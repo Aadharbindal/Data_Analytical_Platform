@@ -3,8 +3,8 @@ from app.models.python_agent import (
     PythonWorkflow,
     PythonExecution,
     ExecutionArtifact,
-    ExecutionMetrics,
-    ExecutionHistory,
+    PythonAgentExecutionMetrics,
+    PythonAgentExecutionHistory,
     ExecutionLog,
     ExecutionValidation
 )
@@ -50,7 +50,7 @@ class PythonExecutionRepository:
             self.db.refresh(execution)
             
             # Log history
-            history = ExecutionHistory(
+            history = PythonAgentExecutionHistory(
                 execution_id=execution_id,
                 status_to=status
             )
@@ -70,8 +70,8 @@ class PythonExecutionRepository:
         self.db.refresh(artifact)
         return artifact
 
-    def save_metrics(self, execution_id: str, execution_time_ms: int, peak_memory_mb: int, cpu_utilization: int) -> ExecutionMetrics:
-        metrics = ExecutionMetrics(
+    def save_metrics(self, execution_id: str, execution_time_ms: int, peak_memory_mb: int, cpu_utilization: int) -> PythonAgentExecutionMetrics:
+        metrics = PythonAgentExecutionMetrics(
             execution_id=execution_id,
             execution_time_ms=execution_time_ms,
             peak_memory_mb=peak_memory_mb,

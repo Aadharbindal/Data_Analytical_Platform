@@ -3,7 +3,7 @@ from typing import List, Dict, Any, Optional
 from sqlalchemy.orm import Session
 
 from app.models.business_rule_engine import (
-    RuleDefinition, RuleVersion, RuleExecution, RuleMetrics
+    RuleDefinition, BusinessRuleEngineVersion, BusinessRuleEngineExecution, RuleMetrics
 )
 from app.schemas.business_rule_engine import (
     RuleCreateRequest, RuleEvaluateRequest
@@ -46,7 +46,7 @@ class RuleEngineService:
         created = self.repository.create_rule(rule)
         
         # Save version snapshot
-        version = RuleVersion(
+        version = BusinessRuleEngineVersion(
             rule_id=created.id,
             version=1,
             expression_ast=request.expression_ast,
@@ -55,7 +55,7 @@ class RuleEngineService:
         self.repository.add_version(version)
         return created
 
-    def evaluate(self, request: RuleEvaluateRequest) -> List[RuleExecution]:
+    def evaluate(self, request: RuleEvaluateRequest) -> List[BusinessRuleEngineExecution]:
         rules_to_evaluate = []
         if request.rule_ids:
             for rid in request.rule_ids:
@@ -81,7 +81,7 @@ class RuleEngineService:
                 
             latency = int((time.time() - start_time) * 1000)
             
-            execution = RuleExecution(
+            execution = BusinessRuleEngineExecution(
                 rule_id=rule.id,
                 workspace_id=request.workspace_id,
                 input_objects=request.input_objects,

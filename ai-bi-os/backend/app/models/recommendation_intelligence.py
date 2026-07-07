@@ -37,7 +37,7 @@ class RecommendationObject(Base):
     generated_at = Column(DateTime, default=datetime.utcnow)
     
     references = relationship("RecommendationReference", back_populates="recommendation", cascade="all, delete-orphan")
-    histories = relationship("RecommendationHistory", back_populates="recommendation", cascade="all, delete-orphan")
+    histories = relationship("RecommendationIntelligenceHistory", back_populates="recommendation", cascade="all, delete-orphan")
     validations = relationship("RecommendationValidation", back_populates="recommendation", cascade="all, delete-orphan")
     scenarios = relationship("RecommendationScenario", back_populates="recommendation", cascade="all, delete-orphan")
     action_plan = relationship("RecommendationActionPlan", uselist=False, back_populates="recommendation", cascade="all, delete-orphan")
@@ -88,7 +88,7 @@ class RecommendationReference(Base):
     
     recommendation = relationship("RecommendationObject", back_populates="references")
 
-class RecommendationHistory(Base):
+class RecommendationIntelligenceHistory(Base):
     """Lifecycle events."""
     __tablename__ = "rec_intel_history"
     

@@ -3,7 +3,7 @@ from typing import List, Dict, Any, Optional
 from sqlalchemy.orm import Session
 
 from app.models.recommendation_intelligence import (
-    RecommendationObject, RecommendationReference, RecommendationHistory,
+    RecommendationObject, RecommendationReference, RecommendationIntelligenceHistory,
     RecommendationPriority, RecommendationValidation, RecommendationScenario,
     RecommendationActionPlan, RecommendationMetrics
 )
@@ -147,7 +147,7 @@ class RecommendationManager:
             self.repository.add_reference(RecommendationReference(recommendation_id=created.id, reference_type="INSIGHT", reference_id=ref.reference_id))
             
         # 8. Save History & Validation
-        self.repository.add_history(RecommendationHistory(recommendation_id=created.id, event="GENERATED"))
+        self.repository.add_history(RecommendationIntelligenceHistory(recommendation_id=created.id, event="GENERATED"))
         self.repository.add_validation(RecommendationValidation(recommendation_id=created.id, is_valid=True, validation_notes="Insight constraints passed."))
         
         # 9. Metrics

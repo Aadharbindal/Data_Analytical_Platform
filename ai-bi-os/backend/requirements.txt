@@ -21,3 +21,4 @@ plotly
 matplotlib
 networkx
 polars
+reportlab

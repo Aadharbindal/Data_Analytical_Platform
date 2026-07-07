@@ -8,7 +8,7 @@ from app.core.database import Base
 def generate_uuid():
     return str(uuid.uuid4())
 
-class InsightObject(Base):
+class InsightGenerationObject(Base):
     """Core insight entity tracking narrative and scores."""
     __tablename__ = "insight_objects"
     
@@ -45,7 +45,7 @@ class InsightReference(Base):
     reference_type = Column(String, nullable=False) # EVIDENCE, CONTEXT, ANALYTICS, FORECAST, KPI
     reference_id = Column(String, nullable=False)
     
-    insight = relationship("InsightObject", back_populates="references")
+    insight = relationship("InsightGenerationObject", back_populates="references")
 
 class InsightHistory(Base):
     """Tracks changes over time to an insight."""
@@ -57,7 +57,7 @@ class InsightHistory(Base):
     action = Column(String, nullable=False) # GENERATED, REGENERATED, INVALIDATED
     timestamp = Column(DateTime, default=datetime.utcnow)
     
-    insight = relationship("InsightObject", back_populates="histories")
+    insight = relationship("InsightGenerationObject", back_populates="histories")
 
 class InsightPriority(Base):
     """Configuration and scores determining the ranking of the insight."""
@@ -85,7 +85,7 @@ class InsightObjectValidation(Base):
     validation_notes = Column(Text, nullable=True)
     timestamp = Column(DateTime, default=datetime.utcnow)
     
-    insight = relationship("InsightObject", back_populates="validations")
+    insight = relationship("InsightGenerationObject", back_populates="validations")
 
 class InsightCategory(Base):
     """Tagging and grouping constructs (e.g., Department, Dataset)."""
@@ -96,7 +96,7 @@ class InsightCategory(Base):
     
     category_name = Column(String, nullable=False)
     
-    insight = relationship("InsightObject", back_populates="categories")
+    insight = relationship("InsightGenerationObject", back_populates="categories")
 
 class InsightAudit(Base):
     """Access logs for RBAC compliance."""

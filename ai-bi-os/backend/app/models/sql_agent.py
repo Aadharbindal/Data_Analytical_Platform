@@ -116,7 +116,7 @@ class SQLMetrics(Base):
     
     execution = relationship("SQLExecution", back_populates="metrics")
 
-class QueryCache(Base):
+class SqlAgentQueryCache(Base):
     """Storing deterministic results for identical queries."""
     __tablename__ = "sql_query_cache"
     

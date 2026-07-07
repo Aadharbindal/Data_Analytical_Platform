@@ -3,7 +3,7 @@ from sqlalchemy import func
 from typing import List, Optional
 
 from app.models.ai_validation_engine import (
-    ValidationObject, ValidationResult, ValidationHistory, ValidationMetrics
+    ValidationObject, AIValidationEngineResult, AIValidationEngineHistory, ValidationMetrics
 )
 
 class AIValidationEngineRepository:
@@ -28,11 +28,11 @@ class AIValidationEngineRepository:
     def list_validations(self, limit: int = 100) -> List[ValidationObject]:
         return self.db.query(ValidationObject).order_by(ValidationObject.created_at.desc()).limit(limit).all()
 
-    def add_result(self, result: ValidationResult):
+    def add_result(self, result: AIValidationEngineResult):
         self.db.add(result)
         self.db.commit()
 
-    def add_history(self, history: ValidationHistory):
+    def add_history(self, history: AIValidationEngineHistory):
         self.db.add(history)
         self.db.commit()
 

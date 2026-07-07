@@ -30,10 +30,10 @@ class ValidationObject(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     approved_at = Column(DateTime, nullable=True)
     
-    results = relationship("ValidationResult", back_populates="validation", cascade="all, delete-orphan")
-    histories = relationship("ValidationHistory", back_populates="validation", cascade="all, delete-orphan")
+    results = relationship("AIValidationEngineResult", back_populates="validation", cascade="all, delete-orphan")
+    histories = relationship("AIValidationEngineHistory", back_populates="validation", cascade="all, delete-orphan")
 
-class ValidationResult(Base):
+class AIValidationEngineResult(Base):
     """Detailed result of an individual validator check."""
     __tablename__ = "ai_validation_results"
     
@@ -48,7 +48,7 @@ class ValidationResult(Base):
     
     validation = relationship("ValidationObject", back_populates="results")
 
-class ValidationRule(Base):
+class AIValidationEngineRule(Base):
     """Configuration for what validators must pass."""
     __tablename__ = "ai_validation_rules"
     
@@ -61,7 +61,7 @@ class ValidationRule(Base):
     validator_config = Column(JSON, nullable=False) # Specific thresholds, e.g. min_confidence = 0.85
     is_active = Column(Boolean, nullable=False, default=True)
 
-class ValidationPolicy(Base):
+class AIValidationEnginePolicy(Base):
     """Grouping of validation rules into a strict policy profile."""
     __tablename__ = "ai_validation_policies"
     
@@ -71,7 +71,7 @@ class ValidationPolicy(Base):
     description = Column(Text, nullable=True)
     enforcement_level = Column(String, nullable=False, default="STRICT") # STRICT, LENIENT, AUDIT_ONLY
 
-class ValidationHistory(Base):
+class AIValidationEngineHistory(Base):
     """Audit log of state transitions."""
     __tablename__ = "ai_validation_history"
     

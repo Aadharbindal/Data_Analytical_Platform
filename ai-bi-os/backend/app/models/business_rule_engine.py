@@ -38,10 +38,10 @@ class RuleDefinition(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
-    executions = relationship("RuleExecution", back_populates="rule", cascade="all, delete-orphan")
-    versions = relationship("RuleVersion", back_populates="rule", cascade="all, delete-orphan")
+    executions = relationship("BusinessRuleEngineExecution", back_populates="rule", cascade="all, delete-orphan")
+    versions = relationship("BusinessRuleEngineVersion", back_populates="rule", cascade="all, delete-orphan")
 
-class RuleVersion(Base):
+class BusinessRuleEngineVersion(Base):
     """Snapshot of a rule definition."""
     __tablename__ = "business_rule_versions"
     
@@ -55,7 +55,7 @@ class RuleVersion(Base):
     
     rule = relationship("RuleDefinition", back_populates="versions")
 
-class RuleExecution(Base):
+class BusinessRuleEngineExecution(Base):
     """Log of every rule evaluation."""
     __tablename__ = "business_rule_executions"
     
@@ -90,7 +90,7 @@ class RulePolicy(Base):
     rule_id = Column(String, ForeignKey("business_rule_definitions.id", ondelete="CASCADE"))
     is_mandatory = Column(Boolean, nullable=False, default=True)
 
-class RuleAudit(Base):
+class BusinessRuleEngineAudit(Base):
     """Access and change logs for rules."""
     __tablename__ = "business_rule_audit"
     

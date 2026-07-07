@@ -3,7 +3,7 @@ from typing import List, Dict, Any, Optional
 from sqlalchemy.orm import Session
 
 from app.models.insight_generation import (
-    InsightObject, InsightReference, InsightHistory,
+    InsightGenerationObject, InsightReference, InsightHistory,
     InsightPriority, InsightObjectValidation, InsightMetrics
 )
 from app.schemas.insight_generation import InsightGenerateRequest
@@ -72,7 +72,7 @@ class InsightManager:
         self.prioritizer = InsightPrioritizer()
         self.narrative_generator = NarrativeGenerator()
 
-    def generate_insight(self, request: InsightGenerateRequest) -> InsightObject:
+    def generate_insight(self, request: InsightGenerateRequest) -> InsightGenerationObject:
         start_time = time.time()
         
         # 1. Validate
@@ -85,7 +85,7 @@ class InsightManager:
         impact, priority, severity = self.prioritizer.calculate_priority(request.business_domain, confidence)
         
         # 4. Save Core Object
-        insight = InsightObject(
+        insight = InsightGenerationObject(
             workspace_id=request.workspace_id,
             dataset_id=request.dataset_id,
             conversation_id=request.conversation_id,
@@ -123,10 +123,10 @@ class InsightManager:
         
         return created
 
-    def get_insight(self, insight_id: str) -> Optional[InsightObject]:
+    def get_insight(self, insight_id: str) -> Optional[InsightGenerationObject]:
         return self.repository.get_insight(insight_id)
         
-    def list_by_workspace(self, workspace_id: str) -> List[InsightObject]:
+    def list_by_workspace(self, workspace_id: str) -> List[InsightGenerationObject]:
         return self.repository.list_insights_by_workspace(workspace_id)
         
     def get_summary(self, workspace_id: str) -> Dict[str, Any]:

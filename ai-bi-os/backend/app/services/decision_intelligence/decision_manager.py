@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.models.decision_intelligence import (
     DecisionObject, DecisionReference, DecisionScenario, DecisionComparison,
-    DecisionPolicy, DecisionApproval, DecisionHistory, DecisionMetrics
+    DecisionPolicy, DecisionApproval, DecisionIntelligenceHistory, DecisionMetrics
 )
 from app.schemas.decision_intelligence import DecisionGenerateRequest
 from app.repositories.decision_intelligence_repository import DecisionIntelligenceRepository
@@ -101,7 +101,7 @@ class DecisionManager:
         for r_id in request.recommendation_ids:
             self.repository.add_reference(DecisionReference(decision_id=created.id, reference_type="RECOMMENDATION", reference_id=r_id))
             
-        self.repository.add_history(DecisionHistory(decision_id=created.id, event="GENERATED"))
+        self.repository.add_history(DecisionIntelligenceHistory(decision_id=created.id, event="GENERATED"))
         
         latency = int((time.time() - start_time) * 1000)
         self.repository.log_metrics(DecisionMetrics(

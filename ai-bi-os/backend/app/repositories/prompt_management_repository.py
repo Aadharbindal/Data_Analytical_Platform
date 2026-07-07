@@ -5,7 +5,7 @@ from sqlalchemy import desc
 from app.models.prompt_management import (
     PromptRegistry, PromptTemplate, PromptVersion,
     PromptLifecycle, PromptApproval, PromptReview,
-    PromptDiff, PromptAudit
+    PromptDiff, PromptManagementAudit
 )
 from app.schemas.prompt_management import PromptTemplateCreate, PromptVersionCreate
 
@@ -134,7 +134,7 @@ class PromptManagementRepository:
         self.db.commit()
 
     def log_audit(self, version_id: str, actor_id: str, action: str, details: Dict[str, Any] = None):
-        audit = PromptAudit(
+        audit = PromptManagementAudit(
             version_id=version_id,
             actor_id=actor_id,
             action=action,
@@ -142,5 +142,5 @@ class PromptManagementRepository:
         )
         self.db.add(audit)
 
-    def get_history(self) -> List[PromptAudit]:
-        return self.db.query(PromptAudit).order_by(desc(PromptAudit.timestamp)).limit(100).all()
+    def get_history(self) -> List[PromptManagementAudit]:
+        return self.db.query(PromptManagementAudit).order_by(desc(PromptManagementAudit.timestamp)).limit(100).all()
