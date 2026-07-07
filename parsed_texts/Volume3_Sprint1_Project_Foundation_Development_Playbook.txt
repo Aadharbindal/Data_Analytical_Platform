@@ -1,0 +1,88 @@
+AI Business Analyst PlatformVolume 3 – AI Development Bible
+Sprint 1 – Project Foundation & Development EnvironmentImplementation Playbook v1.0
+1. Sprint Objective
+Establish a production-ready foundation for the AI Business Analyst Platform. By the end of this sprint, every developer or AI coding assistant should be able to clone the repository, start the application locally and authenticate into the system.
+2. Deliverables
+Monorepo initialized
+Frontend (Next.js) running
+Backend (FastAPI) running
+PostgreSQL & Redis connected
+Docker Compose environment
+Authentication module
+Workspace scaffold
+Environment configuration
+GitHub repository and branching strategy
+3. Repository Structure
+root/├── frontend/├── backend/├── infrastructure/├── docs/├── scripts/├── docker-compose.yml├── .env.example└── README.md
+4. Technology Stack
+Layer
+Technology
+Reason
+Frontend
+Next.js + Tailwind + shadcn/ui
+Modern enterprise UI
+Backend
+FastAPI
+Python ecosystem & async APIs
+Database
+PostgreSQL
+Relational consistency
+Cache
+Redis
+Session and context caching
+ORM
+SQLAlchemy + Alembic
+Schema migrations
+Containers
+Docker Compose
+Reproducible development
+5. Backend Tasks
+Initialize FastAPI project
+Configure SQLAlchemy and Alembic
+Implement JWT authentication
+Create User and Workspace models
+Health-check endpoint
+Structured logging
+Global exception handling
+6. Frontend Tasks
+Initialize Next.js app
+Create authentication pages
+Protected routing
+Dashboard shell
+Global layout
+Theme provider
+API client configuration
+7. APIs To Implement
+Method
+Endpoint
+Purpose
+POST
+/api/v1/auth/register
+Register user
+POST
+/api/v1/auth/login
+Login
+GET
+/api/v1/auth/me
+Current user
+GET
+/api/v1/health
+Health check
+POST
+/api/v1/workspaces
+Create workspace
+8. AntiGravity Master Prompt
+Generate a production-ready monorepo for an AI Business Analyst Platform using Next.js, FastAPI, PostgreSQL, Redis and Docker Compose. Create modular folder structures, JWT authentication, SQLAlchemy models, Alembic migrations, workspace management, health endpoints, centralized configuration, structured logging, error handling, environment variable management and clean architecture principles. Do not implement analytics yet. Produce maintainable, enterprise-grade code with documentation and tests.
+9. Acceptance Criteria
+Application starts with one command.
+Frontend connects to backend.
+User registration and login work.
+Database migrations succeed.
+Health endpoint returns success.
+Workspace creation is functional.
+10. Sprint Exit Checklist
+Code committed
+Docker verified
+README updated
+Environment documented
+Ready for Sprint 2 (Dataset Engine)

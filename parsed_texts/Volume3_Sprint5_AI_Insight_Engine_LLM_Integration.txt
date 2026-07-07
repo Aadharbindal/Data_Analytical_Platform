@@ -1,0 +1,85 @@
+AI Business Analyst PlatformVolume 3 – AI Development Bible
+Sprint 5 – AI Insight Engine, LLM Integration & Recommendation SystemImplementation Playbook v1.0
+1. Sprint Objective
+Introduce the AI layer that converts deterministic analytics into executive-grade explanations and actionable recommendations. The LLM consumes structured analytics_context rather than raw datasets to maximize reliability and minimize hallucinations.
+2. Sprint Deliverables
+Context Builder
+Prompt Builder
+LLM Gateway
+Response Validator
+Recommendation Engine
+Confidence Scoring
+Prompt Library
+Insight Explanation APIs
+Conversation-ready Context
+Audit Logging
+3. Backend Folder Structure
+backend/ai/ ├── context_builder.py ├── prompt_builder.py ├── llm_gateway.py ├── validator.py ├── recommender.py ├── confidence.py ├── routes.py ├── schemas.py └── tests/
+4. AI Processing Pipeline
+analytics_context↓Context Builder↓Prompt Builder↓LLM Gateway↓Response Validator↓Recommendation Engine↓Confidence Scoring↓Persist AI Artifacts↓Return Executive Insights
+5. Core AI Modules
+Module
+Responsibility
+Output
+Context Builder
+Compress analytics into structured context
+Context Package
+Prompt Builder
+Assemble system, developer and task prompts
+Prompt Payload
+LLM Gateway
+Provider abstraction for LLM calls
+Raw AI Response
+Validator
+Ground responses in analytics
+Validated Insights
+Recommendation Engine
+Generate prioritized business actions
+Recommendations
+Confidence Engine
+Assign confidence levels
+Confidence Metadata
+6. APIs
+Method
+Endpoint
+Purpose
+Returns
+POST
+/api/v1/ai/insights
+Generate executive insights
+insights
+POST
+/api/v1/ai/recommend
+Generate recommendations
+recommendations
+POST
+/api/v1/ai/explain
+Explain KPI or anomaly
+explanation
+GET
+/api/v1/ai/prompts
+Prompt versions
+prompt metadata
+7. Prompt Engineering Rules
+Never expose raw datasets unless explicitly required.
+Always ground outputs in analytics_context.
+Separate facts, interpretations and recommendations.
+Return structured JSON before natural-language formatting.
+Include confidence and supporting evidence.
+8. AntiGravity Master Prompt
+Generate a production-ready AI service in FastAPI. Implement Context Builder, Prompt Builder, LLM Gateway, Response Validator, Recommendation Engine and Confidence Scoring. Use analytics_context as the only reasoning input, support multiple LLM providers through an abstraction layer, version prompts, validate responses against computed metrics, expose REST APIs, persist AI artifacts, implement retry logic, structured logging, comprehensive tests and clean architecture. Prevent hallucinations by grounding every insight in deterministic analytics.
+9. Test Plan
+Prompt generation validation
+Grounded response verification
+Hallucination rejection tests
+Recommendation quality review
+Confidence score validation
+Provider failure and retry tests
+Performance under concurrent AI requests
+10. Definition of Done
+AI service integrated with analytics engine.
+Executive insights generated.
+Recommendations evidence-backed.
+Prompt library versioned.
+Tests passing.
+Ready for Sprint 6 (Conversational Analytics & Memory).

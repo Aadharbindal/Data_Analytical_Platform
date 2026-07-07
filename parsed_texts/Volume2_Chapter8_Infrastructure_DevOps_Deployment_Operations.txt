@@ -1,0 +1,59 @@
+AI Business Analyst PlatformVolume 2 – Engineering Design Specification (EDS)
+Chapter 8 – Infrastructure, DevOps, Deployment & OperationsDraft v1.0
+1. Objective
+This chapter defines how the platform is deployed, monitored, secured and operated across development, staging and production environments.
+2. Infrastructure Overview
+Client Browser      │      ▼ CDN / Reverse Proxy (Nginx)      │      ▼ Next.js Frontend      │      ▼ FastAPI Backend      │ ┌────┴───────────────┐ │                    │Redis Cache      Background Workers │                    │ └──────────┬─────────┘            ▼      PostgreSQL            │            ▼      Object Storage            │            ▼       External LLM
+3. Deployment Environments
+Environment
+Purpose
+Data
+Deployment
+Development
+Local coding/testing
+Dummy
+Docker Compose
+Staging
+Pre-release validation
+Sanitized
+Cloud VM
+Production
+Live users
+Production
+Managed infrastructure
+4. Containerization Strategy
+Separate containers for frontend, backend, PostgreSQL and Redis.
+Background worker runs independently.
+Use Docker Compose for local development.
+Support Kubernetes migration in future.
+5. CI/CD Pipeline
+Git Push→ Automated Tests→ Static Analysis→ Build Containers→ Push Images→ Deploy to Staging→ Manual Approval→ Production Deployment
+6. Monitoring & Observability
+Application metrics (Prometheus-ready).
+Dashboards using Grafana.
+Centralized structured logs.
+Request tracing with correlation IDs.
+Health-check endpoints for every service.
+7. Security & Secrets
+Environment variables for secrets.
+JWT signing keys outside source control.
+Database credentials managed securely.
+TLS for all production traffic.
+Regular dependency vulnerability scanning.
+8. Backup & Disaster Recovery
+Schedule PostgreSQL backups daily, replicate object storage, retain multiple restore points and periodically verify restoration procedures. Recovery objectives should be documented before production rollout.
+9. Operational Runbook
+Monitor service health.
+Investigate failed background jobs.
+Rotate logs.
+Review API latency.
+Monitor LLM usage and cost.
+Apply security updates regularly.
+10. Future Infrastructure Roadmap
+Kubernetes orchestration.
+Horizontal auto-scaling.
+Multi-region deployment.
+Managed message queue.
+OpenTelemetry-based distributed tracing.
+Transition to Chapter 9
+Chapter 9 documents Architecture Decision Records (ADRs), engineering trade-offs, technology evaluations and long-term architectural governance.

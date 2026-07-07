@@ -1,0 +1,784 @@
+﻿AI Business Analyst PlatformVolume 2 â€“ Engineering Design Specification (EDS)
+Chapter 10 â€“ Master Engineering Blueprint & AntiGravity Implementation SpecificationDraft v1.0
+1. Objective
+This final chapter consolidates the engineering specification into a practical implementation blueprint. It defines the recommended build sequence, module dependencies, quality gates and guidance for AI-assisted development platforms such as AntiGravity.
+2. Recommended Development Order
+Phase 1: Repository initialization and project structure
+Phase 2: Authentication and workspace management
+Phase 3: Dataset upload and storage
+Phase 4: Validation and profiling engine
+Phase 5: Analytics and KPI engine
+Phase 6: Insight generation service
+Phase 7: AI integration and prompt orchestration
+Phase 8: Recommendation engine
+Phase 9: Dashboard and visualization
+Phase 10: Chat interface
+Phase 11: Report generation
+Phase 12: Testing, optimization and deployment
+3. Module Dependency Map
+Authentication      â†“Workspace      â†“Dataset Service      â†“Validation      â†“Profiling      â†“Analytics      â†“Insights      â†“AI      â†“Recommendations      â†“Dashboard / Chat / Reports
+4. Quality Gates
+All APIs documented.
+Unit tests for analytical modules.
+Prompt templates version controlled.
+Security review completed.
+Performance benchmarks recorded.
+User acceptance testing completed.
+5. Testing Strategy
+Test Level
+Purpose
+Examples
+Unit
+Validate isolated logic
+KPI calculations
+Integration
+Verify service interaction
+Upload â†’ Analytics
+End-to-End
+Validate user workflows
+Upload to report
+Performance
+Measure scalability
+Large dataset processing
+Security
+Validate protection
+Authentication, file upload
+6. MVP vs Enterprise Evolution
+MVP focuses on structured dataset upload, automatic analytics, AI-generated insights and executive reporting. Enterprise editions extend this with connectors, RBAC, scheduling, monitoring, forecasting, multi-agent orchestration and organization-wide governance.
+7. AntiGravity Development Guidance
+Generate modules incrementally rather than the entire application.
+Treat each service as an independent milestone.
+Use the Engineering Design Specification as the source of truth.
+Validate generated code against documented interfaces.
+Maintain architectural consistency across generated modules.
+8. Final Engineering Checklist
+Architecture approved
+Database implemented
+API contracts finalized
+Frontend integrated
+AI pipeline validated
+Monitoring enabled
+Documentation synchronized
+Deployment completed
+9. Long-Term Vision
+The long-term objective is to evolve the platform into an AI Business Operating System capable of continuously monitoring enterprise data, proactively identifying opportunities and risks, coordinating analytical agents and supporting strategic decision-making across multiple business domains.
+10. Closing Statement
+Volume 2 transforms the business vision from Volume 1 into a technical implementation blueprint. Together, the Product Requirements Document and the Engineering Design Specification establish a complete foundation for iterative development, AI-assisted implementation and future enterprise expansion.
+AI Business Analyst PlatformVolume 2 â€“ Engineering Design Specification (EDS)
+Chapter 1 â€“ System Architecture & Engineering PhilosophyDraft v1.0
+1. Purpose
+This document establishes the engineering foundation of the AI Business Analyst Platform. It translates the business requirements from Volume 1 into a scalable technical architecture that can evolve from an MVP into an enterprise-grade AI analytics platform.
+2. Engineering Goals
+Build a modular service-oriented architecture.
+Keep deterministic analytics separate from LLM reasoning.
+Support future domain-specific analytical modules.
+Enable maintainability, observability and scalability.
+Design APIs that are AI-agent friendly.
+3. Design Philosophy
+The platform follows a computation-first architecture. Statistical calculations, profiling, KPI generation and validation are completed before invoking any LLM. Language models explain results rather than invent them. Every recommendation should be traceable to computed evidence.
+4. High-Level Architecture
+                User                  â”‚                  â–¼          React / Next.js UI                  â”‚                  â–¼             FastAPI Gateway                  â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚                â”‚                â”‚Dataset      Analytics        AI ServiceService       Engine â”‚                â”‚                â”‚ â”‚         Statistics Engine       â”‚ â”‚                â”‚                â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–º Insight Engine â—„â”€â”€â”€â”€â”€â”˜                  â”‚                  â–¼      Recommendation Engine                  â”‚                  â–¼ PostgreSQL + Object Storage + Redis                  â”‚                  â–¼          External LLM Provider
+5. Core Architectural Components
+Component
+Responsibility
+Future Expansion
+Dataset Service
+Upload, validation, schema detection
+Cloud connectors
+Analytics Engine
+EDA, KPIs, statistics
+Forecasting
+Insight Engine
+Transforms metrics into structured insights
+Domain-specific rules
+AI Service
+Prompt orchestration and response generation
+Multi-model routing
+Recommendation Engine
+Actionable business suggestions
+ML policy engine
+Report Service
+Executive reports
+Scheduled reports
+6. Architecture Principles
+Single Responsibility per service.
+Stateless APIs where possible.
+Structured context passed to LLMs.
+Replaceable AI model providers.
+Evidence-first recommendations.
+Versioned prompts and APIs.
+7. Technology Decisions (Initial)
+Layer
+Proposed Technology
+Reason
+Frontend
+Next.js + React + Tailwind
+Modern enterprise UI
+Backend
+FastAPI
+High performance, Python ecosystem
+Analytics
+Pandas + Polars
+Efficient tabular processing
+Database
+PostgreSQL
+Relational metadata
+Charts
+Plotly
+Interactive dashboards
+Caching
+Redis
+Fast session/context storage
+8. Architecture Decision Records (Initial)
+ADR-001: Use FastAPI for backend APIs.
+ADR-002: Keep analytics deterministic before LLM invocation.
+ADR-003: Store dataset metadata separately from raw files.
+ADR-004: Design services to allow future microservice extraction.
+9. Non-Goals
+Do not build a generic chatbot.
+Do not tightly couple analytics with LLM prompts.
+Do not require manual dashboard creation.
+Do not optimize for every business domain in Version 1.
+10. Transition to Chapter 2
+Chapter 2 will define the complete request lifecycle and data flow. Every stageâ€”from dataset upload to executive insight generationâ€”will be specified with processing steps, component interactions, error handling and sequence diagrams. This chapter becomes the operational blueprint for implementation.
+AI Business Analyst PlatformVolume 2 â€“ Engineering Design Specification (EDS)
+Chapter 2 â€“ End-to-End Request Lifecycle & Data FlowDraft v1.0
+1. Objective
+This chapter specifies the complete lifecycle of a user request, from dataset upload to insight generation. It defines the responsibilities of each processing stage and the interfaces between services.
+2. End-to-End Processing Pipeline
+User Uploadâ†“File Validationâ†“Dataset Registrationâ†“Schema Detectionâ†“Data Profilingâ†“Data Cleaningâ†“Exploratory Data Analysis (EDA)â†“KPI Computationâ†“Statistical Analysisâ†“Chart Generationâ†“Insight Generationâ†“LLM Reasoningâ†“Recommendation Engineâ†“Dashboard Renderingâ†“Conversational Analyticsâ†“Report Export
+3. Stage-by-Stage Lifecycle
+Pipeline Stage
+Primary Responsibility
+Upload Service
+Accept CSV/Excel, assign workspace ID, store raw file.
+Validation Engine
+Verify file format, size, encoding and mandatory structure.
+Schema Detection
+Infer column names, data types and candidate business fields.
+Profiling Engine
+Detect missing values, duplicates, distributions and summary statistics.
+Cleaning Engine
+Normalize dates, trim values, standardize missing entries.
+EDA Engine
+Generate descriptive statistics, trends, correlations and outliers.
+KPI Engine
+Compute business metrics such as revenue growth, average order value and region performance.
+Insight Engine
+Convert computed metrics into structured evidence objects.
+LLM Service
+Generate executive explanations using structured context only.
+Recommendation Engine
+Produce evidence-backed actions with confidence metadata.
+Dashboard
+Display KPIs, charts, insights and recommendations.
+Chat Service
+Answer follow-up questions using stored analytical context.
+4. Data Objects Created During Processing
+Object
+Purpose
+Workspace
+Logical container for one analysis session.
+Dataset Metadata
+File information, schema, profile summary.
+Analytical Context
+KPIs, statistics, anomalies and trends.
+Insight Objects
+Structured findings before LLM explanation.
+Conversation Context
+Persisted history for follow-up questions.
+Report Package
+Export-ready executive summary.
+5. Error Handling Strategy
+Reject unsupported file types.
+Return detailed validation errors for malformed datasets.
+Continue processing with warnings for recoverable data quality issues.
+Log every failed pipeline stage with correlation ID.
+Never generate recommendations when prerequisite analytics fail.
+6. Async Processing Model
+Heavy analytical operations should execute through background workers. The frontend polls or subscribes to status updates while processing continues asynchronously. Each pipeline stage emits status events: Pending â†’ Running â†’ Completed â†’ Failed.
+7. Observability
+Assign a unique request ID.
+Log stage execution time.
+Capture dataset processing metrics.
+Track LLM latency and token usage.
+Persist pipeline audit trail.
+8. Sequence Summary
+1. User uploads dataset.2. Backend validates and stores file.3. Analytics pipeline produces deterministic results.4. Structured context is assembled.5. LLM generates explanations.6. Recommendation engine proposes actions.7. Dashboard and chat consume the same analytical context.8. Reports are generated from stored insights rather than recomputation.
+9. Design Decisions
+Never expose raw datasets directly to the LLM when summarized context is sufficient.
+Separate statistical computation from natural-language generation.
+Persist intermediate analytical artifacts for reuse.
+Use asynchronous execution for scalability.
+10. Transition to Chapter 3
+Chapter 3 decomposes the platform into individual engineering services (Dataset Service, Analytics Engine, AI Service, Recommendation Engine, Report Service and Chat Service) with interfaces, dependencies and implementation responsibilities.
+AI Business Analyst PlatformVolume 2 â€“ Engineering Design Specification (EDS)
+Chapter 3 â€“ Service Architecture & Component DesignDraft v1.0
+1. Objective
+This chapter decomposes the platform into independently deployable logical services. Each service has a clearly defined responsibility, interfaces, inputs, outputs, dependencies and future evolution path.
+2. Service Catalog
+Service
+Responsibility
+Input
+Output
+Dependencies
+Dataset Service
+Receive uploads, validate files, register datasets, store metadata.
+CSV/XLSX
+Dataset ID, metadata
+Storage, Validation
+Validation Service
+Validate schema, encoding, file size and business rules.
+Dataset
+Validation report
+Dataset Service
+Profiling Service
+Infer schema, detect missing values, duplicates and distributions.
+Validated dataset
+Profile object
+Validation
+Analytics Engine
+Run EDA, correlations, aggregations and KPI calculations.
+Profiled dataset
+Analytical context
+Profiling
+Chart Service
+Generate visualization specifications.
+Analytical context
+Chart configs
+Analytics
+Insight Engine
+Convert metrics into structured evidence.
+Analytics output
+Insight objects
+Analytics
+AI Service
+Build prompts, call LLM and validate responses.
+Insight objects
+Narrative insights
+Insight Engine
+Recommendation Engine
+Produce evidence-backed recommendations.
+Narrative + metrics
+Recommendations
+AI Service
+Chat Service
+Answer follow-up questions using stored context.
+User query
+Grounded response
+AI + DB
+Report Service
+Generate PDF/PPT summaries.
+Insights
+Export package
+All services
+3. Component Interaction
+Processing order:Dataset Serviceâ†’ Validation Serviceâ†’ Profiling Serviceâ†’ Analytics Engineâ†’ Chart Serviceâ†’ Insight Engineâ†’ AI Serviceâ†’ Recommendation Engineâ†’ Dashboard / Chat / Report Services
+4. Interface Contracts
+Service
+Primary API
+Returns
+Dataset Service
+upload(file)
+dataset_id, status
+Analytics Engine
+analyze(dataset_id)
+analytics_context
+AI Service
+generate(context)
+executive_summary
+Recommendation Engine
+recommend(context)
+recommendation_list
+Chat Service
+ask(question, workspace_id)
+answer
+Report Service
+export(workspace_id)
+pdf/ppt
+5. Failure Scenarios
+Component
+Failure
+Handling
+Dataset Service
+Corrupted file
+Reject upload and return validation error.
+Validation Service
+Unsupported schema
+Return actionable diagnostics.
+Analytics Engine
+Computation failure
+Persist logs and stop downstream execution.
+AI Service
+LLM unavailable
+Retry then fall back to cached/error response.
+Report Service
+Rendering failure
+Allow regeneration without recomputation.
+6. Cross-Cutting Concerns
+Structured logging with request IDs.
+Authentication before workspace access.
+Authorization on every dataset operation.
+Metrics collection for each pipeline stage.
+Caching of analytical context for repeated chat queries.
+Versioned prompts and model configurations.
+7. Scalability Strategy
+Each logical service should be independently scalable. CPU-intensive analytics and report generation should execute through background workers. AI requests should be isolated from deterministic analytics to prevent bottlenecks.
+8. Future Decomposition
+As adoption grows, the Analytics Engine can be separated into KPI, Forecasting, Anomaly Detection and Time-Series services. The AI Service can evolve into a multi-model orchestration layer supporting specialized reasoning models.
+9. Engineering Decisions
+Prefer service boundaries over monolithic business logic.
+Keep business rules outside prompt templates whenever possible.
+Persist reusable analytical artifacts.
+Treat AI as a consumer of analytics, not a replacement.
+10. Transition to Chapter 4
+Chapter 4 will define the complete AI Pipeline, including prompt construction, context assembly, grounding strategy, response validation, confidence scoring and recommendation generation.
+AI Business Analyst PlatformVolume 2 â€“ Engineering Design Specification (EDS)
+Chapter 4 â€“ AI Pipeline, Prompt Orchestration & Insight GenerationDraft v1.0
+1. Objective
+This chapter specifies the complete AI pipeline. The platform treats the LLM as a reasoning layer that operates on structured analytical evidence rather than raw datasets, improving accuracy, traceability and explainability.
+2. AI Processing Pipeline
+Datasetâ†’ Validationâ†’ Profilingâ†’ EDAâ†’ KPI Engineâ†’ Statistical Findingsâ†’ Insight Objectsâ†’ Context Builderâ†’ Prompt Builderâ†’ LLMâ†’ Response Validatorâ†’ Recommendation Engineâ†’ Executive Summaryâ†’ Chat Context Storeâ†’ Dashboard & Reports
+3. AI Components
+Component
+Responsibility
+Output
+Context Builder
+Convert analytics into compact structured context
+Context Package
+Prompt Builder
+Compose system, developer and task prompts
+Prompt Payload
+LLM Gateway
+Invoke selected model provider
+Raw Response
+Response Validator
+Verify claims against computed metrics
+Validated Narrative
+Recommendation Engine
+Generate evidence-backed actions
+Recommendations
+Conversation Manager
+Maintain workspace-aware chat history
+Conversation Context
+4. Context Package Design
+Only analytical artifacts should be sent to the LLM:â€¢ Dataset metadataâ€¢ KPI summaryâ€¢ Statistical findingsâ€¢ Anomaliesâ€¢ Trend summariesâ€¢ Correlationsâ€¢ Business objectiveRaw datasets should be avoided unless strictly necessary.
+5. Prompt Layers
+System Prompt â€“ defines AI role and constraints.
+Developer Prompt â€“ formatting, grounding and safety rules.
+Analytical Context â€“ structured metrics from pipeline.
+User Prompt â€“ current business question.
+Response Schema â€“ required JSON/text output format.
+6. Hallucination Prevention
+Never invent KPIs not computed by the analytics engine.
+Reference supporting metrics in every major insight.
+Reject unsupported causal claims.
+Return 'insufficient evidence' when confidence is low.
+Separate observations from recommendations.
+7. Recommendation Generation
+Recommendations should combine deterministic rules and LLM reasoning. Rules identify measurable business events (e.g., revenue decline >10%), while the LLM explains likely implications and proposes next actions with clear assumptions.
+8. Confidence Scoring
+Level
+Meaning
+High
+Supported directly by computed metrics.
+Medium
+Supported by metrics with reasonable interpretation.
+Low
+Speculative; requires additional business context.
+9. Future AI Roadmap
+Multi-model routing based on task type.
+Multi-agent analytical workflows.
+Domain-specific prompt libraries.
+Automatic evaluation datasets.
+Feedback-driven prompt optimization.
+10. Transition to Chapter 5
+Chapter 5 will define the complete data architecture, including PostgreSQL schema, object storage, metadata model, indexing strategy and entity relationships.
+AI Business Analyst PlatformVolume 2 â€“ Engineering Design Specification (EDS)
+Chapter 5 â€“ Data Architecture & Database DesignDraft v1.0
+1. Objective
+This chapter defines how business data, analytical metadata, conversations, reports and AI-generated insights are stored. The architecture separates raw datasets from processed analytical artifacts to improve scalability, traceability and future extensibility.
+2. Storage Strategy
+Storage Layer
+Technology
+Purpose
+Relational Database
+PostgreSQL
+Users, workspaces, metadata, insights
+Object Storage
+Local/S3 compatible
+Raw CSV/XLSX files and exports
+Cache
+Redis
+Sessions, chat context, temporary analytics
+Logs
+Structured log store
+Audit trail and diagnostics
+3. Core Entities
+Entity
+Description
+User
+Owns workspaces and permissions
+Workspace
+Logical project containing one or more datasets
+Dataset
+Uploaded business file
+DatasetProfile
+Schema, statistics, data quality
+Insight
+Evidence-backed analytical finding
+Recommendation
+Action generated from insights
+Conversation
+Chat session linked to workspace
+Report
+Exported executive summary
+4. Logical Relationships
+User â””â”€â”€ Workspace      â”œâ”€â”€ Dataset      â”‚     â”œâ”€â”€ DatasetProfile      â”‚     â”œâ”€â”€ KPISet      â”‚     â”œâ”€â”€ Chart      â”‚     â”œâ”€â”€ Insight      â”‚     â””â”€â”€ Recommendation      â”œâ”€â”€ Conversation      â””â”€â”€ Report
+5. Table Design Guidelines
+Use UUID primary keys for externally exposed entities.
+Include created_at and updated_at timestamps.
+Support soft deletion where business recovery is important.
+Store analytical artifacts separately from raw uploads.
+Maintain foreign key integrity between workspaces and assets.
+6. Indexing Strategy
+Index workspace_id on analytical tables.
+Index dataset_id for KPI, insight and chart lookups.
+Full-text index on conversation messages (future).
+Composite indexes for common dashboard queries.
+7. Versioning & Metadata
+Each uploaded dataset receives a unique version identifier. Profiles, KPIs and insights are linked to the dataset version to ensure reproducibility. Re-uploading a modified file creates a new version rather than overwriting historical analysis.
+8. Backup & Recovery
+Metadata should be backed up through scheduled PostgreSQL backups. Raw datasets and exported reports should be replicated through object storage policies. Recovery procedures must preserve referential integrity between metadata and files.
+9. Data Lifecycle
+Upload â†’ Registration â†’ Profiling â†’ Analytics â†’ Insight Generation â†’ Reporting â†’ Archive â†’ Retention/Deletion.Retention policies should be configurable to support enterprise governance requirements.
+10. Transition to Chapter 6
+Chapter 6 will define the REST API specification, request/response contracts, authentication model, error codes and service interfaces used by the frontend and backend.
+AI Business Analyst PlatformVolume 2 â€“ Engineering Design Specification (EDS)
+Chapter 6 â€“ API Architecture & Integration SpecificationDraft v1.0
+1. Objective
+This chapter defines the public and internal APIs of the platform. The API layer acts as the contract between the frontend, backend services, analytics engine and AI components. The design emphasizes consistency, versioning, security and future extensibility.
+2. API Design Principles
+RESTful resource-oriented endpoints.
+Version all public APIs (e.g., /api/v1).
+Use JSON for requests and responses.
+Return consistent error structures.
+Support pagination, filtering and sorting where applicable.
+Keep internal service APIs separate from public APIs.
+3. Authentication & Authorization
+Version 1 will use JWT-based authentication. Every request carries a bearer token identifying the authenticated user. Workspace ownership is verified before dataset access. Future versions may support OAuth, SSO and role-based access control (RBAC).
+4. Public API Catalog
+Method
+Endpoint
+Purpose
+Authentication
+POST
+/api/v1/upload
+Upload dataset
+Required
+GET
+/api/v1/workspaces
+List user workspaces
+Required
+GET
+/api/v1/datasets/{id}
+Dataset metadata
+Required
+POST
+/api/v1/analyze
+Run analytics
+Required
+GET
+/api/v1/insights
+Retrieve generated insights
+Required
+POST
+/api/v1/chat
+Conversational analytics
+Required
+GET
+/api/v1/reports/{id}
+Download report
+Required
+DELETE
+/api/v1/datasets/{id}
+Delete dataset
+Required
+5. Standard Response Format
+Success Response{  "success": true,  "data": {...},  "message": "Operation completed"}Error Response{  "success": false,  "error": {      "code": "VALIDATION_ERROR",      "message": "Unsupported file format"  }}
+6. Internal Service Interfaces
+Service
+Consumes
+Produces
+Dataset Service
+Uploaded file
+Dataset ID
+Analytics Engine
+Dataset ID
+Analytical Context
+Insight Engine
+Analytics Context
+Insight Objects
+AI Service
+Insight Objects
+Narrative Summary
+Recommendation Engine
+Narrative + KPIs
+Recommendations
+Report Service
+Insights
+PDF/PPT
+7. Error Codes
+HTTP Code
+Meaning
+400
+Bad Request
+401
+Unauthorized
+403
+Forbidden
+404
+Resource Not Found
+409
+Conflict
+422
+Validation Error
+500
+Internal Server Error
+503
+AI Service Unavailable
+8. Security Considerations
+Validate uploaded files before processing.
+Rate-limit API requests.
+Sanitize all user inputs.
+Never expose internal service endpoints publicly.
+Audit sensitive operations.
+9. Future Enhancements
+Streaming chat responses.
+Webhook integrations.
+GraphQL gateway.
+Public SDKs.
+OpenAPI documentation generation.
+10. Transition to Chapter 7
+Chapter 7 will define the frontend architecture, UI module hierarchy, state management strategy, component organization and user interaction patterns.
+AI Business Analyst PlatformVolume 2 â€“ Engineering Design Specification (EDS)
+Chapter 7 â€“ Frontend Architecture, UX System & Client Application DesignDraft v1.0
+1. Objective
+This chapter specifies the frontend architecture that powers the AI Business Analyst Platform. It defines application structure, navigation, state management, component hierarchy, design system and user interaction patterns so the frontend remains scalable, maintainable and consistent.
+2. Technology Stack
+Layer
+Technology
+Rationale
+Framework
+Next.js (React)
+SSR, routing, ecosystem
+Styling
+Tailwind CSS + shadcn/ui
+Reusable enterprise components
+Charts
+Plotly
+Interactive analytics
+State
+Zustand + React Query
+Simple global state and server cache
+Forms
+React Hook Form
+Performance and validation
+Icons
+Lucide
+Consistent iconography
+3. Application Modules
+Module
+Purpose
+Authentication
+Login, registration, session handling
+Workspace
+Project and dataset management
+Upload Center
+CSV/XLSX upload and progress
+Dashboard
+KPIs, charts and summaries
+AI Chat
+Conversational analytics
+Reports
+Export history and downloads
+Settings
+Preferences and profile
+4. Suggested Folder Structure
+frontend/ â”œâ”€â”€ app/ â”œâ”€â”€ components/ â”‚   â”œâ”€â”€ charts/ â”‚   â”œâ”€â”€ chat/ â”‚   â”œâ”€â”€ dashboard/ â”‚   â”œâ”€â”€ upload/ â”‚   â”œâ”€â”€ reports/ â”‚   â””â”€â”€ common/ â”œâ”€â”€ hooks/ â”œâ”€â”€ services/ â”œâ”€â”€ store/ â”œâ”€â”€ types/ â”œâ”€â”€ utils/ â””â”€â”€ styles/
+5. Navigation Flow
+Loginâ†’ Workspaceâ†’ Upload Datasetâ†’ Processing Statusâ†’ Dashboardâ†’ Insight Detailsâ†’ AI Chatâ†’ Report Exportâ†’ Settings
+6. State Management Strategy
+Authentication state stored globally.
+Current workspace shared across modules.
+Server data cached using React Query.
+Temporary UI state kept local to components.
+Long-running analysis status updated through polling or WebSockets (future).
+7. Design System Principles
+Consistent spacing and typography.
+Accessible color contrast.
+Responsive layouts for desktop-first design.
+Reusable cards, tables, dialogs and charts.
+Skeleton loaders and clear empty states.
+8. Error & Loading Experience
+Every asynchronous operation should expose progress, retry options and actionable error messages. Dataset processing stages should be visible to users through a timeline or status indicator.
+9. Accessibility
+Keyboard navigation.
+ARIA labels for interactive controls.
+Focus management in dialogs.
+Screen-reader friendly tables.
+Do not rely solely on color for status.
+10. Transition to Chapter 8
+Chapter 8 will define deployment architecture, infrastructure, DevOps workflow, monitoring, logging, CI/CD pipeline and production operations.
+AI Business Analyst PlatformVolume 2 â€“ Engineering Design Specification (EDS)
+Chapter 8 â€“ Infrastructure, DevOps, Deployment & OperationsDraft v1.0
+1. Objective
+This chapter defines how the platform is deployed, monitored, secured and operated across development, staging and production environments.
+2. Infrastructure Overview
+Client Browser      â”‚      â–¼ CDN / Reverse Proxy (Nginx)      â”‚      â–¼ Next.js Frontend      â”‚      â–¼ FastAPI Backend      â”‚ â”Œâ”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚                    â”‚Redis Cache      Background Workers â”‚                    â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜            â–¼      PostgreSQL            â”‚            â–¼      Object Storage            â”‚            â–¼       External LLM
+3. Deployment Environments
+Environment
+Purpose
+Data
+Deployment
+Development
+Local coding/testing
+Dummy
+Docker Compose
+Staging
+Pre-release validation
+Sanitized
+Cloud VM
+Production
+Live users
+Production
+Managed infrastructure
+4. Containerization Strategy
+Separate containers for frontend, backend, PostgreSQL and Redis.
+Background worker runs independently.
+Use Docker Compose for local development.
+Support Kubernetes migration in future.
+5. CI/CD Pipeline
+Git Pushâ†’ Automated Testsâ†’ Static Analysisâ†’ Build Containersâ†’ Push Imagesâ†’ Deploy to Stagingâ†’ Manual Approvalâ†’ Production Deployment
+6. Monitoring & Observability
+Application metrics (Prometheus-ready).
+Dashboards using Grafana.
+Centralized structured logs.
+Request tracing with correlation IDs.
+Health-check endpoints for every service.
+7. Security & Secrets
+Environment variables for secrets.
+JWT signing keys outside source control.
+Database credentials managed securely.
+TLS for all production traffic.
+Regular dependency vulnerability scanning.
+8. Backup & Disaster Recovery
+Schedule PostgreSQL backups daily, replicate object storage, retain multiple restore points and periodically verify restoration procedures. Recovery objectives should be documented before production rollout.
+9. Operational Runbook
+Monitor service health.
+Investigate failed background jobs.
+Rotate logs.
+Review API latency.
+Monitor LLM usage and cost.
+Apply security updates regularly.
+10. Future Infrastructure Roadmap
+Kubernetes orchestration.
+Horizontal auto-scaling.
+Multi-region deployment.
+Managed message queue.
+OpenTelemetry-based distributed tracing.
+Transition to Chapter 9
+Chapter 9 documents Architecture Decision Records (ADRs), engineering trade-offs, technology evaluations and long-term architectural governance.
+AI Business Analyst PlatformVolume 2 â€“ Engineering Design Specification (EDS)
+Chapter 9 â€“ Architecture Decision Records (ADR) & Engineering GovernanceDraft v1.0
+1. Objective
+This chapter documents the key architectural decisions behind the platform. Every major technology and design choice is recorded with its rationale, alternatives considered, consequences and future review criteria.
+2. ADR Process
+Each Architecture Decision Record (ADR) follows a consistent structure: Decision ID, Status, Context, Decision, Alternatives Considered, Consequences, Risks, and Review Trigger.
+ADR
+Decision
+Alternatives
+Reason
+Review
+ADR-001
+FastAPI
+Django, Flask
+High-performance Python APIs with automatic OpenAPI generation.
+Strong async support and data-science ecosystem alignment.
+ADR-002
+PostgreSQL
+MongoDB
+Relational metadata and transactional consistency.
+Better support for structured business entities and joins.
+ADR-003
+Next.js
+Vite SPA
+Enterprise frontend with routing and SSR.
+Better scalability and application structure.
+ADR-004
+Deterministic Analytics First
+Direct LLM over raw data
+Compute KPIs before LLM reasoning.
+Reduces hallucinations and improves traceability.
+ADR-005
+Redis Cache
+Database-only caching
+Session/context caching.
+Lower latency for repeated requests.
+ADR-006
+Modular Monolith (V1)
+Immediate microservices
+Simple deployment while preserving service boundaries.
+Lower operational complexity for MVP.
+3. Engineering Principles
+Prefer simplicity over premature optimization.
+Keep business logic independent of LLM prompts.
+Use strongly typed APIs and schemas.
+Design for observability from day one.
+Maintain backward compatibility for public APIs.
+Automate testing wherever practical.
+4. Technology Evaluation Matrix
+Category
+Chosen
+Key Advantage
+Trade-off
+Backend
+FastAPI
+Performance
+Smaller ecosystem than Django
+Database
+PostgreSQL
+Relational integrity
+Schema management
+Cache
+Redis
+Low latency
+Extra infrastructure
+Charts
+Plotly
+Interactive
+Larger bundle
+UI
+Next.js
+Scalable architecture
+SSR complexity
+5. Governance Model
+Architecture changes should be proposed through new ADRs, reviewed by technical leads, validated through prototypes where appropriate, and approved before implementation. Deprecated decisions should remain documented to preserve historical context.
+6. Review Triggers
+Major performance bottlenecks.
+New enterprise requirements.
+Cloud migration.
+AI model replacement.
+Regulatory or security changes.
+7. Technical Debt Policy
+Technical debt should be explicitly tracked, prioritized and linked to roadmap items. Temporary shortcuts must include documented remediation plans and target milestones.
+8. Coding Standards
+PEP 8 for Python.
+Type hints for public interfaces.
+OpenAPI-first endpoint documentation.
+Consistent logging format.
+Unit and integration tests for critical modules.
+9. Long-Term Architecture Evolution
+As adoption grows, the modular monolith can gradually evolve into independently deployable services without changing public APIs. AI components may later support multiple model providers and specialized analytical agents.
+10. Transition to Chapter 10
+Chapter 10 consolidates the complete engineering blueprint, implementation phases, module dependency map, development checklist and AntiGravity master specification.

@@ -1,0 +1,85 @@
+AI Business Analyst PlatformVolume 1 – Product Requirements Document
+Part 8 – Functional & Non-Functional RequirementsDraft v1.0
+Purpose
+This chapter formally defines the product requirements for Version 1. These requirements establish the expected system behavior, quality attributes, constraints and acceptance criteria that will guide architecture, implementation and testing.
+Functional Requirements
+ID
+Requirement
+Description
+FR-01
+Dataset Upload
+The system shall allow users to upload CSV and Excel datasets.
+FR-02
+Validation
+The system shall validate file type, size and schema before processing.
+FR-03
+Profiling
+The system shall automatically detect columns, data types, missing values and duplicates.
+FR-04
+EDA
+The system shall perform automatic exploratory data analysis.
+FR-05
+KPI Discovery
+The system shall identify relevant KPIs based on detected business data.
+FR-06
+Visualization
+The system shall generate appropriate charts automatically.
+FR-07
+Insight Generation
+The system shall generate executive summaries grounded in computed statistics.
+FR-08
+Conversational Analytics
+Users shall be able to ask natural-language questions about uploaded datasets.
+FR-09
+Recommendation Engine
+The system shall generate actionable business recommendations with supporting evidence.
+FR-10
+Report Export
+The system shall export analytical summaries for sharing.
+Non-Functional Requirements
+Quality Attribute
+Requirement
+Performance
+Initial analysis should complete within a reasonable time for typical business datasets.
+Reliability
+The platform should recover gracefully from processing failures.
+Scalability
+Architecture should support future horizontal scaling.
+Security
+Uploaded datasets must be isolated per workspace.
+Maintainability
+Modules should be independently replaceable.
+Usability
+Business users should complete core workflow with minimal training.
+Observability
+Processing stages should be logged for debugging and auditing.
+Extensibility
+Support future AI models and analytical modules.
+System Constraints
+Version 1 targets structured tabular datasets.
+Recommendations must be supported by measurable statistics.
+LLM responses should be grounded in analytical outputs rather than raw data alone.
+Forecasting and advanced ML are outside the mandatory MVP scope.
+Assumptions
+Users upload clean or moderately clean business datasets.
+Common business metrics can be inferred from column names and metadata.
+Internet connectivity is available for cloud-based LLM services.
+Acceptance Criteria
+Successful upload and validation of supported files.
+Automatic profiling without manual configuration.
+Generation of at least one relevant KPI and visualization.
+Insights correctly reference calculated metrics.
+Follow-up questions produce context-aware answers.
+Reports can be exported successfully.
+Security Considerations
+Version 1 should isolate user workspaces, avoid exposing uploaded datasets across sessions, sanitize uploaded files, and ensure AI prompts contain only the minimum required analytical context.
+Quality Goals
+The product should prioritize correctness, transparency and reproducibility over creativity. Every important analytical statement should be traceable to computed statistics or clearly identified assumptions.
+Definition of Done (Version 1)
+Core workflow implemented end-to-end.
+Major functional requirements satisfied.
+Acceptance tests passed.
+Basic documentation completed.
+Ready for pilot demonstrations.
+Preview of Part 9
+Part 9 will define the product roadmap, implementation phases, risk register, release strategy and long-term evolution of the AI Business Analyst Platform.

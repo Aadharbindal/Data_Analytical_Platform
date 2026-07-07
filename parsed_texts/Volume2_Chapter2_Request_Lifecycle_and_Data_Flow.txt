@@ -1,0 +1,71 @@
+AI Business Analyst PlatformVolume 2 – Engineering Design Specification (EDS)
+Chapter 2 – End-to-End Request Lifecycle & Data FlowDraft v1.0
+1. Objective
+This chapter specifies the complete lifecycle of a user request, from dataset upload to insight generation. It defines the responsibilities of each processing stage and the interfaces between services.
+2. End-to-End Processing Pipeline
+User Upload↓File Validation↓Dataset Registration↓Schema Detection↓Data Profiling↓Data Cleaning↓Exploratory Data Analysis (EDA)↓KPI Computation↓Statistical Analysis↓Chart Generation↓Insight Generation↓LLM Reasoning↓Recommendation Engine↓Dashboard Rendering↓Conversational Analytics↓Report Export
+3. Stage-by-Stage Lifecycle
+Pipeline Stage
+Primary Responsibility
+Upload Service
+Accept CSV/Excel, assign workspace ID, store raw file.
+Validation Engine
+Verify file format, size, encoding and mandatory structure.
+Schema Detection
+Infer column names, data types and candidate business fields.
+Profiling Engine
+Detect missing values, duplicates, distributions and summary statistics.
+Cleaning Engine
+Normalize dates, trim values, standardize missing entries.
+EDA Engine
+Generate descriptive statistics, trends, correlations and outliers.
+KPI Engine
+Compute business metrics such as revenue growth, average order value and region performance.
+Insight Engine
+Convert computed metrics into structured evidence objects.
+LLM Service
+Generate executive explanations using structured context only.
+Recommendation Engine
+Produce evidence-backed actions with confidence metadata.
+Dashboard
+Display KPIs, charts, insights and recommendations.
+Chat Service
+Answer follow-up questions using stored analytical context.
+4. Data Objects Created During Processing
+Object
+Purpose
+Workspace
+Logical container for one analysis session.
+Dataset Metadata
+File information, schema, profile summary.
+Analytical Context
+KPIs, statistics, anomalies and trends.
+Insight Objects
+Structured findings before LLM explanation.
+Conversation Context
+Persisted history for follow-up questions.
+Report Package
+Export-ready executive summary.
+5. Error Handling Strategy
+Reject unsupported file types.
+Return detailed validation errors for malformed datasets.
+Continue processing with warnings for recoverable data quality issues.
+Log every failed pipeline stage with correlation ID.
+Never generate recommendations when prerequisite analytics fail.
+6. Async Processing Model
+Heavy analytical operations should execute through background workers. The frontend polls or subscribes to status updates while processing continues asynchronously. Each pipeline stage emits status events: Pending → Running → Completed → Failed.
+7. Observability
+Assign a unique request ID.
+Log stage execution time.
+Capture dataset processing metrics.
+Track LLM latency and token usage.
+Persist pipeline audit trail.
+8. Sequence Summary
+1. User uploads dataset.2. Backend validates and stores file.3. Analytics pipeline produces deterministic results.4. Structured context is assembled.5. LLM generates explanations.6. Recommendation engine proposes actions.7. Dashboard and chat consume the same analytical context.8. Reports are generated from stored insights rather than recomputation.
+9. Design Decisions
+Never expose raw datasets directly to the LLM when summarized context is sufficient.
+Separate statistical computation from natural-language generation.
+Persist intermediate analytical artifacts for reuse.
+Use asynchronous execution for scalability.
+10. Transition to Chapter 3
+Chapter 3 decomposes the platform into individual engineering services (Dataset Service, Analytics Engine, AI Service, Recommendation Engine, Report Service and Chat Service) with interfaces, dependencies and implementation responsibilities.

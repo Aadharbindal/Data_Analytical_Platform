@@ -1,0 +1,55 @@
+AI Business Analyst PlatformVolume 1 – Product Requirements Document
+Part 4 – Research Landscape & AI Analytics FoundationsDraft v1.0
+Purpose
+This chapter summarizes the major research directions that influence the architecture of the AI Business Analyst Platform. Rather than implementing a chatbot over CSV files, the platform should combine deterministic analytics with language-model reasoning, an approach increasingly explored in academic and industrial research.
+Research Themes
+Research Area
+Relevance to Project
+Automated Insight Generation
+Generate narrative insights from structured datasets instead of requiring users to manually inspect charts.
+LLM-assisted Data Analysis
+Use LLMs to explain statistical findings, answer follow-up questions and generate reports.
+Conversational Business Intelligence
+Enable natural-language interaction with enterprise data.
+Text-to-SQL
+Translate user questions into executable database queries.
+AI Agents for Analytics
+Coordinate specialized components for profiling, analysis, reporting and recommendations.
+Evaluation Benchmarks
+Measure analytical quality instead of only response fluency.
+Key Research Insights
+Deterministic statistical calculations should precede LLM reasoning.
+Automatic Exploratory Data Analysis (EDA) provides structured context before insight generation.
+Grounding responses in computed metrics reduces hallucinations.
+Evaluation should consider correctness, usefulness and actionability—not only natural language quality.
+Business recommendations should reference measurable evidence from the dataset.
+Representative Papers and Concepts
+Research
+Takeaway for Platform
+InsightBench
+Benchmark for evaluating end-to-end insight generation from datasets.
+AgentPoirot
+Framework exploring automated analytical insight generation.
+LLM-based Text-to-SQL Surveys
+State of the art in translating natural language into SQL.
+Conversational BI Literature
+Natural-language interfaces for business analytics.
+Multi-Agent Analytical Systems
+Specialized AI agents collaborating on analytical workflows.
+Architectural Principles Derived from Research
+Separate computation from explanation.
+Maintain traceability between every insight and supporting metrics.
+Design modular analytical services.
+Keep prompts structured and reproducible.
+Support future replacement of individual AI models without redesigning the platform.
+Research-Informed Pipeline
+Recommended analytical workflow:Dataset Upload→ Validation→ Cleaning→ Profiling→ Exploratory Data Analysis→ KPI Computation→ Statistical Findings→ Insight Generation→ Recommendation Engine→ Executive Summary→ Conversational Follow-up
+Open Research Questions
+How should insight quality be measured objectively?
+How can recommendations remain explainable and auditable?
+When should statistical models be preferred over LLM reasoning?
+How should conflicting analytical signals be presented to business users?
+Implications for Version 1
+The first version should prioritize correctness, transparency and reproducibility over advanced autonomy. Every generated insight should be traceable to measurable statistics computed from the uploaded dataset.
+Preview of Part 5
+Part 5 will translate these research findings into the product strategy, positioning, value proposition, user experience principles and long-term roadmap for the AI Business Analyst Platform.

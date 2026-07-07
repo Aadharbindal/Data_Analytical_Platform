@@ -1,0 +1,121 @@
+AI Business Analyst PlatformVolume 2 – Engineering Design Specification (EDS)
+Chapter 3 – Service Architecture & Component DesignDraft v1.0
+1. Objective
+This chapter decomposes the platform into independently deployable logical services. Each service has a clearly defined responsibility, interfaces, inputs, outputs, dependencies and future evolution path.
+2. Service Catalog
+Service
+Responsibility
+Input
+Output
+Dependencies
+Dataset Service
+Receive uploads, validate files, register datasets, store metadata.
+CSV/XLSX
+Dataset ID, metadata
+Storage, Validation
+Validation Service
+Validate schema, encoding, file size and business rules.
+Dataset
+Validation report
+Dataset Service
+Profiling Service
+Infer schema, detect missing values, duplicates and distributions.
+Validated dataset
+Profile object
+Validation
+Analytics Engine
+Run EDA, correlations, aggregations and KPI calculations.
+Profiled dataset
+Analytical context
+Profiling
+Chart Service
+Generate visualization specifications.
+Analytical context
+Chart configs
+Analytics
+Insight Engine
+Convert metrics into structured evidence.
+Analytics output
+Insight objects
+Analytics
+AI Service
+Build prompts, call LLM and validate responses.
+Insight objects
+Narrative insights
+Insight Engine
+Recommendation Engine
+Produce evidence-backed recommendations.
+Narrative + metrics
+Recommendations
+AI Service
+Chat Service
+Answer follow-up questions using stored context.
+User query
+Grounded response
+AI + DB
+Report Service
+Generate PDF/PPT summaries.
+Insights
+Export package
+All services
+3. Component Interaction
+Processing order:Dataset Service→ Validation Service→ Profiling Service→ Analytics Engine→ Chart Service→ Insight Engine→ AI Service→ Recommendation Engine→ Dashboard / Chat / Report Services
+4. Interface Contracts
+Service
+Primary API
+Returns
+Dataset Service
+upload(file)
+dataset_id, status
+Analytics Engine
+analyze(dataset_id)
+analytics_context
+AI Service
+generate(context)
+executive_summary
+Recommendation Engine
+recommend(context)
+recommendation_list
+Chat Service
+ask(question, workspace_id)
+answer
+Report Service
+export(workspace_id)
+pdf/ppt
+5. Failure Scenarios
+Component
+Failure
+Handling
+Dataset Service
+Corrupted file
+Reject upload and return validation error.
+Validation Service
+Unsupported schema
+Return actionable diagnostics.
+Analytics Engine
+Computation failure
+Persist logs and stop downstream execution.
+AI Service
+LLM unavailable
+Retry then fall back to cached/error response.
+Report Service
+Rendering failure
+Allow regeneration without recomputation.
+6. Cross-Cutting Concerns
+Structured logging with request IDs.
+Authentication before workspace access.
+Authorization on every dataset operation.
+Metrics collection for each pipeline stage.
+Caching of analytical context for repeated chat queries.
+Versioned prompts and model configurations.
+7. Scalability Strategy
+Each logical service should be independently scalable. CPU-intensive analytics and report generation should execute through background workers. AI requests should be isolated from deterministic analytics to prevent bottlenecks.
+8. Future Decomposition
+As adoption grows, the Analytics Engine can be separated into KPI, Forecasting, Anomaly Detection and Time-Series services. The AI Service can evolve into a multi-model orchestration layer supporting specialized reasoning models.
+9. Engineering Decisions
+Prefer service boundaries over monolithic business logic.
+Keep business rules outside prompt templates whenever possible.
+Persist reusable analytical artifacts.
+Treat AI as a consumer of analytics, not a replacement.
+10. Transition to Chapter 4
+Chapter 4 will define the complete AI Pipeline, including prompt construction, context assembly, grounding strategy, response validation, confidence scoring and recommendation generation.

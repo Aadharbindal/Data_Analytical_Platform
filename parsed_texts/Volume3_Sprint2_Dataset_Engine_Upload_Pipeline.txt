@@ -1,0 +1,80 @@
+AI Business Analyst PlatformVolume 3 – AI Development Bible
+Sprint 2 – Dataset Engine, Upload Pipeline & Data ProfilingImplementation Playbook v1.0
+1. Sprint Objective
+Build the complete Dataset Engine responsible for file ingestion, validation, storage, schema detection, metadata extraction and profiling. This sprint creates the foundation upon which all analytics and AI capabilities depend.
+2. Sprint Deliverables
+CSV/XLSX upload
+Workspace-aware dataset storage
+Schema inference
+Dataset profiling
+Metadata persistence
+Validation pipeline
+Dataset lifecycle management
+Upload progress tracking
+Error reporting
+3. Recommended Backend Structure
+backend/ ├── dataset/ │   ├── routes.py │   ├── service.py │   ├── validator.py │   ├── profiler.py │   ├── parser.py │   ├── storage.py │   ├── schemas.py │   └── models.py └── tests/dataset/
+4. Database Tables
+Table
+Purpose
+Key Columns
+datasets
+Uploaded file metadata
+id, workspace_id, filename, version
+dataset_profiles
+Profile summary
+dataset_id,row_count,column_count
+dataset_columns
+Column metadata
+dataset_id,name,type,null_ratio
+upload_jobs
+Track async uploads
+status,started_at,completed_at
+5. APIs to Build
+Method
+Endpoint
+Purpose
+Response
+POST
+/api/v1/datasets/upload
+Upload file
+dataset_id
+GET
+/api/v1/datasets/{id}
+Metadata
+dataset object
+GET
+/api/v1/datasets/{id}/profile
+Profile
+profile
+DELETE
+/api/v1/datasets/{id}
+Soft delete
+success
+6. Processing Workflow
+Upload → Validate → Virus/File Checks → Store Raw File → Register Metadata → Detect Schema → Profile Dataset → Persist Profile → Ready for Analytics
+7. Validation Rules
+Accept CSV and XLSX only.
+Reject empty files.
+Reject unsupported encodings where possible.
+Detect duplicate column names.
+Validate maximum file size.
+Report malformed rows with line numbers.
+8. AntiGravity Prompt
+Generate a production-grade Dataset Engine in FastAPI. Implement modular upload APIs, asynchronous file handling, CSV/XLSX parsing, schema inference, profiling, metadata extraction, SQLAlchemy models, Alembic migrations, object storage abstraction, validation rules, structured logging, unit tests and clean architecture. Expose REST endpoints for upload, metadata, profile and deletion. Keep the implementation extensible for future cloud storage and streaming ingestion.
+9. Testing Checklist
+Valid CSV upload
+Valid XLSX upload
+Large file upload
+Invalid format rejection
+Malformed CSV handling
+Duplicate upload
+Profile generation correctness
+Workspace isolation
+10. Definition of Done
+Dataset upload is functional.
+Metadata persists in PostgreSQL.
+Profile generation succeeds automatically.
+All APIs documented.
+Unit tests pass.
+Ready for Sprint 3 (Analytics Engine).

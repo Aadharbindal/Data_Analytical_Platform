@@ -1,0 +1,77 @@
+AI Business Analyst PlatformVolume 2 – Engineering Design Specification (EDS)
+Chapter 1 – System Architecture & Engineering PhilosophyDraft v1.0
+1. Purpose
+This document establishes the engineering foundation of the AI Business Analyst Platform. It translates the business requirements from Volume 1 into a scalable technical architecture that can evolve from an MVP into an enterprise-grade AI analytics platform.
+2. Engineering Goals
+Build a modular service-oriented architecture.
+Keep deterministic analytics separate from LLM reasoning.
+Support future domain-specific analytical modules.
+Enable maintainability, observability and scalability.
+Design APIs that are AI-agent friendly.
+3. Design Philosophy
+The platform follows a computation-first architecture. Statistical calculations, profiling, KPI generation and validation are completed before invoking any LLM. Language models explain results rather than invent them. Every recommendation should be traceable to computed evidence.
+4. High-Level Architecture
+                User                  │                  ▼          React / Next.js UI                  │                  ▼             FastAPI Gateway                  │ ┌────────────────┼────────────────┐ │                │                │Dataset      Analytics        AI ServiceService       Engine │                │                │ │         Statistics Engine       │ │                │                │ └──────────► Insight Engine ◄─────┘                  │                  ▼      Recommendation Engine                  │                  ▼ PostgreSQL + Object Storage + Redis                  │                  ▼          External LLM Provider
+5. Core Architectural Components
+Component
+Responsibility
+Future Expansion
+Dataset Service
+Upload, validation, schema detection
+Cloud connectors
+Analytics Engine
+EDA, KPIs, statistics
+Forecasting
+Insight Engine
+Transforms metrics into structured insights
+Domain-specific rules
+AI Service
+Prompt orchestration and response generation
+Multi-model routing
+Recommendation Engine
+Actionable business suggestions
+ML policy engine
+Report Service
+Executive reports
+Scheduled reports
+6. Architecture Principles
+Single Responsibility per service.
+Stateless APIs where possible.
+Structured context passed to LLMs.
+Replaceable AI model providers.
+Evidence-first recommendations.
+Versioned prompts and APIs.
+7. Technology Decisions (Initial)
+Layer
+Proposed Technology
+Reason
+Frontend
+Next.js + React + Tailwind
+Modern enterprise UI
+Backend
+FastAPI
+High performance, Python ecosystem
+Analytics
+Pandas + Polars
+Efficient tabular processing
+Database
+PostgreSQL
+Relational metadata
+Charts
+Plotly
+Interactive dashboards
+Caching
+Redis
+Fast session/context storage
+8. Architecture Decision Records (Initial)
+ADR-001: Use FastAPI for backend APIs.
+ADR-002: Keep analytics deterministic before LLM invocation.
+ADR-003: Store dataset metadata separately from raw files.
+ADR-004: Design services to allow future microservice extraction.
+9. Non-Goals
+Do not build a generic chatbot.
+Do not tightly couple analytics with LLM prompts.
+Do not require manual dashboard creation.
+Do not optimize for every business domain in Version 1.
+10. Transition to Chapter 2
+Chapter 2 will define the complete request lifecycle and data flow. Every stage—from dataset upload to executive insight generation—will be specified with processing steps, component interactions, error handling and sequence diagrams. This chapter becomes the operational blueprint for implementation.

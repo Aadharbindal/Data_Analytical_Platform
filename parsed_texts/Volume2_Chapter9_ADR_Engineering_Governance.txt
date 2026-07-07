@@ -1,0 +1,93 @@
+AI Business Analyst PlatformVolume 2 – Engineering Design Specification (EDS)
+Chapter 9 – Architecture Decision Records (ADR) & Engineering GovernanceDraft v1.0
+1. Objective
+This chapter documents the key architectural decisions behind the platform. Every major technology and design choice is recorded with its rationale, alternatives considered, consequences and future review criteria.
+2. ADR Process
+Each Architecture Decision Record (ADR) follows a consistent structure: Decision ID, Status, Context, Decision, Alternatives Considered, Consequences, Risks, and Review Trigger.
+ADR
+Decision
+Alternatives
+Reason
+Review
+ADR-001
+FastAPI
+Django, Flask
+High-performance Python APIs with automatic OpenAPI generation.
+Strong async support and data-science ecosystem alignment.
+ADR-002
+PostgreSQL
+MongoDB
+Relational metadata and transactional consistency.
+Better support for structured business entities and joins.
+ADR-003
+Next.js
+Vite SPA
+Enterprise frontend with routing and SSR.
+Better scalability and application structure.
+ADR-004
+Deterministic Analytics First
+Direct LLM over raw data
+Compute KPIs before LLM reasoning.
+Reduces hallucinations and improves traceability.
+ADR-005
+Redis Cache
+Database-only caching
+Session/context caching.
+Lower latency for repeated requests.
+ADR-006
+Modular Monolith (V1)
+Immediate microservices
+Simple deployment while preserving service boundaries.
+Lower operational complexity for MVP.
+3. Engineering Principles
+Prefer simplicity over premature optimization.
+Keep business logic independent of LLM prompts.
+Use strongly typed APIs and schemas.
+Design for observability from day one.
+Maintain backward compatibility for public APIs.
+Automate testing wherever practical.
+4. Technology Evaluation Matrix
+Category
+Chosen
+Key Advantage
+Trade-off
+Backend
+FastAPI
+Performance
+Smaller ecosystem than Django
+Database
+PostgreSQL
+Relational integrity
+Schema management
+Cache
+Redis
+Low latency
+Extra infrastructure
+Charts
+Plotly
+Interactive
+Larger bundle
+UI
+Next.js
+Scalable architecture
+SSR complexity
+5. Governance Model
+Architecture changes should be proposed through new ADRs, reviewed by technical leads, validated through prototypes where appropriate, and approved before implementation. Deprecated decisions should remain documented to preserve historical context.
+6. Review Triggers
+Major performance bottlenecks.
+New enterprise requirements.
+Cloud migration.
+AI model replacement.
+Regulatory or security changes.
+7. Technical Debt Policy
+Technical debt should be explicitly tracked, prioritized and linked to roadmap items. Temporary shortcuts must include documented remediation plans and target milestones.
+8. Coding Standards
+PEP 8 for Python.
+Type hints for public interfaces.
+OpenAPI-first endpoint documentation.
+Consistent logging format.
+Unit and integration tests for critical modules.
+9. Long-Term Architecture Evolution
+As adoption grows, the modular monolith can gradually evolve into independently deployable services without changing public APIs. AI components may later support multiple model providers and specialized analytical agents.
+10. Transition to Chapter 10
+Chapter 10 consolidates the complete engineering blueprint, implementation phases, module dependency map, development checklist and AntiGravity master specification.

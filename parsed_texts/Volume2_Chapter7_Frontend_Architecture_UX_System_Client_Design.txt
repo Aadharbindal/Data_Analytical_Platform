@@ -1,0 +1,69 @@
+AI Business Analyst PlatformVolume 2 – Engineering Design Specification (EDS)
+Chapter 7 – Frontend Architecture, UX System & Client Application DesignDraft v1.0
+1. Objective
+This chapter specifies the frontend architecture that powers the AI Business Analyst Platform. It defines application structure, navigation, state management, component hierarchy, design system and user interaction patterns so the frontend remains scalable, maintainable and consistent.
+2. Technology Stack
+Layer
+Technology
+Rationale
+Framework
+Next.js (React)
+SSR, routing, ecosystem
+Styling
+Tailwind CSS + shadcn/ui
+Reusable enterprise components
+Charts
+Plotly
+Interactive analytics
+State
+Zustand + React Query
+Simple global state and server cache
+Forms
+React Hook Form
+Performance and validation
+Icons
+Lucide
+Consistent iconography
+3. Application Modules
+Module
+Purpose
+Authentication
+Login, registration, session handling
+Workspace
+Project and dataset management
+Upload Center
+CSV/XLSX upload and progress
+Dashboard
+KPIs, charts and summaries
+AI Chat
+Conversational analytics
+Reports
+Export history and downloads
+Settings
+Preferences and profile
+4. Suggested Folder Structure
+frontend/ ├── app/ ├── components/ │   ├── charts/ │   ├── chat/ │   ├── dashboard/ │   ├── upload/ │   ├── reports/ │   └── common/ ├── hooks/ ├── services/ ├── store/ ├── types/ ├── utils/ └── styles/
+5. Navigation Flow
+Login→ Workspace→ Upload Dataset→ Processing Status→ Dashboard→ Insight Details→ AI Chat→ Report Export→ Settings
+6. State Management Strategy
+Authentication state stored globally.
+Current workspace shared across modules.
+Server data cached using React Query.
+Temporary UI state kept local to components.
+Long-running analysis status updated through polling or WebSockets (future).
+7. Design System Principles
+Consistent spacing and typography.
+Accessible color contrast.
+Responsive layouts for desktop-first design.
+Reusable cards, tables, dialogs and charts.
+Skeleton loaders and clear empty states.
+8. Error & Loading Experience
+Every asynchronous operation should expose progress, retry options and actionable error messages. Dataset processing stages should be visible to users through a timeline or status indicator.
+9. Accessibility
+Keyboard navigation.
+ARIA labels for interactive controls.
+Focus management in dialogs.
+Screen-reader friendly tables.
+Do not rely solely on color for status.
+10. Transition to Chapter 8
+Chapter 8 will define deployment architecture, infrastructure, DevOps workflow, monitoring, logging, CI/CD pipeline and production operations.

@@ -1,0 +1,59 @@
+AI Business Analyst PlatformVolume 1 – Product Requirements Document
+Part 10 – Glossary, References, Assumptions & Final ReviewDraft v1.0
+Purpose
+This concluding chapter standardizes terminology, captures assumptions, summarizes references and provides a final readiness review before transitioning to the System Design Document (Volume 2).
+Glossary
+Term
+Definition
+EDA
+Exploratory Data Analysis
+KPI
+Key Performance Indicator
+LLM
+Large Language Model
+BI
+Business Intelligence
+ETL
+Extract, Transform, Load
+Workspace
+Logical container for a user's uploaded dataset and analysis
+Insight
+Evidence-backed explanation generated from computed statistics
+Recommendation
+Suggested business action supported by analytical findings
+Project Assumptions
+Primary data source is structured tabular data (CSV/Excel).
+Users seek business insights rather than raw statistical outputs.
+Deterministic analytics precede LLM reasoning.
+Enterprise-scale integrations are deferred beyond Version 1.
+Reference Categories
+The final project should maintain a bibliography covering the following categories:
+Business Intelligence and analytics literature
+Research on automated insight generation
+LLM-assisted data analysis and conversational BI
+Text-to-SQL surveys and benchmarks
+Human-computer interaction for analytics
+Enterprise architecture and software engineering
+Open Questions for Volume 2
+How will datasets be represented internally?
+How should the AI pipeline be modularized?
+What services require persistent storage?
+Which APIs are required between frontend and backend?
+How should prompts be versioned and evaluated?
+PRD Completion Checklist
+Vision defined
+Problem statement validated
+Target users identified
+Market analysis completed
+Competitive landscape reviewed
+Research directions documented
+Functional requirements approved
+Non-functional requirements approved
+Roadmap established
+Risks identified
+Transition to Volume 2
+Volume 2 will translate business requirements into an engineering blueprint. It will define the complete system architecture, backend services, AI pipeline, database schema, API contracts, deployment strategy and module interactions. This document becomes the implementation reference for developers and AI-assisted coding tools.
+Executive Summary of Volume 1
+Volume 1 established why the AI Business Analyst Platform should exist, who it serves, how it differentiates itself, what business problems it solves and the requirements for a successful MVP. The product vision centers on transforming uploaded business datasets into trustworthy, explainable and actionable insights through a combination of deterministic analytics and LLM-based reasoning.
+Document Status
+Status: Complete (Draft v1.0)Next Deliverable:Volume 2 – System Design Document (SDD)Recommended Reviewers:• Product Mentor• Technical Architect• Backend Engineer• AI/ML Engineer• UX Designer

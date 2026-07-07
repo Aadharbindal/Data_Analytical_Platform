@@ -1,0 +1,9 @@
+Analytics_Platform.zip
+node_modules/
+__pycache__/
+*.pyc
+venv/
+env/
+.env
+.next/
+*.log

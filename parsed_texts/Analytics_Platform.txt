@@ -1,0 +1,228 @@
+LLM-BASED DATA ANALYTICS PLATFORM
+Turning Raw Data Into Plain-English Decisions
+PROJECT FOUNDATION DOCUMENT
+Starting Vertical  —  Management Revenue Analytics
+Project Type
+Internal AI Analytics Platform
+Core Technology
+Large Language Model (LLM) + Data Analytics Pipeline
+Starting Domain
+Management Revenue Analytics
+Document Purpose
+Foundational reference for business and technical stakeholders
+Status
+Research & Foundation Phase
+Contents
+1. Executive Summary
+2. The Problem We Are Solving
+3. What We Are Building — In Plain Terms
+4. How It Works — Step by Step
+5. The Four Levels of Insight
+6. How the System Is Built (Architecture)
+7. Technology Stack
+8. Roadmap
+9. Competitive Landscape
+10. What “Success” Looks Like
+11. Glossary of Terms
+12. Research References
+01
+Executive Summary
+We are building a tool that reads a company's data — starting with revenue and sales numbers — and explains it in plain English. It works like having a skilled analyst available instantly: it tells you what happened in the data, why it happened, what is likely to happen next, and what action to consider — without anyone needing to open Excel, build pivot tables, or write queries.
+This document explains the project in increasing depth: first in plain language for any reader, then with enough technical and architectural detail for engineers to start building. A glossary and research reference list are included at the end.
+One-Line Description
+An AI assistant that looks at business data and tells you, in plain English, what's happening, why, and what to do about it — starting with revenue analytics.
+02
+The Problem We Are Solving
+Every organization collects data — sales numbers, customer counts, regional performance. But turning that raw data into a decision still depends entirely on a human being available, skilled, and willing to dig through it.
+How This Works Today
+If a manager wants to understand “why did revenue drop this month,” the typical process looks like this:
+Open the spreadsheet or reporting tool.
+Manually filter and sort the data (by region, product, time period, etc.).
+Build comparisons — this month vs. last month, region vs. region.
+Interpret the numbers to figure out the underlying story.
+Write up a summary for management or decision-makers.
+This process takes hours, sometimes days, and requires someone who already knows how to do financial or data analysis. It also does not scale — the same manual work has to be repeated every reporting cycle.
+What Is Missing in Existing Tools
+Tools like Excel, Power BI, and Tableau are excellent at showing charts and numbers, but they stop there — they do not explain what the chart means, why a trend happened, or what to do about it. Some newer AI tools attempt to close this gap, but current consensus is that they remain shallow — they describe data but rarely explain causes or recommend actions reliably.
+The Opportunity
+Recent AI research (2024-2026) has produced techniques that, combined, are now mature enough to build a tool that goes further — from just showing data, to explaining it and recommending action. This project aims to combine those techniques into one practical, business-usable tool, starting with revenue analytics as the first proving ground.
+03
+What We Are Building — In Plain Terms
+The Analogy
+Think of the tool as a very fast, very consistent junior analyst who never gets tired, works instantly, and explains findings in plain language rather than jargon. You hand it the data; it hands you back the story behind the numbers.
+What It Is NOT
+▸  It is not just a dashboard or chart-maker — those already exist (Excel, Power BI, Tableau).
+▸  It is not a general-purpose chatbot — it is purpose-built to analyze data and produce business insight.
+▸  It does not make final decisions on its own — it recommends; a human still decides and acts.
+The Starting Scope
+Rather than trying to analyze every kind of business data at once, the project starts narrow: Management Revenue Analytics. This means the first version will focus specifically on sales and revenue data — by region, product, time, and customer — before expanding to other areas like inventory, marketing, or HR data.
+04
+How It Works — Step by Step
+The table below walks through exactly what happens from the moment a user provides data to the moment they receive an answer.
+Step
+What Happens
+Plain-English Meaning
+1. Input
+User uploads/connects revenue data (Excel, CSV, or database)
+“Here is our sales data”
+2. Understanding
+System reads column names, time periods, categories (region, product, customer)
+The system figures out what the data is about
+3. Question Generation
+System automatically forms relevant business questions about the data
+“What should I even be asking about this data?”
+4. Investigation
+System queries the data to answer those questions (counts, trends, comparisons)
+Like running pivot tables and filters, but automatic
+5. Pattern & Anomaly Check
+System flags what is unusual, growing, shrinking, or inconsistent
+“This number doesn’t look normal”
+6. Explanation
+System links patterns to probable causes within the data
+“This drop is concentrated in one product, not company-wide”
+7. Recommendation
+System suggests a next step or action to consider
+“Check pricing before the board meeting”
+8. Output
+Everything is delivered as plain-English text, with supporting charts
+A written summary a manager can read in 30 seconds
+Example, Start to Finish
+User  "Is there a problem in this data?"
+Tool  "North region revenue has declined for two consecutive months, while customer count has stayed flat — meaning average spend per customer is dropping."
+User  "Why is that happening?"
+Tool  "The decline is concentrated in one product category, not the whole region. This pattern usually points to either a recent pricing change or a shift toward cheaper products."
+User  "What should we do?"
+Tool  "Verify the recent pricing history first. If the decline is discount-driven, consider premium bundling to recover the average order value."
+Notice what happened here: the tool did not just show a chart. It described the problem, diagnosed a likely cause, and proposed a concrete next step — all in plain language.
+05
+The Four Levels of Insight
+A core design principle for this project, based on published AI research (the “AgentPoirot” framework from InsightBench, 2024), is that useful analysis operates on four levels. Most existing tools only manage the first level; this project is designed to reach all four.
+Type
+Question it Answers
+Revenue Analytics Example
+Descriptive
+What happened?
+North region revenue fell 16% in the last two months.
+Diagnostic
+Why did it happen?
+The decline is concentrated in one product category; customer count is unchanged, but average spend per customer dropped.
+Predictive
+What will likely happen next?
+If this trend continues, total quarterly revenue may fall short of target by 8-10%.
+Prescriptive
+What should we do about it?
+Verify recent pricing/discount changes; consider premium bundling to recover average order value.
+06
+How the System Is Built (Architecture)
+This section explains the internal design. It is written so a non-technical reader can follow the overall shape, with technical detail layered in for engineers.
+A. Question Generator
+In plain terms: this part decides what is even worth asking about the data — e.g., “how has revenue trended by region over the last 6 months?” It first thinks of broad questions, then breaks each one into smaller, specific, answerable questions.
+B. Data Investigator (Query Agent)
+In plain terms: this part actually looks up the answer to each question inside the data — similar to what a person would do by building filters and pivot tables, except it writes and runs the equivalent instructions (technically, SQL queries or pandas operations) automatically. It also double-checks its own results before passing them on, to avoid reporting a wrong number.
+C. Explanation Writer (Summarization Module)
+In plain terms: this part turns the raw answers into plain-English sentences, and sorts them into the four levels described in Section 5 — ranking the most important and actionable insights first.
+Supporting Layers
+▸  Anomaly Detection — automatically flags unusual spikes or drops in revenue numbers that deserve attention, rather than waiting for a human to notice.
+▸  Forecasting — projects what a number is likely to look like in the near future, combining traditional statistical methods with AI reasoning.
+▸  Accuracy Check (Evaluation Layer) — before any insight is shown to the user, the system checks it for correctness, so incorrect or misleading statements are filtered out.
+Visual Summary of the Flow
+Pipeline
+Data In  →  Question Generator  →  Data Investigator  →  Explanation Writer  →  Accuracy Check  →  Plain-English Output (+ optional charts)
+07
+Technology Stack
+▸  Programming language: Python — used for data processing and orchestrating the overall pipeline.
+▸  Data storage: Pandas for smaller datasets; a proper SQL database for larger datasets, hosted on a dedicated server.
+▸  AI layer: An LLM API used for question generation, query writing, and writing plain-English explanations.
+▸  Agent orchestration: A framework to coordinate the different components described in Section 6.
+▸  Front-end: A simple web interface combining a conversational chat view with supporting charts/dashboards.
+▸  Evaluation: An internal scoring step that checks correctness and usefulness of insights before they reach the user.
+08
+Roadmap
+Phase
+Goal
+Key Activities
+Output
+Phase 1
+Foundation & Research
+Build understanding and clarity before writing code
+Learn Python data analytics; study revenue KPIs (MRR, churn, growth); study existing tools closely
+Clear, shared understanding of the problem (this document)
+Phase 2
+Prototype
+Prove the core idea works on real data
+Build a small pipeline: question generation → data query → plain-English summary, tested on one sample revenue dataset
+A working demo that turns one dataset into 5-10 correct insights
+Phase 3
+Server & Scale
+Move from small demo to a real, running system
+Deploy on the dedicated server; add anomaly detection and forecasting
+A usable internal tool, accessible to the team
+Phase 4
+Expand & Harden
+Make it reliable and broaden its use
+Add an accuracy-checking layer; expand beyond revenue to inventory, marketing, HR data
+A trustworthy, multi-domain analytics assistant
+09
+Competitive Landscape
+Tools worth studying closely to understand current limitations: ChatGPT's Advanced Data Analysis / Code Interpreter, PandasAI, Julius AI, Powerdrill, and ThoughtSpot's AI layer.
+Common weaknesses observed in these tools, which this project should aim to avoid:
+▸  They mostly stay at the Descriptive level and rarely explain the “why.”
+▸  They can generate incorrect queries on complex, multi-table data, leading to wrong answers presented confidently.
+▸  They have no persistent memory of business context (e.g., what “normal” looks like for a specific company).
+▸  They struggle when data spans multiple related tables rather than a single flat file.
+10
+What “Success” Looks Like
+To keep the project grounded, here is what a successful first version should be able to do, described in plain terms:
+▸  Given a revenue dataset, correctly describe the main trend without being told what to look for.
+▸  Correctly point to a plausible, data-supported reason behind a trend (not a guess).
+▸  Flag at least the most obvious anomalies (e.g., a sudden, large drop) automatically.
+▸  Suggest a reasonable, relevant next action — not a generic statement.
+▸  Be understandable by someone with no data or coding background.
+11
+Glossary of Terms
+A quick reference for any term used in this document or in future project discussions.
+Term
+Plain-English Meaning
+LLM (Large Language Model)
+The AI technology (like the one powering ChatGPT) that reads and writes natural human language, used here to explain data findings in plain sentences.
+Insight
+A specific, useful observation drawn from data — not just a number, but what the number means.
+Descriptive / Diagnostic / Predictive / Prescriptive
+Four levels of analysis: what happened, why, what's next, and what to do — see Section 4.
+Query / Querying
+Asking the underlying data a specific question, e.g. “total revenue by region for March.”
+SQL
+A standard language used to ask structured questions to a database; the system writes this automatically behind the scenes.
+Anomaly
+A data point or trend that looks unusual compared to normal patterns — a red flag worth investigating.
+Forecasting
+Projecting what a number (like revenue) is likely to look like in the future, based on past trends.
+Dashboard
+A visual screen with charts and numbers; our tool goes beyond this by explaining the charts in words.
+Agent (AI agent)
+A component of the system that performs one specific job automatically — e.g., one agent forms questions, another agent checks the data, another writes the explanation.
+Pipeline
+The overall sequence of steps data passes through, from raw upload to final plain-English output.
+12
+Research References
+This project's design is informed by the following research (2024-2026), reviewed specifically for this document:
+Research Paper
+What It Contributes to This Project
+An LLM-Based Approach for Insight Generation in Data Analysis (NAACL 2025)
+The core blueprint: question-generation + data-querying + summarization pipeline that this project's architecture is modeled on.
+InsightBench: Evaluating Business Analytics Agents (2024)
+Source of the Descriptive / Diagnostic / Predictive / Prescriptive framework used throughout this document.
+InsightEval (2025)
+Guidance on how to judge whether generated insights are actually good, not just plausible-sounding.
+Next-Gen Database Interfaces: Survey of LLM-based Text-to-SQL
+Reference for how the system should convert questions into data queries reliably.
+PeerJ Systematic Survey of LLM-based Text-to-SQL
+Warns about security risks (e.g., manipulated inputs tricking the query layer) that must be guarded against.
+ARIMA Forecasting with LLM-Powered Multi-Agent Coordination for Retail KPIs (2025)
+Approach for combining traditional forecasting math with LLM reasoning for the Predictive layer.
+Enhancing Anomaly Detection in Financial Markets with LLM Multi-Agent Framework (2024)
+Model for how multiple specialized checks can validate an anomaly before it's shown to the user, reducing false alarms.
+Detecting Time Series Anomalies Like an Expert (2026)
+Additional technique for catching subtle, evidence-backed anomalies in revenue trends over time.
+DABench / InfiAgent-DABench, DA-Code
+Benchmarks the team can use later to test how well the system performs against real-world data tasks.
