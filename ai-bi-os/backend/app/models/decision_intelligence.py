@@ -40,7 +40,7 @@ class DecisionObject(Base):
     comparisons = relationship("DecisionComparison", back_populates="decision", cascade="all, delete-orphan")
     policies = relationship("DecisionPolicy", back_populates="decision", cascade="all, delete-orphan")
     approvals = relationship("DecisionApproval", back_populates="decision", cascade="all, delete-orphan")
-    histories = relationship("DecisionHistory", back_populates="decision", cascade="all, delete-orphan")
+    histories = relationship("DecisionIntelligenceHistory", back_populates="decision", cascade="all, delete-orphan")
 
 class DecisionReference(Base):
     """Maps decision to supporting recommendation/insight objects."""
@@ -112,7 +112,7 @@ class DecisionApproval(Base):
     
     decision = relationship("DecisionObject", back_populates="approvals")
 
-class DecisionHistory(Base):
+class DecisionIntelligenceHistory(Base):
     """Lifecycle events."""
     __tablename__ = "dec_intel_history"
     

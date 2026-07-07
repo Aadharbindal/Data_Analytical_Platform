@@ -3,7 +3,7 @@ from typing import Dict, Any, Tuple, List
 from sqlalchemy.orm import Session
 
 from app.models.ai_validation_engine import (
-    ValidationObject, ValidationResult, ValidationHistory, ValidationMetrics
+    ValidationObject, AIValidationEngineResult, AIValidationEngineHistory, ValidationMetrics
 )
 from app.repositories.ai_validation_engine_repository import AIValidationEngineRepository
 from app.services.ai_validation_engine.validators import (
@@ -40,7 +40,7 @@ class ValidationPipeline:
         )
         val_obj = self.repository.create_validation(val_obj)
         
-        self.repository.add_history(ValidationHistory(validation_id=val_obj.id, event="VALIDATION_STARTED"))
+        self.repository.add_history(AIValidationEngineHistory(validation_id=val_obj.id, event="VALIDATION_STARTED"))
         
         final_status = "APPROVED"
         warnings = []
@@ -49,7 +49,7 @@ class ValidationPipeline:
         for name, validator in self.validators:
             status, msg = validator.validate(payload)
             
-            result = ValidationResult(
+            result = AIValidationEngineResult(
                 validation_id=val_obj.id,
                 validator_name=name,
                 status=status,
@@ -74,7 +74,7 @@ class ValidationPipeline:
             val_obj.approved_at = datetime.utcnow()
             
         self.repository.update_validation(val_obj)
-        self.repository.add_history(ValidationHistory(validation_id=val_obj.id, event=final_status))
+        self.repository.add_history(AIValidationEngineHistory(validation_id=val_obj.id, event=final_status))
         
         latency = int((time.time() - start_time) * 1000)
         self.repository.log_metrics(ValidationMetrics(

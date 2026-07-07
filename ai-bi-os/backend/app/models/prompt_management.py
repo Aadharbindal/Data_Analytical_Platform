@@ -123,7 +123,7 @@ class PromptPolicy(Base):
     policy_type = Column(String, nullable=False) # Security, Compliance, Business
     rules = Column(JSON, nullable=False)
 
-class PromptAudit(Base):
+class PromptManagementAudit(Base):
     """Immutable log of who did what in prompt management."""
     __tablename__ = "pm_prompt_audits"
     

@@ -4,7 +4,7 @@ from typing import List, Optional, Dict, Any
 
 from app.models.decision_intelligence import (
     DecisionObject, DecisionReference, DecisionScenario, DecisionComparison,
-    DecisionPolicy, DecisionApproval, DecisionHistory, DecisionMetrics
+    DecisionPolicy, DecisionApproval, DecisionIntelligenceHistory, DecisionMetrics
 )
 
 class DecisionIntelligenceRepository:
@@ -51,7 +51,7 @@ class DecisionIntelligenceRepository:
         self.db.add(approval)
         self.db.commit()
 
-    def add_history(self, history: DecisionHistory):
+    def add_history(self, history: DecisionIntelligenceHistory):
         self.db.add(history)
         self.db.commit()
 

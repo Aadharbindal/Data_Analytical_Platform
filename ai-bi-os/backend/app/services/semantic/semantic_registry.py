@@ -3,7 +3,7 @@ from typing import Dict, Any, List
 
 from app.models.semantic import (
     SemanticDomain, BusinessEntity, SemanticMetric, SemanticColumn,
-    BusinessGlossary, OntologyNode, OntologyEdge, SemanticRecommendation
+    SemanticBusinessGlossary, OntologyNode, OntologyEdge, SemanticRecommendation
 )
 from app.models.dataset import DatasetVersion
 
@@ -14,7 +14,7 @@ class SemanticRegistryService:
     def save_semantic_data(self, dataset_version_id: str, results: Dict[str, Any]):
         # Clear existing
         self.db.query(SemanticDomain).filter(SemanticDomain.dataset_version_id == dataset_version_id).delete()
-        self.db.query(BusinessGlossary).filter(BusinessGlossary.dataset_version_id == dataset_version_id).delete()
+        self.db.query(SemanticBusinessGlossary).filter(SemanticBusinessGlossary.dataset_version_id == dataset_version_id).delete()
         self.db.query(OntologyEdge).filter(OntologyEdge.dataset_version_id == dataset_version_id).delete()
         self.db.query(OntologyNode).filter(OntologyNode.dataset_version_id == dataset_version_id).delete()
         self.db.query(SemanticColumn).filter(SemanticColumn.dataset_version_id == dataset_version_id).delete()
@@ -79,7 +79,7 @@ class SemanticRegistryService:
             nodes[n["label"]] = node
             
             # Auto-gen glossary
-            glos = BusinessGlossary(
+            glos = SemanticBusinessGlossary(
                 dataset_version_id=dataset_version_id,
                 term=n["label"],
                 definition=f"Automatically inferred {n['type'].lower()} representing {n['label']} within the {dom.primary_domain} domain."
@@ -129,7 +129,7 @@ class SemanticRegistryService:
         entities = self.db.query(BusinessEntity).filter(BusinessEntity.dataset_version_id == vid).all()
         metrics = self.db.query(SemanticMetric).filter(SemanticMetric.dataset_version_id == vid).all()
         columns = self.db.query(SemanticColumn).filter(SemanticColumn.dataset_version_id == vid).all()
-        glossary = self.db.query(BusinessGlossary).filter(BusinessGlossary.dataset_version_id == vid).all()
+        glossary = self.db.query(SemanticBusinessGlossary).filter(SemanticBusinessGlossary.dataset_version_id == vid).all()
         nodes = self.db.query(OntologyNode).filter(OntologyNode.dataset_version_id == vid).all()
         edges = self.db.query(OntologyEdge).filter(OntologyEdge.dataset_version_id == vid).all()
         recs = self.db.query(SemanticRecommendation).filter(SemanticRecommendation.dataset_version_id == vid).all()

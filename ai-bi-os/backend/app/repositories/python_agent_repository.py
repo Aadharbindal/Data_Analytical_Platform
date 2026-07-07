@@ -5,7 +5,7 @@ from datetime import datetime
 
 from app.models.python_agent import (
     PythonWorkflow, PythonExecution, ExecutionArtifact,
-    ExecutionMetrics, ExecutionHistory, ExecutionLog, ExecutionValidation
+    PythonAgentExecutionMetrics, PythonAgentExecutionHistory, ExecutionLog, ExecutionValidation
 )
 
 class PythonAgentRepository:
@@ -29,7 +29,7 @@ class PythonAgentRepository:
         self.db.add(execution)
         self.db.flush()
         
-        history = ExecutionHistory(
+        history = PythonAgentExecutionHistory(
             execution_id=execution.id,
             status_to="PENDING"
         )
@@ -50,7 +50,7 @@ class PythonAgentRepository:
         if status in ["COMPLETED", "FAILED"]:
             execution.completed_at = datetime.utcnow()
             
-            metrics = ExecutionMetrics(
+            metrics = PythonAgentExecutionMetrics(
                 execution_id=execution.id,
                 execution_time_ms=execution_time_ms
             )
@@ -58,7 +58,7 @@ class PythonAgentRepository:
             
         self.db.add(execution)
         
-        history = ExecutionHistory(
+        history = PythonAgentExecutionHistory(
             execution_id=execution.id,
             status_to=status
         )

@@ -39,8 +39,8 @@ class PythonExecution(Base):
     
     workflow = relationship("PythonWorkflow", back_populates="executions")
     artifacts = relationship("ExecutionArtifact", back_populates="execution", cascade="all, delete-orphan")
-    metrics = relationship("ExecutionMetrics", uselist=False, back_populates="execution", cascade="all, delete-orphan")
-    history = relationship("ExecutionHistory", back_populates="execution", cascade="all, delete-orphan")
+    metrics = relationship("PythonAgentExecutionMetrics", uselist=False, back_populates="execution", cascade="all, delete-orphan")
+    history = relationship("PythonAgentExecutionHistory", back_populates="execution", cascade="all, delete-orphan")
     log = relationship("ExecutionLog", uselist=False, back_populates="execution", cascade="all, delete-orphan")
     validation = relationship("ExecutionValidation", uselist=False, back_populates="execution", cascade="all, delete-orphan")
 
@@ -59,7 +59,7 @@ class ExecutionArtifact(Base):
     
     execution = relationship("PythonExecution", back_populates="artifacts")
 
-class ExecutionMetrics(Base):
+class PythonAgentExecutionMetrics(Base):
     """Tracking CPU, memory, and latency."""
     __tablename__ = "py_execution_metrics"
     
@@ -72,7 +72,7 @@ class ExecutionMetrics(Base):
     
     execution = relationship("PythonExecution", back_populates="metrics")
 
-class ExecutionHistory(Base):
+class PythonAgentExecutionHistory(Base):
     """State machine log for the execution."""
     __tablename__ = "py_execution_history"
     

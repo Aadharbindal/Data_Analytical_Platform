@@ -3,7 +3,7 @@ from sqlalchemy import func
 from typing import List, Optional, Dict, Any
 
 from app.models.recommendation_intelligence import (
-    RecommendationObject, RecommendationReference, RecommendationHistory,
+    RecommendationObject, RecommendationReference, RecommendationIntelligenceHistory,
     RecommendationPriority, RecommendationValidation, RecommendationScenario,
     RecommendationActionPlan, RecommendationMetrics, RecommendationAudit
 )
@@ -40,7 +40,7 @@ class RecommendationIntelligenceRepository:
         self.db.add(reference)
         self.db.commit()
 
-    def add_history(self, history: RecommendationHistory):
+    def add_history(self, history: RecommendationIntelligenceHistory):
         self.db.add(history)
         self.db.commit()
 

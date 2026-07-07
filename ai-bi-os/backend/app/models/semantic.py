@@ -60,7 +60,7 @@ class SemanticColumn(Base):
     business_entity = relationship("BusinessEntity", back_populates="columns")
     semantic_metric = relationship("SemanticMetric", back_populates="columns")
     
-class BusinessGlossary(Base):
+class SemanticBusinessGlossary(Base):
     """Auto-generated business definitions"""
     __tablename__ = "business_glossary"
     id = Column(String, primary_key=True, default=generate_uuid)

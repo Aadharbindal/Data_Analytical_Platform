@@ -24,10 +24,16 @@ app = FastAPI(
 
 Instrumentator().instrument(app).expose(app)
 
+from fastapi import HTTPException
+from fastapi.responses import JSONResponse
+
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
-    # This will raise HTTPException 429 if limit exceeded
-    rate_limiter(request)
+    try:
+        rate_limiter(request)
+    except HTTPException as exc:
+        return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+    
     response = await call_next(request)
     return response
 

@@ -5,7 +5,7 @@ from datetime import datetime
 
 from app.models.sql_agent import (
     SQLQuery, SQLExecution, SQLHistory, SQLValidation,
-    SQLMetrics, BusinessGlossary, SchemaMetadata, QueryCache
+    SQLMetrics, BusinessGlossary, SchemaMetadata, SqlAgentQueryCache
 )
 
 class SQLAgentRepository:
