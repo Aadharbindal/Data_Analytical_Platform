@@ -20,7 +20,7 @@ class LocalStorageProvider(StorageProviderInterface):
         full_path = self._get_full_path(path)
         with open(full_path, "wb") as f:
             f.write(content)
-        return full_path
+        return path
 
     def delete_file(self, path: str) -> bool:
         full_path = self._get_full_path(path)

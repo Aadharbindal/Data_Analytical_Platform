@@ -46,6 +46,8 @@ def test_circuit_breaker_state_transitions():
 @pytest.mark.asyncio
 async def test_fallback_manager():
     """Test the fallback execution chain"""
+    circuit_breaker._state.clear()
+    provider_registry.update_circuit_state("openai", CircuitState.CLOSED)
     
     # Create an operation that fails for OpenAI but succeeds for Anthropic
     async def mock_operation(provider_name):

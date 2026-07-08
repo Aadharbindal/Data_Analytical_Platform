@@ -31,34 +31,38 @@ def create_tables():
 # ─── Module 42: AI Memory Engine ──────────────────────────────────────────────
 
 class TestMemoryEngine:
+    memory_id = None
+
     def test_list_memories_empty(self):
-        r = client.get(f"/memory/memories?workspace_id={WS}")
+        r = client.post("/memory/search", json={"workspace_id": WS})
         assert r.status_code == 200
         assert isinstance(r.json(), list)
 
     def test_store_memory(self):
         payload = {
             "workspace_id": WS,
-            "session_id": "session-001",
             "memory_type": "FACTUAL",
-            "content": "Revenue target for Q3 is $5M",
+            "summary": "Revenue target for Q3 is $5M",
             "importance_score": 0.85,
-            "source": "user_message",
             "tags": ["revenue", "Q3"]
         }
-        r = client.post("/memory/store", json=payload)
+        r = client.post("/memory/create", json=payload)
         assert r.status_code in [200, 201], r.text
         data = r.json()
         assert "id" in data
-        assert data["content"] == payload["content"]
+        assert data["summary"] == payload["summary"]
+        TestMemoryEngine.memory_id = data["id"]
 
-    def test_get_memory_timeline(self):
-        r = client.get(f"/memory/timeline?workspace_id={WS}")
+    def test_get_memory_history(self):
+        mid = TestMemoryEngine.memory_id
+        if not mid:
+            pytest.skip("No memory created")
+        r = client.get(f"/memory/history/{mid}")
         assert r.status_code == 200
         assert isinstance(r.json(), list)
 
     def test_get_memory_summary(self):
-        r = client.get(f"/memory/summary?workspace_id={WS}")
+        r = client.get("/memory/statistics/summary")
         assert r.status_code == 200
         body = r.json()
         assert "total_memories" in body
