@@ -85,11 +85,23 @@ function UploadZone({ onSuccess, onRedirect }: { onSuccess: () => void, onRedire
 
       eventSource.onerror = (error) => {
         console.error("SSE Error:", error);
-        setUploadProgress(prev => prev ? { ...prev, status: "error", currentStep: "Connection lost" } : null);
+        setUploadProgress(prev => {
+          if (prev && (prev.status === "done" || prev.status === "error")) {
+            return prev;
+          }
+          return prev ? { ...prev, status: "error", currentStep: "Connection lost" } : null;
+        });
         eventSource.close();
       };
-    } catch {
-      setUploadProgress({ filename: file.name, status: "error", currentStep: "Upload failed" });
+    } catch (err: any) {
+      let errorMessage = "Upload failed";
+      try {
+          const parsed = JSON.parse(err.message);
+          if (parsed.detail) errorMessage = parsed.detail;
+      } catch (e) {
+          if (err.message) errorMessage = err.message;
+      }
+      setUploadProgress({ filename: file.name, status: "error", currentStep: errorMessage });
     }
   };
 
@@ -172,6 +184,8 @@ export default function DatasetsPage() {
   const { data: datasets, isLoading, isError, refetch } = useQuery({
     queryKey: ["datasets"],
     queryFn: () => datasetsApi.list(),
+    retry: 3,
+    retryDelay: 1000,
   });
 
   const deleteMutation = useMutation({
