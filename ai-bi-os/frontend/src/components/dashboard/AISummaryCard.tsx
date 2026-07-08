@@ -19,31 +19,10 @@ export function AISummaryCard() {
       </CardHeader>
       
       <CardContent className="flex-1 flex flex-col relative z-10 px-6 pt-4 pb-6">
-        <div className="flex-1">
-          <p className="text-[15px] leading-relaxed text-muted-foreground">
-            Revenue is projected to hit <strong className="text-foreground font-semibold">$2.8M</strong> by end of Q3, outperforming initial forecasts by 14%. 
-            The primary driver is the <span className="text-primary font-medium">Enterprise segment</span>, which saw a 22% increase in ACV.
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-[15px] leading-relaxed text-muted-foreground text-center">
+            No data available for analysis.
           </p>
-          
-          <div className="mt-6 space-y-4">
-            <div className="flex items-start gap-3">
-              <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-success/10 border border-success/20 text-success">
-                <TrendingUp className="h-3 w-3" />
-              </div>
-              <p className="text-[13px] text-muted-foreground leading-snug">
-                <span className="font-medium text-foreground">Acquisition costs dropped 8%</span> this month.
-              </p>
-            </div>
-            
-            <div className="flex items-start gap-3">
-              <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-warning/10 border border-warning/20 text-warning">
-                <div className="h-1.5 w-1.5 rounded-full bg-warning" />
-              </div>
-              <p className="text-[13px] text-muted-foreground leading-snug">
-                <span className="font-medium text-foreground">Churn risk in Mid-Market</span> requires attention. 3 accounts show declining usage.
-              </p>
-            </div>
-          </div>
         </div>
 
         <div className="mt-6 pt-5 border-t border-border/40">

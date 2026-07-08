@@ -6,18 +6,18 @@ import { DashboardGrid } from "./DashboardGrid";
 import { analyticsApi, insightsApi, datasetsApi } from "@/lib/api";
 
 const FALLBACK_CHART_DATA = [
-  { name: "Jan", value: 25000, previous: 22000, forecast: null },
-  { name: "Feb", value: 40000, previous: 35000, forecast: null },
-  { name: "Mar", value: 20000, previous: 30000, forecast: null },
-  { name: "Apr", value: 60000, previous: 45000, forecast: null },
-  { name: "May", value: 80000, previous: 55000, forecast: null },
-  { name: "Jun", value: 105200, previous: 90000, forecast: null },
-  { name: "Jul", value: 130800, previous: 120000, forecast: null },
-  { name: "Aug", value: 150000, previous: 135000, forecast: null },
-  { name: "Sep", value: 90000, previous: 110000, forecast: null },
-  { name: "Oct", value: 60000, previous: 70000, forecast: null },
-  { name: "Nov", value: null, previous: 45000, forecast: 42000 },
-  { name: "Dec", value: null, previous: 85000, forecast: 90000 },
+  { name: "Jan", value: null, previous: null, forecast: null },
+  { name: "Feb", value: null, previous: null, forecast: null },
+  { name: "Mar", value: null, previous: null, forecast: null },
+  { name: "Apr", value: null, previous: null, forecast: null },
+  { name: "May", value: null, previous: null, forecast: null },
+  { name: "Jun", value: null, previous: null, forecast: null },
+  { name: "Jul", value: null, previous: null, forecast: null },
+  { name: "Aug", value: null, previous: null, forecast: null },
+  { name: "Sep", value: null, previous: null, forecast: null },
+  { name: "Oct", value: null, previous: null, forecast: null },
+  { name: "Nov", value: null, previous: null, forecast: null },
+  { name: "Dec", value: null, previous: null, forecast: null },
 ];
 
 export const Dashboard: React.FC = () => {

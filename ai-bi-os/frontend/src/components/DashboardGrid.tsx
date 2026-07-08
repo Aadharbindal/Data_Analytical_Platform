@@ -55,10 +55,10 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
           trendDown: (k.trend ?? 0) < 0,
         }))
       : [
-          { title: "Total Revenue", value: "$2.4M", trend: "+12.5%", trendDown: false },
-          { title: "Active Users", value: "45,231", trend: "+5.2%", trendDown: false },
-          { title: "Avg. Deal Size", value: "$12,500", trend: "-1.4%", trendDown: true },
-          { title: "Pipeline Health", value: "98%", trend: "+2.1%", trendDown: false },
+          { title: "Total Revenue", value: "-", trend: "-", trendDown: false },
+          { title: "Active Users", value: "-", trend: "-", trendDown: false },
+          { title: "Avg. Deal Size", value: "-", trend: "-", trendDown: false },
+          { title: "Pipeline Health", value: "-", trend: "-", trendDown: false },
         ];
 
   // Derive up to 3 insight panels from live insights, or fallback to static
@@ -78,28 +78,25 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
         }))
       : [
           {
-            title: "Churn Risk Detected",
-            severity: "high" as const,
-            confidence: 94,
-            impact: "-$125k MRR",
-            description:
-              "Enterprise segment showing decreased engagement over the last 14 days.",
-          },
-          {
-            title: "Upsell Opportunity",
+            title: "-",
             severity: "low" as const,
-            confidence: 88,
-            impact: "+$45k MRR",
-            description:
-              "High usage of API endpoints in the Mid-Market tier. Recommend Pro upgrades.",
+            confidence: 0,
+            impact: "-",
+            description: "No insights available.",
           },
           {
-            title: "Model Drift Warning",
-            severity: "medium" as const,
-            confidence: 76,
-            impact: "Data Quality",
-            description:
-              "Lead scoring model accuracy dropped by 4% compared to baseline.",
+            title: "-",
+            severity: "low" as const,
+            confidence: 0,
+            impact: "-",
+            description: "No insights available.",
+          },
+          {
+            title: "-",
+            severity: "low" as const,
+            confidence: 0,
+            impact: "-",
+            description: "No insights available.",
           },
         ];
 
@@ -134,8 +131,8 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
 
       {/* Bottom Row: Insights */}
       <motion.div variants={itemVariants} className="col-span-12 grid grid-cols-3 gap-6">
-        {insightPanels.map((panel) => (
-          <InsightPanel key={panel.title} {...panel} />
+        {insightPanels.map((panel, index) => (
+          <InsightPanel key={`${panel.title}-${index}`} {...panel} />
         ))}
       </motion.div>
 
