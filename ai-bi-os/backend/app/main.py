@@ -5,6 +5,11 @@ from app.auth import rate_limiter
 
 from prometheus_fastapi_instrumentator import Instrumentator
 
+from app.core.database import engine, Base
+from app.models import *
+
+Base.metadata.create_all(bind=engine)
+
 app = FastAPI(
     title="AI Business Intelligence Operating System (AI BI OS)",
     description="""Enterprise API Gateway for AI Decision Intelligence.
