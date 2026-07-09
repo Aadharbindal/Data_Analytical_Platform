@@ -3,10 +3,13 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { analyticsApi } from "@/lib/api";
-import { LineChart as LineChartIcon } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { ErrorState } from "@/components/ui/error-state";
 import { ComposedChart, Line, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { StudioPage } from "@/components/analytics/StudioPage";
+import { formatNumber } from "@/lib/utils";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 export default function ForecastCenter() {
   const { data: statsData } = useQuery({
@@ -28,12 +31,8 @@ export default function ForecastCenter() {
     enabled: !!metric
   });
 
-  if (isLoading && !data) return <div className="p-8"><CardSkeleton lines={10} /></div>;
-  if (isError) return <div className="p-8"><ErrorState /></div>;
-
   const chartData = [];
   if (data?.historical && data?.forecast) {
-    // Combine historical and forecast data
     const historical = data.historical.map((d: any) => ({
       date: d.date,
       value: d.value
@@ -45,66 +44,97 @@ export default function ForecastCenter() {
       upper: d.upper
     }));
     
-    // To connect the lines, we can add the forecast point to the last historical point if they are continuous,
-    // or just let them be adjacent. We will just concatenate them.
     chartData.push(...historical);
+    // Connect lines by assigning forecast value to the last historical point
+    if (historical.length > 0 && forecast.length > 0) {
+      historical[historical.length - 1].forecast = historical[historical.length - 1].value;
+    }
     chartData.push(...forecast);
   }
 
-  return (
-    <div className="flex flex-col gap-6 h-full">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold">Forecast Center</h1>
-        {statsData?.stats && (
-          <select 
-            className="bg-surface border border-border/40 rounded-lg px-3 py-1.5 text-sm"
-            value={metric}
-            onChange={(e) => setMetric(e.target.value)}
+  const toolbar = statsData?.stats && statsData.stats.length > 0 && (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="flex items-center gap-1.5 bg-surface border border-border text-xs font-medium text-foreground rounded-lg px-3 py-1.5 outline-none hover:bg-white/5 transition-colors focus:ring-2 focus:ring-primary/30 shadow-sm cursor-pointer">
+        {metric || "Select Metric"}
+        <ChevronDown className="h-3 w-3 text-muted-foreground ml-1 shrink-0" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48 max-h-[300px] overflow-y-auto">
+        {statsData.stats.map((s: any) => (
+          <DropdownMenuItem 
+            key={s.column} 
+            onClick={() => setMetric(s.column)}
+            className="text-xs cursor-pointer"
           >
-            {statsData.stats.map((s: any) => (
-              <option key={s.column} value={s.column}>{s.column}</option>
-            ))}
-          </select>
-        )}
-      </div>
-      
-      {!data || data.available === false ? (
-        <div className="p-8 glass-card rounded-[20px]">
+            {s.column}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
+  return (
+    <StudioPage title="Forecast Center" isLoading={isLoading && !data} toolbar={toolbar}>
+      {isError ? (
+        <ErrorState />
+      ) : !data || data.available === false ? (
+        <div className="text-muted-foreground text-sm">
           {data?.reason || "No Forecast data found. Make sure your dataset has a date column."}
         </div>
       ) : (
-        <div className="flex flex-col gap-6">
-          <div className="glass-card rounded-[20px] p-6 flex flex-col gap-4 border-t-4 border-t-indigo-500">
-            <div className="flex justify-between items-center border-b border-border/40 pb-4">
-              <div className="flex items-center gap-2">
-                <LineChartIcon className="h-5 w-5 text-indigo-400" />
-                <h3 className="font-semibold text-lg">{metric} Forecast</h3>
-              </div>
+        <div className="flex flex-col gap-6 h-full">
+          <div className="glass-card rounded-xl p-6 flex flex-col gap-4 border border-white/[0.05] bg-surface/30 h-[400px]">
+            <div className="flex items-center gap-2 pb-2">
+              <span className="text-[14px] font-semibold text-foreground">{metric} Forecast Projection</span>
             </div>
             
-            <div className="h-[400px] w-full mt-4">
+            <div className="flex-1 w-full mt-2">
               <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                  <XAxis dataKey="date" tick={{ fontSize: 10, fill: "#64748b" }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 10, fill: "#64748b" }} axisLine={false} tickLine={false} />
+                <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" vertical={false} />
+                  <XAxis 
+                    dataKey="date" 
+                    tick={{ fontSize: 10, fill: "#80848E", fontWeight: 500 }} 
+                    axisLine={false} 
+                    tickLine={false} 
+                    dy={15} 
+                  />
+                  <YAxis 
+                    tick={{ fontSize: 11, fill: "#80848E", fontWeight: 500 }} 
+                    tickFormatter={(value) => formatNumber(value)}
+                    axisLine={false} 
+                    tickLine={false} 
+                    dx={-10}
+                  />
                   <Tooltip 
-                    contentStyle={{ background: "#131722", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px" }} 
+                    cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1, strokeDasharray: '4 4' }}
+                    contentStyle={{ 
+                      backgroundColor: 'rgba(19, 23, 34, 0.85)', 
+                      backdropFilter: 'blur(12px)',
+                      border: '1px solid rgba(255,255,255,0.08)', 
+                      borderRadius: '12px',
+                      boxShadow: '0 8px 32px -8px rgba(0,0,0,0.5)',
+                      color: '#fff',
+                      fontSize: '12px',
+                      fontWeight: 500,
+                      padding: '8px 12px'
+                    }}
+                    itemStyle={{ color: '#fff', fontWeight: 600, fontSize: '13px' }}
+                    formatter={(value: number, name: string) => [formatNumber(value), name]}
                   />
                   
                   {/* Confidence Interval */}
-                  <Area type="monotone" dataKey="upper" stroke="none" fill="#6366f1" fillOpacity={0.1} />
-                  <Area type="monotone" dataKey="lower" stroke="none" fill="#131722" fillOpacity={1} />
+                  <Area type="monotone" dataKey="upper" stroke="none" fill="#6366f1" fillOpacity={0.05} activeDot={false} />
+                  <Area type="monotone" dataKey="lower" stroke="none" fill="#131722" fillOpacity={1} activeDot={false} />
                   
                   {/* Actual vs Forecast lines */}
-                  <Line type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} dot={false} name="Actual" />
-                  <Line type="monotone" dataKey="forecast" stroke="#8b5cf6" strokeWidth={2} strokeDasharray="5 5" dot={false} name="Forecast" />
+                  <Line type="monotone" dataKey="value" stroke="#0070F3" strokeWidth={2.5} dot={false} name="Actual" activeDot={{ r: 5, fill: '#0B0D12', stroke: '#0070F3', strokeWidth: 2 }} />
+                  <Line type="monotone" dataKey="forecast" stroke="#8b5cf6" strokeWidth={2.5} strokeDasharray="5 5" dot={false} name="Forecast" activeDot={{ r: 5, fill: '#0B0D12', stroke: '#8b5cf6', strokeWidth: 2 }} />
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </StudioPage>
   );
 }
