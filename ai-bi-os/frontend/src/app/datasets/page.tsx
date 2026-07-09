@@ -21,6 +21,8 @@ import {
   AlertCircle,
   FileUp,
   Eye,
+  Power,
+  X,
 } from "lucide-react";
 import { DatasetDetailDrawer } from "@/components/datasets/DatasetDetailDrawer";
 
@@ -138,7 +140,7 @@ function UploadZone({ onSuccess, onRedirect }: { onSuccess: () => void, onRedire
           ref={fileInputRef}
           type="file"
           className="hidden"
-          accept=".csv,.json,.parquet,.xlsx,.xls"
+          accept=".csv,.tsv,.json,.parquet,.xlsx,.xls"
           onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
         />
       </div>
@@ -180,6 +182,7 @@ export default function DatasetsPage() {
   const qc = useQueryClient();
   const router = useRouter();
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   const { data: datasets, isLoading, isError, refetch } = useQuery({
     queryKey: ["datasets"],
@@ -188,9 +191,26 @@ export default function DatasetsPage() {
     retryDelay: 1000,
   });
 
+  const { data: activeDataset } = useQuery({
+    queryKey: ["activeDataset"],
+    queryFn: () => datasetsApi.getActive(),
+  });
+
+  const activateMutation = useMutation({
+    mutationFn: (id: string) => datasetsApi.activate(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["datasets"] });
+      qc.invalidateQueries({ queryKey: ["activeDataset"] });
+    },
+  });
+
   const deleteMutation = useMutation({
     mutationFn: (id: string) => datasetsApi.delete(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["datasets"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["datasets"] });
+      qc.invalidateQueries({ queryKey: ["activeDataset"] });
+      setDeleteConfirmId(null);
+    },
   });
 
   return (
@@ -209,7 +229,10 @@ export default function DatasetsPage() {
 
       {/* Upload Zone */}
       <UploadZone 
-        onSuccess={() => qc.invalidateQueries({ queryKey: ["datasets"] })} 
+        onSuccess={() => {
+          qc.invalidateQueries({ queryKey: ["datasets"] });
+          qc.invalidateQueries({ queryKey: ["activeDataset"] });
+        }} 
         onRedirect={() => router.push("/analytics")}
       />
 
@@ -229,7 +252,7 @@ export default function DatasetsPage() {
           <table className="w-full text-sm">
             <thead className="bg-background/80 border-b border-border/50">
               <tr>
-                {["Name", "Status", "Rows", "Size", "Created", ""].map((h) => (
+                {["Name", "Version", "Status", "Rows", "Size", "Created", ""].map((h) => (
                   <th
                     key={h}
                     className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider"
@@ -247,7 +270,12 @@ export default function DatasetsPage() {
                     key={ds.id}
                     className="border-b border-border/40 hover:bg-white/[0.02] transition-colors group"
                   >
-                    <td className="px-4 py-4 font-medium text-foreground">{ds.name}</td>
+                    <td className="px-4 py-4 font-medium text-foreground">
+                      {ds.name}
+                    </td>
+                    <td className="px-4 py-4 text-muted-foreground text-sm font-mono">
+                      v{ds.version || 1}
+                    </td>
                     <td className="px-4 py-4">
                       <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium border ${sc.color}`}>
                         {sc.icon}{ds.status}
@@ -266,6 +294,22 @@ export default function DatasetsPage() {
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-2 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                        {activeDataset?.id === ds.id ? (
+                          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 mr-2">
+                            Active Version
+                          </Badge>
+                        ) : (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-xs mr-2 text-muted-foreground hover:text-primary"
+                            onClick={() => activateMutation.mutate(ds.id)}
+                            disabled={activateMutation.isPending}
+                          >
+                            <Power className="h-3 w-3 mr-1" />
+                            Set Active
+                          </Button>
+                        )}
                         <Button
                           variant="ghost"
                           size="icon"
@@ -278,7 +322,7 @@ export default function DatasetsPage() {
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8 text-muted-foreground hover:text-error"
-                          onClick={() => deleteMutation.mutate(ds.id)}
+                          onClick={() => setDeleteConfirmId(ds.id)}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -297,6 +341,50 @@ export default function DatasetsPage() {
         dataset={selectedDataset}
         onClose={() => setSelectedDataset(null)}
       />
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {deleteConfirmId && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative w-full max-w-md overflow-hidden rounded-[24px] border border-border/50 bg-surface/95 backdrop-blur-xl p-6 shadow-2xl"
+            >
+              <div className="flex flex-col gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-error/10">
+                  <AlertCircle className="h-6 w-6 text-error" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-foreground">Delete Dataset</h2>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Are you sure you want to delete this dataset? This action cannot be undone and will remove the file and all its associated metadata.
+                  </p>
+                </div>
+                <div className="mt-4 flex justify-end gap-3">
+                  <Button variant="outline" onClick={() => setDeleteConfirmId(null)}>
+                    Cancel
+                  </Button>
+                  <Button 
+                    variant="default" 
+                    className="bg-error hover:bg-error/90 text-error-foreground"
+                    onClick={() => deleteConfirmId && deleteMutation.mutate(deleteConfirmId)}
+                    disabled={deleteMutation.isPending}
+                  >
+                    {deleteMutation.isPending ? "Deleting..." : "Delete"}
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

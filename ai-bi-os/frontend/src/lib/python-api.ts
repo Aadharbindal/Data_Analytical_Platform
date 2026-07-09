@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { BASE_URL } from './api';
 
-const API_BASE_URL = 'http://localhost:8000/python';
+const API_BASE_URL = `${BASE_URL}/python`;
 
 export interface WorkflowStep {
   step_id: string;

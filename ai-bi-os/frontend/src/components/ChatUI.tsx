@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
+import { BASE_URL } from "@/lib/api";
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Bot, User, Send, Database, Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -120,7 +121,7 @@ export const ChatUI: React.FC = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/api/v1/chat", {
+      const res = await fetch(`${BASE_URL}/api/v1/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: userMsg })
