@@ -3,16 +3,47 @@ import pandas as pd
 import uuid
 import json
 from datetime import datetime
+import sqlite3
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data")
 os.makedirs(DATA_DIR, exist_ok=True)
+DB_PATH = os.path.join(DATA_DIR, "datamind.db")
 
-# In-memory database for mock backend
-db = {
-    "datasets": {},
-    "catalog": [],
-    "active_dataset_id": None
-}
+def init_db():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS datasets (
+            id TEXT PRIMARY KEY,
+            name TEXT,
+            status TEXT,
+            created_at TEXT,
+            latest_version JSON,
+            filepath TEXT,
+            columns JSON
+        )
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS catalog (
+            id TEXT PRIMARY KEY,
+            name TEXT,
+            domain TEXT,
+            description TEXT,
+            owner TEXT,
+            tags JSON
+        )
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS active_dataset (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            dataset_id TEXT,
+            FOREIGN KEY(dataset_id) REFERENCES datasets(id)
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+init_db()
 
 def save_dataset(file_content: bytes, filename: str):
     dataset_id = str(uuid.uuid4())
@@ -56,10 +87,6 @@ def save_dataset(file_content: bytes, filename: str):
         "columns": columns
     }
     
-    db["datasets"][dataset_id] = dataset_info
-    db["active_dataset_id"] = dataset_id
-    
-    # Auto-generate catalog entry
     catalog_entry = {
         "id": dataset_id,
         "name": filename,
@@ -68,20 +95,80 @@ def save_dataset(file_content: bytes, filename: str):
         "owner": "DataMind OS",
         "tags": ["auto-inferred", "raw-data"]
     }
-    db["catalog"].append(catalog_entry)
+    
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('''
+        INSERT INTO datasets (id, name, status, created_at, latest_version, filepath, columns)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ''', (
+        dataset_id, filename, dataset_info["status"], dataset_info["created_at"],
+        json.dumps(dataset_info["latest_version"]), filepath, json.dumps(columns)
+    ))
+    
+    cursor.execute('''
+        INSERT INTO catalog (id, name, domain, description, owner, tags)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ''', (
+        dataset_id, catalog_entry["name"], catalog_entry["domain"],
+        catalog_entry["description"], catalog_entry["owner"], json.dumps(catalog_entry["tags"])
+    ))
+    
+    cursor.execute('''
+        INSERT OR REPLACE INTO active_dataset (id, dataset_id) VALUES (1, ?)
+    ''', (dataset_id,))
+    
+    conn.commit()
+    conn.close()
     
     return dataset_info
 
 def get_active_dataset():
-    if not db["active_dataset_id"]:
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT dataset_id FROM active_dataset WHERE id = 1
+    ''')
+    row = cursor.fetchone()
+    if not row:
+        conn.close()
         return None
-    return db["datasets"][db["active_dataset_id"]]
+        
+    dataset_id = row[0]
+    cursor.execute('''
+        SELECT id, name, status, created_at, latest_version, filepath, columns
+        FROM datasets WHERE id = ?
+    ''', (dataset_id,))
+    dataset_row = cursor.fetchone()
+    conn.close()
+    
+    if not dataset_row:
+        return None
+        
+    return {
+        "id": dataset_row[0],
+        "name": dataset_row[1],
+        "status": dataset_row[2],
+        "created_at": dataset_row[3],
+        "latest_version": json.loads(dataset_row[4]),
+        "filepath": dataset_row[5],
+        "columns": json.loads(dataset_row[6])
+    }
 
 def get_dataframe(dataset_id: str):
-    dataset_info = db["datasets"].get(dataset_id)
-    if not dataset_info:
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('SELECT filepath FROM datasets WHERE id = ?', (dataset_id,))
+    row = cursor.fetchone()
+    conn.close()
+    
+    if not row:
         return None
-    filepath = dataset_info["filepath"]
+        
+    filepath = row[0]
+    if not os.path.exists(filepath):
+        return None
+        
     if filepath.endswith(".csv"):
         return pd.read_csv(filepath)
     elif filepath.endswith(".xlsx"):
