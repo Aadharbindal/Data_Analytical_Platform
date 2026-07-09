@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { analyticsApi } from "@/lib/api";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { ErrorState } from "@/components/ui/error-state";
+import { StudioPage } from "@/components/analytics/StudioPage";
+import { formatNumber, formatPercent } from "@/lib/utils";
 
 export default function EDAPage() {
   const { data, isLoading, isError } = useQuery({
@@ -11,58 +13,79 @@ export default function EDAPage() {
     queryFn: () => analyticsApi.eda()
   });
 
-  if (isLoading) return <div className="p-8"><CardSkeleton lines={10} /></div>;
-  if (isError) return <div className="p-8"><ErrorState /></div>;
-  if (!data || !data.summary || data.summary.length === 0) return <div className="p-8">No EDA data found. Upload a dataset first.</div>;
-
   return (
-    <div className="flex flex-col gap-6 h-full">
-      <h1 className="text-2xl font-semibold">Dataset Analysis (EDA)</h1>
-      
-      <div className="grid grid-cols-4 gap-4">
-        <div className="glass-card rounded-[20px] p-6">
-          <div className="text-sm text-muted-foreground">Rows</div>
-          <div className="text-2xl font-semibold">{data.rows.toLocaleString()}</div>
-        </div>
-        <div className="glass-card rounded-[20px] p-6">
-          <div className="text-sm text-muted-foreground">Columns</div>
-          <div className="text-2xl font-semibold">{data.columns.length}</div>
-        </div>
-      </div>
-
-      <div className="glass-card rounded-[20px] p-6 overflow-x-auto">
-        <table className="w-full text-sm text-left">
-          <thead>
-            <tr className="border-b border-border/40 text-muted-foreground">
-              <th className="py-3 px-4">Column Name</th>
-              <th className="py-3 px-4">Type</th>
-              <th className="py-3 px-4">Nulls</th>
-              <th className="py-3 px-4">Mean</th>
-              <th className="py-3 px-4">Min/Max</th>
-              <th className="py-3 px-4">Unique / Top Vals</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.summary.map((c: any) => (
-              <tr key={c.column} className="border-b border-border/20">
-                <td className="py-3 px-4 font-medium">{c.column}</td>
-                <td className="py-3 px-4 text-muted-foreground">{c.type}</td>
-                <td className="py-3 px-4">{c.nulls}</td>
-                <td className="py-3 px-4">{c.mean?.toFixed(2) ?? '-'}</td>
-                <td className="py-3 px-4">{c.min != null ? `${c.min} / ${c.max}` : '-'}</td>
-                <td className="py-3 px-4">
-                  {c.unique != null ? `${c.unique} unique` : '-'}
-                  {c.top_values && (
-                    <div className="text-xs text-muted-foreground truncate max-w-[200px]">
-                      {Object.entries(c.top_values).map(([k,v]) => `${k}:${v}`).join(', ')}
+    <StudioPage title="Dataset Analysis (EDA)" isLoading={isLoading}>
+      {isError ? (
+        <ErrorState />
+      ) : !data || !data.summary || data.summary.length === 0 ? (
+        <div className="text-muted-foreground text-sm">No EDA data found. Upload a dataset first.</div>
+      ) : (
+        <div className="flex flex-col gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {data.summary.map((c: any) => {
+              const nullPct = data.rows ? (c.nulls / data.rows) : 0;
+              
+              return (
+                <div key={c.column} className="glass-card rounded-xl p-4 hover:border-white/20 hover:-translate-y-[1px] transition-all duration-150">
+                  {/* Header: Name + Type + Nulls */}
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <div className="flex flex-col gap-1.5 overflow-hidden">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[14px] font-semibold text-foreground truncate" title={c.column}>
+                          {c.column}
+                        </span>
+                        <span className="text-[10px] font-mono text-muted-foreground bg-white/5 px-1.5 py-0.5 rounded border border-white/10 shrink-0">
+                          {c.type}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 w-48">
+                        <span className="text-[11px] text-muted-foreground shrink-0 w-12">
+                          {formatPercent(nullPct * 100)} null
+                        </span>
+                        <div className="flex-1 h-1.5 bg-surface/50 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full rounded-full ${nullPct > 0.5 ? 'bg-rose-500/80' : nullPct > 0.1 ? 'bg-amber-500/80' : 'bg-primary/80'}`} 
+                            style={{ width: `${Math.min(nullPct * 100, 100)}%` }}
+                          />
+                        </div>
+                      </div>
                     </div>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+                  </div>
+                  
+                  {/* Key Stats Mini-Table */}
+                  <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-[12px] bg-surface/30 rounded-lg p-3 border border-border/20">
+                    {c.mean != null ? (
+                      <>
+                        <div className="text-muted-foreground">Mean</div>
+                        <div className="font-mono text-right truncate">{formatNumber(c.mean)}</div>
+                        <div className="text-muted-foreground">Min / Max</div>
+                        <div className="font-mono text-right truncate">{formatNumber(c.min)} / {formatNumber(c.max)}</div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="text-muted-foreground">Unique Values</div>
+                        <div className="font-mono text-right truncate">{formatNumber(c.unique)}</div>
+                        <div className="text-muted-foreground col-span-2">Top Values</div>
+                        <div className="col-span-2 flex flex-wrap gap-1 mt-0.5">
+                          {c.top_values ? (
+                            Object.entries(c.top_values).slice(0, 3).map(([k,v]) => (
+                              <span key={k} className="text-[10px] bg-white/5 px-1.5 py-0.5 rounded text-muted-foreground/90 truncate max-w-[120px]">
+                                {k} <span className="opacity-50">({v as React.ReactNode})</span>
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-[10px] text-muted-foreground/50">N/A</span>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </StudioPage>
   );
 }
