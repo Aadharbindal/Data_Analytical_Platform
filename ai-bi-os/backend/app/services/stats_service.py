@@ -35,7 +35,19 @@ def compute_kpis(df: pd.DataFrame) -> dict:
                 break
                 
     # 3. Deals / Transactions
-    deal_col = find_column(df, r'deal|order|transaction|invoice')
+    deal_candidates = []
+    for col in df.columns:
+        if re.search(r'deal|order|transaction|invoice', col, re.IGNORECASE):
+            if not re.search(r'date|month|year|time', col, re.IGNORECASE) and not pd.core.dtypes.common.is_datetime64_any_dtype(df[col]):
+                deal_candidates.append(col)
+                
+    deal_col = None
+    if deal_candidates:
+        id_candidates = [c for c in deal_candidates if re.search(r'id|number|no|code', c, re.IGNORECASE)]
+        if id_candidates:
+            deal_col = id_candidates[0]
+        else:
+            deal_col = deal_candidates[0]
     
     # 4. Pipeline / Status
     status_col = find_column(df, r'stage|status|pipeline')

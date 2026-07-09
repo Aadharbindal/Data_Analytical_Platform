@@ -300,7 +300,7 @@ async def get_kpi_center():
             if name == "Total Revenue": reason = "No revenue/sales/amount column found"
             elif name == "Active Users": reason = "No customer/user column found"
             elif name == "Avg. Deal Size": reason = "Missing deal or revenue columns"
-            elif name == "Pipeline Health": reason = "no column matching stage|status..."
+            elif name == "Pipeline Health": reason = "no column matching stage|status|pipeline found"
             omitted_kpis.append({"name": name, "reason": reason})
 
     add_kpi("Total Revenue", rev_col, "Total Revenue")
