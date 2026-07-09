@@ -5,12 +5,36 @@ import json
 from datetime import datetime
 import sqlite3
 
-DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data")
-os.makedirs(DATA_DIR, exist_ok=True)
-DB_PATH = os.path.join(DATA_DIR, "datamind.db")
+from pathlib import Path
+from app.core.config import DATA_DIR, DB_PATH
+
+def get_dataset_path(filename: str) -> str:
+    """Returns the absolute path to the dataset file based on its basename."""
+    return str(Path(DATA_DIR) / os.path.basename(filename))
+
+def run_filepath_migration():
+    """Migrates any stored absolute Windows/Linux paths in SQLite to just their basenames."""
+    conn = sqlite3.connect(str(DB_PATH))
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='datasets'")
+        if cursor.fetchone():
+            cursor.execute("SELECT id, filepath FROM datasets")
+            rows = cursor.fetchall()
+            for row in rows:
+                dataset_id, filepath = row
+                if filepath:
+                    basename = os.path.basename(filepath)
+                    if basename != filepath:
+                        cursor.execute("UPDATE datasets SET filepath = ? WHERE id = ?", (basename, dataset_id))
+            conn.commit()
+    except Exception as e:
+        print(f"Error running migration: {e}")
+    finally:
+        conn.close()
 
 def init_db():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(str(DB_PATH))
     cursor = conn.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS datasets (
@@ -40,24 +64,176 @@ def init_db():
             FOREIGN KEY(dataset_id) REFERENCES datasets(id)
         )
     ''')
+    
+    # Dynamically alter table to add columns for older DB schemas
+    try:
+        cursor.execute("ALTER TABLE datasets ADD COLUMN skipped_rows INTEGER DEFAULT 0")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE datasets ADD COLUMN sheet_name TEXT")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE datasets ADD COLUMN version INTEGER DEFAULT 1")
+    except sqlite3.OperationalError:
+        pass
+        
     conn.commit()
     conn.close()
+    
+    # Run absolute path migration
+    run_filepath_migration()
 
 init_db()
 
-def save_dataset(file_content: bytes, filename: str):
-    dataset_id = str(uuid.uuid4())
-    filepath = os.path.join(DATA_DIR, f"{dataset_id}_{filename}")
-    with open(filepath, "wb") as f:
-        f.write(file_content)
+def parse_to_dataframe(file_content: bytes, filename: str):
+    if not file_content or len(file_content.strip()) == 0:
+        raise ValueError("The uploaded file is empty.")
+        
+    import io
+    lower_filename = filename.lower()
+    df = None
+    metadata = {}
     
-    # Try parsing
-    if filename.endswith(".csv"):
-        df = pd.read_csv(filepath)
-    elif filename.endswith(".xlsx"):
-        df = pd.read_excel(filepath)
+    if lower_filename.endswith(".csv") or lower_filename.endswith(".tsv"):
+        sep = "\t" if lower_filename.endswith(".tsv") else ","
+        
+        # a) Encoding
+        text = None
+        for encoding in ["utf-8", "latin-1", "cp1252"]:
+            try:
+                text = file_content.decode(encoding)
+                break
+            except UnicodeDecodeError:
+                continue
+        if text is None:
+            raise ValueError("Could not decode file - please save as UTF-8 CSV.")
+            
+        # b) Malformed CSV with on_bad_lines='skip'
+        skipped_count = 0
+        def bad_line_handler(line):
+            nonlocal skipped_count
+            skipped_count += 1
+            return None
+            
+        try:
+            # Try normal read first
+            df = pd.read_csv(io.StringIO(text), sep=sep)
+        except Exception:
+            try:
+                df = pd.read_csv(io.StringIO(text), sep=sep, on_bad_lines=bad_line_handler, engine='python')
+            except Exception as e:
+                raise ValueError(f"Failed to parse CSV/TSV file: {str(e)}")
+                
+        metadata["skipped_rows"] = skipped_count
+        
+    elif lower_filename.endswith(".xlsx") or lower_filename.endswith(".xls"):
+        # c) Excel multi-sheet
+        try:
+            xl = pd.ExcelFile(io.BytesIO(file_content))
+            sheets = xl.sheet_names
+            selected_sheet = None
+            for sheet in sheets:
+                temp_df = xl.parse(sheet)
+                if not temp_df.empty:
+                    selected_sheet = sheet
+                    df = temp_df
+                    break
+            if df is None:
+                raise ValueError("Excel file contains no non-empty sheets.")
+            metadata["sheet_name"] = selected_sheet
+        except Exception as e:
+            raise ValueError(f"Failed to parse Excel file: {str(e)}")
+            
+    elif lower_filename.endswith(".json"):
+        # d) JSON / NDJSON
+        text = None
+        for encoding in ["utf-8", "latin-1", "cp1252"]:
+            try:
+                text = file_content.decode(encoding)
+                break
+            except UnicodeDecodeError:
+                continue
+        if text is None:
+            raise ValueError("Could not decode JSON file.")
+            
+        try:
+            data = json.loads(text)
+            if isinstance(data, list):
+                df = pd.json_normalize(data, max_level=1)
+            elif isinstance(data, dict):
+                df = pd.json_normalize([data], max_level=1)
+            else:
+                raise ValueError("JSON content is neither a list nor an object.")
+        except Exception as e_json:
+            try:
+                lines = [json.loads(line) for line in text.splitlines() if line.strip()]
+                if not lines:
+                    raise ValueError("NDJSON content is empty.")
+                df = pd.json_normalize(lines, max_level=1)
+            except Exception as e_ndjson:
+                raise ValueError(f"Could not parse JSON. Standard JSON error: {str(e_json)}. NDJSON error: {str(e_ndjson)}")
+                
+        # Deeper nesting: keep as stringified columns
+        for col in df.columns:
+            if df[col].apply(lambda x: isinstance(x, (dict, list))).any():
+                df[col] = df[col].apply(lambda x: json.dumps(x) if isinstance(x, (dict, list)) else x)
+                
+    elif lower_filename.endswith(".parquet"):
+        try:
+            df = pd.read_parquet(io.BytesIO(file_content))
+        except Exception as e:
+            raise ValueError(f"Failed to parse Parquet file: {str(e)}")
+            
     else:
-        df = pd.read_csv(filepath) # fallback
+        raise ValueError(f"Unsupported file format: {filename}")
+        
+    # e) Empty file / zero rows / no columns
+    if df is None:
+        raise ValueError("The parsed file resulted in no data (null dataframe).")
+    if len(df) == 0:
+        raise ValueError("The dataset contains zero rows of data.")
+    if len(df.columns) == 0:
+        raise ValueError("The dataset contains zero columns.")
+        
+    # f) Duplicate column names
+    cols = list(df.columns)
+    seen = {}
+    new_cols = []
+    has_duplicates = False
+    for col in cols:
+        col_str = str(col)
+        if col_str in seen:
+            has_duplicates = True
+            seen[col_str] += 1
+            new_cols.append(f"{col_str}_{seen[col_str]}")
+        else:
+            seen[col_str] = 1
+            new_cols.append(col_str)
+    df.columns = new_cols
+    metadata["duplicate_columns_renamed"] = has_duplicates
+    
+    return df, metadata
+
+def save_dataset(file_content: bytes, filename: str):
+    # Determine version
+    conn = sqlite3.connect(str(DB_PATH))
+    cursor = conn.cursor()
+    cursor.execute("SELECT MAX(version) FROM datasets WHERE name = ?", (filename,))
+    max_ver = cursor.fetchone()[0]
+    version = (max_ver + 1) if max_ver is not None else 1
+    conn.close()
+
+    # Try parsing first (robust validation)
+    df, metadata = parse_to_dataframe(file_content, filename)
+    
+    dataset_id = str(uuid.uuid4())
+    filename_db = f"{dataset_id}_{filename}"
+    disk_path = get_dataset_path(filename_db)
+    
+    with open(disk_path, "wb") as f:
+        f.write(file_content)
         
     row_count = len(df)
     col_count = len(df.columns)
@@ -69,9 +245,9 @@ def save_dataset(file_content: bytes, filename: str):
         null_count = int(df[col].isnull().sum())
         col_info = {"name": col, "type": dtype, "null_count": null_count}
         if pd.api.types.is_numeric_dtype(df[col]):
-            col_info["mean"] = float(df[col].mean()) if not pd.isna(df[col].mean()) else 0
-            col_info["min"] = float(df[col].min()) if not pd.isna(df[col].min()) else 0
-            col_info["max"] = float(df[col].max()) if not pd.isna(df[col].max()) else 0
+            col_info["mean"] = float(df[col].mean()) if not pd.isna(df[col].mean()) else 0.0
+            col_info["min"] = float(df[col].min()) if not pd.isna(df[col].min()) else 0.0
+            col_info["max"] = float(df[col].max()) if not pd.isna(df[col].max()) else 0.0
         columns.append(col_info)
         
     dataset_info = {
@@ -83,8 +259,11 @@ def save_dataset(file_content: bytes, filename: str):
             "row_count": row_count,
             "file_size_bytes": len(file_content)
         },
-        "filepath": filepath,
-        "columns": columns
+        "filepath": filename_db,
+        "columns": columns,
+        "skipped_rows": metadata.get("skipped_rows", 0),
+        "sheet_name": metadata.get("sheet_name"),
+        "version": version
     }
     
     catalog_entry = {
@@ -96,14 +275,15 @@ def save_dataset(file_content: bytes, filename: str):
         "tags": ["auto-inferred", "raw-data"]
     }
     
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(str(DB_PATH))
     cursor = conn.cursor()
     cursor.execute('''
-        INSERT INTO datasets (id, name, status, created_at, latest_version, filepath, columns)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO datasets (id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
         dataset_id, filename, dataset_info["status"], dataset_info["created_at"],
-        json.dumps(dataset_info["latest_version"]), filepath, json.dumps(columns)
+        json.dumps(dataset_info["latest_version"]), filename_db, json.dumps(columns),
+        dataset_info["skipped_rows"], dataset_info["sheet_name"], dataset_info["version"]
     ))
     
     cursor.execute('''
@@ -124,7 +304,7 @@ def save_dataset(file_content: bytes, filename: str):
     return dataset_info
 
 def get_active_dataset():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(str(DB_PATH))
     cursor = conn.cursor()
     cursor.execute('''
         SELECT dataset_id FROM active_dataset WHERE id = 1
@@ -136,7 +316,7 @@ def get_active_dataset():
         
     dataset_id = row[0]
     cursor.execute('''
-        SELECT id, name, status, created_at, latest_version, filepath, columns
+        SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version
         FROM datasets WHERE id = ?
     ''', (dataset_id,))
     dataset_row = cursor.fetchone()
@@ -152,25 +332,54 @@ def get_active_dataset():
         "created_at": dataset_row[3],
         "latest_version": json.loads(dataset_row[4]),
         "filepath": dataset_row[5],
-        "columns": json.loads(dataset_row[6])
+        "columns": json.loads(dataset_row[6]),
+        "skipped_rows": dataset_row[7],
+        "sheet_name": dataset_row[8],
+        "version": dataset_row[9]
     }
 
 def get_dataframe(dataset_id: str):
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(str(DB_PATH))
     cursor = conn.cursor()
-    cursor.execute('SELECT filepath FROM datasets WHERE id = ?', (dataset_id,))
+    cursor.execute('SELECT filepath, sheet_name FROM datasets WHERE id = ?', (dataset_id,))
     row = cursor.fetchone()
     conn.close()
     
     if not row:
         return None
         
-    filepath = row[0]
-    if not os.path.exists(filepath):
+    filename_db, sheet_name = row
+    disk_path = get_dataset_path(filename_db)
+    if not os.path.exists(disk_path):
         return None
         
-    if filepath.endswith(".csv"):
-        return pd.read_csv(filepath)
-    elif filepath.endswith(".xlsx"):
-        return pd.read_excel(filepath)
-    return pd.read_csv(filepath)
+    lower_path = disk_path.lower()
+    if lower_path.endswith(".csv"):
+        return pd.read_csv(disk_path, on_bad_lines='skip')
+    elif lower_path.endswith(".tsv"):
+        return pd.read_csv(disk_path, sep="\t", on_bad_lines='skip')
+    elif lower_path.endswith(".xlsx") or lower_path.endswith(".xls"):
+        if sheet_name:
+            return pd.read_excel(disk_path, sheet_name=sheet_name)
+        return pd.read_excel(disk_path)
+    elif lower_path.endswith(".json"):
+        with open(disk_path, "r", encoding="utf-8", errors="ignore") as f:
+            text = f.read()
+        try:
+            data = json.loads(text)
+            if isinstance(data, list):
+                df = pd.json_normalize(data, max_level=1)
+            else:
+                df = pd.json_normalize([data], max_level=1)
+        except Exception:
+            lines = [json.loads(line) for line in text.splitlines() if line.strip()]
+            df = pd.json_normalize(lines, max_level=1)
+        for col in df.columns:
+            if df[col].apply(lambda x: isinstance(x, (dict, list))).any():
+                df[col] = df[col].apply(lambda x: json.dumps(x) if isinstance(x, (dict, list)) else x)
+        return df
+    elif lower_path.endswith(".parquet"):
+        return pd.read_parquet(disk_path)
+        
+    return pd.read_csv(disk_path, on_bad_lines='skip')
+

@@ -1,10 +1,32 @@
 "use client";
 
-import { Bell, Search, Sun, Moon } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { datasetsApi } from "@/lib/api";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { Search, Bell, Sun } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export function Header() {
+  const qc = useQueryClient();
+
+  const { data: activeDataset } = useQuery({
+    queryKey: ["activeDataset"],
+    queryFn: () => datasetsApi.getActive(),
+  });
+
+  const { data: datasets } = useQuery({
+    queryKey: ["datasets"],
+    queryFn: () => datasetsApi.list(),
+  });
+
+  const activateMutation = useMutation({
+    mutationFn: (id: string) => datasetsApi.activate(id),
+    onSuccess: () => {
+      qc.invalidateQueries(); // invalidate all queries so the whole app updates!
+    },
+  });
+
   return (
     <header className="flex h-[72px] shrink-0 items-center gap-x-4 border-b border-border/60 bg-background px-8">
       {/* Breadcrumbs or Context */}
@@ -12,7 +34,38 @@ export function Header() {
         <div className="flex items-center text-[13px] tracking-wide">
           <span className="text-muted-foreground/80 font-medium">Workspace</span>
           <span className="mx-2 text-muted-foreground/50">/</span>
-          <span className="font-semibold text-foreground/90">Global Analytics</span>
+          <span className="font-semibold text-foreground/90 mr-2">Global Analytics</span>
+          
+          {datasets && datasets.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger 
+                disabled={activateMutation.isPending}
+                className="flex items-center gap-1.5 bg-surface border border-border/80 text-xs font-semibold text-foreground rounded-lg px-3 py-1.5 outline-none hover:bg-white/5 transition-colors focus:ring-2 focus:ring-primary/30 shadow-sm cursor-pointer ml-2"
+              >
+                {activeDataset ? activeDataset.name : "Select Dataset"}
+                {activeDataset?.version && activeDataset.version > 1 && ` (v${activeDataset.version})`}
+                <svg className="h-3 w-3 text-muted-foreground ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56 bg-surface border border-border">
+                {datasets.map((ds) => (
+                  <DropdownMenuItem 
+                    key={ds.id} 
+                    className={`cursor-pointer ${activeDataset?.id === ds.id ? "bg-primary/10 font-semibold text-primary" : ""}`}
+                    onClick={() => activateMutation.mutate(ds.id)}
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <span>{ds.name}</span>
+                      {ds.version && ds.version > 1 && (
+                        <span className="text-[10px] bg-primary/10 text-primary border border-primary/20 px-1 py-0.2 rounded font-bold">
+                          v{ds.version}
+                        </span>
+                      )}
+                    </div>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { BASE_URL } from './api';
 
-const API_BASE_URL = 'http://localhost:8000/rag';
+const API_BASE_URL = `${BASE_URL}/rag`;
 
 export interface DocumentIndexRequest {
   workspace_id: string;

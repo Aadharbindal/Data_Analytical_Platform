@@ -22,7 +22,7 @@ export default function ForecastGovernancePage() {
     );
   }
 
-  const gov = governance.data.data; // Axios returns data in .data
+  const gov = governance.data as any; // fetch returns data directly
 
   return (
     <div className="space-y-6">

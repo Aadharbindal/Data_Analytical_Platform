@@ -3,7 +3,7 @@
 // All pages import from here — never call fetch() directly
 // ============================================================
 
-export const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+export const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
@@ -58,6 +58,8 @@ export const datasetsApi = {
   uploadStatus: (jobId: string) =>
     api.get<import("./types").UploadJob>(`/api/v1/datasets/upload/status/${jobId}`),
   delete: (id: string) => api.delete(`/api/v1/datasets/${id}`),
+  getActive: () => api.get<import("./types").ActiveDatasetInfo | null>("/api/v1/datasets/active"),
+  activate: (id: string) => api.post(`/api/v1/datasets/${id}/activate`, {}),
 };
 
 // Schema (Module 3)

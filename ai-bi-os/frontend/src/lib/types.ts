@@ -13,6 +13,19 @@ export interface Dataset {
   created_at: string;
   updated_at?: string;
   latest_version?: DatasetVersion;
+  skipped_rows?: number;
+  sheet_name?: string;
+  version?: number;
+}
+
+export interface ActiveDatasetInfo {
+  id: string;
+  name: string;
+  row_count?: number;
+  columns?: any[];
+  skipped_rows?: number;
+  sheet_name?: string;
+  version?: number;
 }
 
 export interface DatasetVersion {
