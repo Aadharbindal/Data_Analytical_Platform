@@ -263,50 +263,29 @@ async def get_kpi_center():
     if df is None:
         return {"kpis": []}
 
-    from app.services.stats_service import find_column
-    rev_col = find_column(df, r'revenue|sales|amount')
-    user_col = None
-    for col in df.columns:
-        if re.search(r'customer|user|client|account', col, re.IGNORECASE):
-            if not re.search(r'region|country|state|type|category|group|segment|tier', col, re.IGNORECASE):
-                user_col = col
-                break
-    deal_col = find_column(df, r'deal|order|transaction|invoice')
-    status_col = find_column(df, r'stage|status|pipeline')
-
-    from app.services.stats_service import compute_kpis
     kpi_data = compute_kpis(df).get("kpis", [])
     
     available_kpis = []
     omitted_kpis = []
     
-    # Map computed KPIs to frontend expected format
-    def add_kpi(name, col, computed_name):
-        if col:
-            # Find matching computed kpi
-            computed = next((k for k in kpi_data if k["name"] == computed_name), None)
-            if computed:
-                available_kpis.append({
-                    "name": name,
-                    "column": col,
-                    "status": "Available",
-                    "value": computed["value"],
-                    "trend": computed.get("trend")
-                })
-            else:
-                omitted_kpis.append({"name": name, "reason": "Computation failed"})
+    expected_kpis = ["Total Revenue", "Active Users", "Avg. Deal Size", "Pipeline Health"]
+    for expected in expected_kpis:
+        computed = next((k for k in kpi_data if k["name"] == expected), None)
+        if computed:
+            available_kpis.append({
+                "name": expected,
+                "column": computed.get("column", "Unknown"),
+                "status": "Available",
+                "value": computed["value"],
+                "trend": computed.get("trend")
+            })
         else:
             reason = "No matching column found"
-            if name == "Total Revenue": reason = "No revenue/sales/amount column found"
-            elif name == "Active Users": reason = "No customer/user column found"
-            elif name == "Avg. Deal Size": reason = "Missing deal or revenue columns"
-            elif name == "Pipeline Health": reason = "no column matching stage|status|pipeline found"
-            omitted_kpis.append({"name": name, "reason": reason})
-
-    add_kpi("Total Revenue", rev_col, "Total Revenue")
-    add_kpi("Active Users", user_col, "Active Users")
-    add_kpi("Avg. Deal Size", deal_col if deal_col and rev_col else None, "Avg. Deal Size")
-    add_kpi("Pipeline Health", status_col, "Pipeline Health")
+            if expected == "Total Revenue": reason = "No revenue/sales/amount column found"
+            elif expected == "Active Users": reason = "No customer/user column found"
+            elif expected == "Avg. Deal Size": reason = "Missing deal or revenue columns"
+            elif expected == "Pipeline Health": reason = "no column matching stage|status|pipeline found"
+            omitted_kpis.append({"name": expected, "reason": reason})
     
     return {"available_kpis": available_kpis, "omitted_kpis": omitted_kpis}
 
