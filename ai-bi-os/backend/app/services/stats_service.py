@@ -83,6 +83,7 @@ def compute_kpis(df: pd.DataFrame) -> dict:
         kpis.append({
             "id": "kpi_rev",
             "name": "Total Revenue",
+            "column": rev_col,
             "value": round(float(curr_rev), 2),
             "previous_value": round(float(prev_rev), 2),
             "trend": calc_trend(curr_rev, prev_rev),
@@ -101,6 +102,7 @@ def compute_kpis(df: pd.DataFrame) -> dict:
         kpis.append({
             "id": "kpi_users",
             "name": "Active Users",
+            "column": user_col,
             "value": float(curr_users),
             "previous_value": float(prev_users),
             "trend": calc_trend(curr_users, prev_users),
@@ -129,6 +131,7 @@ def compute_kpis(df: pd.DataFrame) -> dict:
         kpis.append({
             "id": "kpi_deal_size",
             "name": "Avg. Deal Size",
+            "column": deal_col if deal_col else "(Row Count)",
             "value": round(float(curr_avg), 2),
             "previous_value": round(float(prev_avg), 2),
             "trend": calc_trend(curr_avg, prev_avg),
@@ -152,6 +155,7 @@ def compute_kpis(df: pd.DataFrame) -> dict:
         kpis.append({
             "id": "kpi_pipeline",
             "name": "Pipeline Health",
+            "column": status_col,
             "value": round(curr_health, 1),
             "previous_value": round(prev_health, 1),
             "trend": calc_trend(curr_health, prev_health),
@@ -169,6 +173,17 @@ def compute_kpis(df: pd.DataFrame) -> dict:
                     "name": row[date_col],
                     "value": round(float(row[rev_col]), 2)
                 })
+                
+            fc = forecast_series(df, rev_col, periods=2)
+            if fc.get("available"):
+                if chart_data:
+                    chart_data[-1]["forecast"] = chart_data[-1]["value"]
+                for f_point in fc.get("forecast", []):
+                    chart_data.append({
+                        "name": f_point["date"],
+                        "value": None,
+                        "forecast": round(f_point["forecast"], 2)
+                    })
         except Exception:
             pass
 
