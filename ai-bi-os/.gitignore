@@ -1,2 +1,8 @@
-
 backend_test_copy/
+node_modules/
+backend/venv/
+backend/__pycache__/
+backend/data/*.csv
+backend/data/*.xlsx
+backend/data/*.json
+backend/data/datamind.db

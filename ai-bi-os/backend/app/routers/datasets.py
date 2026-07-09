@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 from pydantic import BaseModel
 from typing import List, Optional
 import uuid
@@ -6,6 +6,7 @@ import sqlite3
 import json
 import os
 from app.services.data_processing import save_dataset, DB_PATH, get_dataset_path, get_active_dataset, get_dataframe
+from app.core.security import get_current_user
 from app.services.stats_service import compute_kpis
 
 router = APIRouter()
@@ -15,7 +16,7 @@ class UploadResponse(BaseModel):
     status: str
 
 @router.post("/upload", response_model=UploadResponse)
-async def upload_dataset(file: UploadFile = File(...)):
+async def upload_dataset(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
     from app.core.config import MAX_UPLOAD_MB
     content = await file.read()
     
@@ -25,7 +26,7 @@ async def upload_dataset(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail=f"File size exceeds maximum limit of {MAX_UPLOAD_MB}MB.")
         
     try:
-        dataset_info = save_dataset(content, file.filename)
+        dataset_info = save_dataset(content, file.filename, current_user["id"])
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:
@@ -37,10 +38,10 @@ from fastapi.responses import StreamingResponse
 import asyncio
 
 @router.get("/upload/status/{job_id}")
-async def get_upload_status(job_id: str):
+async def get_upload_status(job_id: str, current_user: dict = Depends(get_current_user)):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    cursor.execute("SELECT id FROM datasets WHERE id=?", (job_id,))
+    cursor.execute("SELECT id FROM datasets WHERE id=? AND user_id=?", (job_id, current_user["id"]))
     row = cursor.fetchone()
     conn.close()
     if row:
@@ -48,14 +49,14 @@ async def get_upload_status(job_id: str):
     return {"status": "processing", "progress": 50}
 
 @router.get("/upload/status/{job_id}/stream")
-async def get_upload_status_stream(job_id: str):
+async def get_upload_status_stream(job_id: str, current_user: dict = Depends(get_current_user)):
     async def event_generator():
         yield f"data: {json.dumps({'status': 'processing', 'progress': 50, 'current_step': 'Parsing data'})}\n\n"
         await asyncio.sleep(0.5)
         
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
-        cursor.execute("SELECT id FROM datasets WHERE id=?", (job_id,))
+        cursor.execute("SELECT id FROM datasets WHERE id=? AND user_id=?", (job_id, current_user["id"]))
         row = cursor.fetchone()
         conn.close()
         
@@ -67,8 +68,8 @@ async def get_upload_status_stream(job_id: str):
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 @router.get("/active")
-async def get_active_dataset_route():
-    dataset_info = get_active_dataset()
+async def get_active_dataset_route(current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return None
     return {
@@ -83,10 +84,10 @@ async def get_active_dataset_route():
     }
 
 @router.get("/")
-async def list_datasets(workspace_id: Optional[str] = None):
+async def list_datasets(workspace_id: Optional[str] = None, current_user: dict = Depends(get_current_user)):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    cursor.execute('SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score FROM datasets ORDER BY created_at DESC')
+    cursor.execute('SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score FROM datasets WHERE user_id=? ORDER BY created_at DESC', (current_user["id"],))
     rows = cursor.fetchall()
     conn.close()
     
@@ -106,26 +107,26 @@ async def list_datasets(workspace_id: Optional[str] = None):
     ]
 
 @router.post("/{dataset_id}/activate")
-async def activate_dataset(dataset_id: str):
+async def activate_dataset(dataset_id: str, current_user: dict = Depends(get_current_user)):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    cursor.execute("SELECT id FROM datasets WHERE id=?", (dataset_id,))
+    cursor.execute("SELECT id FROM datasets WHERE id=? AND user_id=?", (dataset_id, current_user["id"]))
     if not cursor.fetchone():
         conn.close()
         raise HTTPException(status_code=404, detail="Dataset not found")
         
-    cursor.execute("INSERT OR REPLACE INTO active_dataset (id, dataset_id) VALUES (1, ?)", (dataset_id,))
+    cursor.execute("INSERT OR REPLACE INTO active_dataset (user_id, dataset_id) VALUES (?, ?)", (current_user["id"], dataset_id))
     conn.commit()
     conn.close()
     return {"status": "success", "message": f"Dataset {dataset_id} activated"}
 
 @router.delete("/{dataset_id}")
-async def delete_dataset(dataset_id: str):
+async def delete_dataset(dataset_id: str, current_user: dict = Depends(get_current_user)):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
     # Get filepath to delete file
-    cursor.execute("SELECT filepath FROM datasets WHERE id=?", (dataset_id,))
+    cursor.execute("SELECT filepath FROM datasets WHERE id=? AND user_id=?", (dataset_id, current_user["id"]))
     row = cursor.fetchone()
     if row:
         filename_db = row[0]
@@ -137,19 +138,19 @@ async def delete_dataset(dataset_id: str):
                 except Exception:
                     pass
                     
-    cursor.execute("DELETE FROM datasets WHERE id=?", (dataset_id,))
-    cursor.execute("DELETE FROM catalog WHERE id=?", (dataset_id,))
+    cursor.execute("DELETE FROM datasets WHERE id=? AND user_id=?", (dataset_id, current_user["id"]))
+    cursor.execute("DELETE FROM catalog WHERE id=? AND user_id=?", (dataset_id, current_user["id"]))
     
     # If active dataset was this one, fallback to most recent remaining
-    cursor.execute("SELECT dataset_id FROM active_dataset WHERE id=1")
+    cursor.execute("SELECT dataset_id FROM active_dataset WHERE user_id=?", (current_user["id"],))
     active_row = cursor.fetchone()
     if active_row and active_row[0] == dataset_id:
-        cursor.execute("SELECT id FROM datasets ORDER BY created_at DESC LIMIT 1")
+        cursor.execute("SELECT id FROM datasets WHERE user_id=? ORDER BY created_at DESC LIMIT 1", (current_user["id"],))
         next_row = cursor.fetchone()
         if next_row:
-            cursor.execute("INSERT OR REPLACE INTO active_dataset (id, dataset_id) VALUES (1, ?)", (next_row[0],))
+            cursor.execute("INSERT OR REPLACE INTO active_dataset (user_id, dataset_id) VALUES (?, ?)", (current_user["id"], next_row[0]))
         else:
-            cursor.execute("DELETE FROM active_dataset WHERE id=1")
+            cursor.execute("DELETE FROM active_dataset WHERE user_id=?", (current_user["id"],))
             
     conn.commit()
     conn.close()
@@ -157,9 +158,9 @@ async def delete_dataset(dataset_id: str):
     return {"status": "success", "message": "Dataset deleted"}
 
 @router.get("/compare")
-async def compare_datasets(id_a: str, id_b: str):
-    df_a = get_dataframe(id_a)
-    df_b = get_dataframe(id_b)
+async def compare_datasets(id_a: str, id_b: str, current_user: dict = Depends(get_current_user)):
+    df_a = get_dataframe(id_a, current_user["id"])
+    df_b = get_dataframe(id_b, current_user["id"])
     
     if df_a is None or df_b is None:
         raise HTTPException(status_code=400, detail="One or both datasets could not be loaded")

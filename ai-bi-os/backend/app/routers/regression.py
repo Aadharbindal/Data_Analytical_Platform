@@ -3,20 +3,21 @@ import numpy as np
 import sqlite3
 import json
 from datetime import datetime
-from fastapi import APIRouter, HTTPException, Body
+from fastapi import APIRouter, HTTPException, Body, Depends
 from typing import List, Dict, Any
 from app.services.data_processing import get_active_dataset, get_dataframe
 from app.core.config import DB_PATH
+from app.core.security import get_current_user
 from pydantic import BaseModel
 
 router = APIRouter()
 
 @router.get("/columns")
-async def get_regression_columns():
-    dataset_info = get_active_dataset()
+async def get_regression_columns(current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         raise HTTPException(status_code=400, detail="No active dataset")
-    df = get_dataframe(dataset_info["id"])
+    df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         raise HTTPException(status_code=400, detail="Dataset not loaded")
 
@@ -56,12 +57,12 @@ class TrainRequest(BaseModel):
     features: List[str]
 
 @router.post("/train")
-async def train_regression_model(req: TrainRequest):
-    dataset_info = get_active_dataset()
+async def train_regression_model(req: TrainRequest, current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         raise HTTPException(status_code=400, detail="No active dataset")
     
-    df = get_dataframe(dataset_info["id"])
+    df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         raise HTTPException(status_code=400, detail="Dataset not loaded")
         
@@ -144,8 +145,8 @@ async def train_regression_model(req: TrainRequest):
     conn = sqlite3.connect(str(DB_PATH))
     cursor = conn.cursor()
     cursor.execute('''
-        INSERT INTO regression_models (dataset_id, target, features, r2_train, r2_test, coefficients, intercept, n_rows_used, timestamp)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO regression_models (dataset_id, target, features, r2_train, r2_test, coefficients, intercept, n_rows_used, timestamp, user_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
         dataset_info["id"],
         req.target,
@@ -155,7 +156,8 @@ async def train_regression_model(req: TrainRequest):
         json.dumps(coefficients),
         intercept,
         n_rows_used,
-        datetime.now().isoformat()
+        datetime.now().isoformat(),
+        current_user["id"]
     ))
     conn.commit()
     conn.close()
@@ -170,8 +172,8 @@ async def train_regression_model(req: TrainRequest):
     }
 
 @router.get("/models")
-async def get_regression_models():
-    dataset_info = get_active_dataset()
+async def get_regression_models(current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return []
         
@@ -180,9 +182,9 @@ async def get_regression_models():
     cursor.execute('''
         SELECT id, target, features, r2_train, r2_test, coefficients, intercept, n_rows_used, timestamp
         FROM regression_models
-        WHERE dataset_id = ?
+        WHERE dataset_id = ? AND user_id = ?
         ORDER BY timestamp DESC
-    ''', (dataset_info["id"],))
+    ''', (dataset_info["id"], current_user["id"]))
     rows = cursor.fetchall()
     conn.close()
     

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 import {
   LayoutDashboard,
   Database,
@@ -17,6 +18,7 @@ import {
   User,
   MoreVertical,
   BarChart3,
+  LogOut,
 } from "lucide-react";
 
 const mainNavItems = [
@@ -38,6 +40,7 @@ const bottomNavItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { user, logout } = useAuth();
   const isAnalytics = pathname?.startsWith("/analytics") ?? false;
 
   return (
@@ -108,20 +111,29 @@ export function Sidebar() {
         <div className="pt-2 mt-2 border-t border-border/40 w-full">
           <div className={cn(
             "flex items-center rounded-xl hover:bg-white/[0.03] cursor-pointer transition-colors duration-200 group",
-            isAnalytics ? "justify-center py-2 px-0" : "justify-between px-3 py-2.5"
-          )} title={isAnalytics ? "Wade Warren (Admin)" : undefined}>
+            isAnalytics ? "justify-center py-2 px-0 flex-col" : "justify-between px-3 py-2.5"
+          )} title={isAnalytics ? (user?.full_name || "User") : undefined}>
             <div className="flex items-center gap-3">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary border border-primary/30 shrink-0">
                 <User className="h-4 w-4" />
               </div>
               {!isAnalytics && (
                 <div className="flex flex-col overflow-hidden">
-                  <span className="text-[13px] font-semibold text-foreground/90 group-hover:text-foreground transition-colors truncate">Wade Warren</span>
-                  <span className="text-[11px] text-muted-foreground tracking-wide uppercase font-medium">Admin</span>
+                  <span className="text-[13px] font-semibold text-foreground/90 group-hover:text-foreground transition-colors truncate">{user?.full_name || "Guest"}</span>
+                  <span className="text-[11px] text-muted-foreground tracking-wide font-medium truncate w-24">{user?.email || "guest@example.com"}</span>
                 </div>
               )}
             </div>
-            {!isAnalytics && <MoreVertical className="h-4 w-4 shrink-0 text-muted-foreground/70 group-hover:text-foreground/90 transition-colors" />}
+            {!isAnalytics && (
+              <button onClick={logout} className="p-1 hover:text-destructive transition-colors text-muted-foreground/70 group-hover:text-foreground/90" title="Logout">
+                <LogOut className="h-4 w-4 shrink-0" />
+              </button>
+            )}
+            {isAnalytics && (
+              <button onClick={logout} className="p-1 hover:text-destructive transition-colors text-muted-foreground/70 mt-2" title="Logout">
+                <LogOut className="h-4 w-4 shrink-0" />
+              </button>
+            )}
           </div>
         </div>
       </div>

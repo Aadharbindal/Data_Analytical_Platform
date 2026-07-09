@@ -12,3 +12,8 @@ statsmodels
 scikit-learn
 reportlab
 matplotlib
+passlib[bcrypt]
+bcrypt==3.2.2
+PyJWT
+slowapi
+email-validator
