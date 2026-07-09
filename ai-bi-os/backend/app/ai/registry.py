@@ -6,7 +6,7 @@ class ModelRegistry:
     """Central gateway for all LLM calls, handling routing and fallback via LiteLLM."""
     
     def __init__(self):
-        self.default_model = "gemini/gemini-1.5-pro"
+        self.default_model = "gpt-4o-mini"
 
     def route_request(self, messages: list, tools: list = None, target_model: str = None) -> Any:
         """Routes the prompt to the specified model via litellm. Returns the litellm message object."""

@@ -1,15 +1,12 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+# Removed sqlalchemy imports to avoid missing dependency on Windows
 
 # Temporary SQLite DB for Module 1
 SQLALCHEMY_DATABASE_URL = "sqlite:///./ai_bi_os.db"
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-Base = declarative_base()
+# Mocked out DB
+class SessionLocal:
+    def close(self):
+        pass
 
 def get_db():
     db = SessionLocal()
