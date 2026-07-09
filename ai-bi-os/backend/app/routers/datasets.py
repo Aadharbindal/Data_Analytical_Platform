@@ -106,6 +106,28 @@ async def list_datasets(workspace_id: Optional[str] = None, current_user: dict =
         for r in rows
     ]
 
+@router.get("/{dataset_id}")
+async def get_dataset(dataset_id: str, current_user: dict = Depends(get_current_user)):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score FROM datasets WHERE id=? AND user_id=?', (dataset_id, current_user["id"]))
+    r = cursor.fetchone()
+    conn.close()
+    if not r:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    
+    return {
+        "id": r[0], "name": r[1], "status": r[2], 
+        "created_at": r[3], 
+        "latest_version": json.loads(r[4]) if r[4] else {}, 
+        "filepath": r[5], 
+        "columns": json.loads(r[6]) if r[6] else [],
+        "skipped_rows": r[7],
+        "sheet_name": r[8],
+        "version": r[9],
+        "quality_score": r[10]
+    }
+
 @router.post("/{dataset_id}/activate")
 async def activate_dataset(dataset_id: str, current_user: dict = Depends(get_current_user)):
     conn = sqlite3.connect(DB_PATH)
@@ -128,15 +150,18 @@ async def delete_dataset(dataset_id: str, current_user: dict = Depends(get_curre
     # Get filepath to delete file
     cursor.execute("SELECT filepath FROM datasets WHERE id=? AND user_id=?", (dataset_id, current_user["id"]))
     row = cursor.fetchone()
-    if row:
-        filename_db = row[0]
-        if filename_db:
-            disk_path = get_dataset_path(filename_db)
-            if os.path.exists(disk_path):
-                try:
-                    os.remove(disk_path)
-                except Exception:
-                    pass
+    if not row:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Dataset not found")
+        
+    filename_db = row[0]
+    if filename_db:
+        disk_path = get_dataset_path(filename_db)
+        if os.path.exists(disk_path):
+            try:
+                os.remove(disk_path)
+            except Exception:
+                pass
                     
     cursor.execute("DELETE FROM datasets WHERE id=? AND user_id=?", (dataset_id, current_user["id"]))
     cursor.execute("DELETE FROM catalog WHERE id=? AND user_id=?", (dataset_id, current_user["id"]))
