@@ -31,6 +31,10 @@ class UserLogin(BaseModel):
 
 @router.post("/signup")
 def signup(user: UserSignup, response: Response):
+    import re
+    if len(user.password) < 8 or not re.search(r"[A-Za-z]", user.password) or not re.search(r"[0-9]", user.password):
+        raise HTTPException(status_code=400, detail="Password must be at least 8 characters and include a letter and a number.")
+        
     conn = sqlite3.connect(str(DB_PATH))
     cursor = conn.cursor()
     
