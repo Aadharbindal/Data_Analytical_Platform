@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import {
   AreaChart,
   Area,
@@ -21,16 +22,17 @@ export function RevenueCard({ data }: RevenueCardProps) {
     <Card className="glass-card h-full flex flex-col p-1">
       <CardHeader className="pb-2 pt-4 px-5 flex flex-row items-center justify-between border-b border-border/40 mb-4">
         <CardTitle className="text-base font-semibold tracking-tight text-foreground/90">Revenue Forecast</CardTitle>
-        <div className="relative">
-          <select className="appearance-none bg-surface border border-border text-xs font-medium text-foreground rounded-lg px-3 py-1.5 pr-7 outline-none hover:bg-white/5 transition-colors focus:ring-2 focus:ring-primary/30 shadow-sm cursor-pointer">
-            <option>Last 12 Months</option>
-            <option>Year to Date</option>
-            <option>All Time</option>
-          </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-muted-foreground">
-            <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-          </div>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center gap-1.5 bg-surface border border-border text-xs font-medium text-foreground rounded-lg px-3 py-1.5 outline-none hover:bg-white/5 transition-colors focus:ring-2 focus:ring-primary/30 shadow-sm cursor-pointer">
+            Last 12 Months
+            <svg className="h-3 w-3 text-muted-foreground ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-36">
+            <DropdownMenuItem>Last 12 Months</DropdownMenuItem>
+            <DropdownMenuItem>Year to Date</DropdownMenuItem>
+            <DropdownMenuItem>All Time</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </CardHeader>
       <CardContent className="flex-1 min-h-[300px] px-2 pb-4">
         <ResponsiveContainer width="100%" height="100%">

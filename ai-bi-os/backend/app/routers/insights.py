@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import re
+import os
 from fastapi import APIRouter
 from app.services.data_processing import get_active_dataset, get_dataframe
 from litellm import completion
@@ -60,8 +61,9 @@ async def get_executive_summary():
     
     try:
         response = completion(
-            model="gpt-4o-mini", 
-            messages=[{"role": "user", "content": prompt}]
+            model="xai/grok-beta", 
+            messages=[{"role": "user", "content": prompt}],
+            api_key=os.getenv("XAI_API_KEY")
         )
         llm_summary = response.choices[0].message.content.strip()
         

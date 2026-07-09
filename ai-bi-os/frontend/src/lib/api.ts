@@ -135,6 +135,10 @@ export const insightsApi = {
     api.get<import("./types").Insight[]>(
       `/api/v1/insights${datasetVersionId ? `?dataset_version_id=${datasetVersionId}` : ""}`
     ),
+  executiveSummary: () =>
+    api.get<{ summary: string; highlights?: string[]; verified: boolean }>(
+      "/api/v1/insights/executive-summary"
+    ),
 };
 
 // Rules (Module 14)
