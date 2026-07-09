@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from "@/components/ui/card";
 import Link from "next/link";
-import { AxiosError } from "axios";
+
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -33,23 +33,17 @@ export default function SignupPage() {
       });
 
       // 2. Login
-      const loginRes = await api.post("/api/v1/auth/login", {
+      await api.post("/api/v1/auth/login", {
         email,
         password
       });
       
-      const { access_token } = loginRes.data;
-      
       // 3. Fetch user data
-      const userRes = await api.get("/api/v1/auth/me");
+      const user = await api.get("/api/v1/auth/me");
       
-      login(access_token, userRes.data);
+      login("cookie-auth", user as any);
     } catch (err: unknown) {
-      if (err instanceof AxiosError && err.response) {
-        setError(err.response.data.detail || "Failed to sign up");
-      } else {
-        setError("An error occurred during signup. Please try again.");
-      }
+      setError(err instanceof Error ? err.message : "An error occurred during signup. Please try again.");
     } finally {
       setIsLoading(false);
     }
