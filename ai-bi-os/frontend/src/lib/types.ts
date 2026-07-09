@@ -200,3 +200,9 @@ export interface Recommendation {
   dataset_version_id?: string;
   created_at: string;
 }
+
+export interface ExecutiveSummary {
+  verified: boolean;
+  summary: string;
+  highlights?: string[];
+}

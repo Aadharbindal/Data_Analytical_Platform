@@ -137,7 +137,10 @@ async def get_kpis():
         def calc_health(df_subset):
             if df_subset.empty:
                 return 0.0
-            mask = df_subset[status_col].astype(str).str.contains(r'won|closed|active', case=False, na=False)
+            s = df_subset[status_col].astype(str)
+            healthy = s.str.contains(r'won|active|open|closed', case=False, na=False)
+            unhealthy = s.str.contains(r'lost|churn|cancel|reject|fail', case=False, na=False)
+            mask = healthy & ~unhealthy
             return float(mask.mean() * 100)
             
         curr_health = calc_health(recent_df)
