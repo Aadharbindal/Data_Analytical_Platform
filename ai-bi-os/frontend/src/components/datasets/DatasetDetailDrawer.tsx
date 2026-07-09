@@ -82,38 +82,52 @@ function ProfileTab({ versionId }: { versionId: string }) {
   );
 }
 
-function QualityTab({ versionId }: { versionId: string }) {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["quality", versionId],
-    queryFn: () => qualityApi.get(versionId),
-    enabled: !!versionId,
-  });
-  if (isLoading) return <CardSkeleton lines={4} />;
-  if (isError) return <ErrorState />;
-  if (!data) return null;
-  const score = Math.round(data.overall_score * 100);
+function QualityTab({ dataset }: { dataset: Dataset }) {
+  const score = dataset.quality_score ? Math.round(dataset.quality_score) : 0;
   const color = score >= 80 ? "text-success" : score >= 60 ? "text-warning" : "text-error";
+  
+  const breakdown = dataset.quality_breakdown || {
+    completeness: 0,
+    uniqueness: 0,
+    type_consistency: 0,
+    validity: 0
+  };
+
+  const metrics = [
+    { label: "Completeness", value: Math.round(breakdown.completeness) },
+    { label: "Uniqueness", value: Math.round(breakdown.uniqueness) },
+    { label: "Type Consistency", value: Math.round(breakdown.type_consistency) },
+    { label: "Validity", value: Math.round(breakdown.validity) }
+  ];
+
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-center py-6">
+    <div className="space-y-6">
+      <div className="flex items-center justify-center py-4">
         <div className="text-center">
           <p className={`text-5xl font-bold tabular-metrics ${color}`}>{score}</p>
           <p className="text-sm text-muted-foreground mt-2">Overall Quality Score</p>
         </div>
       </div>
-      {data.issues.map((issue, i) => (
-        <div key={i} className="flex gap-3 px-3 py-2 rounded-lg bg-white/[0.02] border border-border/40">
-          <span className={`text-xs font-medium px-2 py-0.5 rounded-full h-fit mt-0.5 ${
-            issue.severity === "critical" ? "bg-error/15 text-error" :
-            issue.severity === "high" ? "bg-warning/15 text-warning" :
-            "bg-primary/10 text-primary"
-          }`}>{issue.severity}</span>
-          <div>
-            <p className="text-sm font-medium text-foreground">{issue.rule}</p>
-            <p className="text-xs text-muted-foreground">{issue.description} ({issue.count} occurrences)</p>
-          </div>
+      
+      <div className="space-y-4">
+        <h4 className="text-sm font-medium text-foreground">Quality Breakdown</h4>
+        <div className="space-y-3">
+          {metrics.map((m) => (
+            <div key={m.label} className="space-y-1.5">
+              <div className="flex justify-between text-xs">
+                <span className="text-muted-foreground">{m.label}</span>
+                <span className="font-medium text-foreground">{m.value}%</span>
+              </div>
+              <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                <div 
+                  className={`h-full rounded-full ${m.value >= 80 ? 'bg-success' : m.value >= 60 ? 'bg-warning' : 'bg-error'}`}
+                  style={{ width: `${m.value}%` }}
+                />
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
     </div>
   );
 }
@@ -202,7 +216,7 @@ export function DatasetDetailDrawer({ dataset, onClose }: Props) {
               ) : activeTab === "profile" ? (
                 <ProfileTab versionId={versionId} />
               ) : activeTab === "quality" ? (
-                <QualityTab versionId={versionId} />
+                <QualityTab dataset={dataset} />
               ) : (
                 <CleaningTab versionId={versionId} />
               )}

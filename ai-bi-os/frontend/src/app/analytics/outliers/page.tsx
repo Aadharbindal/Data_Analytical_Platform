@@ -1,61 +1,50 @@
 "use client";
 
-import { useDatasetAnalytics } from "@/hooks/useAnalytics";
+import { useQuery } from "@tanstack/react-query";
+import { analyticsApi } from "@/lib/api";
 import { AlertTriangle } from "lucide-react";
+import { CardSkeleton } from "@/components/ui/skeleton-loader";
+import { ErrorState } from "@/components/ui/error-state";
 
 export default function OutlierExplorer() {
-  const { outliers, isLoading } = useDatasetAnalytics("demo", "v1");
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['outliers'],
+    queryFn: () => analyticsApi.outliers()
+  });
 
-  if (isLoading) return <div className="p-8">Loading Outliers...</div>;
-
-  const data = outliers.data;
-  if (!data) return <div className="p-8">No Outlier data found.</div>;
+  if (isLoading) return <div className="p-8"><CardSkeleton lines={10} /></div>;
+  if (isError) return <div className="p-8"><ErrorState /></div>;
+  if (!data || !data.outliers || data.outliers.length === 0) return <div className="p-8">No Outlier data found.</div>;
 
   return (
     <div className="flex flex-col gap-6 h-full">
       <h1 className="text-2xl font-semibold">Outlier Explorer</h1>
       
-      <div className="flex flex-col gap-6">
-        {data.map((colData, i) => (
-          <div key={i} className="glass-card rounded-[20px] p-6 flex flex-col gap-4">
-            <h3 className="font-semibold text-lg border-b border-border/40 pb-3 flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-amber-500" />
-              Feature: {colData.column_name}
-              <span className="ml-auto text-sm font-normal text-muted-foreground bg-surface px-2 py-1 rounded-md">
-                {colData.outliers.length} Outliers Detected
-              </span>
-            </h3>
-            
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead>
-                  <tr className="border-b border-border/40 text-muted-foreground">
-                    <th className="py-2 px-4">Row Index</th>
-                    <th className="py-2 px-4">Value</th>
-                    <th className="py-2 px-4">Severity</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {colData.outliers.map((outlier, j) => (
-                    <tr key={j} className="border-b border-border/10 hover:bg-white/[0.01]">
-                      <td className="py-2 px-4 font-mono text-muted-foreground">#{outlier.index}</td>
-                      <td className="py-2 px-4 font-mono font-medium">{outlier.value}</td>
-                      <td className="py-2 px-4">
-                        <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                          outlier.severity === 'HIGH' ? 'bg-rose-500/10 text-rose-500' : 
-                          outlier.severity === 'MEDIUM' ? 'bg-amber-500/10 text-amber-500' : 
-                          'bg-sky-500/10 text-sky-500'
-                        }`}>
-                          {outlier.severity}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {data.outliers.map((colData: any, i: number) => {
+          const totalOutliers = Math.max(colData.z_score_outliers, colData.iqr_outliers);
+          const hasOutliers = totalOutliers > 0;
+          
+          return (
+            <div key={i} className={`glass-card rounded-[20px] p-6 flex flex-col gap-4 border-l-4 ${hasOutliers ? 'border-amber-500' : 'border-emerald-500'}`}>
+              <h3 className="font-semibold text-lg flex items-center gap-2">
+                <AlertTriangle className={`h-5 w-5 ${hasOutliers ? 'text-amber-500' : 'text-emerald-500'}`} />
+                {colData.column}
+              </h3>
+              
+              <div className="grid grid-cols-2 gap-4 mt-2">
+                <div className="bg-surface/50 p-4 rounded-xl border border-border/40 text-center">
+                  <div className="text-3xl font-bold font-mono mb-1">{colData.z_score_outliers}</div>
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider">Z-Score Outliers</div>
+                </div>
+                <div className="bg-surface/50 p-4 rounded-xl border border-border/40 text-center">
+                  <div className="text-3xl font-bold font-mono mb-1">{colData.iqr_outliers}</div>
+                  <div className="text-xs text-muted-foreground uppercase tracking-wider">IQR Outliers</div>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

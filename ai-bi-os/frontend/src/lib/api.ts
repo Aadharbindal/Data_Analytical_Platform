@@ -125,6 +125,15 @@ export const queryApi = {
 // Analytics Engine (Module 11)
 export const analyticsApi = {
   kpis: () => api.get<import("./types").AnalyticsKPIs>("/api/v1/analytics/kpis"),
+  kpiCenter: () => api.get<any>("/api/v1/analytics/kpi-center"),
+  eda: () => api.get<any>("/api/v1/analytics/eda"),
+  statistics: () => api.get<any>("/api/v1/analytics/statistics"),
+  correlation: () => api.get<any>("/api/v1/analytics/correlation"),
+  distribution: () => api.get<any>("/api/v1/analytics/distribution"),
+  outliers: () => api.get<any>("/api/v1/analytics/outliers"),
+  timeseries: (metric: string) => api.get<any>(`/api/v1/analytics/timeseries?metric=${metric}`),
+  trend: () => api.get<any>("/api/v1/analytics/trend"),
+  forecast: (metric: string) => api.get<any>(`/api/v1/analytics/forecast?metric=${metric}`),
   trends: (datasetVersionId: string) =>
     api.get<import("./types").TrendData[]>(
       `/api/v1/analytics/trends?dataset_version_id=${datasetVersionId}`

@@ -77,14 +77,15 @@ async def get_active_dataset_route():
         "columns": dataset_info["columns"],
         "skipped_rows": dataset_info.get("skipped_rows", 0),
         "sheet_name": dataset_info.get("sheet_name"),
-        "version": dataset_info.get("version", 1)
+        "version": dataset_info.get("version", 1),
+        "quality_score": dataset_info.get("quality_score", 0)
     }
 
 @router.get("/")
 async def list_datasets(workspace_id: Optional[str] = None):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    cursor.execute('SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version FROM datasets ORDER BY created_at DESC')
+    cursor.execute('SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score FROM datasets ORDER BY created_at DESC')
     rows = cursor.fetchall()
     conn.close()
     
@@ -97,7 +98,8 @@ async def list_datasets(workspace_id: Optional[str] = None):
             "columns": json.loads(r[6]) if r[6] else [],
             "skipped_rows": r[7],
             "sheet_name": r[8],
-            "version": r[9]
+            "version": r[9],
+            "quality_score": r[10]
         }
         for r in rows
     ]

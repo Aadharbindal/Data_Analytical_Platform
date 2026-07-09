@@ -115,42 +115,42 @@ export interface GovernanceSummary {
 // API Client
 // ---------------------------------------------------------
 export const advancedAnalyticsApi = {
-  // M18: KPI Engine
-  getKpis: (datasetId: string) => api.get<KPI[]>(`/api/v1/kpi/${datasetId}/summary`),
+  // M18: KPI Engine (Dashboard uses analyticsApi.kpis() in lib/api.ts, this one is extra)
+  getKpis: (datasetId: string) => api.get<KPI[]>(`/api/v1/analytics/kpis`),
   
-  // M19: Business Metrics Engine
-  getBusinessMetrics: (datasetId: string) => api.get<BusinessMetric[]>(`/api/v1/metrics/${datasetId}/summary`),
+  // M19: Business Metrics Engine (Not implemented in backend yet, stub)
+  getBusinessMetrics: (datasetId: string) => api.get<BusinessMetric[]>(`/api/v1/analytics/metrics`),
   
   // M20: EDA Engine
-  getEDAProfile: (datasetVersionId: string) => api.get<EDAProfile>(`/api/v1/eda/${datasetVersionId}`),
+  getEDAProfile: (datasetVersionId: string) => api.get<EDAProfile>(`/api/v1/analytics/eda`),
   
   // M21: Correlation Engine
-  getCorrelations: (datasetVersionId: string) => api.get<CorrelationData>(`/api/v1/correlation/${datasetVersionId}/matrix`),
+  getCorrelations: (datasetVersionId: string) => api.get<CorrelationData>(`/api/v1/analytics/correlation`),
   
   // M22: Statistical Inference Engine
-  getStatistics: (datasetVersionId: string) => api.get<StatisticalTest[]>(`/api/v1/statistics/${datasetVersionId}/summary`),
+  getStatistics: (datasetVersionId: string) => api.get<StatisticalTest[]>(`/api/v1/analytics/statistics`),
   
-  // M23: Regression Engine
-  getRegression: (datasetVersionId: string) => api.get<RegressionModel[]>(`/api/v1/regression/${datasetVersionId}/summary`),
+  // M23: Regression Engine (Not implemented yet, stub)
+  getRegression: (datasetVersionId: string) => api.get<RegressionModel[]>(`/api/v1/analytics/regression`),
   
-  // M24: Confidence & Validation Engine
-  getValidation: (datasetVersionId: string) => api.get<ValidationScore>(`/api/v1/validation/${datasetVersionId}/summary`),
+  // M24: Confidence & Validation Engine (Not implemented yet, stub)
+  getValidation: (datasetVersionId: string) => api.get<ValidationScore>(`/api/v1/analytics/validation`),
   
   // M25: Distribution Analytics Engine
-  getDistributions: (datasetId: string) => api.get<DistributionProfile[]>(`/api/v1/distribution/${datasetId}/profiles`),
+  getDistributions: (datasetId: string) => api.get<DistributionProfile[]>(`/api/v1/analytics/distribution`),
   
   // M26: Outlier Analysis Engine
-  getOutliers: (datasetId: string) => api.get<OutlierData[]>(`/api/v1/outliers/${datasetId}/summary`),
+  getOutliers: (datasetId: string) => api.get<OutlierData[]>(`/api/v1/analytics/outliers`),
   
-  // M27: Time Series Analytics Engine
-  getTimeSeries: (datasetId: string) => api.get<TimeSeriesSummary[]>(`/api/v1/timeseries/${datasetId}/summary`),
+  // M27: Time Series Analytics Engine (defaults to revenue)
+  getTimeSeries: (datasetId: string) => api.get<TimeSeriesSummary[]>(`/api/v1/analytics/timeseries?metric=revenue`),
   
   // M28: Trend & Change Detection Engine
-  getTrends: (datasetId: string) => api.get<TrendSummary[]>(`/api/v1/trends/${datasetId}/summary`),
+  getTrends: (datasetId: string) => api.get<TrendSummary[]>(`/api/v1/analytics/trend`),
   
-  // M29: Forecasting Engine
-  getForecasts: (datasetId: string) => api.get<ForecastSummary[]>(`/api/v1/forecast/${datasetId}/summary`),
+  // M29: Forecasting Engine (defaults to revenue)
+  getForecasts: (datasetId: string) => api.get<ForecastSummary[]>(`/api/v1/analytics/forecast?metric=revenue`),
   
-  // M30: Forecast Governance Engine
-  getGovernance: (modelId: string) => api.get<GovernanceSummary>(`/api/v1/forecast/governance?model_id=${modelId}`),
+  // M30: Forecast Governance Engine (Not implemented yet, stub)
+  getGovernance: (modelId: string) => api.get<GovernanceSummary>(`/api/v1/analytics/governance`),
 };
