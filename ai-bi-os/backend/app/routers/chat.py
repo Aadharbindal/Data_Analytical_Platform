@@ -1,8 +1,9 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from app.services.data_processing import get_active_dataset, get_dataset_path
 from app.services.query.duckdb_engine import DuckDBEngine
 from app.ai.agents import AgentOrchestrator
+from app.core.security import get_current_user
 import os
 
 router = APIRouter()
@@ -11,8 +12,8 @@ class ChatRequest(BaseModel):
     message: str
 
 @router.post("/")
-async def chat(request: ChatRequest):
-    dataset_info = get_active_dataset()
+async def chat(request: ChatRequest, current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return {"response": "No dataset uploaded yet.", "sql": None}
         

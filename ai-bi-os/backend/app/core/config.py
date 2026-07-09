@@ -28,3 +28,11 @@ MAX_UPLOAD_MB = int(os.getenv("MAX_UPLOAD_MB", "50"))
 
 # Backend Port
 PORT = int(os.getenv("PORT", "8000"))
+
+# Secret Key for Auth
+import secrets
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    SECRET_KEY = secrets.token_urlsafe(32)
+    print("WARNING: No SECRET_KEY found in environment. Generated a temporary random key for development.")
+

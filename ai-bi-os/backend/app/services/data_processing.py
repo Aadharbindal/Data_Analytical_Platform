@@ -36,6 +36,18 @@ def run_filepath_migration():
 def init_db():
     conn = sqlite3.connect(str(DB_PATH))
     cursor = conn.cursor()
+    
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id TEXT PRIMARY KEY,
+            email TEXT UNIQUE,
+            password_hash TEXT,
+            full_name TEXT,
+            created_at TEXT,
+            is_active INTEGER DEFAULT 1
+        )
+    ''')
+    
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS datasets (
             id TEXT PRIMARY KEY,
@@ -57,11 +69,26 @@ def init_db():
             tags JSON
         )
     ''')
+    
+    # We must migrate active_dataset from global singleton to per-user.
+    # Safe to drop since it's just ephemeral session state.
+    try:
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='active_dataset'")
+        if cursor.fetchone():
+            # check if it has user_id
+            cursor.execute("PRAGMA table_info(active_dataset)")
+            columns = [c[1] for c in cursor.fetchall()]
+            if 'user_id' not in columns:
+                cursor.execute("DROP TABLE active_dataset")
+    except Exception:
+        pass
+        
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS active_dataset (
-            id INTEGER PRIMARY KEY CHECK (id = 1),
+            user_id TEXT PRIMARY KEY,
             dataset_id TEXT,
-            FOREIGN KEY(dataset_id) REFERENCES datasets(id)
+            FOREIGN KEY(dataset_id) REFERENCES datasets(id),
+            FOREIGN KEY(user_id) REFERENCES users(id)
         )
     ''')
     
@@ -82,30 +109,45 @@ def init_db():
     ''')
     
     # Dynamically alter table to add columns for older DB schemas
+    for col, ctype, default in [
+        ("skipped_rows", "INTEGER", "0"),
+        ("sheet_name", "TEXT", "NULL"),
+        ("version", "INTEGER", "1"),
+        ("quality_score", "REAL", "0"),
+        ("quality_breakdown", "TEXT", "NULL"),
+        ("user_id", "TEXT", "NULL")
+    ]:
+        try:
+            cursor.execute(f"ALTER TABLE datasets ADD COLUMN {col} {ctype} DEFAULT {default}")
+        except sqlite3.OperationalError:
+            pass
+            
+    for col, ctype, default in [
+        ("user_id", "TEXT", "NULL")
+    ]:
+        try:
+            cursor.execute(f"ALTER TABLE catalog ADD COLUMN {col} {ctype} DEFAULT {default}")
+        except sqlite3.OperationalError:
+            pass
+            
+    for col, ctype, default in [
+        ("user_id", "TEXT", "NULL")
+    ]:
+        try:
+            cursor.execute(f"ALTER TABLE regression_models ADD COLUMN {col} {ctype} DEFAULT {default}")
+        except sqlite3.OperationalError:
+            pass
+            
+    # Migration: assign existing datasets without a user to the first created user, if any exists
     try:
-        cursor.execute("ALTER TABLE datasets ADD COLUMN skipped_rows INTEGER DEFAULT 0")
-    except sqlite3.OperationalError:
-        pass
-    try:
-        cursor.execute("ALTER TABLE datasets ADD COLUMN sheet_name TEXT")
-    except sqlite3.OperationalError:
-        pass
-    try:
-        cursor.execute("ALTER TABLE datasets ADD COLUMN version INTEGER DEFAULT 1")
-    except sqlite3.OperationalError:
-        pass
-    try:
-        cursor.execute("ALTER TABLE datasets ADD COLUMN quality_score REAL DEFAULT 0")
-    except sqlite3.OperationalError:
-        pass
-    try:
-        cursor.execute("ALTER TABLE datasets ADD COLUMN quality_breakdown TEXT")
-    except sqlite3.OperationalError:
-        pass
-    try:
-        cursor.execute("ALTER TABLE datasets ADD COLUMN quality_breakdown TEXT")
-    except sqlite3.OperationalError:
-        pass
+        cursor.execute("SELECT id FROM users ORDER BY created_at ASC LIMIT 1")
+        first_user = cursor.fetchone()
+        if first_user:
+            cursor.execute("UPDATE datasets SET user_id = ? WHERE user_id IS NULL", (first_user[0],))
+            cursor.execute("UPDATE catalog SET user_id = ? WHERE user_id IS NULL", (first_user[0],))
+            cursor.execute("UPDATE regression_models SET user_id = ? WHERE user_id IS NULL", (first_user[0],))
+    except Exception as e:
+        print(f"Error assigning legacy datasets: {e}")
         
     conn.commit()
     conn.close()
@@ -244,11 +286,11 @@ def parse_to_dataframe(file_content: bytes, filename: str):
     
     return df, metadata
 
-def save_dataset(file_content: bytes, filename: str):
+def save_dataset(file_content: bytes, filename: str, user_id: str):
     # Determine version
     conn = sqlite3.connect(str(DB_PATH))
     cursor = conn.cursor()
-    cursor.execute("SELECT MAX(version) FROM datasets WHERE name = ?", (filename,))
+    cursor.execute("SELECT MAX(version) FROM datasets WHERE name = ? AND user_id = ?", (filename, user_id))
     max_ver = cursor.fetchone()[0]
     version = (max_ver + 1) if max_ver is not None else 1
     conn.close()
@@ -313,38 +355,38 @@ def save_dataset(file_content: bytes, filename: str):
     conn = sqlite3.connect(str(DB_PATH))
     cursor = conn.cursor()
     cursor.execute('''
-        INSERT INTO datasets (id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score, quality_breakdown)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO datasets (id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score, quality_breakdown, user_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
         dataset_id, filename, dataset_info["status"], dataset_info["created_at"],
         json.dumps(dataset_info["latest_version"]), filename_db, json.dumps(columns),
         dataset_info["skipped_rows"], dataset_info["sheet_name"], dataset_info["version"],
-        dataset_info["quality_score"], dataset_info["quality_breakdown"]
+        dataset_info["quality_score"], dataset_info["quality_breakdown"], user_id
     ))
     
     cursor.execute('''
-        INSERT INTO catalog (id, name, domain, description, owner, tags)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO catalog (id, name, domain, description, owner, tags, user_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     ''', (
         dataset_id, catalog_entry["name"], catalog_entry["domain"],
-        catalog_entry["description"], catalog_entry["owner"], json.dumps(catalog_entry["tags"])
+        catalog_entry["description"], catalog_entry["owner"], json.dumps(catalog_entry["tags"]), user_id
     ))
     
     cursor.execute('''
-        INSERT OR REPLACE INTO active_dataset (id, dataset_id) VALUES (1, ?)
-    ''', (dataset_id,))
+        INSERT OR REPLACE INTO active_dataset (user_id, dataset_id) VALUES (?, ?)
+    ''', (user_id, dataset_id))
     
     conn.commit()
     conn.close()
     
     return dataset_info
 
-def get_active_dataset():
+def get_active_dataset(user_id: str):
     conn = sqlite3.connect(str(DB_PATH))
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT dataset_id FROM active_dataset WHERE id = 1
-    ''')
+        SELECT dataset_id FROM active_dataset WHERE user_id = ?
+    ''', (user_id,))
     row = cursor.fetchone()
     if not row:
         conn.close()
@@ -353,8 +395,8 @@ def get_active_dataset():
     dataset_id = row[0]
     cursor.execute('''
         SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score, quality_breakdown
-        FROM datasets WHERE id = ?
-    ''', (dataset_id,))
+        FROM datasets WHERE id = ? AND user_id = ?
+    ''', (dataset_id, user_id))
     dataset_row = cursor.fetchone()
     conn.close()
     
@@ -378,7 +420,7 @@ def get_active_dataset():
     
     # Lazy computation for datasets where quality_score is 0.0 (from SQLite ALTER TABLE DEFAULT 0)
     if dataset_info["quality_score"] == 0.0:
-        df = get_dataframe(dataset_info["id"])
+        df = get_dataframe(dataset_info["id"], user_id)
         if df is not None and len(df) > 0:
             from app.services.stats_service import quality_report
             quality = quality_report(df)
@@ -398,10 +440,10 @@ def get_active_dataset():
             
     return dataset_info
 
-def get_dataframe(dataset_id: str):
+def get_dataframe(dataset_id: str, user_id: str):
     conn = sqlite3.connect(str(DB_PATH))
     cursor = conn.cursor()
-    cursor.execute('SELECT filepath, sheet_name FROM datasets WHERE id = ?', (dataset_id,))
+    cursor.execute('SELECT filepath, sheet_name FROM datasets WHERE id = ? AND user_id = ?', (dataset_id, user_id))
     row = cursor.fetchone()
     conn.close()
     

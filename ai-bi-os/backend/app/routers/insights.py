@@ -2,8 +2,9 @@ import pandas as pd
 import numpy as np
 import re
 import os
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from app.services.data_processing import get_active_dataset, get_dataframe
+from app.core.security import get_current_user
 from litellm import completion
 
 router = APIRouter()
@@ -15,12 +16,12 @@ def find_column(df: pd.DataFrame, pattern: str) -> str:
     return None
 
 @router.get("/executive-summary")
-async def get_executive_summary():
-    dataset_info = get_active_dataset()
+async def get_executive_summary(current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return {"summary": "No dataset uploaded yet. Upload a dataset to see AI insights.", "verified": False}
         
-    df = get_dataframe(dataset_info["id"])
+    df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         return {"summary": "Failed to load data.", "verified": False}
 
@@ -108,12 +109,12 @@ async def get_executive_summary():
         return {"summary": summary, "verified": True}
 
 @router.get("/")
-async def list_insights(dataset_version_id: str = None):
-    dataset_info = get_active_dataset()
+async def list_insights(dataset_version_id: str = None, current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return []
         
-    df = get_dataframe(dataset_info["id"])
+    df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         return []
 

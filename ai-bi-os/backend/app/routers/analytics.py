@@ -1,33 +1,34 @@
 import pandas as pd
 import numpy as np
 import re
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException, Depends
 from fastapi.responses import PlainTextResponse, HTMLResponse
 from typing import Optional
 from app.services.data_processing import get_active_dataset, get_dataframe
+from app.core.security import get_current_user
 from app.services.stats_service import compute_kpis, forecast_series
 
 router = APIRouter()
 
 @router.get("/kpis")
-async def get_kpis_endpoint():
-    dataset_info = get_active_dataset()
+async def get_kpis_endpoint(current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return {"kpis": [], "chart_data": []}
     
-    df = get_dataframe(dataset_info["id"])
+    df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         return {"kpis": [], "chart_data": []}
         
     return compute_kpis(df)
 
 @router.get("/eda")
-async def get_eda():
-    dataset_info = get_active_dataset()
+async def get_eda(current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return {"columns": [], "rows": 0, "summary": []}
     
-    df = get_dataframe(dataset_info["id"])
+    df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         return {"columns": [], "rows": 0, "summary": []}
 
@@ -61,12 +62,12 @@ async def get_eda():
     }
 
 @router.get("/statistics")
-async def get_statistics():
-    dataset_info = get_active_dataset()
+async def get_statistics(current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return {"stats": []}
     
-    df = get_dataframe(dataset_info["id"])
+    df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         return {"stats": []}
 
@@ -87,12 +88,12 @@ async def get_statistics():
     return {"stats": stats_list}
 
 @router.get("/correlation")
-async def get_correlation():
-    dataset_info = get_active_dataset()
+async def get_correlation(current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return {"correlation": []}
     
-    df = get_dataframe(dataset_info["id"])
+    df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         return {"correlation": []}
 
@@ -112,12 +113,12 @@ async def get_correlation():
     return {"correlation": result}
 
 @router.get("/distribution")
-async def get_distribution():
-    dataset_info = get_active_dataset()
+async def get_distribution(current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return []
     
-    df = get_dataframe(dataset_info["id"])
+    df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         return []
 
@@ -142,12 +143,12 @@ async def get_distribution():
     return res
 
 @router.get("/outliers")
-async def get_outliers():
-    dataset_info = get_active_dataset()
+async def get_outliers(current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return {"outliers": []}
     
-    df = get_dataframe(dataset_info["id"])
+    df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         return {"outliers": []}
 
@@ -177,12 +178,12 @@ async def get_outliers():
     return {"outliers": outliers_res}
 
 @router.get("/timeseries")
-async def get_timeseries(metric: str):
-    dataset_info = get_active_dataset()
+async def get_timeseries(metric: str, current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         raise HTTPException(status_code=400, detail="No active dataset")
     
-    df = get_dataframe(dataset_info["id"])
+    df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None or metric not in df.columns:
         raise HTTPException(status_code=400, detail="Invalid metric column")
 
@@ -207,12 +208,12 @@ async def get_timeseries(metric: str):
     return {"timeseries": res}
 
 @router.get("/trend")
-async def get_trend():
-    dataset_info = get_active_dataset()
+async def get_trend(current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return {"trends": []}
     
-    df = get_dataframe(dataset_info["id"])
+    df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         return {"trends": []}
 
@@ -255,12 +256,12 @@ async def get_trend():
     return {"trend": trends_res}
 
 @router.get("/kpi-center")
-async def get_kpi_center():
-    dataset_info = get_active_dataset()
+async def get_kpi_center(current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return {"kpis": []}
     
-    df = get_dataframe(dataset_info["id"])
+    df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         return {"kpis": []}
 
@@ -291,12 +292,12 @@ async def get_kpi_center():
     return {"available_kpis": available_kpis, "omitted_kpis": omitted_kpis}
 
 @router.get("/forecast")
-async def get_forecast(metric: str):
-    dataset_info = get_active_dataset()
+async def get_forecast(metric: str, current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         raise HTTPException(status_code=400, detail="No active dataset")
     
-    df = get_dataframe(dataset_info["id"])
+    df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         raise HTTPException(status_code=400, detail="Dataset not loaded")
         
@@ -304,11 +305,11 @@ async def get_forecast(metric: str):
     return res
 
 @router.get("/export/{page}")
-async def export_csv(page: str):
-    dataset_info = get_active_dataset()
+async def export_csv(page: str, current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         raise HTTPException(status_code=400, detail="No active dataset")
-    df = get_dataframe(dataset_info["id"])
+    df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         raise HTTPException(status_code=400, detail="Dataset not loaded")
         
@@ -347,12 +348,12 @@ async def export_csv(page: str):
         raise HTTPException(status_code=400, detail="Invalid page for export")
 
 @router.get("/report")
-async def generate_report():
-    dataset_info = get_active_dataset()
+async def generate_report(current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return HTMLResponse("<h1>No active dataset</h1>")
         
-    df = get_dataframe(dataset_info["id"])
+    df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         return HTMLResponse("<h1>Dataset not loaded</h1>")
         
@@ -419,12 +420,12 @@ from app.services.pdf_generator import generate_pdf_report
 from datetime import datetime
 
 @router.get("/report.pdf")
-async def get_pdf_report():
-    dataset_info = get_active_dataset()
+async def get_pdf_report(current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         raise HTTPException(status_code=400, detail="No active dataset")
         
-    df = get_dataframe(dataset_info["id"])
+    df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         raise HTTPException(status_code=400, detail="Dataset not loaded")
         
@@ -444,12 +445,12 @@ async def get_pdf_report():
     )
 
 @router.get("/metrics")
-async def get_metrics_explorer():
-    dataset_info = get_active_dataset()
+async def get_metrics_explorer(current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return []
     
-    df = get_dataframe(dataset_info["id"])
+    df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         return []
 
@@ -488,11 +489,11 @@ async def get_metrics_explorer():
     return res
 
 @router.get("/breakdown")
-async def get_breakdown(metric: str, period: Optional[str] = None):
-    dataset_info = get_active_dataset()
+async def get_breakdown(metric: str, period: Optional[str] = None, current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         raise HTTPException(status_code=400, detail="No dataset")
-    df = get_dataframe(dataset_info["id"])
+    df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         raise HTTPException(status_code=400, detail="Dataset not loaded")
         

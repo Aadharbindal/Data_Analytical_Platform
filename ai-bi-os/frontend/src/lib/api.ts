@@ -7,6 +7,7 @@ export const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:800
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
+    credentials: 'include',
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -20,7 +21,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   return res.json();
 }
 
-export const api = {
+const api = {
   get: <T>(path: string) => request<T>(path),
   post: <T>(path: string, body: unknown) =>
     request<T>(path, { method: "POST", body: JSON.stringify(body) }),
@@ -32,6 +33,7 @@ export const api = {
   upload: async <T>(path: string, formData: FormData): Promise<T> => {
     const res = await fetch(`${BASE_URL}${path}`, {
       method: "POST",
+      credentials: 'include',
       body: formData,
     });
     if (!res.ok) {
@@ -41,6 +43,7 @@ export const api = {
     return res.json();
   },
 };
+export default api;
 
 // ============================================================
 // Typed endpoint helpers
