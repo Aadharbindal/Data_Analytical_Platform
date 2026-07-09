@@ -5,7 +5,8 @@ import uuid
 import sqlite3
 import json
 import os
-from app.services.data_processing import save_dataset, DB_PATH, get_dataset_path, get_active_dataset
+from app.services.data_processing import save_dataset, DB_PATH, get_dataset_path, get_active_dataset, get_dataframe
+from app.services.stats_service import compute_kpis
 
 router = APIRouter()
 
@@ -154,4 +155,72 @@ async def delete_dataset(dataset_id: str):
     conn.close()
     
     return {"status": "success", "message": "Dataset deleted"}
+
+@router.get("/compare")
+async def compare_datasets(id_a: str, id_b: str):
+    df_a = get_dataframe(id_a)
+    df_b = get_dataframe(id_b)
+    
+    if df_a is None or df_b is None:
+        raise HTTPException(status_code=400, detail="One or both datasets could not be loaded")
+        
+    # Schema diff
+    cols_a = set(df_a.columns)
+    cols_b = set(df_b.columns)
+    only_in_a = list(cols_a - cols_b)
+    only_in_b = list(cols_b - cols_a)
+    common_cols = list(cols_a & cols_b)
+    
+    # KPI Diffs
+    kpis_a = compute_kpis(df_a).get("kpis", [])
+    kpis_b = compute_kpis(df_b).get("kpis", [])
+    
+    kpi_diffs = []
+    for ka in kpis_a:
+        for kb in kpis_b:
+            if ka["name"] == kb["name"]:
+                try:
+                    val_a = float(str(ka["value"]).replace("$","").replace(",",""))
+                    val_b = float(str(kb["value"]).replace("$","").replace(",",""))
+                except ValueError:
+                    val_a, val_b = 0, 0
+                delta = val_b - val_a
+                delta_pct = (delta / val_a) * 100 if val_a != 0 else 0
+                
+                kpi_diffs.append({
+                    "name": ka["name"],
+                    "value_a": val_a,
+                    "value_b": val_b,
+                    "delta": delta,
+                    "delta_pct": delta_pct
+                })
+                break
+                
+    # Numeric column diffs (means)
+    num_diffs = []
+    import numpy as np
+    import pandas as pd
+    for col in common_cols:
+        if pd.api.types.is_numeric_dtype(df_a[col]) and pd.api.types.is_numeric_dtype(df_b[col]):
+            mean_a = float(df_a[col].mean()) if not pd.isna(df_a[col].mean()) else 0
+            mean_b = float(df_b[col].mean()) if not pd.isna(df_b[col].mean()) else 0
+            delta = mean_b - mean_a
+            num_diffs.append({
+                "column": col,
+                "mean_a": mean_a,
+                "mean_b": mean_b,
+                "delta": delta
+            })
+            
+    return {
+        "schema_diff": {
+            "only_in_a": only_in_a,
+            "only_in_b": only_in_b,
+            "common": common_cols
+        },
+        "kpi_diffs": kpi_diffs,
+        "num_diffs": num_diffs,
+        "rows_a": len(df_a),
+        "rows_b": len(df_b)
+    }
 

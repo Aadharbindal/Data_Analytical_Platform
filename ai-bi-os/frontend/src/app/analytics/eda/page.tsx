@@ -6,6 +6,7 @@ import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { ErrorState } from "@/components/ui/error-state";
 import { StudioPage } from "@/components/analytics/StudioPage";
 import { formatNumber, formatPercent } from "@/lib/utils";
+import { Download } from "lucide-react";
 
 export default function EDAPage() {
   const { data, isLoading, isError } = useQuery({
@@ -13,8 +14,18 @@ export default function EDAPage() {
     queryFn: () => analyticsApi.eda()
   });
 
+  const toolbar = (
+    <button 
+      onClick={() => window.open("http://127.0.0.1:8000/api/v1/analytics/export/eda")}
+      className="bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1.5 transition-colors"
+    >
+      <Download className="w-3.5 h-3.5" />
+      Export CSV
+    </button>
+  );
+
   return (
-    <StudioPage title="Dataset Analysis (EDA)" isLoading={isLoading}>
+    <StudioPage title="Dataset Analysis (EDA)" isLoading={isLoading} toolbar={toolbar}>
       {isError ? (
         <ErrorState />
       ) : !data || !data.summary || data.summary.length === 0 ? (
