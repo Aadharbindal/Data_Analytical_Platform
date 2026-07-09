@@ -108,7 +108,11 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
       className="grid grid-cols-12 gap-6 w-full"
     >
       {/* Top Row: Metrics */}
-      <motion.div variants={itemVariants} className="col-span-12 grid grid-cols-4 gap-6">
+      <motion.div 
+        variants={itemVariants} 
+        className="col-span-12 grid gap-6"
+        style={{ gridTemplateColumns: `repeat(${loading.analytics ? 4 : (metricCards.length || 4)}, minmax(0, 1fr))` }}
+      >
         {loading.analytics
           ? Array.from({ length: 4 }).map((_, i) => <MetricCardSkeleton key={i} />)
           : metricCards.map((card) => (

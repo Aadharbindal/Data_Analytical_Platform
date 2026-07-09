@@ -23,16 +23,35 @@ async def get_kpis():
         
     kpis = []
     
+    def safe_divide(a, b):
+        return a / b if b else 0.0
+
+    def calc_trend(current, previous):
+        if previous == 0 or pd.isna(previous):
+            return 0.0
+        return round(((current - previous) / previous) * 100, 1)
+    
     # 1. Total Revenue
     rev_col = find_column(df, r'revenue|sales|amount')
+    
     # 2. Active Users / Customers
-    user_col = find_column(df, r'customer|user|client')
+    user_col = None
+    for col in df.columns:
+        if re.search(r'customer|user|client|account', col, re.IGNORECASE):
+            # Exclude categorical dimensions that just happen to contain the word
+            if not re.search(r'region|country|state|type|category|group|segment|tier', col, re.IGNORECASE):
+                user_col = col
+                break
+                
     # 3. Deals / Transactions
-    deal_col = find_column(df, r'deal|order|transaction')
+    deal_col = find_column(df, r'deal|order|transaction|invoice')
+    
+    # 4. Pipeline / Status
+    status_col = find_column(df, r'stage|status|pipeline')
+    
     # Date column
     date_col = find_column(df, r'date|month|year|time')
     
-    # If date_col exists, we can try to compute trends
     if date_col:
         try:
             df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
@@ -41,80 +60,102 @@ async def get_kpis():
         except Exception:
             date_col = None
 
-    def calc_trend(current, previous):
-        if previous == 0 or pd.isna(previous):
-            return 0.0
-        return round(((current - previous) / previous) * 100, 1)
-
-    def append_kpi(kpi_id, name, col, agg_func, is_unique=False):
-        if not col or col not in df.columns:
-            return
-        
+    recent_df = df
+    prior_df = None
+    
+    if date_col:
         try:
-            if date_col:
-                # Group by month or generic period
-                periods = df.groupby(df[date_col].dt.to_period('M'))
-                if len(periods) >= 2:
-                    sorted_periods = sorted(periods.groups.keys())
-                    recent_period = periods.get_group(sorted_periods[-1])
-                    prior_period = periods.get_group(sorted_periods[-2])
-                    
-                    if is_unique:
-                        curr_val = recent_period[col].nunique()
-                        prev_val = prior_period[col].nunique()
-                    else:
-                        curr_val = float(recent_period[col].agg(agg_func))
-                        prev_val = float(prior_period[col].agg(agg_func))
-                        
-                    kpis.append({
-                        "id": kpi_id,
-                        "name": name,
-                        "value": round(curr_val, 2) if isinstance(curr_val, float) else curr_val,
-                        "previous_value": round(prev_val, 2) if isinstance(prev_val, float) else prev_val,
-                        "trend": calc_trend(curr_val, prev_val),
-                        "history": []
-                    })
-                    return
-        except Exception as e:
+            periods = df.groupby(df[date_col].dt.to_period('M'))
+            if len(periods) >= 2:
+                sorted_periods = sorted(periods.groups.keys())
+                recent_df = periods.get_group(sorted_periods[-1])
+                prior_df = periods.get_group(sorted_periods[-2])
+        except Exception:
             pass
-            
-        # Fallback if no date column or not enough data
-        if is_unique:
-            val = df[col].nunique()
-        else:
-            val = float(df[col].agg(agg_func))
-            
+
+    # 1. KPI: Total Revenue
+    if rev_col and pd.api.types.is_numeric_dtype(df[rev_col]):
+        curr_rev = recent_df[rev_col].sum()
+        prev_rev = prior_df[rev_col].sum() if prior_df is not None else curr_rev
         kpis.append({
-            "id": kpi_id,
-            "name": name,
-            "value": round(val, 2) if isinstance(val, float) else val,
-            "previous_value": round(val, 2) if isinstance(val, float) else val,
-            "trend": 0.0,
+            "id": "kpi_rev",
+            "name": "Total Revenue",
+            "value": round(float(curr_rev), 2),
+            "previous_value": round(float(prev_rev), 2),
+            "trend": calc_trend(curr_rev, prev_rev),
             "history": []
         })
 
-    # Total Revenue
-    if rev_col and pd.api.types.is_numeric_dtype(df[rev_col]):
-        append_kpi("kpi_rev", "Total Revenue", rev_col, 'sum')
-        
-    # Active Users
+    # 2. KPI: Active Users
     if user_col:
-        append_kpi("kpi_users", "Active Users", user_col, 'count', is_unique=True)
+        if pd.api.types.is_numeric_dtype(df[user_col]) and not re.search(r'id\b', user_col, re.IGNORECASE):
+            curr_users = recent_df[user_col].sum()
+            prev_users = prior_df[user_col].sum() if prior_df is not None else curr_users
+        else:
+            curr_users = recent_df[user_col].nunique()
+            prev_users = prior_df[user_col].nunique() if prior_df is not None else curr_users
+            
+        kpis.append({
+            "id": "kpi_users",
+            "name": "Active Users",
+            "value": float(curr_users),
+            "previous_value": float(prev_users),
+            "trend": calc_trend(curr_users, prev_users),
+            "history": []
+        })
+
+    # 3. KPI: Avg. Deal Size
+    if rev_col and pd.api.types.is_numeric_dtype(df[rev_col]):
+        curr_rev = recent_df[rev_col].sum()
+        prev_rev = prior_df[rev_col].sum() if prior_df is not None else curr_rev
         
-    # Avg. Deal Size
-    if rev_col and pd.api.types.is_numeric_dtype(df[rev_col]) and deal_col:
-        append_kpi("kpi_deal_size", "Avg. Deal Size", rev_col, 'mean')
+        if deal_col:
+            if pd.api.types.is_numeric_dtype(df[deal_col]) and not re.search(r'id\b', deal_col, re.IGNORECASE):
+                curr_deals = recent_df[deal_col].sum()
+                prev_deals = prior_df[deal_col].sum() if prior_df is not None else curr_deals
+            else:
+                curr_deals = recent_df[deal_col].nunique()
+                prev_deals = prior_df[deal_col].nunique() if prior_df is not None else curr_deals
+        else:
+            curr_deals = len(recent_df)
+            prev_deals = len(prior_df) if prior_df is not None else curr_deals
+            
+        curr_avg = safe_divide(curr_rev, curr_deals)
+        prev_avg = safe_divide(prev_rev, prev_deals)
         
-    # Pipeline Health / Deals count
-    if deal_col:
-        append_kpi("kpi_deals", "Total Deals", deal_col, 'count')
+        kpis.append({
+            "id": "kpi_deal_size",
+            "name": "Avg. Deal Size",
+            "value": round(float(curr_avg), 2),
+            "previous_value": round(float(prev_avg), 2),
+            "trend": calc_trend(curr_avg, prev_avg),
+            "history": []
+        })
+
+    # 4. KPI: Pipeline Health
+    if status_col:
+        def calc_health(df_subset):
+            if df_subset.empty:
+                return 0.0
+            mask = df_subset[status_col].astype(str).str.contains(r'won|closed|active', case=False, na=False)
+            return float(mask.mean() * 100)
+            
+        curr_health = calc_health(recent_df)
+        prev_health = calc_health(prior_df) if prior_df is not None else curr_health
+        
+        kpis.append({
+            "id": "kpi_pipeline",
+            "name": "Pipeline Health",
+            "value": round(curr_health, 1),
+            "previous_value": round(prev_health, 1),
+            "trend": calc_trend(curr_health, prev_health),
+            "history": []
+        })
 
     chart_data = []
     if date_col and rev_col and pd.api.types.is_numeric_dtype(df[rev_col]):
         try:
-            # Group by month and sum revenue
             monthly_rev = df.groupby(df[date_col].dt.strftime('%b %Y'))[rev_col].sum().reset_index()
-            # Sort by date
             monthly_rev['temp_date'] = pd.to_datetime(monthly_rev[date_col], format='%b %Y')
             monthly_rev = monthly_rev.sort_values(by='temp_date')
             for _, row in monthly_rev.iterrows():
