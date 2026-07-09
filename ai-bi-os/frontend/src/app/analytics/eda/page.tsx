@@ -1,14 +1,19 @@
 "use client";
 
-import { useDatasetAnalytics } from "@/hooks/useAnalytics";
+import { useQuery } from "@tanstack/react-query";
+import { analyticsApi } from "@/lib/api";
+import { CardSkeleton } from "@/components/ui/skeleton-loader";
+import { ErrorState } from "@/components/ui/error-state";
 
 export default function EDAPage() {
-  const { eda, isLoading } = useDatasetAnalytics("demo", "v1");
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['eda'],
+    queryFn: () => analyticsApi.eda()
+  });
 
-  if (isLoading) return <div className="p-8">Loading EDA Profile...</div>;
-
-  const data = eda.data;
-  if (!data) return <div className="p-8">No EDA data found.</div>;
+  if (isLoading) return <div className="p-8"><CardSkeleton lines={10} /></div>;
+  if (isError) return <div className="p-8"><ErrorState /></div>;
+  if (!data || !data.summary || data.summary.length === 0) return <div className="p-8">No EDA data found. Upload a dataset first.</div>;
 
   return (
     <div className="flex flex-col gap-6 h-full">
@@ -17,19 +22,11 @@ export default function EDAPage() {
       <div className="grid grid-cols-4 gap-4">
         <div className="glass-card rounded-[20px] p-6">
           <div className="text-sm text-muted-foreground">Rows</div>
-          <div className="text-2xl font-semibold">{data.row_count.toLocaleString()}</div>
+          <div className="text-2xl font-semibold">{data.rows.toLocaleString()}</div>
         </div>
         <div className="glass-card rounded-[20px] p-6">
           <div className="text-sm text-muted-foreground">Columns</div>
-          <div className="text-2xl font-semibold">{data.column_count}</div>
-        </div>
-        <div className="glass-card rounded-[20px] p-6">
-          <div className="text-sm text-muted-foreground">Missing Cells</div>
-          <div className="text-2xl font-semibold text-amber-500">{data.missing_cells.toLocaleString()}</div>
-        </div>
-        <div className="glass-card rounded-[20px] p-6">
-          <div className="text-sm text-muted-foreground">Duplicate Rows</div>
-          <div className="text-2xl font-semibold text-rose-500">{data.duplicate_rows.toLocaleString()}</div>
+          <div className="text-2xl font-semibold">{data.columns.length}</div>
         </div>
       </div>
 
@@ -42,16 +39,25 @@ export default function EDAPage() {
               <th className="py-3 px-4">Nulls</th>
               <th className="py-3 px-4">Mean</th>
               <th className="py-3 px-4">Min/Max</th>
+              <th className="py-3 px-4">Unique / Top Vals</th>
             </tr>
           </thead>
           <tbody>
-            {data.columns.map(c => (
-              <tr key={c.name} className="border-b border-border/20">
-                <td className="py-3 px-4 font-medium">{c.name}</td>
+            {data.summary.map((c: any) => (
+              <tr key={c.column} className="border-b border-border/20">
+                <td className="py-3 px-4 font-medium">{c.column}</td>
                 <td className="py-3 px-4 text-muted-foreground">{c.type}</td>
-                <td className="py-3 px-4">{c.null_count}</td>
+                <td className="py-3 px-4">{c.nulls}</td>
                 <td className="py-3 px-4">{c.mean?.toFixed(2) ?? '-'}</td>
-                <td className="py-3 px-4">{c.min ?? '-'} / {c.max ?? '-'}</td>
+                <td className="py-3 px-4">{c.min != null ? `${c.min} / ${c.max}` : '-'}</td>
+                <td className="py-3 px-4">
+                  {c.unique != null ? `${c.unique} unique` : '-'}
+                  {c.top_values && (
+                    <div className="text-xs text-muted-foreground truncate max-w-[200px]">
+                      {Object.entries(c.top_values).map(([k,v]) => `${k}:${v}`).join(', ')}
+                    </div>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>

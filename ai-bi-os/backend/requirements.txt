@@ -7,3 +7,5 @@ litellm
 python-dotenv
 duckdb
 sqlalchemy
+scipy
+statsmodels

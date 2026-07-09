@@ -18,6 +18,20 @@ const categoryColors: Record<string, string> = {
   trend: "bg-purple-500/10 text-purple-400 border-purple-500/20",
 };
 
+function formatRelativeTime(dateString?: string) {
+  if (!dateString) return "Just now";
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "Just now";
+  
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  
+  if (diffInSeconds < 60) return "Just now";
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+  return `${Math.floor(diffInSeconds / 86400)} days ago`;
+}
+
 function InsightCard({ insight }: { insight: Insight }) {
   const confidence = Math.round((insight.score?.confidence ?? 0.75) * 100);
   const colorKey =
@@ -74,7 +88,7 @@ function InsightCard({ insight }: { insight: Insight }) {
       </div>
 
       <p className="text-[11px] text-muted-foreground/60 mt-auto">
-        {new Date(insight.created_at).toLocaleDateString()}
+        {formatRelativeTime(insight.created_at)}
       </p>
     </motion.div>
   );

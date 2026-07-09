@@ -155,7 +155,8 @@ async def list_insights(dataset_version_id: str = None):
                                 "category": category,
                                 "confidence": round(min(0.99, abs(z_score) / 3), 2),
                                 "impact": impact,
-                                "verified": True
+                                "verified": True,
+                                "created_at": pd.Timestamp.utcnow().isoformat()
                             })
                             insight_id += 1
         except Exception:

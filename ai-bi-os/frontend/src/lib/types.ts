@@ -16,6 +16,13 @@ export interface Dataset {
   skipped_rows?: number;
   sheet_name?: string;
   version?: number;
+  quality_score?: number;
+  quality_breakdown?: {
+    completeness: number;
+    uniqueness: number;
+    type_consistency: number;
+    validity: number;
+  };
 }
 
 export interface ActiveDatasetInfo {
@@ -26,6 +33,13 @@ export interface ActiveDatasetInfo {
   skipped_rows?: number;
   sheet_name?: string;
   version?: number;
+  quality_score?: number;
+  quality_breakdown?: {
+    completeness: number;
+    uniqueness: number;
+    type_consistency: number;
+    validity: number;
+  };
 }
 
 export interface DatasetVersion {

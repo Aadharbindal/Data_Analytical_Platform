@@ -78,6 +78,18 @@ def init_db():
         cursor.execute("ALTER TABLE datasets ADD COLUMN version INTEGER DEFAULT 1")
     except sqlite3.OperationalError:
         pass
+    try:
+        cursor.execute("ALTER TABLE datasets ADD COLUMN quality_score REAL DEFAULT 0")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE datasets ADD COLUMN quality_breakdown TEXT")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE datasets ADD COLUMN quality_breakdown TEXT")
+    except sqlite3.OperationalError:
+        pass
         
     conn.commit()
     conn.close()
@@ -250,6 +262,11 @@ def save_dataset(file_content: bytes, filename: str):
             col_info["max"] = float(df[col].max()) if not pd.isna(df[col].max()) else 0.0
         columns.append(col_info)
         
+    from app.services.stats_service import quality_report
+    quality = quality_report(df)
+    quality_score = quality.get("quality_score", 0)
+    quality_breakdown = json.dumps(quality.get("breakdown", {}))
+        
     dataset_info = {
         "id": dataset_id,
         "name": filename,
@@ -263,7 +280,9 @@ def save_dataset(file_content: bytes, filename: str):
         "columns": columns,
         "skipped_rows": metadata.get("skipped_rows", 0),
         "sheet_name": metadata.get("sheet_name"),
-        "version": version
+        "version": version,
+        "quality_score": quality_score,
+        "quality_breakdown": quality_breakdown
     }
     
     catalog_entry = {
@@ -278,12 +297,13 @@ def save_dataset(file_content: bytes, filename: str):
     conn = sqlite3.connect(str(DB_PATH))
     cursor = conn.cursor()
     cursor.execute('''
-        INSERT INTO datasets (id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO datasets (id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score, quality_breakdown)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
         dataset_id, filename, dataset_info["status"], dataset_info["created_at"],
         json.dumps(dataset_info["latest_version"]), filename_db, json.dumps(columns),
-        dataset_info["skipped_rows"], dataset_info["sheet_name"], dataset_info["version"]
+        dataset_info["skipped_rows"], dataset_info["sheet_name"], dataset_info["version"],
+        dataset_info["quality_score"], dataset_info["quality_breakdown"]
     ))
     
     cursor.execute('''
@@ -316,7 +336,7 @@ def get_active_dataset():
         
     dataset_id = row[0]
     cursor.execute('''
-        SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version
+        SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score, quality_breakdown
         FROM datasets WHERE id = ?
     ''', (dataset_id,))
     dataset_row = cursor.fetchone()
@@ -335,7 +355,9 @@ def get_active_dataset():
         "columns": json.loads(dataset_row[6]),
         "skipped_rows": dataset_row[7],
         "sheet_name": dataset_row[8],
-        "version": dataset_row[9]
+        "version": dataset_row[9],
+        "quality_score": dataset_row[10],
+        "quality_breakdown": json.loads(dataset_row[11]) if dataset_row[11] else {}
     }
 
 def get_dataframe(dataset_id: str):
