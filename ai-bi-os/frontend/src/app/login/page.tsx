@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from "@/components/ui/card";
 import Link from "next/link";
-import { AxiosError } from "axios";
+
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -25,23 +25,17 @@ export default function LoginPage() {
 
     try {
       // Use URLSearchParams for form-urlencoded required by OAuth2PasswordRequestForm
-      const response = await api.post("/api/v1/auth/login", {
+      await api.post("/api/v1/auth/login", {
         email,
         password
       });
       
-      const { access_token } = response.data;
-      
       // Fetch user data
-      const userRes = await api.get("/api/v1/auth/me");
+      const user = await api.get("/api/v1/auth/me");
       
-      login(access_token, userRes.data);
+      login("cookie-auth", user as any);
     } catch (err: unknown) {
-      if (err instanceof AxiosError && err.response) {
-        setError(err.response.data.detail || "Invalid email or password");
-      } else {
-        setError("An error occurred during login. Please try again.");
-      }
+      setError(err instanceof Error ? err.message : "An error occurred during login. Please try again.");
     } finally {
       setIsLoading(false);
     }
