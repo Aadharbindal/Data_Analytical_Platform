@@ -9,3 +9,6 @@ duckdb
 sqlalchemy
 scipy
 statsmodels
+scikit-learn
+reportlab
+matplotlib

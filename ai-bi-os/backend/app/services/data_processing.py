@@ -65,6 +65,22 @@ def init_db():
         )
     ''')
     
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS regression_models (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            dataset_id TEXT,
+            target TEXT,
+            features JSON,
+            r2_train REAL,
+            r2_test REAL,
+            coefficients JSON,
+            intercept REAL,
+            n_rows_used INTEGER,
+            timestamp TEXT,
+            FOREIGN KEY(dataset_id) REFERENCES datasets(id)
+        )
+    ''')
+    
     # Dynamically alter table to add columns for older DB schemas
     try:
         cursor.execute("ALTER TABLE datasets ADD COLUMN skipped_rows INTEGER DEFAULT 0")
@@ -345,7 +361,7 @@ def get_active_dataset():
     if not dataset_row:
         return None
         
-    return {
+    dataset_info = {
         "id": dataset_row[0],
         "name": dataset_row[1],
         "status": dataset_row[2],
@@ -359,6 +375,28 @@ def get_active_dataset():
         "quality_score": dataset_row[10],
         "quality_breakdown": json.loads(dataset_row[11]) if dataset_row[11] else {}
     }
+    
+    # Lazy computation for datasets where quality_score is 0.0 (from SQLite ALTER TABLE DEFAULT 0)
+    if dataset_info["quality_score"] == 0.0:
+        df = get_dataframe(dataset_info["id"])
+        if df is not None and len(df) > 0:
+            from app.services.stats_service import quality_report
+            quality = quality_report(df)
+            dataset_info["quality_score"] = quality.get("quality_score", 0)
+            dataset_info["quality_breakdown"] = quality.get("breakdown", {})
+            
+            # Save back to database
+            conn = sqlite3.connect(str(DB_PATH))
+            cursor = conn.cursor()
+            cursor.execute('''
+                UPDATE datasets 
+                SET quality_score = ?, quality_breakdown = ?
+                WHERE id = ?
+            ''', (dataset_info["quality_score"], json.dumps(dataset_info["quality_breakdown"]), dataset_info["id"]))
+            conn.commit()
+            conn.close()
+            
+    return dataset_info
 
 def get_dataframe(dataset_id: str):
     conn = sqlite3.connect(str(DB_PATH))

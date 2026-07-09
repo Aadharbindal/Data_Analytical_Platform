@@ -4,7 +4,7 @@ load_dotenv()
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import datasets, analytics, catalog, chat
+from app.routers import datasets, analytics, catalog, chat, regression
 
 from app.core.config import CORS_ORIGIN
 
@@ -21,6 +21,7 @@ app.add_middleware(
 
 app.include_router(datasets.router, prefix="/api/v1/datasets", tags=["datasets"])
 app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["analytics"])
+app.include_router(regression.router, prefix="/api/v1/analytics/regression", tags=["regression"])
 app.include_router(catalog.router, prefix="/api/v1/catalog", tags=["catalog"])
 # Also include insights router for executive summary etc.
 from app.routers import insights
