@@ -79,45 +79,45 @@ export function RevenueCard({ data }: RevenueCardProps) {
                   <stop offset="95%" stopColor="#A0A4AE" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.03)" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
               <XAxis 
                 dataKey="name" 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fill: '#80848E', fontSize: 11, fontWeight: 500 }} 
+                tick={{ fill: 'var(--muted-foreground)', fontSize: 11, fontWeight: 500 }} 
                 dy={15}
               />
               <YAxis 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fill: '#80848E', fontSize: 11, fontWeight: 500 }}
+                tick={{ fill: 'var(--muted-foreground)', fontSize: 11, fontWeight: 500 }}
                 tickFormatter={(value) => `$${value / 1000}k`}
                 dx={-10}
               />
               <Tooltip
                 contentStyle={{ 
-                  backgroundColor: 'rgba(19, 23, 34, 0.85)',
+                  backgroundColor: 'color-mix(in srgb, var(--card) 85%, transparent)',
                   backdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  border: '1px solid var(--border)',
                   borderRadius: '12px',
-                  boxShadow: '0 8px 32px -8px rgba(0,0,0,0.5)',
-                  color: '#fff',
+                  boxShadow: '0 8px 32px -8px rgba(0,0,0,0.1)',
+                  color: 'var(--foreground)',
                   fontSize: '12px',
                   fontWeight: 500,
                   padding: '8px 12px'
                 }}
-                itemStyle={{ color: '#fff', fontWeight: 600, fontSize: '13px' }}
+                itemStyle={{ color: 'var(--foreground)', fontWeight: 600, fontSize: '13px' }}
                 formatter={(value: number) => [`$${value.toLocaleString()}`, 'Revenue']}
-                cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1, strokeDasharray: '4 4' }}
+                cursor={{ stroke: 'var(--border)', strokeWidth: 1, strokeDasharray: '4 4' }}
               />
               <Area
                 type="monotone"
                 dataKey="value"
-                stroke="#0070F3"
+                stroke="var(--primary)"
                 strokeWidth={2.5}
                 fillOpacity={1}
                 fill="url(#colorValue)"
-                activeDot={{ r: 5, fill: '#0B0D12', stroke: '#0070F3', strokeWidth: 2, cursor: 'pointer' }}
+                activeDot={{ r: 5, fill: 'var(--background)', stroke: 'var(--primary)', strokeWidth: 2, cursor: 'pointer' }}
               />
               <Area
                 type="monotone"
@@ -127,7 +127,7 @@ export function RevenueCard({ data }: RevenueCardProps) {
                 strokeDasharray="4 4"
                 fillOpacity={1}
                 fill="url(#colorForecast)"
-                activeDot={{ r: 4, fill: '#0B0D12', stroke: '#A0A4AE', strokeWidth: 2 }}
+                activeDot={{ r: 4, fill: 'var(--background)', stroke: '#A0A4AE', strokeWidth: 2 }}
               />
             </AreaChart>
           </ResponsiveContainer>
