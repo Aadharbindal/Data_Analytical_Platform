@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import api from "@/lib/api";
 import { StudioPage } from "@/components/analytics/StudioPage";
 import { formatNumber } from "@/lib/utils";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";

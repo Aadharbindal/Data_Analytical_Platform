@@ -15,8 +15,17 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     },
   });
   if (!res.ok) {
-    const error = await res.text();
-    throw new Error(error || `Request failed with status ${res.status}`);
+    const errorText = await res.text();
+    let errorMessage = errorText;
+    try {
+      const errorJson = JSON.parse(errorText);
+      if (errorJson.detail) {
+        errorMessage = typeof errorJson.detail === 'string' ? errorJson.detail : JSON.stringify(errorJson.detail);
+      }
+    } catch (e) {
+      // Not JSON, use raw text
+    }
+    throw new Error(errorMessage || `Request failed with status ${res.status}`);
   }
   return res.json();
 }
@@ -37,8 +46,17 @@ const api = {
       body: formData,
     });
     if (!res.ok) {
-      const error = await res.text();
-      throw new Error(error || `Upload failed with status ${res.status}`);
+      const errorText = await res.text();
+      let errorMessage = errorText;
+      try {
+        const errorJson = JSON.parse(errorText);
+        if (errorJson.detail) {
+          errorMessage = typeof errorJson.detail === 'string' ? errorJson.detail : JSON.stringify(errorJson.detail);
+        }
+      } catch (e) {
+        // Not JSON, use raw text
+      }
+      throw new Error(errorMessage || `Upload failed with status ${res.status}`);
     }
     return res.json();
   },

@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const checkAuth = async () => {
       try {
         const response = await api.get("/api/v1/auth/me");
-        setUser(response.data);
+        setUser(response as any);
       } catch (error) {
         setUser(null);
         if (pathname !== "/login" && pathname !== "/signup") {

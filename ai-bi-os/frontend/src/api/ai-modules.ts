@@ -4,7 +4,7 @@
  * No mock data, no setTimeout. All calls go to the backend.
  */
 
-import { api } from "../lib/api";
+import api from "../lib/api";
 
 const WS = "workspace-123"; // Default workspace — replace with session/auth context
 
