@@ -9,6 +9,7 @@ import {
   Database,
   MessageSquare,
   Lightbulb,
+  Layers,
   Network,
   GitBranch,
   Settings,
@@ -50,11 +51,11 @@ export function Sidebar() {
     )}>
       {/* Brand / Logo */}
       <div className={cn("flex h-[72px] shrink-0 items-center border-b border-border/40 mb-2", isAnalytics ? "px-0 justify-center" : "px-6")}>
-        <Link href="/" className="flex items-center gap-3 text-foreground font-semibold text-[15px] tracking-wide" title="DataMind OS">
-          <div className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-primary text-primary-foreground shadow-[0_0_12px_rgba(0,112,243,0.4)] shrink-0">
-            <LayoutDashboard className="h-4 w-4" />
+        <Link href="/" className="flex items-center gap-3 text-foreground font-semibold text-[15px] tracking-wide" title="DataMind">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0c1e3e] border border-[#1a3b70] shadow-[0_0_15px_rgba(0,112,243,0.2)] shrink-0">
+            <Layers className="h-4 w-4 text-[#3b82f6]" strokeWidth={2.5} />
           </div>
-          {!isAnalytics && <span>DataMind OS</span>}
+          {!isAnalytics && <span>DataMind</span>}
         </Link>
       </div>
 

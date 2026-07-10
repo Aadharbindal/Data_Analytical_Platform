@@ -62,9 +62,9 @@ async def get_executive_summary(current_user: dict = Depends(get_current_user)):
     
     try:
         response = completion(
-            model="xai/grok-beta", 
+            model="groq/llama-3.3-70b-versatile", 
             messages=[{"role": "user", "content": prompt}],
-            api_key=os.getenv("XAI_API_KEY")
+            api_key=os.getenv("GROQ_API_KEY")
         )
         llm_summary = response.choices[0].message.content.strip()
         

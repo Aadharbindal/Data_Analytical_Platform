@@ -6,7 +6,7 @@ class ModelRegistry:
     """Central gateway for all LLM calls, handling routing and fallback via LiteLLM."""
     
     def __init__(self):
-        self.default_model = "xai/grok-beta"
+        self.default_model = "groq/llama-3.3-70b-versatile"
 
     def route_request(self, messages: list, tools: list = None, target_model: str = None) -> Any:
         """Routes the prompt to the specified model via litellm. Returns the litellm message object."""
@@ -18,8 +18,12 @@ class ModelRegistry:
             kwargs = {
                 "model": model,
                 "messages": messages,
-                "api_key": os.getenv("XAI_API_KEY")
             }
+            
+            if model.startswith("groq/") or model == "groq/llama-3.3-70b-versatile":
+                kwargs["api_key"] = os.getenv("GROQ_API_KEY")
+            else:
+                kwargs["api_key"] = os.getenv("XAI_API_KEY")
             if tools:
                 kwargs["tools"] = tools
                 
