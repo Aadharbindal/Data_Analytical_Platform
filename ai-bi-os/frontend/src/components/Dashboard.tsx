@@ -69,8 +69,8 @@ export const Dashboard: React.FC = () => {
               a.download = `datamind_report_${Date.now()}.pdf`;
               document.body.appendChild(a);
               a.click();
-              window.URL.revokeObjectURL(url);
               document.body.removeChild(a);
+              setTimeout(() => window.URL.revokeObjectURL(url), 1000);
             } catch (error) {
               console.error(error);
               alert("Could not download the report. Please try again.");
