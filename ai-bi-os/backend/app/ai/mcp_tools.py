@@ -36,18 +36,20 @@ def register_duckdb_tools(mcp: MCPToolAbstraction, db_engine):
     
     def run_sql(sql_query: str) -> str:
         try:
-            # We assume the table is named 'current_dataset'
-            df = db_engine.execute_query(sql_query)
-            if df.empty:
+            # We assume the table is named 'active_dataset'
+            result = db_engine.execute(sql_query)
+            rows = result.get("rows", [])
+            if not rows:
                 return "Query returned 0 rows."
             # Convert to JSON string for the LLM
-            return df.to_json(orient="records")
+            import json
+            return json.dumps(rows)
         except Exception as e:
             return f"SQL Error: {str(e)}"
             
     mcp.register_tool(
         name="query_duckdb",
-        description="Run a SQL query against the DuckDB analytics engine. The primary table is named 'current_dataset'.",
+        description="Run a SQL query against the DuckDB analytics engine. The primary table is named 'active_dataset'.",
         parameters={
             "type": "object",
             "properties": {

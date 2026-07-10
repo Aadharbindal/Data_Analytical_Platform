@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
-import { BASE_URL } from "@/lib/api";
+import api, { BASE_URL } from "@/lib/api";
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Bot, User, Send, Database, Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -110,7 +110,9 @@ export const ChatUI: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messages.length > 1) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
 
   const handleSend = async () => {
@@ -121,15 +123,7 @@ export const ChatUI: React.FC = () => {
     setLoading(true);
 
     try {
-      const res = await fetch(`${BASE_URL}/api/v1/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMsg })
-      });
-      
-      if (!res.ok) throw new Error("Failed to connect to agent");
-      
-      const data = await res.json();
+      const data = await api.post<any>('/api/v1/chat', { message: userMsg });
       let aiContent = data.response;
       let chartConfig = undefined;
 
@@ -160,9 +154,9 @@ export const ChatUI: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-12rem)] max-w-4xl mx-auto w-full">
+    <div className="flex flex-col min-h-[calc(100vh-12rem)] max-w-4xl mx-auto w-full">
       
-      <div className="flex-1 overflow-y-auto px-4 py-8 space-y-2">
+      <div className="flex-1 px-4 py-2 space-y-2">
         {messages.map((msg, idx) => (
           msg.role === 'user' ? (
             <div key={idx} className="flex justify-end gap-4 mb-6">

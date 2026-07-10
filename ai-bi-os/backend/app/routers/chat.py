@@ -11,7 +11,7 @@ router = APIRouter()
 class ChatRequest(BaseModel):
     message: str
 
-@router.post("/")
+@router.post("")
 async def chat(request: ChatRequest, current_user: dict = Depends(get_current_user)):
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
