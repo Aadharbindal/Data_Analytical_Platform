@@ -255,7 +255,7 @@ export default function DatasetsPage() {
                 {["Name", "Version", "Status", "Rows", "Size", "Created", ""].map((h) => (
                   <th
                     key={h}
-                    className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider"
+                    className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider"
                   >
                     {h}
                   </th>
@@ -270,29 +270,29 @@ export default function DatasetsPage() {
                     key={ds.id}
                     className="border-b border-border/40 hover:bg-white/[0.02] transition-colors group"
                   >
-                    <td className="px-4 py-4 font-medium text-foreground">
+                    <td className="px-6 py-5 font-medium text-foreground">
                       {ds.name}
                     </td>
-                    <td className="px-4 py-4 text-muted-foreground text-sm font-mono">
+                    <td className="px-6 py-5 text-muted-foreground text-sm font-mono">
                       v{ds.version || 1}
                     </td>
-                    <td className="px-4 py-4">
+                    <td className="px-6 py-5">
                       <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium border ${sc.color}`}>
                         {sc.icon}{ds.status}
                       </span>
                     </td>
-                    <td className="px-4 py-4 tabular-metrics text-muted-foreground">
+                    <td className="px-6 py-5 tabular-metrics text-muted-foreground">
                       {ds.latest_version?.row_count?.toLocaleString() ?? "–"}
                     </td>
-                    <td className="px-4 py-4 tabular-metrics text-muted-foreground">
+                    <td className="px-6 py-5 tabular-metrics text-muted-foreground">
                       {ds.latest_version?.file_size_bytes
                         ? `${(ds.latest_version.file_size_bytes / 1024).toFixed(1)} KB`
                         : "–"}
                     </td>
-                    <td className="px-4 py-4 text-muted-foreground text-xs">
+                    <td className="px-6 py-5 text-muted-foreground text-xs">
                       {new Date(ds.created_at).toLocaleDateString()}
                     </td>
-                    <td className="px-4 py-4">
+                    <td className="px-6 py-5">
                       <div className="flex items-center gap-2 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
                         {activeDataset?.id === ds.id ? (
                           <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 mr-2">

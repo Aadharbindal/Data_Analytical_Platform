@@ -32,8 +32,6 @@ export function Header() {
       {/* Breadcrumbs or Context */}
       <div className="flex flex-1 items-center gap-x-4">
         <div className="flex items-center text-[13px] tracking-wide">
-          <span className="text-muted-foreground/80 font-medium">Workspace</span>
-          <span className="mx-2 text-muted-foreground/50">/</span>
           <span className="font-semibold text-foreground/90 mr-2">Global Analytics</span>
           
           {datasets && datasets.length > 0 && (
