@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { api, datasetsApi } from "@/lib/api";
+import api, { datasetsApi } from "@/lib/api";
 import { StudioPage } from "@/components/analytics/StudioPage";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { formatNumber } from "@/lib/utils";
