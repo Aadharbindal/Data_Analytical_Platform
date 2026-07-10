@@ -48,21 +48,21 @@ export function DataTable({ datasets, loading }: DataTableProps) {
         <Table className="w-full text-sm">
           <TableHeader className="bg-background/80 backdrop-blur-md sticky top-0 z-10 border-b border-border/50">
             <TableRow className="hover:bg-transparent">
-              <TableHead className="font-semibold text-muted-foreground/80 h-12">Name</TableHead>
-              <TableHead className="font-semibold text-muted-foreground/80 h-12">Status</TableHead>
-              <TableHead className="font-semibold text-muted-foreground/80 h-12">Rows</TableHead>
-              <TableHead className="font-semibold text-muted-foreground/80 h-12">Size</TableHead>
-              <TableHead className="text-right font-semibold text-muted-foreground/80 h-12">Created</TableHead>
+              <TableHead className="font-semibold text-muted-foreground/80 h-14 px-6">Name</TableHead>
+              <TableHead className="font-semibold text-muted-foreground/80 h-14 px-6">Status</TableHead>
+              <TableHead className="font-semibold text-muted-foreground/80 h-14 px-6">Rows</TableHead>
+              <TableHead className="font-semibold text-muted-foreground/80 h-14 px-6">Size</TableHead>
+              <TableHead className="text-right font-semibold text-muted-foreground/80 h-14 px-6">Created</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {datasets.slice(0, 8).map((ds) => (
               <TableRow
                 key={ds.id}
-                className="border-border/40 hover:bg-white/[0.02] transition-colors h-14 group"
+                className="border-border/40 hover:bg-white/[0.02] transition-colors h-16 group"
               >
-                <TableCell className="font-medium text-foreground">{ds.name}</TableCell>
-                <TableCell>
+                <TableCell className="font-medium text-foreground px-6 py-4">{ds.name}</TableCell>
+                <TableCell className="px-6 py-4">
                   <Badge
                     variant="outline"
                     className={`rounded-full px-2.5 py-0.5 capitalize ${statusColors[ds.status] ?? statusColors.archived}`}
@@ -70,15 +70,15 @@ export function DataTable({ datasets, loading }: DataTableProps) {
                     {ds.status}
                   </Badge>
                 </TableCell>
-                <TableCell className="tabular-metrics text-muted-foreground">
+                <TableCell className="tabular-metrics text-muted-foreground px-6 py-4">
                   {ds.latest_version?.row_count?.toLocaleString() ?? "–"}
                 </TableCell>
-                <TableCell className="tabular-metrics text-muted-foreground">
+                <TableCell className="tabular-metrics text-muted-foreground px-6 py-4">
                   {ds.latest_version?.file_size_bytes
                     ? `${(ds.latest_version.file_size_bytes / 1024).toFixed(1)} KB`
                     : "–"}
                 </TableCell>
-                <TableCell className="text-right text-muted-foreground text-[13px]">
+                <TableCell className="text-right text-muted-foreground text-[13px] px-6 py-4">
                   {new Date(ds.created_at).toLocaleDateString()}
                 </TableCell>
               </TableRow>
