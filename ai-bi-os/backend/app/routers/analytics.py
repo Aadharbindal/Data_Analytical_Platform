@@ -536,3 +536,45 @@ async def get_breakdown(metric: str, period: Optional[str] = None, current_user:
             
     return breakdowns
 
+import sqlite3
+from app.core.config import DB_PATH
+
+@router.get("/confidence")
+async def get_confidence(current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
+    if not dataset_info:
+        return {"insights": {"verified": 0, "unverified": 0}, "recommendations": {"verified": 0, "unverified": 0}, "audit_trail": []}
+        
+    conn = sqlite3.connect(str(DB_PATH))
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    
+    # Insights stats
+    cursor.execute('SELECT verified, count(*) as count FROM insights WHERE user_id = ? AND dataset_id = ? GROUP BY verified', (current_user["id"], dataset_info["id"]))
+    ins_stats = cursor.fetchall()
+    ins_verified = 0
+    ins_unverified = 0
+    for row in ins_stats:
+        if row["verified"] == 1: ins_verified = row["count"]
+        else: ins_unverified = row["count"]
+        
+    # Recommendations stats
+    cursor.execute('SELECT verified, count(*) as count FROM recommendations WHERE user_id = ? AND dataset_id = ? GROUP BY verified', (current_user["id"], dataset_info["id"]))
+    rec_stats = cursor.fetchall()
+    rec_verified = 0
+    rec_unverified = 0
+    for row in rec_stats:
+        if row["verified"] == 1: rec_verified = row["count"]
+        else: rec_unverified = row["count"]
+        
+    # Audit trail (recent insights)
+    cursor.execute('SELECT id, title, audit_sql, confidence, verified FROM insights WHERE user_id = ? AND dataset_id = ? ORDER BY created_at DESC LIMIT 10', (current_user["id"], dataset_info["id"]))
+    audit_trail = [dict(r) for r in cursor.fetchall()]
+    
+    conn.close()
+    
+    return {
+        "insights": {"verified": ins_verified, "unverified": ins_unverified},
+        "recommendations": {"verified": rec_verified, "unverified": rec_unverified},
+        "audit_trail": audit_trail
+    }

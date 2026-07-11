@@ -1,0 +1,32 @@
+def get_schema_context(db_engine, table_name="active_dataset"):
+    """
+    Returns a formatted string containing the schema, row count,
+    and a few sample rows of the specified table using the DuckDB engine.
+    """
+    schema_str = ""
+    sample_str = ""
+    row_count = 0
+    
+    try:
+        desc_res = db_engine.execute(f"DESCRIBE {table_name}")
+        cols = desc_res.get("rows", [])
+        schema_str = "\n".join([f"- {c['column_name']} ({c['column_type']})" for c in cols])
+        
+        count_res = db_engine.execute(f"SELECT COUNT(*) as cnt FROM {table_name}")
+        if count_res.get("rows"):
+            row_count = count_res["rows"][0].get("cnt", 0)
+        
+        df = db_engine.con.sql(f"SELECT * FROM {table_name} LIMIT 3").df()
+        df = df.astype(str)
+        sample_rows = df.to_dict(orient="records")
+        sample_str = "\n".join([str(r) for r in sample_rows])
+    except Exception as e:
+        schema_str = f"(Error loading schema: {e})"
+        sample_str = "(Could not load samples)"
+        
+    return {
+        "schema_str": schema_str,
+        "sample_str": sample_str,
+        "row_count": row_count,
+        "formatted_context": f"DATABASE SCHEMA:\nThe data is in a table named '{table_name}'. Use ONLY this table name.\nRow Count: {row_count}\nColumns:\n{schema_str}\n\nSample data:\n{sample_str}"
+    }

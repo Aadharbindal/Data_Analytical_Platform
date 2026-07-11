@@ -11,22 +11,22 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState, detectErrorType } from "@/components/ui/error-state";
 
 const priorityConfig: Record<string, { color: string; icon: React.ReactNode; label: string }> = {
-  critical: {
+  Critical: {
     color: "border-l-error",
     icon: <AlertTriangle className="h-4 w-4 text-error" />,
     label: "bg-error/10 text-error border-error/20",
   },
-  high: {
+  High: {
     color: "border-l-warning",
     icon: <TrendingUp className="h-4 w-4 text-warning" />,
     label: "bg-warning/10 text-warning border-warning/20",
   },
-  medium: {
+  Medium: {
     color: "border-l-primary",
     icon: <Zap className="h-4 w-4 text-primary" />,
     label: "bg-primary/10 text-primary border-primary/20",
   },
-  low: {
+  Low: {
     color: "border-l-success",
     icon: <CheckCircle className="h-4 w-4 text-success" />,
     label: "bg-success/10 text-success border-success/20",
@@ -34,8 +34,7 @@ const priorityConfig: Record<string, { color: string; icon: React.ReactNode; lab
 };
 
 function RecommendationCard({ rec }: { rec: Recommendation }) {
-  const config = priorityConfig[rec.priority] ?? priorityConfig.medium;
-  const confidence = Math.round((rec.confidence ?? 0.75) * 100);
+  const config = priorityConfig[rec.priority] ?? priorityConfig.Medium;
 
   return (
     <motion.div
@@ -49,32 +48,25 @@ function RecommendationCard({ rec }: { rec: Recommendation }) {
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2 mb-2">
           <h3 className="text-sm font-semibold text-foreground leading-tight">{rec.title}</h3>
-          <span className={`shrink-0 text-[11px] font-medium border px-2 py-0.5 rounded-full capitalize ${config.label}`}>
-            {rec.priority}
-          </span>
+          <div className="flex items-center gap-2">
+            {rec.verified && (
+              <span className="flex items-center gap-1 text-[10px] font-medium text-success bg-success/10 px-2 py-0.5 rounded-full border border-success/20">
+                <CheckCircle className="h-3 w-3" />
+                Verified Fact
+              </span>
+            )}
+            <span className={`shrink-0 text-[11px] font-medium border px-2 py-0.5 rounded-full capitalize ${config.label}`}>
+              {rec.priority}
+            </span>
+          </div>
         </div>
 
-        {rec.description && (
-          <p className="text-xs text-muted-foreground leading-relaxed mb-3">{rec.description}</p>
+        {rec.rationale && (
+          <p className="text-xs text-muted-foreground leading-relaxed mb-3">{rec.rationale}</p>
         )}
 
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
-          {rec.roi_estimate != null && (
-            <span className="flex items-center gap-1 text-success font-medium">
-              <TrendingUp className="h-3 w-3" />
-              +${rec.roi_estimate.toLocaleString()} est. ROI
-            </span>
-          )}
           <span>Category: {rec.category}</span>
-          <span className="ml-auto">Confidence: {confidence}%</span>
-        </div>
-
-        {/* Confidence bar */}
-        <div className="mt-2 h-1 rounded-full bg-white/[0.05] overflow-hidden">
-          <div
-            className="h-full rounded-full bg-primary/60 transition-all duration-500"
-            style={{ width: `${confidence}%` }}
-          />
         </div>
       </div>
     </motion.div>
@@ -97,7 +89,7 @@ export default function RecommendationsPage() {
   });
 
   const sorted = [...(recommendations ?? [])].sort((a, b) => {
-    const order = { critical: 0, high: 1, medium: 2, low: 3 };
+    const order: Record<string, number> = { Critical: 0, High: 1, Medium: 2, Low: 3 };
     return (order[a.priority] ?? 3) - (order[b.priority] ?? 3);
   });
 
@@ -107,7 +99,7 @@ export default function RecommendationsPage() {
         <div>
           <h1 className="text-3xl font-semibold tracking-tight text-foreground">Recommendations</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Prioritized, evidence-backed actions generated from your business data.
+            Prioritized, deterministic evidence-backed actions generated from your business data.
           </p>
         </div>
         <span className="text-sm text-muted-foreground">{sorted.length} recommendations</span>
@@ -127,7 +119,7 @@ export default function RecommendationsPage() {
         <EmptyState
           icon={<Zap className="h-7 w-7 text-muted-foreground/50" />}
           title="No recommendations yet"
-          description="Run the Recommendation Engine on your analytical insights to generate action items."
+          description="Upload a dataset to generate recommendations based on deterministic data evaluation."
         />
       ) : (
         <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-4">

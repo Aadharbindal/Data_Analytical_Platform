@@ -154,6 +154,11 @@ export const analyticsApi = {
   outliers: () => api.get<any>("/api/v1/analytics/outliers"),
   timeseries: (metric: string) => api.get<any>(`/api/v1/analytics/timeseries?metric=${metric}`),
   trend: () => api.get<any>("/api/v1/analytics/trend"),
+  confidence: () => api.get<{
+    insights: { verified: number; unverified: number };
+    recommendations: { verified: number; unverified: number };
+    audit_trail: any[];
+  }>("/api/v1/analytics/confidence"),
   forecast: (metric: string) => api.get<any>(`/api/v1/analytics/forecast?metric=${metric}`),
   trends: (datasetVersionId: string) =>
     api.get<import("./types").TrendData[]>(
@@ -171,16 +176,22 @@ export const insightsApi = {
     api.get<{ summary: string; highlights?: string[]; verified: boolean }>(
       "/api/v1/insights/executive-summary"
     ),
+  deepAnalyze: () =>
+    api.post<{ success: boolean; insights: any[] }>("/api/v1/insights/deep-analyze", {}),
 };
 
 // Rules (Module 14)
 export const rulesApi = {
-  list: (workspaceId = "workspace-123") =>
+  list: () =>
     api.get<import("./types").BusinessRule[]>(
-      `/api/v1/rules?workspace_id=${workspaceId}`
+      `/api/v1/rules`
     ),
   create: (body: Partial<import("./types").BusinessRule>) =>
-    api.post<import("./types").BusinessRule>("/api/v1/rules", body),
+    api.post<{id: string, success: boolean}>("/api/v1/rules", body),
+  delete: (id: string) =>
+    api.delete<{success: boolean}>(`/api/v1/rules/${id}`),
+  parseText: (text: string) =>
+    api.post<{success: boolean, parsed: any, error?: string}>("/api/v1/rules/parse-text", { text }),
 };
 
 // Recommendations (Module 15)
