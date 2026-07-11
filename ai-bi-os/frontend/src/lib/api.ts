@@ -152,14 +152,14 @@ export const analyticsApi = {
   correlation: () => api.get<any>("/api/v1/analytics/correlation"),
   distribution: () => api.get<any>("/api/v1/analytics/distribution"),
   outliers: () => api.get<any>("/api/v1/analytics/outliers"),
-  timeseries: (metric: string) => api.get<any>(`/api/v1/analytics/timeseries?metric=${metric}`),
+  timeseries: (metric?: string) => api.get<any>(`/api/v1/analytics/timeseries${metric ? `?metric=${metric}` : ''}`),
   trend: () => api.get<any>("/api/v1/analytics/trend"),
   confidence: () => api.get<{
     insights: { verified: number; unverified: number };
     recommendations: { verified: number; unverified: number };
     audit_trail: any[];
   }>("/api/v1/analytics/confidence"),
-  forecast: (metric: string) => api.get<any>(`/api/v1/analytics/forecast?metric=${metric}`),
+  forecast: (metric?: string) => api.get<any>(`/api/v1/analytics/forecast${metric ? `?metric=${metric}` : ''}`),
   trends: (datasetVersionId: string) =>
     api.get<import("./types").TrendData[]>(
       `/api/v1/analytics/trends?dataset_version_id=${datasetVersionId}`

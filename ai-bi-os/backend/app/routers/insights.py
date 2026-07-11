@@ -24,6 +24,10 @@ def find_column(df: pd.DataFrame, pattern: str) -> str:
 
 @router.get("/executive-summary")
 async def get_executive_summary(current_user: dict = Depends(get_current_user)):
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key or not api_key.strip():
+        return {"summary": "AI features are not configured - add GROQ_API_KEY to your .env file.", "verified": False}
+        
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return {"summary": "No dataset uploaded yet. Upload a dataset to see AI insights.", "verified": False}
@@ -35,7 +39,7 @@ async def get_executive_summary(current_user: dict = Depends(get_current_user)):
     # Compute deterministic facts
     row_count = len(df)
     
-    rev_col = find_column(df, r'revenue|sales|amount')
+    rev_col = find_column(df, r'revenue|sales|amount|mrr|arr|turnover|income|earnings|gmv|sales_amount|order_value|net_revenue|total_revenue')
     date_col = find_column(df, r'date|month|year|time')
     
     facts = {
@@ -194,7 +198,7 @@ async def list_insights(dataset_version_id: str = None, current_user: dict = Dep
                             category = "Risk" if is_drop else "Opportunity"
                             title = f"Significant {'Drop' if is_drop else 'Spike'} in {col}"
                             desc = f"{col} was {recent_val:.2f} in the most recent period, which is {abs(z_score):.1f} standard deviations from the mean."
-                            impact = 1.0 if abs(z_score) > 2.0 else 0.5
+                            impact = float(abs(recent_val))
                             
                             anomalies.append({
                                 "id": f"ins_{uuid.uuid4().hex[:8]}",

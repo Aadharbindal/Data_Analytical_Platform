@@ -10,6 +10,7 @@ from fastapi import APIRouter, Depends
 from app.services.data_processing import get_active_dataset, get_dataframe
 from app.core.security import get_current_user
 from app.core.config import DB_PATH, LLM_MODEL
+from app.services.validation import verify_numbers_against_facts
 from litellm import completion
 
 router = APIRouter()
@@ -34,6 +35,17 @@ async def get_recommendations(current_user: dict = Depends(get_current_user)):
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return []
+    return get_cached_recommendations(current_user["id"], dataset_info["id"])
+
+@router.post("/generate")
+async def generate_recommendations(current_user: dict = Depends(get_current_user)):
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key or not api_key.strip():
+        return {"success": False, "message": "AI features are not configured - add GROQ_API_KEY to your .env file."}
+        
+    dataset_info = get_active_dataset(current_user["id"])
+    if not dataset_info:
+        return []
 
     # 1. Check cache
     cached = get_cached_recommendations(current_user["id"], dataset_info["id"])
@@ -54,7 +66,7 @@ async def get_recommendations(current_user: dict = Depends(get_current_user)):
         main_cat = cat_cols[0]
         main_num = num_cols[0]
         for col in num_cols:
-            if re.search(r'revenue|sales|profit|amount', col, re.IGNORECASE):
+            if re.search(r'revenue|sales|profit|amount|mrr|arr|turnover|income|earnings|gmv|sales_amount|order_value|net_revenue|total_revenue', col, re.IGNORECASE):
                 main_num = col
                 break
         for col in cat_cols:
@@ -98,51 +110,45 @@ Return ONLY a valid JSON array of objects with keys:
         res = completion(
             model=LLM_MODEL,
             messages=[{"role": "user", "content": prompt}],
-            api_key=os.getenv("GROQ_API_KEY")
+            api_key=os.getenv("GROQ_API_KEY"),
+            max_tokens=2000
         )
         
         content = res.choices[0].message.content
-        m = re.search(r'\[\s*\{.*\}\s*\]', content, re.DOTALL)
-        if m:
-            content = m.group(0)
-        recs = json.loads(content)
         
-    except Exception:
-        recs = []
+        # Try direct JSON parse first
+        try:
+            clean_content = content
+            m = re.search(r'```(?:json)?\s*(.*?)\s*```', content, re.DOTALL)
+            if m:
+                clean_content = m.group(1)
+            recs = json.loads(clean_content)
+        except json.JSONDecodeError as jde:
+            # Fallback to regex
+            m = re.search(r'\[\s*\{.*\}\s*\]', content, re.DOTALL)
+            if m:
+                recs = json.loads(m.group(0))
+            else:
+                raise ValueError(f"JSON Parse Error: {jde}. Response was: {content}")
+        
+    except Exception as e:
+        import traceback
+        import logging
+        logging.error(f"[recommendations] LLM call/parse failed: {type(e).__name__}: {e}")
+        logging.error(traceback.format_exc())
+        return {"success": False, "message": f"Failed to generate recommendations: {str(e)}"}
 
     # 4. Accuracy Check & Save
     conn = sqlite3.connect(str(DB_PATH))
     cursor = conn.cursor()
     
     final_recs = []
-    
-    fact_str = json.dumps(facts).replace(',', '')
-    fact_nums = re.findall(r'\b\d+(?:\.\d+)?\b', fact_str)
+    fact_str = json.dumps(facts)
     
     for r in recs:
-        rec_str = f"{r.get('title', '')} {r.get('rationale', '')}".replace(',', '')
-        rec_nums = re.findall(r'\b\d+(?:\.\d+)?\b', rec_str)
+        rec_str = f"{r.get('title', '')} {r.get('rationale', '')}"
+        verified = verify_numbers_against_facts(rec_str, fact_str)
         
-        verified = True
-        for num in rec_nums:
-            try:
-                num_float = float(num)
-                if num_float == 0: continue
-                
-                found = False
-                for f_num in fact_nums:
-                    try:
-                        if abs(float(f_num) - num_float) < 1.0:
-                            found = True
-                            break
-                    except:
-                        pass
-                if not found:
-                    verified = False
-                    break
-            except:
-                pass
-                
         rec_id = f"rec_{uuid.uuid4().hex[:8]}"
         created_at = datetime.utcnow().isoformat()
         

@@ -46,7 +46,7 @@ async def get_rules(current_user: dict = Depends(get_current_user)):
                 continue
                 
             df_temp = df.copy()
-            if date_col and rule["window"] == "MoM":
+            if date_col and rule["window"].lower() == "mom":
                 df_temp[date_col] = pd.to_datetime(df_temp[date_col], errors='coerce')
                 df_temp = df_temp.dropna(subset=[date_col])
                 if not df_temp.empty:
@@ -62,6 +62,9 @@ async def get_rules(current_user: dict = Depends(get_current_user)):
                             rule["current_value"] = pct_change
                             
                             cond = rule["condition"]
+                            cond_map = {"gt": ">", "lt": "<", "pct_change_gt": ">", "pct_change_lt": "<", "eq": "=="}
+                            cond = cond_map.get(cond.lower(), cond)
+                            
                             thresh = rule["threshold"]
                             
                             if cond == ">" and pct_change > thresh: rule["status"] = "TRIGGERED"
@@ -73,6 +76,9 @@ async def get_rules(current_user: dict = Depends(get_current_user)):
                 val = float(df_temp[metric].sum())
                 rule["current_value"] = val
                 cond = rule["condition"]
+                cond_map = {"gt": ">", "lt": "<", "pct_change_gt": ">", "pct_change_lt": "<", "eq": "=="}
+                cond = cond_map.get(cond.lower(), cond)
+                
                 thresh = rule["threshold"]
                 if cond == ">" and val > thresh: rule["status"] = "TRIGGERED"
                 elif cond == "<" and val < thresh: rule["status"] = "TRIGGERED"
@@ -119,6 +125,10 @@ async def delete_rule(rule_id: str, current_user: dict = Depends(get_current_use
 
 @router.post("/parse-text")
 async def parse_text_rule(data: dict = Body(...), current_user: dict = Depends(get_current_user)):
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key or not api_key.strip():
+        return {"error": "AI features are not configured - add GROQ_API_KEY to your .env file."}
+        
     text = data.get("text", "")
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
@@ -133,7 +143,7 @@ Rule text: "{text}"
 Return a valid JSON object with:
 - name (string, a short title for the rule)
 - metric_column (string, MUST be exactly one of the available columns)
-- condition (string, one of: ">", "<", ">=", "<=", "==")
+- condition (string, one of: ">", "<", ">=", "<=", "==", "pct_change_gt", "pct_change_lt", "gt", "lt")
 - threshold (number)
 - window (string, either "MoM" or "latest")"""
 

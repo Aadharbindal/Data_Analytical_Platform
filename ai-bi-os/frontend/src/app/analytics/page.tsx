@@ -131,8 +131,8 @@ export default function AnalyticsDashboard() {
                   <h3 className="font-semibold text-foreground">Revenue Forecast</h3>
                   <div className="flex justify-between items-end mt-2">
                     <div className="text-sm text-muted-foreground">
-                      <div><span className="font-medium text-foreground">Model:</span> Auto-ARIMA</div>
-                      <div><span className="font-medium text-foreground">Horizon:</span> 3 periods</div>
+                      <div><span className="font-medium text-foreground">Model:</span> {(forecasts.data as any)?.method || "Auto-ARIMA"}</div>
+                      <div><span className="font-medium text-foreground">Horizon:</span> {(forecasts.data as any)?.forecast?.length || 3} periods</div>
                     </div>
                     <div className="h-8 w-16 bg-emerald-500/10 rounded overflow-hidden flex items-end opacity-70">
                        <div className="w-full h-1/2 border-t-2 border-emerald-500 border-dashed transform -rotate-12 translate-y-1"></div>
