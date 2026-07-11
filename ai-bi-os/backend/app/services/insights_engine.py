@@ -109,6 +109,7 @@ class DeepInsightsEngine:
             q_prompt = f"""{profile_str}
             
 Based on this schema, generate exactly 6 highly specific analytical questions that would reveal deep insights about the business. 
+Do NOT generate questions asking about future probability, likelihood, or prediction of events - this system can only query historical/existing data via SQL, not run predictive models. Only generate questions answerable by aggregating or filtering existing rows (sums, counts, averages, comparisons, rankings, time-based groupings of PAST data).
 Return ONLY a valid JSON object with a single key "questions" containing an array of objects with keys: "question" (string) and "type" (string: descriptive, diagnostic, predictive, or prescriptive)."""
             questions = call_llm_with_retry(q_prompt, "LLM CALL 1 (Questions)")
             logging.info(f"Parsed questions: {questions}")
@@ -121,6 +122,8 @@ Return ONLY a valid JSON object with a single key "questions" containing an arra
             
 Given these questions, write exactly one DuckDB SQL query for each question to find the answer.
 The table is named 'active_dataset'.
+When grouping by a high-cardinality dimension like exact date, prefer using COUNT(*) alongside any AVG/SUM and note that group-by-exact-date often produces tiny, statistically unreliable groups - consider grouping by week, month, or day-of-week instead for anything claiming a 'trend'.
+IMPORTANT: Whenever you use GROUP BY, you MUST include COUNT(*) AS sample_size in your SELECT clause so sample sizes can be verified.
 Return ONLY a valid JSON object with a single key "mappings" containing an array of objects with keys: "question" (string) and "sql" (string)."""
             q_json_str = json.dumps(questions)
             sql_mappings = call_llm_with_retry(sql_prompt + "\n\nQuestions:\n" + q_json_str, "LLM CALL 2 (SQL Mappings)")
@@ -154,6 +157,16 @@ Return ONLY a valid JSON object with a single key "mappings" containing an array
                     result = self.db_engine.execute(sql)
                     rows = result.get("rows", [])
                     if rows:
+                        # Check for minimum sample size in grouped aggregates
+                        count_key = next((k for k in rows[0].keys() if "sample_size" in k.lower() or "count(" in k.lower()), None)
+                        if "group by" in sql.lower() and count_key:
+                            try:
+                                if any(int(r.get(count_key, 0)) < 5 for r in rows):
+                                    logging.warning(f"SQL Gate rejected result due to small sample size (<5) in groups: {sql}")
+                                    continue
+                            except (ValueError, TypeError):
+                                pass
+
                         successful_results.append({
                             "question": q,
                             "sql": sql,
@@ -204,7 +217,7 @@ Return ONLY a valid JSON object with a single key "insights" containing an array
                 "not evident from the data", "cannot be confirmed", "not observed in the",
                 "insufficient information", "not identifiable"
             ]
-            speculative_pattern = re.compile(r'\b(might|could|anticipate|projected|likely to|expected to)\b', re.IGNORECASE)
+            speculative_pattern = re.compile(r'\b(might|could|anticipate|projected|likely to|expected to|predicted|prediction|probability of|likelihood of|forecast to|will (?:likely )?(?:increase|decrease|happen)|chance of)\b', re.IGNORECASE)
             
             for ins in insights_data:
                 title_desc = f"{ins.get('title', '')} {ins.get('description', '')}"
