@@ -66,7 +66,7 @@ async def generate_recommendations(current_user: dict = Depends(get_current_user
         main_cat = cat_cols[0]
         main_num = num_cols[0]
         for col in num_cols:
-            if re.search(r'revenue|sales|profit|amount|mrr|arr|turnover|income|earnings|gmv|sales_amount|order_value|net_revenue|total_revenue', col, re.IGNORECASE):
+            if re.search(r'revenue|sales|profit|amount|\bmrr\b|\barr\b|turnover|income|earnings|\bgmv\b|sales_amount|order_value|net_revenue|total_revenue', col, re.IGNORECASE):
                 main_num = col
                 break
         for col in cat_cols:
@@ -106,37 +106,50 @@ Return ONLY a valid JSON array of objects with keys:
 - priority (string, High, Medium, Low)
 - category (string)"""
 
-    try:
-        res = completion(
-            model=LLM_MODEL,
-            messages=[{"role": "user", "content": prompt}],
-            api_key=os.getenv("GROQ_API_KEY"),
-            max_tokens=2000
-        )
-        
-        content = res.choices[0].message.content
-        
-        # Try direct JSON parse first
+    import asyncio
+    max_retries = 2
+    for attempt in range(max_retries):
         try:
-            clean_content = content
-            m = re.search(r'```(?:json)?\s*(.*?)\s*```', content, re.DOTALL)
-            if m:
-                clean_content = m.group(1)
-            recs = json.loads(clean_content)
-        except json.JSONDecodeError as jde:
-            # Fallback to regex
-            m = re.search(r'\[\s*\{.*\}\s*\]', content, re.DOTALL)
-            if m:
-                recs = json.loads(m.group(0))
-            else:
-                raise ValueError(f"JSON Parse Error: {jde}. Response was: {content}")
-        
-    except Exception as e:
-        import traceback
-        import logging
-        logging.error(f"[recommendations] LLM call/parse failed: {type(e).__name__}: {e}")
-        logging.error(traceback.format_exc())
-        return {"success": False, "message": f"Failed to generate recommendations: {str(e)}"}
+            res = completion(
+                model=LLM_MODEL,
+                messages=[{"role": "user", "content": prompt}],
+                api_key=os.getenv("GROQ_API_KEY"),
+                max_tokens=2000
+            )
+            
+            content = res.choices[0].message.content
+            
+            # Try direct JSON parse first
+            try:
+                clean_content = content.strip()
+                m = re.search(r'```(?:json)?\s*(.*?)\s*```', content, re.DOTALL)
+                if m:
+                    clean_content = m.group(1).strip()
+                recs = json.loads(clean_content)
+            except json.JSONDecodeError as jde:
+                # Fallback to regex
+                m = re.search(r'\[\s*\{.*\}\s*\]', content, re.DOTALL)
+                if m:
+                    recs = json.loads(m.group(0))
+                else:
+                    raise ValueError(f"JSON Parse Error: {jde}. Response was: {content}")
+            
+            break # Success, exit retry loop
+            
+        except Exception as e:
+            error_str = str(e).lower()
+            is_rate_limit = "429" in error_str or "rate limit" in error_str or getattr(e, "status_code", None) == 429
+            if is_rate_limit and attempt < max_retries - 1:
+                import logging
+                logging.warning(f"[recommendations] Rate limit hit. Retrying in 2.5s...")
+                await asyncio.sleep(2.5)
+                continue
+                
+            import traceback
+            import logging
+            logging.error(f"[recommendations] LLM call/parse failed: {type(e).__name__}: {e}")
+            logging.error(traceback.format_exc())
+            return {"success": False, "message": f"Failed to generate recommendations: {str(e)}"}
 
     # 4. Accuracy Check & Save
     conn = sqlite3.connect(str(DB_PATH))

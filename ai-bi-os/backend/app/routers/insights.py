@@ -16,8 +16,9 @@ from app.core.config import DB_PATH, LLM_MODEL
 
 router = APIRouter()
 
-def find_column(df: pd.DataFrame, pattern: str) -> str:
-    for col in df.columns:
+def find_column(df: pd.DataFrame, pattern: str, numeric_only: bool = False) -> str:
+    cols_to_check = df.select_dtypes(include=[np.number]).columns if numeric_only else df.columns
+    for col in cols_to_check:
         if re.search(pattern, col, re.IGNORECASE):
             return col
     return None
@@ -39,7 +40,7 @@ async def get_executive_summary(current_user: dict = Depends(get_current_user)):
     # Compute deterministic facts
     row_count = len(df)
     
-    rev_col = find_column(df, r'revenue|sales|amount|mrr|arr|turnover|income|earnings|gmv|sales_amount|order_value|net_revenue|total_revenue')
+    rev_col = find_column(df, r'revenue|sales|amount|\bmrr\b|\barr\b|turnover|income|earnings|\bgmv\b|sales_amount|order_value|net_revenue|total_revenue', numeric_only=True)
     date_col = find_column(df, r'date|month|year|time')
     
     facts = {

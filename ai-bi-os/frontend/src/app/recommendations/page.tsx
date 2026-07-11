@@ -91,12 +91,15 @@ const itemVariants = {
 };
 
 export default function RecommendationsPage() {
-  const { data: recommendations, isLoading, isError, error, refetch } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["recommendations"],
-    queryFn: () => recommendationsApi.list(),
+    queryFn: () => recommendationsApi.generate(),
   });
 
-  const sorted = [...(recommendations ?? [])].sort((a, b) => {
+  const isApiError = data && typeof data === 'object' && !Array.isArray(data) && data.success === false;
+  const recommendations = Array.isArray(data) ? data : [];
+
+  const sorted = [...recommendations].sort((a, b) => {
     const order: Record<string, number> = { Critical: 0, High: 1, Medium: 2, Low: 3 };
     return (order[a.priority] ?? 3) - (order[b.priority] ?? 3);
   });
@@ -110,18 +113,26 @@ export default function RecommendationsPage() {
             Prioritized, deterministic evidence-backed actions generated from your business data.
           </p>
         </div>
-        <span className="text-sm text-muted-foreground">{sorted.length} recommendations</span>
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-muted-foreground">{sorted.length} recommendations</span>
+          <button 
+            onClick={() => refetch()} 
+            className="text-sm px-4 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary font-medium rounded-full transition-colors border border-primary/20"
+          >
+            Regenerate
+          </button>
+        </div>
       </div>
 
       {isLoading ? (
         <div className="space-y-4">
           {Array.from({ length: 5 }).map((_, i) => <CardSkeleton key={i} lines={3} />)}
         </div>
-      ) : isError ? (
+      ) : isError || isApiError ? (
         <ErrorState 
           onRetry={refetch} 
           errorType={detectErrorType(error)}
-          developerDetails={error instanceof Error ? error.message : String(error)}
+          developerDetails={isApiError ? data.message : (error instanceof Error ? error.message : String(error))}
         />
       ) : sorted.length === 0 ? (
         <EmptyState
