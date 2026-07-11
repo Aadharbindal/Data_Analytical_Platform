@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import re
 import os
+import uuid
+from datetime import datetime
 from fastapi import APIRouter, Depends
 from app.services.data_processing import get_active_dataset, get_dataframe
 from app.core.security import get_current_user
@@ -168,7 +170,6 @@ async def list_insights(dataset_version_id: str = None, current_user: dict = Dep
     numeric_cols = df.select_dtypes(include=[np.number]).columns
 
     anomalies = []
-    insight_id = 1
 
     if date_col and len(numeric_cols) > 0:
         try:
@@ -196,17 +197,41 @@ async def list_insights(dataset_version_id: str = None, current_user: dict = Dep
                             impact = 1.0 if abs(z_score) > 2.0 else 0.5
                             
                             anomalies.append({
-                                "id": f"insight_{insight_id}",
+                                "id": f"ins_{uuid.uuid4().hex[:8]}",
                                 "title": title,
                                 "description": desc,
                                 "category": category,
                                 "confidence": round(min(0.99, abs(z_score) / 3), 2),
                                 "impact": impact,
-                                "verified": True,
-                                "created_at": pd.Timestamp.utcnow().isoformat()
+                                "verified": 1,
+                                "created_at": datetime.utcnow().isoformat()
                             })
-                            insight_id += 1
         except Exception:
             pass
+
+    if anomalies:
+        conn = sqlite3.connect(str(DB_PATH))
+        cursor = conn.cursor()
+        for a in anomalies:
+            cursor.execute('''
+                INSERT INTO insights (id, user_id, dataset_id, title, description, category, insight_level, confidence, impact, recommendation, verified, audit_sql, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (
+                a["id"],
+                current_user["id"],
+                dataset_info["id"],
+                a["title"],
+                a["description"],
+                a["category"],
+                "Operational",
+                a["confidence"],
+                a["impact"],
+                "Investigate the cause of this recent anomaly.",
+                a["verified"],
+                "Computed via Pandas Z-Score Z=(X-μ)/σ",
+                a["created_at"]
+            ))
+        conn.commit()
+        conn.close()
 
     return anomalies
