@@ -72,8 +72,8 @@ export function AISummaryCard() {
           <Button 
             onClick={() => {
               let question = "Give me a deeper analysis of the current dataset.";
-              if (data?.facts) {
-                const { percent_change } = data.facts;
+              if ((data as any)?.facts) {
+                const { percent_change } = (data as any).facts;
                 if (percent_change !== undefined && percent_change !== null) {
                   const direction = percent_change > 0 ? "increased" : "decreased";
                   question = `Give me a deeper analysis of why the primary metric ${direction} by ${Math.abs(percent_change).toFixed(1)}% this period, and what's driving it.`;

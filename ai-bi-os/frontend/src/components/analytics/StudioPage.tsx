@@ -12,10 +12,9 @@ interface StudioPageProps {
 }
 
 export function StudioPage({ title, toolbar, children, isLoading }: StudioPageProps) {
-  // Fetch active dataset to display in the header
   const { data: activeDataset } = useQuery({
     queryKey: ["activeDataset"],
-    queryFn: () => api.get("/datasets/active"),
+    queryFn: () => api.get<any>("/datasets/active"),
   });
 
   return (

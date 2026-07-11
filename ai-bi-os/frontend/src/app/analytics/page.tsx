@@ -47,12 +47,7 @@ export default function AnalyticsDashboard() {
 
   return (
     <div className="flex flex-col gap-8 h-full p-8 overflow-y-auto">
-      <div>
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground">Analytics Dashboard</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Comprehensive overview of your enterprise data intelligence.
-        </p>
-      </div>
+
 
       <div className="grid grid-cols-4 gap-4">
         {/* KPI Summary Card */}

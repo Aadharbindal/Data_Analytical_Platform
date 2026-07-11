@@ -19,7 +19,7 @@ export default function CompareDatasets() {
 
   const { data: diff, isLoading: diffLoading } = useQuery({
     queryKey: ["dataset_compare", idA, idB],
-    queryFn: () => api.get(`/datasets/compare?id_a=${idA}&id_b=${idB}`).then(res => res.data),
+    queryFn: () => api.get(`/datasets/compare?id_a=${idA}&id_b=${idB}`).then((res: any) => res.data),
     enabled: !!idA && !!idB,
   });
 
