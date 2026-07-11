@@ -6,7 +6,7 @@ import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { ErrorState } from "@/components/ui/error-state";
 import { StudioPage } from "@/components/analytics/StudioPage";
-import { formatNumber } from "@/lib/utils";
+import { formatNumber, formatPercent } from "@/lib/utils";
 
 export default function TrendAnalysis() {
   const { data, isLoading, isError } = useQuery({
@@ -64,7 +64,7 @@ export default function TrendAnalysis() {
                     <div className="bg-surface/30 p-3 rounded-lg border border-border/20 flex flex-col gap-1">
                       <div className="text-[10px] text-muted-foreground uppercase tracking-wider">R-Value (Confidence)</div>
                       <div className="text-[15px] font-medium font-mono">
-                        {formatNumber(trend.r_value)}
+                        {trend.r_value != null ? formatPercent(trend.r_value * 100) : "N/A"}
                       </div>
                     </div>
                   </div>

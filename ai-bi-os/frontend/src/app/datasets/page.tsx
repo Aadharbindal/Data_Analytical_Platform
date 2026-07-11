@@ -20,7 +20,6 @@ import {
   Clock,
   AlertCircle,
   FileUp,
-  Eye,
   Power,
   X,
 } from "lucide-react";
@@ -314,14 +313,7 @@ export default function DatasetsPage() {
                             Set Active
                           </Button>
                         )}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                          onClick={() => setSelectedDataset(ds)}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
+
                         <Button
                           variant="ghost"
                           size="icon"

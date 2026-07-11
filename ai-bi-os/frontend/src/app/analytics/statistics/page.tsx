@@ -5,7 +5,7 @@ import { analyticsApi } from "@/lib/api";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { ErrorState } from "@/components/ui/error-state";
 import { StudioPage } from "@/components/analytics/StudioPage";
-import { formatNumber } from "@/lib/utils";
+import { formatNumber, formatDecimal } from "@/lib/utils";
 
 export default function StatisticalAnalysis() {
   const { data, isLoading, isError } = useQuery({

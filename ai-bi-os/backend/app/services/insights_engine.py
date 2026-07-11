@@ -174,6 +174,7 @@ Return ONLY a valid JSON object with a single key "mappings" containing an array
             exp_prompt = """Given the following analytical questions and their EXACT SQL result rows, write a deep insight for each.
 CRITICAL: You MUST ONLY cite numbers that are explicitly present in the provided result rows. Do not invent, estimate, or guess any figures.
 CRITICAL: If the data does not support a clear conclusion, do not generate an insight for this question at all - simply skip it.
+CRITICAL: If you cannot state a specific, real impact number for this insight, do not generate it - skip the question entirely rather than describing the absence of an answer.
 CRITICAL: Do NOT use speculative or forward-looking language such as 'might', 'could', 'anticipate', 'projected', 'likely to', 'expected to' unless the underlying data genuinely contains a forecast/projection value computed by the system (i.e. from the actual forecast endpoint, not invented). Insights must describe what the data ALREADY shows (past/current, per the query results), not predict what might happen next - that is a different feature (Forecast), and this pipeline must not blur into speculation.
 Return ONLY a valid JSON object with a single key "insights" containing an array of objects with the following keys:
 - title (string)
@@ -196,7 +197,13 @@ Return ONLY a valid JSON object with a single key "insights" containing an array
             conn = sqlite3.connect(str(DB_PATH))
             cursor = conn.cursor()
             
-            hedging_phrases = ["can't draw any conclusions", "unobtainable", "insufficient data", "unable to determine", "no clear pattern"]
+            hedging_phrases = [
+                "can't draw any conclusions", "unobtainable", "insufficient data", "unable to determine", "no clear pattern",
+                "not explicitly stated", "not available in the data", "data does not show", "cannot be determined",
+                "not clearly indicated", "no significant", "not specified", "data does not provide",
+                "not evident from the data", "cannot be confirmed", "not observed in the",
+                "insufficient information", "not identifiable"
+            ]
             speculative_pattern = re.compile(r'\b(might|could|anticipate|projected|likely to|expected to)\b', re.IGNORECASE)
             
             for ins in insights_data:
@@ -210,6 +217,17 @@ Return ONLY a valid JSON object with a single key "insights" containing an array
                 # Filter Problem 2: Speculation
                 if speculative_pattern.search(title_desc):
                     logging.info(f"Skipping insight due to speculative language: {ins.get('title')}")
+                    continue
+                    
+                # Filter Problem 3: Missing/Invalid Impact
+                impact_val = ins.get('impact')
+                if impact_val in (None, "N/A", "", "null", "None"):
+                    logging.info(f"Skipping insight due to missing impact value: {ins.get('title')}")
+                    continue
+                try:
+                    float(str(impact_val).replace('$', '').replace(',', ''))
+                except (ValueError, TypeError):
+                    logging.info(f"Skipping insight due to unparseable impact value ({impact_val}): {ins.get('title')}")
                     continue
                     
                 # find matching result rows

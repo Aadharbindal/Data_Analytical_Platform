@@ -68,7 +68,7 @@ export default function TimeSeriesPage() {
             
             <div className="flex-1 w-full mt-2">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data.timeseries} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <LineChart data={data.timeseries} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" vertical={false} />
                   <XAxis 
                     dataKey="date" 

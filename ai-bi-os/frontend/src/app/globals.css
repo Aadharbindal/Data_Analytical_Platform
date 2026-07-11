@@ -204,3 +204,9 @@
 .recharts-tooltip-wrapper {
   outline: none !important;
 }
+
+/* Hide native password reveal eye icon in Edge/Windows */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}

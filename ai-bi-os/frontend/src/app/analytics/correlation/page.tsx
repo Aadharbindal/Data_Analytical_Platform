@@ -5,6 +5,7 @@ import { analyticsApi } from "@/lib/api";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { ErrorState } from "@/components/ui/error-state";
 import { StudioPage } from "@/components/analytics/StudioPage";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default function CorrelationStudio() {
   const { data, isLoading, isError } = useQuery({
@@ -23,6 +24,16 @@ export default function CorrelationStudio() {
           <div className="rounded-xl border border-white/[0.05] bg-surface/30 p-6 overflow-x-auto custom-scrollbar">
             {(() => {
               const features = Array.from(new Set(data.correlation.map((d: any) => d.x))) as string[];
+              
+              if (features.length < 2) {
+                return (
+                  <EmptyState 
+                    title="Insufficient Numeric Data"
+                    description={`Correlation analysis requires at least 2 numeric columns. Found ${features.length} numeric column(s).`}
+                  />
+                );
+              }
+
               const matrix = features.map(f1 => {
                 return features.map(f2 => {
                   const item = data.correlation.find((d: any) => d.x === f1 && d.y === f2);

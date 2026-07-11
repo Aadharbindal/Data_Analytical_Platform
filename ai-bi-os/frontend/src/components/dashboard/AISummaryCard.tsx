@@ -22,8 +22,8 @@ export function AISummaryCard() {
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-50 transition-opacity duration-700 group-hover:opacity-100" />
       
       <CardHeader className="pb-0 pt-5 px-6 relative z-10">
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-primary" />
+        <div className="flex items-start gap-2">
+          <Sparkles className="h-4 w-4 text-primary mt-[2px]" />
           <CardTitle className="flex-1 flex items-center text-sm font-semibold tracking-wide uppercase text-muted-foreground">
             AI Executive Summary
             {data && data.verified === false && (
@@ -51,7 +51,7 @@ export function AISummaryCard() {
             </div>
           ) : (
             <div className="space-y-4">
-              <p className="text-[15px] leading-relaxed text-foreground">
+              <p className="text-[15px] leading-relaxed text-foreground break-words">
                 {data.summary}
               </p>
               {data.highlights && data.highlights.length > 0 && (
