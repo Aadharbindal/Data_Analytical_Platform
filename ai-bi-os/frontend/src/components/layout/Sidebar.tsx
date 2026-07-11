@@ -28,9 +28,9 @@ const mainNavItems = [
   { name: "Data Catalog", href: "/data-catalog", icon: Network },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
   { name: "Insights", href: "/insights", icon: Lightbulb },
-  { name: "Rules & Decisions", href: "/rules", icon: GitBranch },
   { name: "Recommendations", href: "/recommendations", icon: Zap },
-  { name: "Privacy & Governance", href: "/privacy", icon: Shield },
+  { name: "Rules", href: "/rules", icon: GitBranch },
+  { name: "Confidence Center", href: "/analytics/confidence", icon: Shield },
   { name: "AI Chat", href: "/chat", icon: MessageSquare },
 ];
 

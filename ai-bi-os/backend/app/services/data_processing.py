@@ -108,6 +108,53 @@ def init_db():
         )
     ''')
     
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS insights (
+            id TEXT PRIMARY KEY,
+            user_id TEXT,
+            dataset_id TEXT,
+            title TEXT,
+            description TEXT,
+            category TEXT,
+            insight_level TEXT,
+            confidence REAL,
+            impact REAL,
+            recommendation TEXT,
+            verified INTEGER,
+            audit_sql TEXT,
+            created_at TEXT
+        )
+    ''')
+    
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS recommendations (
+            id TEXT PRIMARY KEY,
+            user_id TEXT,
+            dataset_id TEXT,
+            title TEXT,
+            rationale TEXT,
+            priority TEXT,
+            category TEXT,
+            verified INTEGER,
+            created_at TEXT
+        )
+    ''')
+    
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS rules (
+            id TEXT PRIMARY KEY,
+            user_id TEXT,
+            dataset_id TEXT,
+            name TEXT,
+            metric_column TEXT,
+            condition TEXT,
+            threshold REAL,
+            window TEXT,
+            is_active INTEGER,
+            created_at TEXT
+        )
+    ''')
+    
     # Dynamically alter table to add columns for older DB schemas
     for col, ctype, default in [
         ("skipped_rows", "INTEGER", "0"),

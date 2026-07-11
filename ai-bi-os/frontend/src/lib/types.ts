@@ -198,7 +198,12 @@ export interface Insight {
   category: string;
   metric_name?: string;
   metric_value?: number;
-  insight_type?: string;
+  insight_level?: string;
+  confidence?: number;
+  impact?: number;
+  recommendation?: string;
+  verified?: boolean;
+  audit_sql?: string;
   score?: InsightScore;
   dataset_version_id?: string;
   created_at: string;
@@ -206,24 +211,25 @@ export interface Insight {
 
 export interface BusinessRule {
   id: string;
-  workspace_id: string;
+  workspace_id?: string;
   name: string;
-  description?: string;
+  metric_column?: string;
   condition: string;
-  action: string;
-  priority: number;
-  status: "active" | "inactive" | "deprecated";
+  threshold?: number;
+  window?: string;
+  is_active?: boolean;
+  status?: string;
+  current_value?: number;
   created_at: string;
 }
 
 export interface Recommendation {
   id: string;
   title: string;
-  description?: string;
+  rationale?: string;
   category: string;
-  priority: "critical" | "high" | "medium" | "low";
-  roi_estimate?: number;
-  confidence?: number;
+  priority: string;
+  verified?: boolean;
   dataset_version_id?: string;
   created_at: string;
 }

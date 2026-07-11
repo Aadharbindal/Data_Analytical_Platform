@@ -89,20 +89,10 @@ class AgentOrchestrator:
         if db_engine:
             register_duckdb_tools(mcp, db_engine)
             try:
-                desc_res = db_engine.execute("DESCRIBE active_dataset")
-                cols = desc_res.get("rows", [])
-                schema_str = "\\n".join([f"- {c['column_name']} ({c['column_type']})" for c in cols])
-                
-                sample_str = ""
-                try:
-                    df = db_engine.con.sql("SELECT * FROM active_dataset LIMIT 2").df()
-                    df = df.astype(str)
-                    sample_rows = df.to_dict(orient="records")
-                    sample_str = "\\n".join([str(r) for r in sample_rows])
-                except Exception:
-                    sample_str = "(Could not load samples)"
-
-                system_prompt += f"\\n\\nDATABASE SCHEMA:\\nThe data is in a table named 'active_dataset'. Use ONLY this table name.\\nColumns:\\n{schema_str}\\n\\nSample data:\\n{sample_str}\\n\\nRULES:\n- Use ONLY the table and column names listed above, exactly as spelled.\n- Use standard DuckDB SQL syntax.\n- Always alias aggregates.\n- Never invent columns.\n\nCRITICAL RULES:\n1. Answer ONLY from query results on the columns listed above. If a question requires data that does not exist (e.g. cost, profit, margin when no such column exists), say clearly that the data is not available and list which columns ARE available. NEVER assume, estimate, or invent values (prices, costs, counts).\n2. If you reinterpret the user's wording to a different column (e.g. 'branch' -> Region), SAY SO explicitly in the answer.\n3. Every number in your answer must come from a query result in this conversation. If you did not query it, do not state it."
+                from app.services.schema_helper import get_schema_context
+                ctx = get_schema_context(db_engine, "active_dataset")
+                formatted_ctx = ctx["formatted_context"].replace("\n", "\\n")
+                system_prompt += f"\\n\\n{formatted_ctx}\\n\\nRULES:\n- Use ONLY the table and column names listed above, exactly as spelled.\n- Use standard DuckDB SQL syntax.\n- Always alias aggregates.\n- Never invent columns.\n\nCRITICAL RULES:\n1. Answer ONLY from query results on the columns listed above. If a question requires data that does not exist (e.g. cost, profit, margin when no such column exists), say clearly that the data is not available and list which columns ARE available. NEVER assume, estimate, or invent values (prices, costs, counts).\n2. If you reinterpret the user's wording to a different column (e.g. 'branch' -> Region), SAY SO explicitly in the answer.\n3. Every number in your answer must come from a query result in this conversation. If you did not query it, do not state it."
             except Exception:
                 pass
                 
@@ -206,20 +196,9 @@ class AgentOrchestrator:
         if db_engine:
             register_duckdb_tools(mcp, db_engine)
             try:
-                desc_res = db_engine.execute("DESCRIBE active_dataset")
-                cols = desc_res.get("rows", [])
-                schema_str = "\n".join([f"- {c['column_name']} ({c['column_type']})" for c in cols])
-                
-                sample_str = ""
-                try:
-                    df = db_engine.con.sql("SELECT * FROM active_dataset LIMIT 2").df()
-                    df = df.astype(str)
-                    sample_rows = df.to_dict(orient="records")
-                    sample_str = "\n".join([str(r) for r in sample_rows])
-                except Exception:
-                    sample_str = "(Could not load samples)"
-
-                system_prompt += f"\n\nDATABASE SCHEMA:\nThe data is in a table named 'active_dataset'. Use ONLY this table name.\nColumns:\n{schema_str}\n\nSample data:\n{sample_str}\n\nRULES:\n- Use ONLY the table and column names listed above, exactly as spelled.\n- Use standard DuckDB SQL syntax.\n- Always alias aggregates.\n- Never invent columns.\n\nCRITICAL RULES:\n1. Answer ONLY from query results on the columns listed above. If a question requires data that does not exist (e.g. cost, profit, margin when no such column exists), say clearly that the data is not available and list which columns ARE available. NEVER assume, estimate, or invent values (prices, costs, counts).\n2. If you reinterpret the user's wording to a different column (e.g. 'branch' -> Region), SAY SO explicitly in the answer.\n3. Every number in your answer must come from a query result in this conversation. If you did not query it, do not state it."
+                from app.services.schema_helper import get_schema_context
+                ctx = get_schema_context(db_engine, "active_dataset")
+                system_prompt += f"\n\n{ctx['formatted_context']}\n\nRULES:\n- Use ONLY the table and column names listed above, exactly as spelled.\n- Use standard DuckDB SQL syntax.\n- Always alias aggregates.\n- Never invent columns.\n\nCRITICAL RULES:\n1. Answer ONLY from query results on the columns listed above. If a question requires data that does not exist (e.g. cost, profit, margin when no such column exists), say clearly that the data is not available and list which columns ARE available. NEVER assume, estimate, or invent values (prices, costs, counts).\n2. If you reinterpret the user's wording to a different column (e.g. 'branch' -> Region), SAY SO explicitly in the answer.\n3. Every number in your answer must come from a query result in this conversation. If you did not query it, do not state it."
             except Exception:
                 pass
                 

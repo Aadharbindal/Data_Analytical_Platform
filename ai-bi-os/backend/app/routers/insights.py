@@ -5,6 +5,11 @@ import os
 from fastapi import APIRouter, Depends
 from app.services.data_processing import get_active_dataset, get_dataframe
 from app.core.security import get_current_user
+from app.services.query.duckdb_engine import DuckDBEngine
+from app.services.data_processing import get_dataset_path
+from app.services.insights_engine import DeepInsightsEngine
+from app.core.config import DB_PATH
+import sqlite3
 from litellm import completion
 
 router = APIRouter()
@@ -108,12 +113,44 @@ async def get_executive_summary(current_user: dict = Depends(get_current_user)):
             summary += f" There is a {abs(facts['percent_change'])}% {change_dir} in the recent period."
         return {"summary": summary, "verified": True}
 
+@router.post("/deep-analyze")
+async def deep_analyze(current_user: dict = Depends(get_current_user)):
+    dataset_info = get_active_dataset(current_user["id"])
+    if not dataset_info:
+        return {"success": False, "message": "No active dataset."}
+        
+    db_engine = DuckDBEngine()
+    file_path = get_dataset_path(dataset_info["filepath"])
+    format_type = "parquet" if file_path.endswith(".parquet") else "csv"
+    db_engine.register_dataset("active_dataset", file_path, format=format_type)
+    
+    engine = DeepInsightsEngine(db_engine)
+    insights = engine.generate_insights(current_user["id"], dataset_info["id"])
+    db_engine.close()
+    return {"success": True, "insights": insights}
+
 @router.get("/")
 async def list_insights(dataset_version_id: str = None, current_user: dict = Depends(get_current_user)):
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return []
         
+    # Check DB first
+    conn = sqlite3.connect(str(DB_PATH))
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT * FROM insights 
+        WHERE user_id = ? AND dataset_id = ? 
+        ORDER BY verified DESC, created_at DESC
+    ''', (current_user["id"], dataset_info["id"]))
+    rows = cursor.fetchall()
+    conn.close()
+    
+    if rows:
+        return [dict(r) for r in rows]
+        
+    # Fallback to Z-Score Anomalies
     df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         return []
@@ -147,7 +184,7 @@ async def list_insights(dataset_version_id: str = None, current_user: dict = Dep
                             category = "Risk" if is_drop else "Opportunity"
                             title = f"Significant {'Drop' if is_drop else 'Spike'} in {col}"
                             desc = f"{col} was {recent_val:.2f} in the most recent period, which is {abs(z_score):.1f} standard deviations from the mean."
-                            impact = "High" if abs(z_score) > 2.0 else "Medium"
+                            impact = 1.0 if abs(z_score) > 2.0 else 0.5
                             
                             anomalies.append({
                                 "id": f"insight_{insight_id}",

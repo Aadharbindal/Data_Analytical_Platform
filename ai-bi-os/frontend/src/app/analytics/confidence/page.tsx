@@ -1,61 +1,155 @@
 "use client";
 
-import { useDatasetAnalytics } from "@/hooks/useAnalytics";
-import { CheckCircle, AlertTriangle } from "lucide-react";
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { analyticsApi } from "@/lib/api";
+import { CheckCircle, AlertTriangle, Database, Lightbulb, Zap, ShieldCheck } from "lucide-react";
+import { ErrorState, detectErrorType } from "@/components/ui/error-state";
+import { CardSkeleton } from "@/components/ui/skeleton-loader";
+import { motion, AnimatePresence } from "framer-motion";
 
-export default function ConfidenceCenter() {
-  const { validation, isLoading } = useDatasetAnalytics("demo", "v1");
-
-  if (isLoading) return <div className="p-8">Loading Confidence Scores...</div>;
-
-  const data = validation.data;
-  if (!data) return <div className="p-8">No Validation data found.</div>;
+function StatCard({ title, verified, unverified, icon }: { title: string; verified: number; unverified: number; icon: React.ReactNode }) {
+  const total = verified + unverified;
+  const pct = total === 0 ? 0 : Math.round((verified / total) * 100);
 
   return (
-    <div className="flex flex-col gap-6 h-full">
-      <h1 className="text-2xl font-semibold">Confidence & Validation Center</h1>
-      
-      <div className="grid grid-cols-2 gap-4">
-        <div className="glass-card rounded-[20px] p-8 flex flex-col items-center justify-center gap-4">
-          <div className="text-sm text-muted-foreground uppercase tracking-widest font-medium">Overall Trust Score</div>
-          <div className="relative flex items-center justify-center">
-            <svg className="w-32 h-32 transform -rotate-90">
-              <circle cx="64" cy="64" r="56" fill="transparent" stroke="rgba(255,255,255,0.05)" strokeWidth="12" />
-              <circle 
-                cx="64" cy="64" r="56" fill="transparent" 
-                stroke={data.trust_score > 80 ? "#10b981" : "#f59e0b"} 
-                strokeWidth="12" 
-                strokeDasharray="351.8" 
-                strokeDashoffset={351.8 - (351.8 * data.trust_score) / 100}
-                className="transition-all duration-1000 ease-out"
-              />
-            </svg>
-            <div className="absolute text-4xl font-bold">{data.trust_score}</div>
-          </div>
-          <div className={`px-3 py-1 rounded-full text-xs font-medium ${data.trust_score > 80 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'}`}>
-            {data.reliability}
-          </div>
+    <div className="glass-card rounded-[20px] p-6 flex flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold text-lg flex items-center gap-2">
+          {icon}
+          {title}
+        </h3>
+        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${pct > 80 ? 'bg-success/10 text-success border-success/20' : 'bg-warning/10 text-warning border-warning/20'}`}>
+          {pct}% Verified
+        </span>
+      </div>
+      <div className="grid grid-cols-2 gap-4 mt-2">
+        <div className="p-4 bg-success/5 border border-success/10 rounded-xl flex flex-col items-center justify-center">
+          <span className="text-2xl font-bold text-success">{verified}</span>
+          <span className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Verified</span>
         </div>
+        <div className="p-4 bg-error/5 border border-error/10 rounded-xl flex flex-col items-center justify-center">
+          <span className="text-2xl font-bold text-error">{unverified}</span>
+          <span className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Unverified</span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-        <div className="glass-card rounded-[20px] p-6 flex flex-col gap-4">
+export default function ConfidenceCenter() {
+  const { data, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ["confidence"],
+    queryFn: () => analyticsApi.confidence(),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-6">
+        <div className="grid grid-cols-2 gap-6">
+          <CardSkeleton lines={4} />
+          <CardSkeleton lines={4} />
+        </div>
+        <CardSkeleton lines={10} />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <ErrorState onRetry={refetch} errorType={detectErrorType(error)} />;
+  }
+
+  if (!data) return null;
+
+  return (
+    <div className="flex flex-col gap-8 h-full p-8 overflow-y-auto">
+      <div>
+        <h1 className="text-3xl font-semibold tracking-tight text-foreground flex items-center gap-2">
+          <ShieldCheck className="h-8 w-8 text-primary" />
+          Confidence Center
+        </h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          Monitor the deterministic validation of AI-generated insights and recommendations.
+        </p>
+      </div>
+      
+      <div className="grid grid-cols-2 gap-6">
+        <StatCard 
+          title="Insights" 
+          verified={data.insights.verified} 
+          unverified={data.insights.unverified} 
+          icon={<Lightbulb className="h-5 w-5 text-primary" />} 
+        />
+        <StatCard 
+          title="Recommendations" 
+          verified={data.recommendations.verified} 
+          unverified={data.recommendations.unverified} 
+          icon={<Zap className="h-5 w-5 text-primary" />} 
+        />
+      </div>
+
+      <div className="glass-card rounded-[20px] overflow-hidden">
+        <div className="p-5 border-b border-border/40">
           <h3 className="font-semibold text-lg flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-amber-500" />
-            Validation Warnings
+            <Database className="h-5 w-5 text-muted-foreground" />
+            Insights Audit Trail
           </h3>
-          <ul className="space-y-3">
-            {data.warnings.length === 0 ? (
-              <li className="flex items-center gap-2 text-emerald-500 text-sm">
-                <CheckCircle className="h-4 w-4" />
-                All checks passed successfully.
-              </li>
-            ) : (
-              data.warnings.map((warn, i) => (
-                <li key={i} className="bg-amber-500/10 border border-amber-500/20 text-amber-200/80 p-3 rounded-lg text-sm">
-                  {warn}
-                </li>
-              ))
-            )}
-          </ul>
+          <p className="text-xs text-muted-foreground mt-1">
+            Recent insights and their underlying SQL queries used for deterministic verification.
+          </p>
+        </div>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-white/[0.02] border-b border-border/40 text-xs text-muted-foreground uppercase tracking-wider">
+              <tr>
+                <th className="px-5 py-4 font-medium">Insight Title</th>
+                <th className="px-5 py-4 font-medium">Confidence</th>
+                <th className="px-5 py-4 font-medium">Status</th>
+                <th className="px-5 py-4 font-medium">SQL Audit</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/20">
+              {data.audit_trail.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-5 py-8 text-center text-muted-foreground">
+                    No insights generated yet.
+                  </td>
+                </tr>
+              ) : (
+                data.audit_trail.map((row: any) => (
+                  <tr key={row.id} className="hover:bg-white/[0.01] transition-colors">
+                    <td className="px-5 py-4 font-medium text-foreground max-w-[250px] truncate" title={row.title}>
+                      {row.title}
+                    </td>
+                    <td className="px-5 py-4">
+                      {Math.round(row.confidence * 100)}%
+                    </td>
+                    <td className="px-5 py-4">
+                      {row.verified ? (
+                        <span className="flex items-center gap-1.5 text-success bg-success/10 px-2.5 py-1 rounded-full w-fit text-[11px] font-semibold border border-success/20">
+                          <CheckCircle className="h-3 w-3" />
+                          Verified
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1.5 text-error bg-error/10 px-2.5 py-1 rounded-full w-fit text-[11px] font-semibold border border-error/20">
+                          <AlertTriangle className="h-3 w-3" />
+                          Unverified
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="max-w-md">
+                        <code className="text-[10px] font-mono text-muted-foreground bg-black/20 p-2 rounded block break-words whitespace-pre-wrap">
+                          {row.audit_sql}
+                        </code>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
