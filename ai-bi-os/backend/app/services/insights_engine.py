@@ -6,6 +6,7 @@ import sqlite3
 from datetime import datetime
 from litellm import completion
 from app.services.schema_helper import get_schema_context
+from app.services.validation import verify_numbers_against_facts
 from app.core.config import DB_PATH, LLM_MODEL
 
 class DeepInsightsEngine:
@@ -14,33 +15,44 @@ class DeepInsightsEngine:
         self.model = LLM_MODEL
         
     def _parse_json(self, text):
+        import logging
         try:
-            return json.loads(text)
-        except:
+            return json.loads(text, strict=False)
+        except Exception as e1:
             # try to find json block
             m = re.search(r'```(?:json)?\s*(.*?)\s*```', text, re.DOTALL)
             if m:
                 try:
-                    return json.loads(m.group(1))
-                except:
-                    pass
+                    return json.loads(m.group(1), strict=False)
+                except Exception as e2:
+                    logging.error(f"Failed to parse JSON inside markdown block: {e2}")
             # last ditch: find [{
             m = re.search(r'\[\s*\{.*\}\s*\]', text, re.DOTALL)
             if m:
                 try:
-                    return json.loads(m.group(0))
-                except:
-                    pass
+                    return json.loads(m.group(0), strict=False)
+                except Exception as e3:
+                    logging.error(f"Failed to parse JSON array from text: {e3}")
+            logging.error(f"Failed to parse any JSON from text. Raw text was:\n{text}\nFirst JSON parse error: {e1}")
             return []
 
     def _sql_gate(self, sql):
-        # Reject forbidden operations
-        forbidden = r'\b(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|ATTACH|COPY|PRAGMA|INSTALL|LOAD|EXPORT|SET)\b'
+        # Reject forbidden operations. Use word boundaries to avoid matching drop_off etc.
+        forbidden = r'\b(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|ATTACH|COPY|PRAGMA|INSTALL|LOAD|EXPORT|SET|CALL)\b'
+        # Wait, if SQL contains "DROP OFF" it will still match \bDROP\b.
+        # Let's ensure it's not part of a column name by checking if it's followed by TABLE, DATABASE, etc.
+        # But a safer way is to just forbid the destructive keywords that start a statement.
+        forbidden = r'^\s*(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|ATTACH|COPY|PRAGMA|INSTALL|LOAD|EXPORT|SET|CALL)\b'
         if re.search(forbidden, sql, re.IGNORECASE):
             return False, "Query rejected by SQL Gate: Modifying or administrative commands are not allowed."
         return True, ""
 
     def generate_insights(self, user_id: str, dataset_id: str):
+        api_key = os.getenv("GROQ_API_KEY")
+        if not api_key or not api_key.strip():
+            print("AI features are not configured - add GROQ_API_KEY to your .env file.")
+            return []
+
         # 1. PROFILE
         ctx = get_schema_context(self.db_engine, "active_dataset")
         profile_str = ctx["formatted_context"]
@@ -57,10 +69,16 @@ Return ONLY a valid JSON array of objects with keys: "question" (string) and "ty
         res1 = completion(
             model=self.model,
             messages=[{"role": "user", "content": q_prompt}],
-            api_key=os.getenv("GROQ_API_KEY")
+            api_key=os.getenv("GROQ_API_KEY"),
+            max_tokens=2000
         )
+        import logging
+        logging.info("--- LLM CALL 1 (Questions) ---")
+        logging.info(f"Raw response: {res1.choices[0].message.content}")
         questions = self._parse_json(res1.choices[0].message.content)
+        logging.info(f"Parsed questions: {questions}")
         if not questions:
+            logging.error("Failed at Call 1: returning empty due to unparseable LLM output.")
             return []
             
         # 3. DATA INVESTIGATOR (LLM Call 2)
@@ -74,13 +92,27 @@ Return ONLY a valid JSON array of objects with keys: "question" (string) and "sq
         res2 = completion(
             model=self.model,
             messages=[
-                {"role": "user", "content": sql_prompt},
-                {"role": "user", "content": q_json_str}
+                {"role": "user", "content": sql_prompt + "\n\nQuestions:\n" + q_json_str}
             ],
-            api_key=os.getenv("GROQ_API_KEY")
+            api_key=os.getenv("GROQ_API_KEY"),
+            max_tokens=2000
         )
+        logging.info("--- LLM CALL 2 (SQL Mappings) ---")
+        logging.info(f"Raw response: {res2.choices[0].message.content}")
         sql_mappings = self._parse_json(res2.choices[0].message.content)
+        
+        # Fallback: Extract using regex if JSON parse fails or is empty
         if not sql_mappings:
+            logging.warning("JSON parse failed for SQL mappings. Falling back to regex extraction.")
+            text = res2.choices[0].message.content
+            # Extract question and sql pairs
+            pattern = r'"question"\s*:\s*"(.*?)".*?"sql"\s*:\s*"(.*?)"'
+            matches = re.findall(pattern, text, re.DOTALL | re.IGNORECASE)
+            sql_mappings = [{"question": q.replace('\\"', '"'), "sql": s.replace('\\n', ' ').replace('\n', ' ').replace('\\"', '"')} for q, s in matches]
+
+        logging.info(f"Parsed sql mappings: {sql_mappings}")
+        if not sql_mappings:
+            logging.error("Failed at Call 2: returning empty due to unparseable LLM output.")
             return []
             
         # Execute SQL + Gate
@@ -97,6 +129,7 @@ Return ONLY a valid JSON array of objects with keys: "question" (string) and "sq
                 
             is_safe, err = self._sql_gate(sql)
             if not is_safe:
+                logging.warning(f"SQL Gate rejected query '{sql}': {err}")
                 continue
                 
             try:
@@ -108,11 +141,16 @@ Return ONLY a valid JSON array of objects with keys: "question" (string) and "sq
                         "sql": sql,
                         "rows": rows[:10] # cap rows passed to LLM to save tokens
                     })
+                else:
+                    logging.warning(f"Query returned no rows: {sql}")
             except Exception as e:
                 # We skip retry to strictly enforce the 3 batched LLM calls max.
+                logging.error(f"SQL Execution failed for '{sql}': {e}")
                 pass
                 
+        logging.info(f"Successful SQL results: {len(successful_results)}")
         if not successful_results:
+            logging.error("Failed at SQL Execution: no successful queries, returning empty.")
             return []
             
         # 4. EXPLANATION WRITER (LLM Call 3)
@@ -132,13 +170,17 @@ Return ONLY a valid JSON array of objects with the following keys:
         res3 = completion(
             model=self.model,
             messages=[
-                {"role": "user", "content": exp_prompt},
-                {"role": "user", "content": res_json_str}
+                {"role": "user", "content": exp_prompt + "\n\nResults:\n" + res_json_str}
             ],
-            api_key=os.getenv("GROQ_API_KEY")
+            api_key=os.getenv("GROQ_API_KEY"),
+            max_tokens=2000
         )
+        logging.info("--- LLM CALL 3 (Explanations) ---")
+        logging.info(f"Raw response: {res3.choices[0].message.content}")
         insights_data = self._parse_json(res3.choices[0].message.content)
+        logging.info(f"Parsed insights data: {insights_data}")
         if not insights_data:
+            logging.error("Failed at Call 3: returning empty due to unparseable LLM output.")
             return []
             
         # 5. ACCURACY CHECK & PERSIST
@@ -153,57 +195,34 @@ Return ONLY a valid JSON array of objects with the following keys:
             
             verified = False
             if orig_res:
-                # Extract all numbers from LLM text
                 text_to_check = f"{ins.get('title', '')} {ins.get('description', '')} {ins.get('impact', '')}"
-                llm_nums = re.findall(r'\b\d+(?:\.\d+)?\b', text_to_check.replace(',', ''))
-                
-                # Extract all numbers from result rows
-                res_str = json.dumps(orig_res["rows"], default=str).replace(',', '')
-                res_nums = re.findall(r'\b\d+(?:\.\d+)?\b', res_str)
-                
-                # We consider verified if every number in LLM output is found in the result
-                # OR if there are no numbers in the LLM output (though prompt asks for numbers)
-                verified = True
-                for num_str in llm_nums:
-                    try:
-                        num = float(num_str)
-                        if num == 0: continue # ignore 0
-                        # allow slight rounding matches
-                        match_found = False
-                        for r_num_str in res_nums:
-                            try:
-                                if abs(float(r_num_str) - num) < 1.0:
-                                    match_found = True
-                                    break
-                            except:
-                                pass
-                        if not match_found:
-                            verified = False
-                            break
-                    except:
-                        pass
+                res_str = json.dumps(orig_res["rows"], default=str)
+                verified = verify_numbers_against_facts(text_to_check, res_str)
                         
             ins_id = f"ins_{uuid.uuid4().hex[:8]}"
             created_at = datetime.utcnow().isoformat()
             
-            cursor.execute('''
-                INSERT INTO insights (id, user_id, dataset_id, title, description, category, insight_level, confidence, impact, recommendation, verified, audit_sql, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (
-                ins_id,
-                user_id,
-                dataset_id,
-                ins.get("title", "Insight"),
-                ins.get("description", ""),
-                ins.get("category", "Trend"),
-                ins.get("insight_level", "Operational"),
-                float(ins.get("confidence", 0.5)),
-                float(ins.get("impact", 0.0)),
-                ins.get("recommendation", ""),
-                1 if verified else 0,
-                matching_sql,
-                created_at
-            ))
+            try:
+                cursor.execute('''
+                    INSERT INTO insights (id, user_id, dataset_id, title, description, category, insight_level, confidence, impact, recommendation, verified, audit_sql, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    ins_id,
+                    user_id,
+                    dataset_id,
+                    ins.get("title", "Insight"),
+                    ins.get("description", ""),
+                    ins.get("category", "Trend"),
+                    ins.get("insight_level", "Operational"),
+                    float(str(ins.get("confidence", 0.5)).replace('$', '').replace(',', '')),
+                    float(str(ins.get("impact", 0.0)).replace('$', '').replace(',', '')),
+                    ins.get("recommendation", ""),
+                    1 if verified else 0,
+                    matching_sql,
+                    created_at
+                ))
+            except Exception as e:
+                logging.error(f"Failed to insert insight: {e}\nInsight data: {ins}")
             
             ins["id"] = ins_id
             ins["verified"] = verified

@@ -357,7 +357,7 @@ def generate_pdf_report(dataset_info, df):
     section_header("Revenue / Metric Chart")
     
     chart_data = kpi_results.get("chart_data", [])
-    rev_col = find_column(df, r'revenue|sales|amount')
+    rev_col = find_column(df, r'revenue|sales|amount|mrr|arr|turnover|income|earnings|gmv|sales_amount|order_value|net_revenue|total_revenue')
     
     if date_col and rev_col and chart_data:
         plt.figure(figsize=(8, 4.5), dpi=200)

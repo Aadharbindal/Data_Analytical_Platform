@@ -142,14 +142,14 @@ export const advancedAnalyticsApi = {
   // M26: Outlier Analysis Engine
   getOutliers: (datasetId: string) => api.get<OutlierData[]>(`/api/v1/analytics/outliers`),
   
-  // M27: Time Series Analytics Engine (defaults to revenue)
-  getTimeSeries: (datasetId: string) => api.get<TimeSeriesSummary[]>(`/api/v1/analytics/timeseries?metric=revenue`),
+  // M27: Time Series Analytics Engine (defaults to backend auto-detection)
+  getTimeSeries: (datasetId: string, metric?: string) => api.get<TimeSeriesSummary[]>(`/api/v1/analytics/timeseries${metric ? `?metric=${metric}` : ''}`),
   
   // M28: Trend & Change Detection Engine
   getTrends: (datasetId: string) => api.get<TrendSummary[]>(`/api/v1/analytics/trend`),
   
-  // M29: Forecasting Engine (defaults to revenue)
-  getForecasts: (datasetId: string) => api.get<ForecastSummary[]>(`/api/v1/analytics/forecast?metric=revenue`),
+  // M29: Forecasting Engine (defaults to backend auto-detection)
+  getForecasts: (datasetId: string, metric?: string) => api.get<ForecastSummary[]>(`/api/v1/analytics/forecast${metric ? `?metric=${metric}` : ''}`),
   
   // M30: Forecast Governance Engine (Not implemented yet, stub)
   getGovernance: (modelId: string) => api.get<GovernanceSummary>(`/api/v1/analytics/governance`),

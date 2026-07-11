@@ -73,12 +73,12 @@ export function AISummaryCard() {
             onClick={() => {
               let question = "Give me a deeper analysis of the current dataset.";
               if (data?.facts) {
-                const { metric_name, percent_change } = data.facts;
-                if (metric_name && percent_change !== undefined) {
+                const { percent_change } = data.facts;
+                if (percent_change !== undefined && percent_change !== null) {
                   const direction = percent_change > 0 ? "increased" : "decreased";
-                  question = `Give me a deeper analysis of why ${metric_name} ${direction} by ${Math.abs(percent_change)}% this period, and what's driving it`;
-                } else if (metric_name) {
-                  question = `Give me a deeper analysis of the ${metric_name} metric.`;
+                  question = `Give me a deeper analysis of why the primary metric ${direction} by ${Math.abs(percent_change).toFixed(1)}% this period, and what's driving it.`;
+                } else {
+                  question = `Give me a deeper analysis of the primary metric.`;
                 }
               }
               router.push(`/chat?q=${encodeURIComponent(question)}`);

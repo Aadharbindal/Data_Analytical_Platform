@@ -32,10 +32,19 @@ const itemVariants = {
   show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 300, damping: 24 } },
 };
 
-function formatValue(value: number): string {
+function formatValue(value: number, type?: string): string {
+  if (type === "count") {
+    if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
+    if (value >= 1_000) return `${(value / 1_000).toFixed(1)}K`;
+    return String(value);
+  }
+  if (type === "percent") {
+    return `${value}%`;
+  }
+  
   if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`;
   if (value >= 1_000) return `$${(value / 1_000).toFixed(0)}K`;
-  return String(value);
+  return type === "currency" ? `$${value}` : String(value);
 }
 
 export const DashboardGrid: React.FC<DashboardGridProps> = ({
@@ -50,7 +59,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
     kpis.length > 0
       ? kpis.slice(0, 4).map((k) => ({
           title: k.name,
-          value: formatValue(k.value),
+          value: formatValue(k.value, k.type),
           trend: k.trend ? `${k.trend > 0 ? "+" : ""}${k.trend.toFixed(1)}%` : "–",
           trendDown: (k.trend ?? 0) < 0,
         }))

@@ -170,7 +170,7 @@ export default function ConfidenceCenter() {
           </p>
         </div>
         
-        <div className="overflow-auto flex-1 min-h-0 relative">
+        <div className="overflow-auto flex-1 min-h-0 relative max-h-[500px]">
           <table className="w-full text-left text-sm relative">
             <thead className="bg-[#111] border-b border-border/40 text-xs text-muted-foreground uppercase tracking-wider sticky top-0 z-20">
               <tr>

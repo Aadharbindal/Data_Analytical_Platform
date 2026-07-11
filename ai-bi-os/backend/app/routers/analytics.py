@@ -178,14 +178,25 @@ async def get_outliers(current_user: dict = Depends(get_current_user)):
     return {"outliers": outliers_res}
 
 @router.get("/timeseries")
-async def get_timeseries(metric: str, current_user: dict = Depends(get_current_user)):
+async def get_timeseries(metric: str = None, current_user: dict = Depends(get_current_user)):
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         raise HTTPException(status_code=400, detail="No active dataset")
     
     df = get_dataframe(dataset_info["id"], current_user["id"])
-    if df is None or metric not in df.columns:
-        raise HTTPException(status_code=400, detail="Invalid metric column")
+    if df is None:
+        raise HTTPException(status_code=400, detail="Dataset not loaded")
+        
+    from app.services.stats_service import find_column
+    if not metric:
+        metric = find_column(df, r'revenue|sales|amount|mrr|arr|turnover|income|earnings|gmv|sales_amount|order_value|net_revenue|total_revenue')
+        if not metric:
+            raise HTTPException(status_code=400, detail="No metric column found")
+    else:
+        col_map = {c.lower(): c for c in df.columns}
+        if metric.lower() not in col_map:
+            raise HTTPException(status_code=400, detail="Invalid metric column")
+        metric = col_map[metric.lower()]
 
     from app.services.stats_service import find_column
     date_col = find_column(df, r'date|month|year|time')
@@ -286,13 +297,19 @@ async def get_kpi_center(current_user: dict = Depends(get_current_user)):
             if expected == "Total Revenue": reason = "No revenue/sales/amount column found"
             elif expected == "Active Users": reason = "No customer/user column found"
             elif expected == "Avg. Deal Size": reason = "Missing deal or revenue columns"
-            elif expected == "Pipeline Health": reason = "no column matching stage|status|pipeline found"
+            elif expected == "Pipeline Health": 
+                from app.services.stats_service import find_column
+                status_col = find_column(df, r'stage|status|pipeline')
+                if status_col:
+                    reason = f"{status_col} values don't match a recognized pipeline stage pattern"
+                else:
+                    reason = "No column matching stage|status|pipeline found"
             omitted_kpis.append({"name": expected, "reason": reason})
     
     return {"available_kpis": available_kpis, "omitted_kpis": omitted_kpis}
 
 @router.get("/forecast")
-async def get_forecast(metric: str, current_user: dict = Depends(get_current_user)):
+async def get_forecast(metric: str = None, current_user: dict = Depends(get_current_user)):
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         raise HTTPException(status_code=400, detail="No active dataset")
@@ -301,6 +318,18 @@ async def get_forecast(metric: str, current_user: dict = Depends(get_current_use
     if df is None:
         raise HTTPException(status_code=400, detail="Dataset not loaded")
         
+    if metric:
+        col_map = {c.lower(): c for c in df.columns}
+        if metric.lower() not in col_map:
+            return {"available": False, "reason": "Invalid metric column"}
+        metric = col_map[metric.lower()]
+    
+    if not metric:
+        from app.services.stats_service import find_column
+        metric = find_column(df, r'revenue|sales|amount|mrr|arr|turnover|income|earnings|gmv|sales_amount|order_value|net_revenue|total_revenue')
+        if not metric:
+            return {"available": False, "reason": "No revenue metric column found"}
+            
     res = forecast_series(df, metric)
     return res
 

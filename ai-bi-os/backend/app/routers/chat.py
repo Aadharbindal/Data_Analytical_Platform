@@ -13,6 +13,10 @@ class ChatRequest(BaseModel):
 
 @router.post("")
 async def chat(request: ChatRequest, current_user: dict = Depends(get_current_user)):
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key or not api_key.strip():
+        return {"response": "AI features are not configured - add GROQ_API_KEY to your .env file.", "sql": []}
+
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return {"response": "No dataset uploaded yet.", "sql": None}

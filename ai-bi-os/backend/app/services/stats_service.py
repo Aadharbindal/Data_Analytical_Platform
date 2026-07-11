@@ -23,7 +23,7 @@ def compute_kpis(df: pd.DataFrame) -> dict:
         return round(((current - previous) / previous) * 100, 1)
     
     # 1. Total Revenue
-    rev_col = find_column(df, r'revenue|sales|amount')
+    rev_col = find_column(df, r'revenue|sales|amount|mrr|arr|turnover|income|earnings|gmv|sales_amount|order_value|net_revenue|total_revenue')
     
     # 2. Active Users / Customers
     user_col = None
@@ -87,6 +87,7 @@ def compute_kpis(df: pd.DataFrame) -> dict:
             "value": round(float(curr_rev), 2),
             "previous_value": round(float(prev_rev), 2),
             "trend": calc_trend(curr_rev, prev_rev),
+            "type": "currency",
             "history": []
         })
 
@@ -106,6 +107,7 @@ def compute_kpis(df: pd.DataFrame) -> dict:
             "value": float(curr_users),
             "previous_value": float(prev_users),
             "trend": calc_trend(curr_users, prev_users),
+            "type": "count",
             "history": []
         })
 
@@ -135,6 +137,7 @@ def compute_kpis(df: pd.DataFrame) -> dict:
             "value": round(float(curr_avg), 2),
             "previous_value": round(float(prev_avg), 2),
             "trend": calc_trend(curr_avg, prev_avg),
+            "type": "currency",
             "history": []
         })
 
@@ -149,18 +152,26 @@ def compute_kpis(df: pd.DataFrame) -> dict:
             mask = healthy & ~unhealthy
             return float(mask.mean() * 100)
             
-        curr_health = calc_health(recent_df)
-        prev_health = calc_health(prior_df) if prior_df is not None else curr_health
+        s_full = df[status_col].astype(str)
+        healthy_total = s_full.str.contains(r'won|active|open|closed', case=False, na=False).sum()
+        unhealthy_total = s_full.str.contains(r'lost|churn|cancel|reject|fail', case=False, na=False).sum()
         
-        kpis.append({
-            "id": "kpi_pipeline",
-            "name": "Pipeline Health",
-            "column": status_col,
-            "value": round(curr_health, 1),
-            "previous_value": round(prev_health, 1),
-            "trend": calc_trend(curr_health, prev_health),
-            "history": []
-        })
+        if healthy_total > 0 or unhealthy_total > 0:
+            total_matches = healthy_total + unhealthy_total
+            if total_matches >= len(df) * 0.05:
+                curr_health = calc_health(recent_df)
+                prev_health = calc_health(prior_df) if prior_df is not None else curr_health
+            
+            kpis.append({
+                "id": "kpi_pipeline",
+                "name": "Pipeline Health",
+                "column": status_col,
+                "value": round(curr_health, 1),
+                "previous_value": round(prev_health, 1),
+                "trend": calc_trend(curr_health, prev_health),
+                "type": "percent",
+                "history": []
+            })
 
     chart_data = []
     if date_col and rev_col and pd.api.types.is_numeric_dtype(df[rev_col]):
@@ -184,6 +195,49 @@ def compute_kpis(df: pd.DataFrame) -> dict:
                         "value": None,
                         "forecast": round(f_point["forecast"], 2)
                     })
+        except Exception:
+            pass
+            
+    # Populate history for KPIs based on date_col grouping if possible
+    if date_col:
+        try:
+            df_temp = df.dropna(subset=[date_col]).copy()
+            periods_list = df_temp.groupby(df_temp[date_col].dt.to_period('M'))
+            
+            for k in kpis:
+                hist = []
+                # Sort periods chronologically
+                sorted_p = sorted(periods_list.groups.keys())
+                for p in sorted_p:
+                    group_df = periods_list.get_group(p)
+                    val = 0.0
+                    
+                    if k["id"] == "kpi_rev" and rev_col and pd.api.types.is_numeric_dtype(group_df[rev_col]):
+                        val = group_df[rev_col].sum()
+                        
+                    elif k["id"] == "kpi_users" and user_col:
+                        if pd.api.types.is_numeric_dtype(group_df[user_col]) and not re.search(r'id\b', user_col, re.IGNORECASE):
+                            val = group_df[user_col].sum()
+                        else:
+                            val = group_df[user_col].nunique()
+                            
+                    elif k["id"] == "kpi_deal_size":
+                        r = group_df[rev_col].sum() if (rev_col and pd.api.types.is_numeric_dtype(group_df[rev_col])) else 0.0
+                        if deal_col:
+                            if pd.api.types.is_numeric_dtype(group_df[deal_col]) and not re.search(r'id\b', deal_col, re.IGNORECASE):
+                                d = group_df[deal_col].sum()
+                            else:
+                                d = group_df[deal_col].nunique()
+                        else:
+                            d = len(group_df)
+                        val = safe_divide(r, d)
+                        
+                    elif k["id"] == "kpi_pipeline" and status_col:
+                        val = calc_health(group_df)
+                        
+                    hist.append({"date": p.strftime('%b %Y'), "value": round(float(val), 2)})
+                
+                k["history"] = hist
         except Exception:
             pass
 
@@ -226,8 +280,14 @@ def quality_report(df: pd.DataFrame) -> dict:
     }
 
 def forecast_series(df: pd.DataFrame, metric_col: str, periods: int = 3) -> dict:
-    if df.empty or metric_col not in df.columns or not pd.api.types.is_numeric_dtype(df[metric_col]):
+    if df.empty:
+        return {"available": False, "reason": "Empty dataset"}
+        
+    actual_col = next((c for c in df.columns if c.lower() == metric_col.lower()), None)
+    if not actual_col or not pd.api.types.is_numeric_dtype(df[actual_col]):
         return {"available": False, "reason": "Invalid metric column"}
+        
+    metric_col = actual_col
         
     date_col = find_column(df, r'date|month|year|time')
     if not date_col:
@@ -296,6 +356,7 @@ def forecast_series(df: pd.DataFrame, metric_col: str, periods: int = 3) -> dict
         
     return {
         "available": True,
+        "method": "Linear trend projection",
         "historical": historical_values,
         "forecast": forecast_values
     }
