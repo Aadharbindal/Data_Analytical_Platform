@@ -9,7 +9,7 @@ import re
 from fastapi import APIRouter, Depends
 from app.services.data_processing import get_active_dataset, get_dataframe
 from app.core.security import get_current_user
-from app.core.config import DB_PATH
+from app.core.config import DB_PATH, LLM_MODEL
 from litellm import completion
 
 router = APIRouter()
@@ -96,7 +96,7 @@ Return ONLY a valid JSON array of objects with keys:
 
     try:
         res = completion(
-            model=os.getenv("LLM_MODEL", "groq/llama-3.3-70b-versatile"),
+            model=LLM_MODEL,
             messages=[{"role": "user", "content": prompt}],
             api_key=os.getenv("GROQ_API_KEY")
         )

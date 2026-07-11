@@ -6,9 +6,11 @@ import { Sparkles, TrendingUp, ArrowRight, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { insightsApi } from "@/lib/api";
+import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton-loader";
 
 export function AISummaryCard() {
+  const router = useRouter();
   const { data, isLoading, isError } = useQuery({
     queryKey: ["executiveSummary"],
     queryFn: () => insightsApi.executiveSummary(),
@@ -67,7 +69,25 @@ export function AISummaryCard() {
         </div>
 
         <div className="mt-6 pt-5 border-t border-border/40">
-          <Button variant="ghost" className="group/btn w-full justify-between text-primary hover:text-primary hover:bg-primary/10 rounded-lg h-10 px-4 text-sm font-medium transition-all">
+          <Button 
+            onClick={() => {
+              let question = "Give me a deeper analysis of the current dataset.";
+              if (data?.facts) {
+                const { dataset_name, metric_name, percent_change } = data.facts;
+                if (dataset_name && metric_name && percent_change !== undefined) {
+                  const direction = percent_change > 0 ? "increased" : "decreased";
+                  question = `Give me a deeper analysis of why ${dataset_name}'s ${metric_name} ${direction} by ${Math.abs(percent_change)}% this period, and what's driving it`;
+                } else if (dataset_name && metric_name) {
+                  question = `Give me a deeper analysis of the ${metric_name} metric in the ${dataset_name} dataset.`;
+                } else if (dataset_name) {
+                  question = `Give me a deeper analysis of the ${dataset_name} dataset.`;
+                }
+              }
+              router.push(`/chat?q=${encodeURIComponent(question)}`);
+            }}
+            variant="ghost" 
+            className="group/btn w-full justify-between text-primary hover:text-primary hover:bg-primary/10 rounded-lg h-10 px-4 text-sm font-medium transition-all"
+          >
             Ask Copilot for deep dive
             <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
           </Button>

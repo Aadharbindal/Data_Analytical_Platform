@@ -6,12 +6,12 @@ import sqlite3
 from datetime import datetime
 from litellm import completion
 from app.services.schema_helper import get_schema_context
-from app.core.config import DB_PATH
+from app.core.config import DB_PATH, LLM_MODEL
 
 class DeepInsightsEngine:
     def __init__(self, db_engine):
         self.db_engine = db_engine
-        self.model = os.getenv("LLM_MODEL", "groq/llama-3.3-70b-versatile")
+        self.model = LLM_MODEL
         
     def _parse_json(self, text):
         try:
