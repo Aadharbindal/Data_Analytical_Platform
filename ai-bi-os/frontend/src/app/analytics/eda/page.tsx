@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { analyticsApi } from "@/lib/api";
+import { analyticsApi, BASE_URL } from "@/lib/api";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { ErrorState } from "@/components/ui/error-state";
 import { StudioPage } from "@/components/analytics/StudioPage";
@@ -16,7 +16,7 @@ export default function EDAPage() {
 
   const toolbar = (
     <button 
-      onClick={() => window.open("http://127.0.0.1:8000/api/v1/analytics/export/eda")}
+      onClick={() => window.open(`${BASE_URL}/api/v1/analytics/export/eda`)}
       className="bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1.5 transition-colors"
     >
       <Download className="w-3.5 h-3.5" />

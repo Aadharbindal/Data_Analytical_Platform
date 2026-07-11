@@ -98,26 +98,19 @@ export default function DataCatalogPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground">Data Catalog</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Discover and explore your organization's data assets with semantic context.
-          </p>
+      {/* Search and Entries */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="relative w-full max-w-lg">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Search by name, domain, or description..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full h-10 bg-surface border border-border/80 rounded-xl pl-9 pr-4 text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+          />
         </div>
-        <span className="text-sm text-muted-foreground">{filtered.length} entries</span>
-      </div>
-
-      {/* Search */}
-      <div className="relative max-w-lg">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <input
-          type="text"
-          placeholder="Search by name, domain, or description..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full h-10 bg-surface border border-border/80 rounded-xl pl-9 pr-4 text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-        />
+        <span className="text-sm text-muted-foreground whitespace-nowrap">{filtered.length} entries</span>
       </div>
 
       {/* List */}

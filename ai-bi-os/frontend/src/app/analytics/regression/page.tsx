@@ -34,7 +34,7 @@ export default function RegressionModels() {
   const trainMutation = useMutation({
     mutationFn: (data: { target: string; features: string[] }) =>
       api.post("/api/v1/analytics/regression/train", data),
-    onSuccess: (res) => {
+    onSuccess: (res: any) => {
       queryClient.invalidateQueries({ queryKey: ["regression_models"] });
       setTrainError(null);
       setActiveModel({

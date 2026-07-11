@@ -134,15 +134,7 @@ export default function ConfidenceCenter() {
 
   return (
     <div className="flex flex-col gap-8 h-full p-8 overflow-hidden">
-      <div className="shrink-0">
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground flex items-center gap-2">
-          <ShieldCheck className="h-8 w-8 text-primary" />
-          Confidence Center
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Monitor the deterministic validation of AI-generated insights and recommendations.
-        </p>
-      </div>
+
       
       <div className="grid grid-cols-2 gap-6">
         <StatCard 

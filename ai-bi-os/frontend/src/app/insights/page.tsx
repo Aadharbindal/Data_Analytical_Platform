@@ -225,7 +225,7 @@ export default function InsightsPage() {
       </div>
 
       {isLoading || deepAnalyze.isPending ? (
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-6">
+        <div className="grid grid-cols-1 gap-6">
           {Array.from({ length: 6 }).map((_, i) => <CardSkeleton key={i} lines={5} />)}
         </div>
       ) : isError ? (
@@ -251,7 +251,7 @@ export default function InsightsPage() {
           variants={containerVariants}
           initial="hidden"
           animate="show"
-          className="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-6"
+          className="grid grid-cols-1 gap-6"
         >
           {insights.map((insight) => (
             <motion.div key={insight.id} variants={itemVariants} className="h-full">
