@@ -42,25 +42,25 @@ function InsightCard({ insight }: { insight: Insight }) {
 
   return (
     <motion.div
-      whileHover={{ y: -2 }}
-      className="glass-card rounded-[20px] p-5 flex flex-col gap-4 relative overflow-hidden"
+      whileHover={{ y: -4, boxShadow: "0 12px 30px -10px rgba(0,0,0,0.3)" }}
+      className="glass-card h-full rounded-[24px] p-6 flex flex-col gap-5 relative overflow-hidden bg-gradient-to-br from-white/[0.05] to-transparent border border-white/[0.08] shadow-lg backdrop-blur-xl transition-all duration-300"
     >
       {/* Decorative gradient blob */}
-      <div className={`absolute -right-10 -top-10 w-32 h-32 blur-3xl opacity-[0.03] pointer-events-none ${categoryColor.split(' ')[0]}`} />
+      <div className={`absolute -right-12 -top-12 w-40 h-40 blur-3xl opacity-[0.06] pointer-events-none ${categoryColor.split(' ')[0]}`} />
 
       <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2 flex-1 min-w-0">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
-            <Lightbulb className="h-4 w-4 text-primary" />
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] bg-white/[0.06] border border-white/[0.05] shadow-inner">
+            <Lightbulb className={`h-5 w-5 ${categoryColor.split(' ')[1] || "text-primary"}`} />
           </div>
-          <h3 className="text-sm font-semibold text-foreground leading-tight">{insight.title}</h3>
+          <h3 className="text-base font-semibold text-foreground/90 leading-tight tracking-tight">{insight.title}</h3>
         </div>
-        <div className="flex flex-col items-end gap-1">
-          <span className={`shrink-0 text-[11px] font-medium border px-2 py-0.5 rounded-full ${categoryColor}`}>
+        <div className="flex flex-col items-end gap-1.5 shrink-0">
+          <span className={`text-[11px] font-semibold tracking-wide uppercase border px-2.5 py-0.5 rounded-full ${categoryColor}`}>
             {insight.category}
           </span>
           {insight.verified && (
-            <span className="flex items-center gap-1 text-[10px] font-medium text-success">
+            <span className="flex items-center gap-1 text-[10px] font-semibold tracking-wide uppercase text-success/80">
               <CheckCircle className="h-3 w-3" />
               Verified
             </span>
@@ -69,34 +69,36 @@ function InsightCard({ insight }: { insight: Insight }) {
       </div>
 
       {insight.description && (
-        <p className="text-xs text-muted-foreground leading-relaxed">{insight.description}</p>
+        <p className="text-[13px] text-muted-foreground/80 leading-relaxed font-light">{insight.description}</p>
       )}
 
       {insight.impact !== undefined && insight.impact > 0 && (
-        <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.02] border border-border/40">
-          <span className="text-xs text-muted-foreground">Impact Value</span>
-          <span className="text-sm font-semibold text-foreground tabular-metrics ml-auto">
-            {insight.impact.toLocaleString()}
+        <div className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-white/[0.03] border border-white/[0.04]">
+          <span className="text-[11px] font-medium text-muted-foreground/70 tracking-wide uppercase">Impact Value</span>
+          <span className="text-lg font-semibold text-foreground tabular-metrics ml-auto">
+            {insight.impact.toLocaleString(undefined, { maximumFractionDigits: 2 })}
           </span>
         </div>
       )}
 
       {insight.recommendation && (
-        <div className="text-xs p-3 rounded-xl bg-primary/5 border border-primary/10">
-          <span className="font-semibold text-primary block mb-1">Recommendation:</span>
-          <span className="text-muted-foreground">{insight.recommendation}</span>
+        <div className="text-[13px] p-4 rounded-2xl bg-primary/[0.03] border border-primary/[0.08] leading-relaxed">
+          <span className="font-semibold text-primary/90 flex items-center gap-1.5 mb-1.5">
+            <Lightbulb className="h-4 w-4" /> Recommendation
+          </span>
+          <span className="text-muted-foreground/90">{insight.recommendation}</span>
         </div>
       )}
 
       {/* Confidence Bar */}
-      <div className="space-y-1.5 mt-auto">
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-muted-foreground">AI Confidence</span>
-          <span className="font-semibold text-foreground">{confidence}%</span>
+      <div className="space-y-2 mt-auto pt-2">
+        <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider">
+          <span className="text-muted-foreground/60">AI Confidence</span>
+          <span className="text-foreground/80">{confidence}%</span>
         </div>
-        <div className="h-1.5 rounded-full bg-white/[0.05] overflow-hidden">
+        <div className="h-2 rounded-full bg-black/40 overflow-hidden shadow-inner border border-white/[0.02]">
           <div
-            className={`h-full rounded-full transition-all duration-500 ${
+            className={`h-full rounded-full transition-all duration-1000 ease-out ${
               confidence > 80 ? "bg-success" : confidence > 60 ? "bg-warning" : "bg-error"
             }`}
             style={{ width: `${confidence}%` }}
@@ -104,19 +106,19 @@ function InsightCard({ insight }: { insight: Insight }) {
         </div>
       </div>
 
-      <div className="flex items-center justify-between pt-2 border-t border-border/50">
-        <p className="text-[11px] text-muted-foreground/60">
+      <div className="flex items-center justify-between pt-3 mt-1 border-t border-border/40">
+        <p className="text-[11px] font-medium text-muted-foreground/50">
           {formatRelativeTime(insight.created_at)}
         </p>
         
         {insight.audit_sql && (
           <button
             onClick={() => setShowSql(!showSql)}
-            className="text-[11px] font-medium text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+            className="text-[11px] font-semibold tracking-wide uppercase text-muted-foreground/70 hover:text-foreground flex items-center gap-1.5 transition-colors"
           >
-            <Database className="h-3 w-3" />
+            <Database className="h-3.5 w-3.5" />
             {showSql ? "Hide SQL" : "View SQL"}
-            {showSql ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+            {showSql ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
           </button>
         )}
       </div>
@@ -129,7 +131,7 @@ function InsightCard({ insight }: { insight: Insight }) {
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden"
           >
-            <div className="p-3 bg-black/40 border border-border/50 rounded-xl mt-2 text-[10px] font-mono text-muted-foreground whitespace-pre-wrap overflow-x-auto">
+            <div className="p-4 bg-black/40 border border-white/[0.05] rounded-2xl mt-3 text-[11px] font-mono text-muted-foreground/80 whitespace-pre-wrap overflow-x-auto shadow-inner">
               {insight.audit_sql}
             </div>
           </motion.div>
@@ -213,10 +215,10 @@ export default function InsightsPage() {
           variants={containerVariants}
           initial="hidden"
           animate="show"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {insights.map((insight) => (
-            <motion.div key={insight.id} variants={itemVariants}>
+            <motion.div key={insight.id} variants={itemVariants} className="h-full">
               <InsightCard insight={insight} />
             </motion.div>
           ))}
