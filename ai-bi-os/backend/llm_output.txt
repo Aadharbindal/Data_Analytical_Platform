@@ -1,0 +1,364 @@
+====== LLM RAW RESPONSE ======
+[
+  {
+    "question": "What is the month‑over‑month growth rate of total MRR for each country in the last 12 months, and which countries have experienced a sustained acceleration or deceleration in that growth?",
+    "type": "descriptive"
+  },
+  {
+    "question": "Which subscription plan shows the highest churn rate (transition from 'Active' to any non‑active status) within the first 90 days after signup, and how does that churn correlate with the average number of ActiveUsers per subscription for the same plan?",
+    "type": "diagnostic"
+  },
+  {
+    "question": "Based on the historical MRR and ActiveUsers trends per plan and country, what is the forecasted total MRR for the next three quarters for the top‑performing plan in the United States?",
+    "type": "predictive"
+  },
+  {
+    "question": "If the company wants to increase overall MRR by 12% over the next six months, what combination of price adjustments across plans and targeted acquisition in the three countries with the highest average ActiveUsers would achieve this goal while keeping churn below 4%?",
+    "type": "prescriptive"
+  },
+  {
+    "question": "How does the average MRR per ActiveUser differ between plans for each signup month, and are there specific months where a plan’s per‑user revenue deviates significantly from its overall average?",
+    "type": "descriptive"
+  },
+  {
+    "question": "What are the key drivers behind a subscription’s transition from 'Active' to 'Cancelled' after six months, considering variables such as Plan, Country, MRR tier, and ActiveUsers count, and how can the company intervene to reduce cancellations?",
+    "type": "diagnostic"
+  }
+]
+==============================
+====== LLM RAW RESPONSE ======
+
+==============================
+====== LLM RAW RESPONSE ======
+[
+  {
+    "question": "What is the month‑over‑month growth rate in total MRR for each country over the past 12 months, broken down by plan type?",
+    "type": "descriptive"
+  },
+  {
+    "question": "Which plan‑country combinations exhibit the highest churn rate (subscriptions that moved from 'Active' to a non‑active status within the first three months after SignupMonth), and what is the magnitude of that churn?",
+    "type": "diagnostic"
+  },
+  {
+    "question": "Based on historical trends in MRR and ActiveUsers, what is the forecasted total MRR for the next quarter for the top five countries by current revenue?",
+    "type": "predictive"
+  },
+  {
+    "question": "What pricing adjustments (percentage increase or discount) for each plan in each country would maximize projected MRR for the next six months while keeping the estimated churn rate below 5%?",
+    "type": "prescriptive"
+  },
+  {
+    "question": "How does average MRR per active user vary across plans and countries, and which factors (e.g., plan tier, country, subscription age) are most strongly associated with higher per‑user revenue?",
+    "type": "diagnostic"
+  },
+  {
+    "question": "For subscription cohorts grouped by SignupMonth, which cohorts are most likely to upgrade from the Basic to the Standard plan within six months, based on current MRR and ActiveUsers patterns?",
+    "type": "predictive"
+  }
+]
+==============================
+====== LLM RAW RESPONSE ======
+
+==============================
+====== LLM RAW RESPONSE ======
+```json
+[
+  {
+    "question": "What is the total monthly recurring revenue (MRR) broken down by plan and country for the most recent SignupMonth in the active_dataset table?",
+    "type": "descriptive"
+  },
+  {
+    "question": "Why does the churn rate (status transitioning from 'Active' to 'Cancelled') differ between the Basic and Premium plans over the past 6 months, and which countries exhibit the largest disparities?",
+    "type": "diagnostic"
+  },
+  {
+    "question": "Based on historical MRR trends by plan and country, what is the forecasted MRR for each plan in the United Kingdom for the next three months?",
+    "type": "predictive"
+  },
+  {
+    "question": "Which pricing adjustments for the Standard plan would maximize projected MRR while achieving a target active‑user growth of at least 5% per month in Canada?",
+    "type": "prescriptive"
+  },
+  {
+    "question": "How does the average number of ActiveUsers per SubscriptionID vary across countries for subscriptions that have been active for more than 12 months (i.e., where SignupMonth is at least 12 months prior to the latest month)?",
+    "type": "descriptive"
+  },
+  {
+    "question": "What combination of factors (Plan, Country, SignupMonth, initial MRR) is most strongly associated with a subscription moving to 'Cancelled' status within the first three months of signup?",
+    "type": "diagnostic"
+  }
+]
+```
+==============================
+====== LLM RAW RESPONSE ======
+[
+  {
+    "question": "What is the total monthly recurring revenue (MRR) broken down by plan and country for the most recent SignupMonth in the active_dataset table?",
+    "sql": "SELECT\n  Plan,\n  Country,\n  SUM(MRR) AS total_mrr\nFROM active_dataset\nWHERE SignupMonth = (SELECT MAX(SignupMonth) FROM active_dataset)\nGROUP BY Plan, Country\nORDER BY Plan, Country;"
+  },
+  {
+    "question": "Why does the churn rate (status transitioning from 'Active' to 'Cancelled') differ between the Basic and Premium plans over the past 6 months, and which countries exhibit the largest disparities?",
+    "sql": "WITH recent AS (\n  SELECT *, CAST(SignupMonth || '-01' AS DATE) AS signup_date\n  FROM active_dataset\n),\nfiltered AS (\n  SELECT *\n  FROM recent\n  WHERE signup_date >= (SELECT DATE_TRUNC('month', MAX(signup_date)) - INTERVAL '5 months' FROM recent)\n    AND Plan IN ('Basic','Premium')\n),\nplan_rates AS (\n  SELECT Country,\n         Plan,\n         SUM(CASE WHEN Status = 'Cancelled' THEN 1 ELSE 0 END)::DOUBLE / COUNT(*) AS churn_rate\n  FROM filtered\n  GROUP BY Country, Plan\n)\nSELECT\n  pr_basic.Country,\n  pr_basic.churn_rate AS basic_churn_rate,\n  pr_premium.churn_rate AS premium_churn_rate,\n  (pr_basic.churn_rate - pr_premium.churn_rate) AS disparity\nFROM plan_rates pr_basic\nJOIN plan_rates pr_premium\n  ON pr_basic.Country = pr_premium.Country\nWHERE pr_basic.Plan = 'Basic' AND pr_premium.Plan = 'Premium'\nORDER BY ABS(disparity) DESC\nLIMIT 10;"
+  },
+  {
+    "question": "Based on historical MRR trends by plan and country, what is the forecasted MRR for each plan in the United Kingdom for the next three months?",
+    "sql": "WITH uk_monthly AS (\n  SELECT\n    Plan,\n    CAST(SignupMonth || '-01' AS DATE) AS month_date,\n    SUM(MRR) AS monthly_mrr\n  FROM active_dataset\n  WHERE Country = 'United Kingdom'\n  GROUP BY Plan, month_date\n),\nranked AS (\n  SELECT\n    Plan,\n    month_date,\n    monthly_mrr,\n    DENSE_RANK() OVER (PARTITION BY Plan ORDER BY month_date) AS month_number\n  FROM uk_monthly\n),\nmodel AS (\n  SELECT\n    Plan
+==============================
+====== LLM RAW RESPONSE ======
+[
+  {
+    "question": "What is the average Monthly Recurring Revenue (MRR) per active user for each subscription plan in each country for the most recent three signup months?",
+    "type": "descriptive"
+  },
+  {
+    "question": "How does the churn rate (percentage of subscriptions moving from 'Active' to any non‑active status) vary across plans and countries on a month‑over‑month basis over the past year?",
+    "type": "diagnostic"
+  },
+  {
+    "question": "What are the projected MRR growth trends for the next six months for each plan, based on historical signup month patterns and current active user counts?",
+    "type": "predictive"
+  },
+  {
+    "question": "Which combination of plan and country yields the highest contribution margin when considering MRR per active user, and how would reallocating marketing spend to the top three combos improve total MRR by the end of the fiscal year?",
+    "type": "prescriptive"
+  },
+  {
+    "question": "Is there a statistically significant relationship between the number of active users in a subscription and the likelihood of a subscription remaining 'Active' after three months, segmented by plan?",
+    "type": "diagnostic"
+  },
+  {
+    "question": "What is the optimal pricing adjustment (increase or decrease) for each plan that would maximize total MRR while keeping the projected churn rate below 5% over the next quarter?",
+    "type": "prescriptive"
+  }
+]
+==============================
+====== LLM RAW RESPONSE ======
+[
+  {
+    "question": "What was the average revenue per customer for each product category in the North region during Q1 2026, and how did it compare to the same period in the previous year?",
+    "type": "descriptive"
+  },
+  {
+    "question": "Why did the conversion rate (Closed Won orders / total orders) for Smartphones drop by more than 15% in the South region between February and March 2026?",
+    "type": "diagnostic"
+  },
+  {
+    "question": "What is the projected total revenue for Tablet sales in the West region for the next two quarters based on the trend of quantity and customer growth observed in the last six months?",
+    "type": "predictive"
+  },
+  {
+    "question": "Which combination of product and region is expected to yield the highest incremental revenue if we increase the average order quantity by 10% while keeping the customer base constant?",
+    "type": "prescriptive"
+  },
+  {
+    "question": "How does the average order size (quantity) differ between customers who placed multiple orders versus single-order customers across all regions in 2026, and what segment contributes most to total revenue?",
+    "type": "diagnostic"
+  },
+  {
+    "question": "If we allocate a 5% marketing budget increase to the top‑performing product‑region pair identified in Q1 2026, what is the expected lift in revenue and customer acquisition by the end of Q2 2026?",
+    "type": "prescriptive"
+  }
+]
+==============================
+====== LLM RAW RESPONSE ======
+[
+  {
+    "question": "What was the average revenue per customer for each product category in the North region during Q1 2026, and how did it compare to the same period in the previous year?",
+    "sql": "SELECT\n  Product,\n  SUM(CASE WHEN OrderDate BETWEEN DATE '2026-01-01' AND DATE '2026-03-31' THEN Revenue END) /\n    NULLIF(SUM(CASE WHEN OrderDate BETWEEN DATE '2026-01-01' AND DATE '2026-03-31' THEN Customers END), 0
+==============================
+====== LLM RAW RESPONSE ======
+[
+  {
+    "question": "What was the average revenue per customer for each product in the North region during Q1 2026, and how does it compare to the same metric in the South region for the same period?",
+    "type": "descriptive"
+  },
+  {
+    "question": "Why did the total quantity sold of Monitors in the West region drop by more than 30% after 2026‑02‑15 compared to the preceding two weeks, while the number of active orders remained stable?",
+    "type": "diagnostic"
+  },
+  {
+    "question": "Based on the monthly trends from January to June 2026, what is the forecasted revenue for Keyboards in the East region for the next three months, assuming current growth rates continue?",
+    "type": "predictive"
+  },
+  {
+    "question": "What pricing and discount strategy should be applied to the Mouse product in the Central region to increase its revenue by at least 15% over the next quarter without reducing the current customer count?",
+    "type": "prescriptive"
+  },
+  {
+    "question": "How does the conversion rate from 'Active' to 'Closed Won' status vary by product and region for orders placed in the first half of 2026, and which combinations show the highest conversion efficiency?",
+    "type": "descriptive"
+  },
+  {
+    "question": "If the company aims to boost overall revenue by 10% in Q3 2026, which product‑region pairs should be prioritized for targeted marketing campaigns based on their historical revenue growth and customer acquisition trends?",
+    "type": "prescriptive"
+  }
+]
+==============================
+====== LLM RAW RESPONSE ======
+[
+  {
+    "question": "What was the month‑by‑month revenue trend for each product (Laptop, Smartphone, Tablet, etc.) in each region (North, South, East, West) over the past 12 months?",
+    "type": "descriptive"
+  },
+  {
+    "question": "Why did the average revenue per customer for the Laptop product decline in Q2 2025 compared to Q1 2025 specifically in the West region?",
+    "type": "diagnostic"
+  },
+  {
+    "question": "Based on the historical order data for the last 12 months, what is the forecasted revenue for the Smartphone product in the South region for the next fiscal quarter?",
+    "type": "predictive"
+  },
+  {
+    "question": "Which combination of product mix and discount percentage would maximize total revenue while keeping the Closed Won win rate above 70% in the East region for the upcoming fiscal year?",
+    "type": "prescriptive"
+  },
+  {
+    "question": "What are the key drivers (e.g., region, product type, order size, customer count) that most strongly predict an order ending with a 'Closed Lost' status?",
+    "type": "diagnostic"
+  },
+  {
+    "question": "How should inventory levels for each product be adjusted in each region to satisfy the projected demand for the next six months while minimizing stockout risk and holding costs?",
+    "type": "prescriptive"
+  }
+]
+==============================
+====== LLM RAW RESPONSE ======
+[
+  {
+    "question": "What was the month‑by‑month revenue trend for each product (Laptop, Smartphone, Tablet, etc.) in each region (North, South, East, West) over the past 12 months?",
+    "sql": "SELECT DATE_TRUNC('month', OrderDate) AS month,\n       Region,\n       Product,\n       SUM(Revenue) AS revenue\nFROM active_dataset\nWHERE OrderDate >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '12' MONTH\nGROUP BY month, Region, Product\nORDER BY month, Region, Product;"
+  },
+  {
+    "question": "Why did the average revenue per customer for the Laptop product decline in Q2 2025 compared to Q1 2025 specifically in the West region?",
+    "sql": "SELECT EXTRACT(QUARTER FROM OrderDate) AS quarter,\n       SUM(Revenue) / NULLIF(SUM(Customers), 0) AS avg_rev_per_customer,\n       SUM(Revenue) AS total_revenue,\n       SUM(Customers) AS total_customers\nFROM active_dataset\nWHERE Product = '
+==============================
+====== LLM RAW RESPONSE ======
+[
+  {
+    "question": "What is the total revenue, total quantity sold, and average order value for each Region‑Month combination in the most recent quarter?",
+    "type": "descriptive"
+  },
+  {
+    "question": "Why did the revenue from the product 'Monitor' decrease in February 2026 compared to January 2026 despite the quantity sold remaining within ±5%?",
+    "type": "diagnostic"
+  },
+  {
+    "question": "Based on the monthly trends of the past six months, what is the forecasted revenue for each Product in the upcoming month?",
+    "type": "predictive"
+  },
+  {
+    "question": "Which Product‑Region pairs should receive increased marketing budget to maximize incremental revenue, considering current conversion rates from 'Active' to 'Closed Won' and marginal cost of acquisition?",
+    "type": "prescriptive"
+  },
+  {
+    "question": "How does the average number of Customers per Order differ between 'Active' and 'Closed Won' statuses across each Product category?",
+    "type": "descriptive"
+  },
+  {
+    "question": "What combination of Region, Product, and Quantity most strongly predicts an order’s transition from 'Active' to 'Closed Won' within 30 days?",
+    "type": "diagnostic"
+  }
+]
+==============================
+====== LLM RAW RESPONSE ======
+
+==============================
+====== LLM RAW RESPONSE ======
+[
+  {
+    "question": "What is the month‑over‑month churn rate (percentage of subscriptions that changed from 'Active' to any non‑active status) for each plan over the past 12 months?",
+    "type": "descriptive"
+  },
+  {
+    "question": "Why does the average MRR per ActiveUser differ significantly between the USA and Germany for the Premium plan in the last quarter?",
+    "type": "diagnostic"
+  },
+  {
+    "question": "Based on historical signup trends, plan mix, and MRR growth, what will be the projected total MRR for the Enterprise plan in Canada for the next three months?",
+    "type": "predictive"
+  },
+  {
+    "question": "Which combination of plan upgrades and targeted country marketing campaigns would maximize incremental MRR while keeping churn below 5% over the next six months?",
+    "type": "prescriptive"
+  },
+  {
+    "question": "How has the distribution of ActiveUsers per subscription evolved month‑to‑month for each plan since January 2023?",
+    "type": "descriptive"
+  },
+  {
+    "question": "What are the strongest predictors (plan, country, signup month, initial MRR, initial ActiveUsers) of a subscription transitioning from 'Active' to a non‑active status within 90 days?",
+    "type": "diagnostic"
+  }
+]
+==============================
+====== LLM RAW RESPONSE ======
+[
+  {
+    "question": "What is the month‑over‑month churn rate (percentage of subscriptions that changed from 'Active' to any non‑active status) for each plan over the past 12 months?",
+    "sql": "WITH base AS (\n  SELECT *, DATE_TRUNC('month', TO_DATE(SignupMonth||'-01')) AS month\n  FROM active_dataset\n), lagged AS (\n  SELECT *, LAG(Status) OVER (PARTITION BY SubscriptionID ORDER BY month) AS prev_status\n  FROM base\n), filtered AS (\n  SELECT month, Plan, prev_status, Status\n  FROM lagged\n  WHERE month >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '12' MONTH\n)\nSELECT month,\n       Plan,\n       100.0 * SUM(CASE WHEN prev_status = 'Active' AND Status <> 'Active' THEN 1 ELSE 0 END) /\n               NULLIF(SUM(CASE WHEN prev_status = 'Active' THEN 1 ELSE 0 END), 0) AS churn_rate_percentage\nFROM filtered\nGROUP BY month, Plan\nORDER BY month, Plan;"
+  },
+  {
+    "question": "Why does the average MRR per ActiveUser differ significantly between the USA and Germany
+==============================
+====== LLM RAW RESPONSE ======
+[
+  {
+    "question": "What is the month‑over‑month growth rate of total revenue for each region over the past 12 months?",
+    "type": "descriptive"
+  },
+  {
+    "question": "Which product has the highest variance in revenue per customer across regions, and how is that variance correlated with the quantity sold for those orders?",
+    "type": "diagnostic"
+  },
+  {
+    "question": "Based on historical trends, what is the forecasted revenue for the next quarter for the North region's Laptop product, assuming the current growth pattern continues?",
+    "type": "predictive"
+  },
+  {
+    "question": "What is the optimal allocation of sales effort (e.g., targeting high‑value customers) to maximize expected revenue for the South region in the upcoming month?",
+    "type": "prescriptive"
+  },
+  {
+    "question": "How does the average order size (Revenue per OrderID) differ between Closed Won and Closed Lost statuses for each product line?",
+    "type": "descriptive"
+  },
+  {
+    "question": "For orders with status Closed Won, what is the relationship between Quantity and Customers per order, and does this relationship vary by product type?",
+    "type": "diagnostic"
+  }
+]
+==============================
+====== LLM RAW RESPONSE ======
+
+==============================
+====== LLM RAW RESPONSE ======
+[
+  {
+    "question": "What is the total revenue, average order quantity, and number of distinct customers for each product in each region for the last 90 days?",
+    "type": "descriptive"
+  },
+  {
+    "question": "Which regions experienced a statistically significant month‑over‑month decline in closed‑won order count, and how much of that decline is attributable to changes in the product mix?",
+    "type": "diagnostic"
+  },
+  {
+    "question": "Based on the historical trends of the past six months, what are the projected revenues for each product‑region pair for the next month, and what confidence intervals can be attached to those forecasts?",
+    "type": "predictive"
+  },
+  {
+    "question": "What allocation of inventory across regions would maximize expected revenue for the next quarter while keeping total inventory cost below the current budget, given the demand forecasts for each product?",
+    "type": "prescriptive"
+  },
+  {
+    "question": "How does the conversion rate (closed‑won orders ÷ total orders) differ across regions and product lines, and which factors (e.g., order size, customer count) most strongly correlate with low conversion rates?",
+    "type": "diagnostic"
+  },
+  {
+    "question": "Which customers are most likely to reduce their order frequency in the next quarter, and what targeted promotional offers would most effectively improve their retention probability?",
+    "type": "prescriptive"
+  }
+]
+==============================
+====== LLM RAW RESPONSE ======
+
+==============================

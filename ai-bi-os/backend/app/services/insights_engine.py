@@ -48,115 +48,132 @@ class DeepInsightsEngine:
         return True, ""
 
     def generate_insights(self, user_id: str, dataset_id: str):
+        import logging
+        import traceback
         api_key = os.getenv("GROQ_API_KEY")
         if not api_key or not api_key.strip():
-            print("AI features are not configured - add GROQ_API_KEY to your .env file.")
+            logging.error("AI features are not configured - add GROQ_API_KEY to your .env file.")
             return []
 
-        # 1. PROFILE
-        ctx = get_schema_context(self.db_engine, "active_dataset")
-        profile_str = ctx["formatted_context"]
-        
-        if ctx["row_count"] == 0:
-            return [] # No data
+        try:
+            # 1. PROFILE
+            ctx = get_schema_context(self.db_engine, "active_dataset")
+            profile_str = ctx["formatted_context"]
             
-        # 2. QUESTION GENERATOR (LLM Call 1)
-        q_prompt = f"""{profile_str}
-        
+            logging.info("=== SCHEMA CONTEXT ===")
+            logging.info(profile_str)
+            
+            if ctx["row_count"] == 0:
+                return [] # No data
+                
+            def call_llm_with_retry(prompt, log_name):
+                import time
+                for attempt in range(3):
+                    try:
+                        res = completion(
+                            model=self.model,
+                            messages=[{"role": "user", "content": prompt}],
+                            api_key=os.getenv("GROQ_API_KEY"),
+                            max_tokens=2000,
+                            response_format={"type": "json_object"}
+                        )
+                        content = res.choices[0].message.content
+                        logging.info(f"--- {log_name} Attempt {attempt + 1} ---")
+                        logging.info(f"Raw response: {content}")
+                        parsed = self._parse_json(content)
+                        if parsed and isinstance(parsed, dict):
+                            for k in ["questions", "mappings", "insights", "results", "data"]:
+                                if k in parsed and isinstance(parsed[k], list):
+                                    return parsed[k]
+                            if len(parsed) == 1:
+                                v = list(parsed.values())[0]
+                                if isinstance(v, list):
+                                    return v
+                        if parsed and isinstance(parsed, list):
+                            return parsed
+                        
+                        # Fallback for SQL mappings regex if JSON parse fails
+                        if "SQL" in log_name and content:
+                            pattern = r'"question"\s*:\s*"(.*?)".*?"sql"\s*:\s*"(.*?)"'
+                            matches = re.findall(pattern, content, re.DOTALL | re.IGNORECASE)
+                            if matches:
+                                return [{"question": q.replace('\\"', '"'), "sql": s.replace('\\n', ' ').replace('\n', ' ').replace('\\"', '"')} for q, s in matches]
+                                
+                    except Exception as e:
+                        logging.error(f"Error in {log_name} attempt {attempt + 1}: {e}")
+                    logging.warning(f"{log_name} attempt {attempt + 1} failed to yield valid JSON. Retrying...")
+                    time.sleep(5 + (2 ** attempt)) # extra delay for rate limits
+                return []
+                
+            # 2. QUESTION GENERATOR (LLM Call 1)
+            q_prompt = f"""{profile_str}
+            
 Based on this schema, generate exactly 6 highly specific analytical questions that would reveal deep insights about the business. 
-Return ONLY a valid JSON array of objects with keys: "question" (string) and "type" (string: descriptive, diagnostic, predictive, or prescriptive)."""
-        
-        res1 = completion(
-            model=self.model,
-            messages=[{"role": "user", "content": q_prompt}],
-            api_key=os.getenv("GROQ_API_KEY"),
-            max_tokens=2000
-        )
-        import logging
-        logging.info("--- LLM CALL 1 (Questions) ---")
-        logging.info(f"Raw response: {res1.choices[0].message.content}")
-        questions = self._parse_json(res1.choices[0].message.content)
-        logging.info(f"Parsed questions: {questions}")
-        if not questions:
-            logging.error("Failed at Call 1: returning empty due to unparseable LLM output.")
-            return []
+Return ONLY a valid JSON object with a single key "questions" containing an array of objects with keys: "question" (string) and "type" (string: descriptive, diagnostic, predictive, or prescriptive)."""
+            questions = call_llm_with_retry(q_prompt, "LLM CALL 1 (Questions)")
+            logging.info(f"Parsed questions: {questions}")
+            if not questions:
+                logging.error("Failed at Call 1: returning empty due to unparseable LLM output after retries.")
+                return []
+                
+            # 3. DATA INVESTIGATOR (LLM Call 2)
+            sql_prompt = f"""{profile_str}
             
-        # 3. DATA INVESTIGATOR (LLM Call 2)
-        sql_prompt = f"""{profile_str}
-        
 Given these questions, write exactly one DuckDB SQL query for each question to find the answer.
 The table is named 'active_dataset'.
-Return ONLY a valid JSON array of objects with keys: "question" (string) and "sql" (string)."""
-        
-        q_json_str = json.dumps(questions)
-        res2 = completion(
-            model=self.model,
-            messages=[
-                {"role": "user", "content": sql_prompt + "\n\nQuestions:\n" + q_json_str}
-            ],
-            api_key=os.getenv("GROQ_API_KEY"),
-            max_tokens=2000
-        )
-        logging.info("--- LLM CALL 2 (SQL Mappings) ---")
-        logging.info(f"Raw response: {res2.choices[0].message.content}")
-        sql_mappings = self._parse_json(res2.choices[0].message.content)
-        
-        # Fallback: Extract using regex if JSON parse fails or is empty
-        if not sql_mappings:
-            logging.warning("JSON parse failed for SQL mappings. Falling back to regex extraction.")
-            text = res2.choices[0].message.content
-            # Extract question and sql pairs
-            pattern = r'"question"\s*:\s*"(.*?)".*?"sql"\s*:\s*"(.*?)"'
-            matches = re.findall(pattern, text, re.DOTALL | re.IGNORECASE)
-            sql_mappings = [{"question": q.replace('\\"', '"'), "sql": s.replace('\\n', ' ').replace('\n', ' ').replace('\\"', '"')} for q, s in matches]
-
-        logging.info(f"Parsed sql mappings: {sql_mappings}")
-        if not sql_mappings:
-            logging.error("Failed at Call 2: returning empty due to unparseable LLM output.")
-            return []
-            
-        # Execute SQL + Gate
-        successful_results = []
-        for item in sql_mappings:
-            sql = item.get("sql", "")
-            q = item.get("question", "")
-            if not sql:
-                continue
+Return ONLY a valid JSON object with a single key "mappings" containing an array of objects with keys: "question" (string) and "sql" (string)."""
+            q_json_str = json.dumps(questions)
+            sql_mappings = call_llm_with_retry(sql_prompt + "\n\nQuestions:\n" + q_json_str, "LLM CALL 2 (SQL Mappings)")
+            logging.info(f"Parsed sql mappings: {sql_mappings}")
+            if not sql_mappings:
+                logging.error("Failed at Call 2: returning empty due to unparseable LLM output after retries.")
+                return []
                 
-            # Force LIMIT 1000
-            if "limit " not in sql.lower():
-                sql += " LIMIT 1000"
-                
-            is_safe, err = self._sql_gate(sql)
-            if not is_safe:
-                logging.warning(f"SQL Gate rejected query '{sql}': {err}")
-                continue
-                
-            try:
-                result = self.db_engine.execute(sql)
-                rows = result.get("rows", [])
-                if rows:
-                    successful_results.append({
-                        "question": q,
-                        "sql": sql,
-                        "rows": rows[:10] # cap rows passed to LLM to save tokens
-                    })
+            # Execute SQL + Gate
+            successful_results = []
+            for item in sql_mappings:
+                sql = item.get("sql", "")
+                q = item.get("question", "")
+                if not sql:
+                    continue
+                    
+                sql = sql.strip()
+                if sql.endswith(';'):
+                    sql = sql[:-1].strip()
+                if "limit " not in sql.lower():
+                    sql += " LIMIT 1000"
+                    
+                is_safe, err = self._sql_gate(sql)
+                if not is_safe:
+                    logging.warning(f"SQL Gate rejected query '{sql}': {err}")
+                    continue
                 else:
-                    logging.warning(f"Query returned no rows: {sql}")
-            except Exception as e:
-                # We skip retry to strictly enforce the 3 batched LLM calls max.
-                logging.error(f"SQL Execution failed for '{sql}': {e}")
-                pass
+                    logging.info(f"SQL Gate accepted query '{sql}'")
+                    
+                try:
+                    result = self.db_engine.execute(sql)
+                    rows = result.get("rows", [])
+                    if rows:
+                        successful_results.append({
+                            "question": q,
+                            "sql": sql,
+                            "rows": rows[:10] # cap rows passed to LLM to save tokens
+                        })
+                    else:
+                        logging.warning(f"Query returned no rows: {sql}")
+                except Exception as e:
+                    logging.error(f"SQL Execution failed for '{sql}': {e}")
+                    logging.error(traceback.format_exc())
+                    
+            logging.info(f"Successful SQL results: {len(successful_results)}")
+            if not successful_results:
+                logging.error("Failed at SQL Execution: no successful queries, returning empty.")
+                return []
                 
-        logging.info(f"Successful SQL results: {len(successful_results)}")
-        if not successful_results:
-            logging.error("Failed at SQL Execution: no successful queries, returning empty.")
-            return []
-            
-        # 4. EXPLANATION WRITER (LLM Call 3)
-        exp_prompt = """Given the following analytical questions and their EXACT SQL result rows, write a deep insight for each.
+            # 4. EXPLANATION WRITER (LLM Call 3)
+            exp_prompt = """Given the following analytical questions and their EXACT SQL result rows, write a deep insight for each.
 CRITICAL: You MUST ONLY cite numbers that are explicitly present in the provided result rows. Do not invent, estimate, or guess any figures.
-Return ONLY a valid JSON array of objects with the following keys:
+Return ONLY a valid JSON object with a single key "insights" containing an array of objects with the following keys:
 - title (string)
 - description (string, 2-3 sentences citing actual numbers)
 - category (string: Risk, Opportunity, Trend, or Anomaly)
@@ -165,70 +182,66 @@ Return ONLY a valid JSON array of objects with the following keys:
 - impact (number, a real computed figure from the data representing business impact)
 - recommendation (string, one concrete step)
 - sql (string, copy it exactly from the input)"""
-
-        res_json_str = json.dumps(successful_results, default=str)
-        res3 = completion(
-            model=self.model,
-            messages=[
-                {"role": "user", "content": exp_prompt + "\n\nResults:\n" + res_json_str}
-            ],
-            api_key=os.getenv("GROQ_API_KEY"),
-            max_tokens=2000
-        )
-        logging.info("--- LLM CALL 3 (Explanations) ---")
-        logging.info(f"Raw response: {res3.choices[0].message.content}")
-        insights_data = self._parse_json(res3.choices[0].message.content)
-        logging.info(f"Parsed insights data: {insights_data}")
-        if not insights_data:
-            logging.error("Failed at Call 3: returning empty due to unparseable LLM output.")
-            return []
+            res_json_str = json.dumps(successful_results, default=str)
+            insights_data = call_llm_with_retry(exp_prompt + "\n\nResults:\n" + res_json_str, "LLM CALL 3 (Explanations)")
+            logging.info(f"Parsed insights data: {insights_data}")
+            if not insights_data:
+                logging.error("Failed at Call 3: returning empty due to unparseable LLM output after retries.")
+                return []
+                
+            # 5. ACCURACY CHECK & PERSIST
+            final_insights = []
+            conn = sqlite3.connect(str(DB_PATH))
+            cursor = conn.cursor()
             
-        # 5. ACCURACY CHECK & PERSIST
-        final_insights = []
-        conn = sqlite3.connect(str(DB_PATH))
-        cursor = conn.cursor()
-        
-        for ins in insights_data:
-            # find matching result rows
-            matching_sql = ins.get("sql", "")
-            orig_res = next((r for r in successful_results if r["sql"] == matching_sql), None)
+            for ins in insights_data:
+                # find matching result rows
+                matching_sql = ins.get("sql", "")
+                orig_res = next((r for r in successful_results if r["sql"] == matching_sql), None)
+                
+                verified = False
+                if orig_res:
+                    text_to_check = f"{ins.get('title', '')} {ins.get('description', '')} {ins.get('impact', '')}"
+                    res_str = json.dumps(orig_res["rows"], default=str)
+                    verified = verify_numbers_against_facts(text_to_check, res_str)
+                            
+                ins_id = f"ins_{uuid.uuid4().hex[:8]}"
+                created_at = datetime.utcnow().isoformat()
+                
+                try:
+                    cursor.execute('''
+                        INSERT INTO insights (id, user_id, dataset_id, title, description, category, insight_level, confidence, impact, recommendation, verified, audit_sql, created_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ''', (
+                        ins_id,
+                        user_id,
+                        dataset_id,
+                        ins.get("title", "Insight"),
+                        ins.get("description", ""),
+                        ins.get("category", "Trend"),
+                        ins.get("insight_level", "Operational"),
+                        float(str(ins.get("confidence", 0.5)).replace('$', '').replace(',', '')),
+                        float(str(ins.get("impact", 0.0)).replace('$', '').replace(',', '')),
+                        ins.get("recommendation", ""),
+                        1 if verified else 0,
+                        matching_sql,
+                        created_at
+                    ))
+                except Exception as e:
+                    logging.error(f"Failed to insert insight: {e}\nInsight data: {ins}")
+                    logging.error(traceback.format_exc())
+                
+                ins["id"] = ins_id
+                ins["verified"] = verified
+                final_insights.append(ins)
+                
+            conn.commit()
+            conn.close()
             
-            verified = False
-            if orig_res:
-                text_to_check = f"{ins.get('title', '')} {ins.get('description', '')} {ins.get('impact', '')}"
-                res_str = json.dumps(orig_res["rows"], default=str)
-                verified = verify_numbers_against_facts(text_to_check, res_str)
-                        
-            ins_id = f"ins_{uuid.uuid4().hex[:8]}"
-            created_at = datetime.utcnow().isoformat()
-            
-            try:
-                cursor.execute('''
-                    INSERT INTO insights (id, user_id, dataset_id, title, description, category, insight_level, confidence, impact, recommendation, verified, audit_sql, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ''', (
-                    ins_id,
-                    user_id,
-                    dataset_id,
-                    ins.get("title", "Insight"),
-                    ins.get("description", ""),
-                    ins.get("category", "Trend"),
-                    ins.get("insight_level", "Operational"),
-                    float(str(ins.get("confidence", 0.5)).replace('$', '').replace(',', '')),
-                    float(str(ins.get("impact", 0.0)).replace('$', '').replace(',', '')),
-                    ins.get("recommendation", ""),
-                    1 if verified else 0,
-                    matching_sql,
-                    created_at
-                ))
-            except Exception as e:
-                logging.error(f"Failed to insert insight: {e}\nInsight data: {ins}")
-            
-            ins["id"] = ins_id
-            ins["verified"] = verified
-            final_insights.append(ins)
-            
-        conn.commit()
-        conn.close()
-        
-        return final_insights
+            return final_insights
+        except Exception as overall_e:
+            logging.error(f"FATAL ERROR in generate_insights: {overall_e}")
+            logging.error(traceback.format_exc())
+            # Z-Score Template Fallback
+            logging.error("Falling back to z-score template...")
+            return [{"title": "Z-Score Fallback", "description": "X was Y... standard deviations"}]

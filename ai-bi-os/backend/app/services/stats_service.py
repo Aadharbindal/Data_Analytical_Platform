@@ -2,8 +2,9 @@ import pandas as pd
 import numpy as np
 import re
 
-def find_column(df: pd.DataFrame, pattern: str) -> str:
-    for col in df.columns:
+def find_column(df: pd.DataFrame, pattern: str, numeric_only: bool = False) -> str:
+    cols_to_check = df.select_dtypes(include=[np.number]).columns if numeric_only else df.columns
+    for col in cols_to_check:
         if re.search(pattern, col, re.IGNORECASE):
             return col
     return None
@@ -23,11 +24,11 @@ def compute_kpis(df: pd.DataFrame) -> dict:
         return round(((current - previous) / previous) * 100, 1)
     
     # 1. Total Revenue
-    rev_col = find_column(df, r'revenue|sales|amount|mrr|arr|turnover|income|earnings|gmv|sales_amount|order_value|net_revenue|total_revenue')
+    rev_col = find_column(df, r'revenue|sales|amount|\bmrr\b|\barr\b|turnover|income|earnings|\bgmv\b|sales_amount|order_value|net_revenue|total_revenue', numeric_only=True)
     
     # 2. Active Users / Customers
     user_col = None
-    for col in df.columns:
+    for col in df.select_dtypes(include=[np.number]).columns:
         if re.search(r'customer|user|client|account', col, re.IGNORECASE):
             # Exclude categorical dimensions that just happen to contain the word
             if not re.search(r'region|country|state|type|category|group|segment|tier', col, re.IGNORECASE):
@@ -36,7 +37,7 @@ def compute_kpis(df: pd.DataFrame) -> dict:
                 
     # 3. Deals / Transactions
     deal_candidates = []
-    for col in df.columns:
+    for col in df.select_dtypes(include=[np.number]).columns:
         if re.search(r'deal|order|transaction|invoice', col, re.IGNORECASE):
             if not re.search(r'date|month|year|time', col, re.IGNORECASE) and not pd.core.dtypes.common.is_datetime64_any_dtype(df[col]):
                 deal_candidates.append(col)

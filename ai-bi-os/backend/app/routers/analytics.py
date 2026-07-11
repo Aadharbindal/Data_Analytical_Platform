@@ -189,7 +189,7 @@ async def get_timeseries(metric: str = None, current_user: dict = Depends(get_cu
         
     from app.services.stats_service import find_column
     if not metric:
-        metric = find_column(df, r'revenue|sales|amount|mrr|arr|turnover|income|earnings|gmv|sales_amount|order_value|net_revenue|total_revenue')
+        metric = find_column(df, r'revenue|sales|amount|\bmrr\b|\barr\b|turnover|income|earnings|\bgmv\b|sales_amount|order_value|net_revenue|total_revenue', numeric_only=True)
         if not metric:
             raise HTTPException(status_code=400, detail="No metric column found")
     else:
@@ -326,7 +326,7 @@ async def get_forecast(metric: str = None, current_user: dict = Depends(get_curr
     
     if not metric:
         from app.services.stats_service import find_column
-        metric = find_column(df, r'revenue|sales|amount|mrr|arr|turnover|income|earnings|gmv|sales_amount|order_value|net_revenue|total_revenue')
+        metric = find_column(df, r'revenue|sales|amount|\bmrr\b|\barr\b|turnover|income|earnings|\bgmv\b|sales_amount|order_value|net_revenue|total_revenue', numeric_only=True)
         if not metric:
             return {"available": False, "reason": "No revenue metric column found"}
             
@@ -461,6 +461,8 @@ async def get_pdf_report(current_user: dict = Depends(get_current_user)):
     try:
         pdf_buffer = generate_pdf_report(dataset_info, df)
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Failed to generate PDF: {str(e)}")
         
     date_str = datetime.now().strftime("%Y-%m-%d")
