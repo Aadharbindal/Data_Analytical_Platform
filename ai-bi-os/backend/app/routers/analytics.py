@@ -290,7 +290,8 @@ async def get_kpi_center(current_user: dict = Depends(get_current_user)):
                 "column": computed.get("column", "Unknown"),
                 "status": "Available",
                 "value": computed["value"],
-                "trend": computed.get("trend")
+                "trend": computed.get("trend"),
+                "history": computed.get("history", [])
             })
         else:
             reason = "No matching column found"
