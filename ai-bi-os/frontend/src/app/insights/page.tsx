@@ -10,13 +10,14 @@ import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState, detectErrorType } from "@/components/ui/error-state";
 import { Button } from "@/components/ui/button";
+import { formatNumber } from "@/lib/utils";
 
-const categoryColors: Record<string, string> = {
-  revenue: "bg-success/10 text-success border-success/20",
-  risk: "bg-error/10 text-error border-error/20",
-  opportunity: "bg-primary/10 text-primary border-primary/20",
-  trend: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-  anomaly: "bg-warning/10 text-warning border-warning/20",
+const categoryColors: Record<string, { border: string; bg: string; text: string }> = {
+  revenue: { border: "border-success", bg: "bg-success/10", text: "text-success" },
+  risk: { border: "border-error", bg: "bg-error/10", text: "text-error" },
+  opportunity: { border: "border-primary", bg: "bg-primary/10", text: "text-primary" },
+  trend: { border: "border-purple-500", bg: "bg-purple-500/10", text: "text-purple-500" },
+  anomaly: { border: "border-amber-500", bg: "bg-amber-500/10", text: "text-amber-500" },
 };
 
 function formatRelativeTime(dateString?: string) {
@@ -35,92 +36,127 @@ function formatRelativeTime(dateString?: string) {
 
 function InsightCard({ insight }: { insight: Insight }) {
   const [showSql, setShowSql] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const confidence = Math.round((insight.confidence ?? (insight.score?.confidence ?? 0.75)) * 100);
   
   const colorKey = (insight.category?.toLowerCase() || "trend");
   const categoryColor = categoryColors[colorKey] || categoryColors.trend;
 
+  // Smart impact formatting
+  const titleLower = (insight.title || "").toLowerCase();
+  const isCurrency = titleLower.includes('revenue') || titleLower.includes('cost') || titleLower.includes('price') || titleLower.includes('sales') || (insight.impact !== undefined && insight.impact % 1 !== 0) || (insight.impact !== undefined && insight.impact > 10000);
+  const isPercent = titleLower.includes('percentage') || titleLower.includes('rate');
+  const unit = isCurrency ? "" : isPercent ? "%" : (titleLower.includes('quantity') || titleLower.includes('units') || titleLower.includes('count') ? " units" : "");
+  
+  const formatImpact = (val: number) => {
+    if (isCurrency) return `$${formatNumber(val)}`;
+    if (isPercent) return `${val}%`;
+    return `${val.toLocaleString()}${unit}`;
+  };
+
+  const confidenceColor = confidence >= 80 ? "bg-success" : confidence >= 50 ? "bg-warning" : "bg-error";
+
   return (
-    <motion.div
-      whileHover={{ y: -4, boxShadow: "0 12px 30px -10px rgba(0,0,0,0.3)" }}
-      className="glass-card h-full rounded-[24px] p-6 flex flex-col gap-5 relative overflow-hidden bg-gradient-to-br from-white/[0.05] to-transparent border border-white/[0.08] shadow-lg backdrop-blur-xl transition-all duration-300"
+    <div
+      className={`glass-card h-full rounded-[20px] p-5 flex flex-col relative bg-gradient-to-br from-white/[0.03] to-transparent border border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 border-l-4 ${categoryColor.border}`}
     >
       {/* Decorative gradient blob */}
-      <div className={`absolute -right-12 -top-12 w-40 h-40 blur-3xl opacity-[0.06] pointer-events-none ${categoryColor.split(' ')[0]}`} />
+      <div className={`absolute -right-12 -top-12 w-40 h-40 blur-3xl opacity-[0.06] pointer-events-none ${categoryColor.bg.split('/')[0].replace('bg-', '')}`} />
 
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3 flex-1 min-w-0">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] bg-white/[0.06] border border-white/[0.05] shadow-inner">
-            <Lightbulb className={`h-5 w-5 ${categoryColor.split(' ')[1] || "text-primary"}`} />
+      {/* Top area: Title and badges */}
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <div className="flex items-start gap-3 flex-1 min-w-0">
+          <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${categoryColor.bg}`}>
+            <Lightbulb className={`h-4 w-4 ${categoryColor.text}`} />
           </div>
-          <h3 className="text-base font-semibold text-foreground/90 leading-tight tracking-tight">{insight.title}</h3>
+          <div className="flex flex-col min-w-0">
+            <h3 
+              className="text-base font-semibold text-foreground leading-snug line-clamp-2"
+              title={insight.title}
+            >
+              {insight.title}
+            </h3>
+            
+            {/* Badges directly under title */}
+            <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+              <span className={`text-[10px] font-semibold tracking-wide uppercase px-2 py-0.5 rounded-full ${categoryColor.bg} ${categoryColor.text}`}>
+                {insight.category}
+              </span>
+              {insight.verified && (
+                <span className="flex items-center gap-1 text-[10px] font-semibold tracking-wide uppercase text-success bg-success/10 px-2 py-0.5 rounded-full">
+                  <CheckCircle className="h-3 w-3" />
+                  Verified
+                </span>
+              )}
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col items-end gap-1.5 shrink-0">
-          <span className={`text-[11px] font-semibold tracking-wide uppercase border px-2.5 py-0.5 rounded-full ${categoryColor}`}>
-            {insight.category}
-          </span>
-          {insight.verified && (
-            <span className="flex items-center gap-1 text-[10px] font-semibold tracking-wide uppercase text-success/80">
-              <CheckCircle className="h-3 w-3" />
-              Verified
-            </span>
+      </div>
+
+      {/* Description */}
+      {insight.description && (
+        <div className="mb-4">
+          <p className={`text-[13px] text-muted-foreground leading-relaxed ${expanded ? "" : "line-clamp-3"}`}>
+            {insight.description}
+          </p>
+          {insight.description.length > 120 && (
+            <button 
+              onClick={() => setExpanded(!expanded)} 
+              className="text-xs text-primary hover:underline mt-1 font-medium"
+            >
+              {expanded ? "Show less" : "Read more"}
+            </button>
           )}
         </div>
-      </div>
-
-      {insight.description && (
-        <p className="text-[13px] text-muted-foreground/80 leading-relaxed font-light">{insight.description}</p>
       )}
 
-      {insight.impact !== undefined && insight.impact > 0 && (
-        <div className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-white/[0.03] border border-white/[0.04]">
-          <span className="text-[11px] font-medium text-muted-foreground/70 tracking-wide uppercase">Impact Value</span>
-          <span className="text-lg font-semibold text-foreground tabular-metrics ml-auto">
-            {insight.impact.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-          </span>
-        </div>
-      )}
-
-      {insight.recommendation && (
-        <div className="text-[13px] p-4 rounded-2xl bg-primary/[0.03] border border-primary/[0.08] leading-relaxed">
-          <span className="font-semibold text-primary/90 flex items-center gap-1.5 mb-1.5">
-            <Lightbulb className="h-4 w-4" /> Recommendation
-          </span>
-          <span className="text-muted-foreground/90">{insight.recommendation}</span>
-        </div>
-      )}
-
-      {/* Confidence Bar */}
-      <div className="space-y-2 mt-auto pt-2">
-        <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider">
-          <span className="text-muted-foreground/60">AI Confidence</span>
-          <span className="text-foreground/80">{confidence}%</span>
-        </div>
-        <div className="h-2 rounded-full bg-black/40 overflow-hidden shadow-inner border border-white/[0.02]">
-          <div
-            className={`h-full rounded-full transition-all duration-1000 ease-out ${
-              confidence > 80 ? "bg-success" : confidence > 60 ? "bg-warning" : "bg-error"
-            }`}
-            style={{ width: `${confidence}%` }}
-          />
-        </div>
-      </div>
-
-      <div className="flex items-center justify-between pt-3 mt-1 border-t border-border/40">
-        <p className="text-[11px] font-medium text-muted-foreground/50">
-          {formatRelativeTime(insight.created_at)}
-        </p>
-        
-        {insight.audit_sql && (
-          <button
-            onClick={() => setShowSql(!showSql)}
-            className="text-[11px] font-semibold tracking-wide uppercase text-muted-foreground/70 hover:text-foreground flex items-center gap-1.5 transition-colors"
-          >
-            <Database className="h-3.5 w-3.5" />
-            {showSql ? "Hide SQL" : "View SQL"}
-            {showSql ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-          </button>
+      {/* Growing flex area so footer sticks to bottom */}
+      <div className="flex-grow flex flex-col gap-4">
+        {/* Impact Value */}
+        {insight.impact !== undefined && insight.impact > 0 && (
+          <div className="self-start inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.05]">
+            <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Impact</span>
+            <span className="text-sm font-semibold text-foreground tabular-metrics" title={insight.impact.toString()}>
+              {formatImpact(insight.impact)}
+            </span>
+          </div>
         )}
+
+        {/* Recommendation */}
+        {insight.recommendation && (
+          <div className="text-[13px] p-3 rounded-xl bg-primary/5 border border-primary/10 leading-relaxed mt-auto">
+            <span className="font-semibold text-primary flex items-center gap-1.5 mb-1">
+              <Lightbulb className="h-3.5 w-3.5" /> Recommendation
+            </span>
+            <span className="text-muted-foreground/90">{insight.recommendation}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <div className="flex items-center justify-between pt-3 mt-4 border-t border-border/40 gap-3">
+        {/* Confidence scale + % */}
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="flex gap-0.5 h-1.5 w-8 rounded-full overflow-hidden bg-black/20">
+             <div className={`h-full w-full ${confidenceColor}`} />
+          </div>
+          <span className={`text-[11px] font-bold ${confidenceColor.replace('bg-', 'text-')}`}>{confidence}%</span>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] font-medium text-muted-foreground/60 whitespace-nowrap">
+            {formatRelativeTime(insight.created_at)}
+          </span>
+          {insight.audit_sql && (
+            <button
+              onClick={() => setShowSql(!showSql)}
+              className="text-[10px] font-semibold tracking-wide uppercase text-muted-foreground/70 hover:text-foreground flex items-center gap-1 transition-colors whitespace-nowrap"
+            >
+              <Database className="h-3 w-3" />
+              {showSql ? "Hide SQL" : "View SQL"}
+            </button>
+          )}
+        </div>
       </div>
 
       <AnimatePresence>
@@ -131,13 +167,13 @@ function InsightCard({ insight }: { insight: Insight }) {
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden"
           >
-            <div className="p-4 bg-black/40 border border-white/[0.05] rounded-2xl mt-3 text-[11px] font-mono text-muted-foreground/80 whitespace-pre-wrap overflow-x-auto shadow-inner">
+            <div className="p-3 bg-black/40 border border-white/[0.05] rounded-xl mt-3 text-[10px] font-mono text-muted-foreground/80 whitespace-pre-wrap overflow-x-auto shadow-inner">
               {insight.audit_sql}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 }
 
@@ -189,7 +225,7 @@ export default function InsightsPage() {
       </div>
 
       {isLoading || deepAnalyze.isPending ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-6">
           {Array.from({ length: 6 }).map((_, i) => <CardSkeleton key={i} lines={5} />)}
         </div>
       ) : isError ? (
@@ -215,7 +251,7 @@ export default function InsightsPage() {
           variants={containerVariants}
           initial="hidden"
           animate="show"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-6"
         >
           {insights.map((insight) => (
             <motion.div key={insight.id} variants={itemVariants} className="h-full">
