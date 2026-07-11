@@ -48,8 +48,8 @@ export function InsightPanel({ title, severity, confidence, impact, description 
             <span className="text-[10px] uppercase tracking-widest font-medium text-muted-foreground/80 mb-1">Impact</span>
             <span className={cn(
               "text-sm font-semibold tabular-metrics",
-              impact.startsWith("+") ? "text-success" : impact.startsWith("-") ? "text-error" : "text-foreground"
-            )}>{impact}</span>
+              impact?.startsWith("+") ? "text-success" : impact?.startsWith("-") ? "text-error" : "text-foreground"
+            )}>{impact || "N/A"}</span>
           </div>
           
           <div className="flex flex-col items-end">
