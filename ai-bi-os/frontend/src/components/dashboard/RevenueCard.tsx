@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import {
@@ -23,6 +23,48 @@ interface RevenueCardProps {
 
 export function RevenueCard({ data }: RevenueCardProps) {
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+  const [range, setRange] = useState<'12m' | 'ytd' | 'all'>('12m');
+
+  const filteredData = useMemo(() => {
+    if (!data || data.length === 0) return [];
+    if (range === 'all') return data;
+
+    let lastHistoryIdx = -1;
+    for (let i = data.length - 1; i >= 0; i--) {
+      if (data[i].value !== undefined && data[i].value !== null) {
+        lastHistoryIdx = i;
+        break;
+      }
+    }
+
+    if (lastHistoryIdx === -1) return data;
+
+    const historyData = data.slice(0, lastHistoryIdx + 1);
+    const forecastData = data.slice(lastHistoryIdx + 1);
+
+    let filteredHistory = historyData;
+
+    if (range === '12m') {
+      filteredHistory = historyData.slice(-12);
+    } else if (range === 'ytd') {
+      const getYear = (name: string) => {
+        const m = name.match(/\b(20\d{2})\b/);
+        if (m) return m[1];
+        const d = new Date(name);
+        if (!isNaN(d.getTime())) return d.getFullYear().toString();
+        return null;
+      };
+      const lastPoint = historyData[historyData.length - 1];
+      const lastYear = lastPoint ? getYear(lastPoint.name) : null;
+      if (lastYear) {
+        filteredHistory = historyData.filter(d => getYear(d.name) === lastYear);
+      }
+    }
+
+    return [...filteredHistory, ...forecastData];
+  }, [data, range]);
+
+  const hasHistoricalData = filteredData.some((d: any) => d.value !== undefined && d.value !== null);
 
   // Note: hardcoding "Revenue" or "Sales" could fail if the column is named differently.
   // The drill-down modal will try to fetch breakdown for the main revenue metric.
@@ -56,19 +98,24 @@ export function RevenueCard({ data }: RevenueCardProps) {
           <CardTitle className="text-base font-semibold tracking-tight text-foreground/90">Revenue Forecast (Click to drill down)</CardTitle>
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-1.5 bg-surface border border-border text-xs font-medium text-foreground rounded-lg px-3 py-1.5 outline-none hover:bg-white/5 transition-colors focus:ring-2 focus:ring-primary/30 shadow-sm cursor-pointer">
-              Last 12 Months
+              {range === '12m' ? 'Last 12 Months' : range === 'ytd' ? 'Year to Date' : 'All Time'}
               <svg className="h-3 w-3 text-muted-foreground ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-36">
-              <DropdownMenuItem>Last 12 Months</DropdownMenuItem>
-              <DropdownMenuItem>Year to Date</DropdownMenuItem>
-              <DropdownMenuItem>All Time</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setRange('12m')}>Last 12 Months</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setRange('ytd')}>Year to Date</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setRange('all')}>All Time</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </CardHeader>
         <CardContent className="flex-1 min-h-[300px] px-2 pb-4">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 10, right: 30, left: 10, bottom: 20 }} onClick={handleChartClick}>
+          {!hasHistoricalData ? (
+            <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm font-medium min-h-[300px]">
+              No data for this period
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={filteredData} margin={{ top: 10, right: 30, left: 10, bottom: 20 }} onClick={handleChartClick}>
               <defs>
                 <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#0070F3" stopOpacity={0.4} />
@@ -130,7 +177,8 @@ export function RevenueCard({ data }: RevenueCardProps) {
                 activeDot={{ r: 4, fill: 'var(--background)', stroke: '#A0A4AE', strokeWidth: 2 }}
               />
             </AreaChart>
-          </ResponsiveContainer>
+            </ResponsiveContainer>
+          )}
         </CardContent>
       </Card>
 
