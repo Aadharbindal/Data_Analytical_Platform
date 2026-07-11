@@ -35,38 +35,46 @@ const priorityConfig: Record<string, { color: string; icon: React.ReactNode; lab
 
 function RecommendationCard({ rec }: { rec: Recommendation }) {
   const config = priorityConfig[rec.priority] ?? priorityConfig.Medium;
+  
+  const colorPrefix = config.color.replace('border-l-', 'bg-');
 
   return (
     <motion.div
-      whileHover={{ x: 2 }}
-      className={`glass-card rounded-[20px] p-5 flex gap-4 border-l-2 ${config.color}`}
+      className={`glass-card rounded-[24px] p-6 flex gap-5 relative overflow-hidden bg-gradient-to-r from-white/[0.03] to-transparent border border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 border-l-4 ${config.color}`}
     >
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/[0.03] border border-border/40 mt-0.5">
+      {/* Decorative gradient blob */}
+      <div className={`absolute -left-12 -top-12 w-40 h-40 blur-3xl opacity-[0.06] pointer-events-none ${colorPrefix}`} />
+
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] bg-white/[0.06] border border-white/[0.05] shadow-inner mt-0.5 z-10">
         {config.icon}
       </div>
 
-      <div className="flex-1 min-w-0">
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <h3 className="text-sm font-semibold text-foreground leading-tight">{rec.title}</h3>
-          <div className="flex items-center gap-2">
+      <div className="flex-1 min-w-0 z-10 flex flex-col">
+        <div className="flex items-start justify-between gap-3 mb-2.5">
+          <h3 className="text-base font-semibold text-foreground/90 leading-snug tracking-tight">{rec.title}</h3>
+          <div className="flex items-center flex-wrap justify-end gap-2 shrink-0">
             {rec.verified && (
-              <span className="flex items-center gap-1 text-[10px] font-medium text-success bg-success/10 px-2 py-0.5 rounded-full border border-success/20">
+              <span className="flex items-center gap-1 text-[10px] font-semibold tracking-wide uppercase text-success/80 bg-success/10 px-2 py-0.5 rounded-full border border-success/20">
                 <CheckCircle className="h-3 w-3" />
                 Verified Fact
               </span>
             )}
-            <span className={`shrink-0 text-[11px] font-medium border px-2 py-0.5 rounded-full capitalize ${config.label}`}>
+            <span className={`text-[10px] font-semibold tracking-wide uppercase px-2.5 py-0.5 rounded-full border ${config.label}`}>
               {rec.priority}
             </span>
           </div>
         </div>
 
         {rec.rationale && (
-          <p className="text-xs text-muted-foreground leading-relaxed mb-3">{rec.rationale}</p>
+          <p className="text-[13px] text-muted-foreground/80 leading-relaxed font-light mb-5">
+            {rec.rationale}
+          </p>
         )}
 
-        <div className="flex items-center gap-4 text-xs text-muted-foreground">
-          <span>Category: {rec.category}</span>
+        <div className="mt-auto pt-1 flex items-center justify-between">
+          <span className="inline-flex items-center text-[11px] font-medium text-muted-foreground/70 tracking-wide uppercase bg-white/[0.03] border border-white/[0.05] px-3 py-1.5 rounded-xl shadow-sm">
+            Category: <span className="text-foreground/80 ml-1.5">{rec.category}</span>
+          </span>
         </div>
       </div>
     </motion.div>

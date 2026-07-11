@@ -568,7 +568,7 @@ async def get_confidence(current_user: dict = Depends(get_current_user)):
         else: rec_unverified = row["count"]
         
     # Audit trail (recent insights)
-    cursor.execute('SELECT id, title, audit_sql, confidence, verified FROM insights WHERE user_id = ? AND dataset_id = ? ORDER BY created_at DESC LIMIT 10', (current_user["id"], dataset_info["id"]))
+    cursor.execute('SELECT id, title, description, audit_sql, confidence, verified FROM insights WHERE user_id = ? AND dataset_id = ? ORDER BY created_at DESC LIMIT 100', (current_user["id"], dataset_info["id"]))
     audit_trail = [dict(r) for r in cursor.fetchall()]
     
     conn.close()
