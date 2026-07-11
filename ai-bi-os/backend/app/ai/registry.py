@@ -1,12 +1,13 @@
 from typing import Dict, Any, Optional
 
 import os
+from app.core.config import LLM_MODEL
 
 class ModelRegistry:
     """Central gateway for all LLM calls, handling routing and fallback via LiteLLM."""
     
     def __init__(self):
-        self.default_model = "groq/llama-3.3-70b-versatile"
+        self.default_model = LLM_MODEL
 
     def route_request(self, messages: list, tools: list = None, target_model: str = None) -> Any:
         """Routes the prompt to the specified model via litellm. Returns the litellm message object."""
@@ -20,7 +21,7 @@ class ModelRegistry:
                 "messages": messages,
             }
             
-            if model.startswith("groq/") or model == "groq/llama-3.3-70b-versatile":
+            if model.startswith("groq/"):
                 kwargs["api_key"] = os.getenv("GROQ_API_KEY")
             else:
                 kwargs["api_key"] = os.getenv("XAI_API_KEY")

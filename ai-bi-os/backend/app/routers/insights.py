@@ -8,9 +8,9 @@ from app.core.security import get_current_user
 from app.services.query.duckdb_engine import DuckDBEngine
 from app.services.data_processing import get_dataset_path
 from app.services.insights_engine import DeepInsightsEngine
-from app.core.config import DB_PATH
 import sqlite3
 from litellm import completion
+from app.core.config import DB_PATH, LLM_MODEL
 
 router = APIRouter()
 
@@ -67,7 +67,7 @@ async def get_executive_summary(current_user: dict = Depends(get_current_user)):
     
     try:
         response = completion(
-            model="groq/llama-3.3-70b-versatile", 
+            model=LLM_MODEL, 
             messages=[{"role": "user", "content": prompt}],
             api_key=os.getenv("GROQ_API_KEY")
         )
@@ -99,19 +99,28 @@ async def get_executive_summary(current_user: dict = Depends(get_current_user)):
                 break
                 
         if verified:
-            return {"summary": llm_summary, "verified": True}
+            return {"summary": llm_summary, "verified": True, "facts": facts}
         else:
             raise Exception("Hallucination detected")
             
     except Exception as e:
         # Fallback to template
-        summary = f"Based on the recently uploaded dataset '{dataset_info['name']}' which contains {row_count} records."
-        if "total_value" in facts:
-            summary += f" The total {facts['metric_name']} is {facts['total_value']}."
-        if "percent_change" in facts:
-            change_dir = "increase" if facts["percent_change"] > 0 else "decrease"
-            summary += f" There is a {abs(facts['percent_change'])}% {change_dir} in the recent period."
-        return {"summary": summary, "verified": True}
+        dataset_name = dataset_info['name']
+        
+        if "total_value" in facts and "metric_name" in facts:
+            metric_name = facts['metric_name']
+            formatted_total = f"${facts['total_value']:,.2f}"
+            
+            if "percent_change" in facts:
+                pct = facts["percent_change"]
+                direction = "increase" if pct > 0 else "decrease"
+                summary = f"The {dataset_name} dataset shows total {metric_name} of {formatted_total} across {row_count} records, a {abs(pct):.1f}% {direction} versus the prior period."
+            else:
+                summary = f"The {dataset_name} dataset shows total {metric_name} of {formatted_total} across {row_count} records."
+        else:
+            summary = f"The {dataset_name} dataset contains {row_count} records."
+            
+        return {"summary": summary, "verified": True, "facts": facts}
 
 @router.post("/deep-analyze")
 async def deep_analyze(current_user: dict = Depends(get_current_user)):

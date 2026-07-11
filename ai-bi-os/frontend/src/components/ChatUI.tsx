@@ -106,6 +106,18 @@ export const ChatUI: React.FC = () => {
     { role: 'ai', content: 'Hello! I am DataMind Copilot. I can query your databases, generate charts, and provide strategic insights. What would you like to know today?' }
   ]);
   const [input, setInput] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const query = params.get('q');
+      if (query) {
+        setInput(query);
+        // Clear query param so it doesn't stay in the URL
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    }
+  }, []);
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 

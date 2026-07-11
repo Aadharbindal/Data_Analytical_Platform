@@ -36,3 +36,5 @@ if not SECRET_KEY:
     SECRET_KEY = secrets.token_urlsafe(32)
     print("WARNING: No SECRET_KEY found in environment. Generated a temporary random key for development.")
 
+# AI Model Configuration
+LLM_MODEL = os.getenv("LLM_MODEL", "groq/openai/gpt-oss-120b")
