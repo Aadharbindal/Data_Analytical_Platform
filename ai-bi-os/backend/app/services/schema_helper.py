@@ -1,4 +1,4 @@
-def get_schema_context(db_engine, table_name="active_dataset"):
+def get_schema_context(db_engine, table_name="active_dataset", dataset_display_name=None):
     """
     Returns a formatted string containing the schema, row count,
     and a few sample rows of the specified table using the DuckDB engine.
@@ -6,7 +6,10 @@ def get_schema_context(db_engine, table_name="active_dataset"):
     schema_str = ""
     sample_str = ""
     row_count = 0
-    
+    dataset_name_str = ""
+    if dataset_display_name:
+        dataset_name_str = f"The user's dataset is named '{dataset_display_name}' and its data is fully available in the table described above - treat any reference to this filename/dataset name as referring to this table.\n"
+        
     try:
         desc_res = db_engine.execute(f"DESCRIBE {table_name}")
         cols = desc_res.get("rows", [])
@@ -28,5 +31,5 @@ def get_schema_context(db_engine, table_name="active_dataset"):
         "schema_str": schema_str,
         "sample_str": sample_str,
         "row_count": row_count,
-        "formatted_context": f"DATABASE SCHEMA:\nThe data is in a table named '{table_name}'. Use ONLY this table name.\nRow Count: {row_count}\nColumns:\n{schema_str}\n\nSample data:\n{sample_str}"
+        "formatted_context": f"DATABASE SCHEMA:\n{dataset_name_str}The data is in a table named '{table_name}'. Use ONLY this table name.\nRow Count: {row_count}\nColumns:\n{schema_str}\n\nSample data:\n{sample_str}"
     }
