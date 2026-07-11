@@ -173,6 +173,8 @@ Return ONLY a valid JSON object with a single key "mappings" containing an array
             # 4. EXPLANATION WRITER (LLM Call 3)
             exp_prompt = """Given the following analytical questions and their EXACT SQL result rows, write a deep insight for each.
 CRITICAL: You MUST ONLY cite numbers that are explicitly present in the provided result rows. Do not invent, estimate, or guess any figures.
+CRITICAL: If the data does not support a clear conclusion, do not generate an insight for this question at all - simply skip it.
+CRITICAL: Do NOT use speculative or forward-looking language such as 'might', 'could', 'anticipate', 'projected', 'likely to', 'expected to' unless the underlying data genuinely contains a forecast/projection value computed by the system (i.e. from the actual forecast endpoint, not invented). Insights must describe what the data ALREADY shows (past/current, per the query results), not predict what might happen next - that is a different feature (Forecast), and this pipeline must not blur into speculation.
 Return ONLY a valid JSON object with a single key "insights" containing an array of objects with the following keys:
 - title (string)
 - description (string, 2-3 sentences citing actual numbers)
@@ -194,7 +196,22 @@ Return ONLY a valid JSON object with a single key "insights" containing an array
             conn = sqlite3.connect(str(DB_PATH))
             cursor = conn.cursor()
             
+            hedging_phrases = ["can't draw any conclusions", "unobtainable", "insufficient data", "unable to determine", "no clear pattern"]
+            speculative_pattern = re.compile(r'\b(might|could|anticipate|projected|likely to|expected to)\b', re.IGNORECASE)
+            
             for ins in insights_data:
+                title_desc = f"{ins.get('title', '')} {ins.get('description', '')}"
+                
+                # Filter Problem 1: Hedging
+                if any(phrase in title_desc.lower() for phrase in hedging_phrases):
+                    logging.info(f"Skipping insight due to hedging language: {ins.get('title')}")
+                    continue
+                    
+                # Filter Problem 2: Speculation
+                if speculative_pattern.search(title_desc):
+                    logging.info(f"Skipping insight due to speculative language: {ins.get('title')}")
+                    continue
+                    
                 # find matching result rows
                 matching_sql = ins.get("sql", "")
                 orig_res = next((r for r in successful_results if r["sql"] == matching_sql), None)

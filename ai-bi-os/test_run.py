@@ -29,4 +29,6 @@ def test_dataset(filename):
         print(ins.get('title'), ":", ins.get('description'))
         
 if __name__ == "__main__":
+    test_dataset("52026dc1-ebdb-45dd-9c76-77b107caf3e7_corporate_bank_statement_FINAL.csv")
+    test_dataset("a0113953-1bcd-45d5-85ac-8c02b3a92cce_bank_statement_FINAL_TEST.csv")
     test_dataset("ccaecda4-2c8b-4757-b693-1ea8e5296e76_bank_statement_FINAL.csv")

@@ -28,8 +28,8 @@ def compute_kpis(df: pd.DataFrame) -> dict:
     
     # 2. Active Users / Customers
     user_col = None
-    for col in df.select_dtypes(include=[np.number]).columns:
-        if re.search(r'customer|user|client|account', col, re.IGNORECASE):
+    for col in df.columns:
+        if re.search(r'customer|user|client|account|seats?|members?|subscribers?|licenses?|headcount|active_users|end_users', col, re.IGNORECASE):
             # Exclude categorical dimensions that just happen to contain the word
             if not re.search(r'region|country|state|type|category|group|segment|tier', col, re.IGNORECASE):
                 user_col = col
@@ -37,7 +37,7 @@ def compute_kpis(df: pd.DataFrame) -> dict:
                 
     # 3. Deals / Transactions
     deal_candidates = []
-    for col in df.select_dtypes(include=[np.number]).columns:
+    for col in df.columns:
         if re.search(r'deal|order|transaction|invoice', col, re.IGNORECASE):
             if not re.search(r'date|month|year|time', col, re.IGNORECASE) and not pd.core.dtypes.common.is_datetime64_any_dtype(df[col]):
                 deal_candidates.append(col)
@@ -154,14 +154,14 @@ def compute_kpis(df: pd.DataFrame) -> dict:
             return float(mask.mean() * 100)
             
         s_full = df[status_col].astype(str)
-        healthy_total = s_full.str.contains(r'won|active|open|closed', case=False, na=False).sum()
-        unhealthy_total = s_full.str.contains(r'lost|churn|cancel|reject|fail', case=False, na=False).sum()
+        healthy_mask = s_full.str.contains(r'won|active|open|closed', case=False, na=False)
+        unhealthy_mask = s_full.str.contains(r'lost|churn|cancel|reject|fail', case=False, na=False)
         
-        if healthy_total > 0 or unhealthy_total > 0:
-            total_matches = healthy_total + unhealthy_total
-            if total_matches >= len(df) * 0.05:
-                curr_health = calc_health(recent_df)
-                prev_health = calc_health(prior_df) if prior_df is not None else curr_health
+        classified_pct = (healthy_mask | unhealthy_mask).mean()
+        
+        if classified_pct >= 0.6:
+            curr_health = calc_health(recent_df)
+            prev_health = calc_health(prior_df) if prior_df is not None else curr_health
             
             kpis.append({
                 "id": "kpi_pipeline",
