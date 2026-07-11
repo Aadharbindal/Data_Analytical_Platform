@@ -10,7 +10,7 @@ import { Loader2 } from "lucide-react";
 export function AppLayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, loading } = useAuth();
-  const isAnalytics = pathname?.startsWith("/analytics") ?? false;
+  const isAnalytics = (pathname?.startsWith("/analytics") || pathname?.startsWith("/chat")) ?? false;
   const isAuthPage = pathname === "/login" || pathname === "/signup";
 
   if (loading) {

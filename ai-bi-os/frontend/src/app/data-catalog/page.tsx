@@ -14,59 +14,60 @@ function CatalogCard({ entry }: { entry: CatalogEntry }) {
   return (
     <motion.div
       whileHover={{ y: -2 }}
-      className="glass-card rounded-[20px] p-5 flex flex-col gap-3 cursor-pointer group hover:border-primary/30 transition-colors"
+      className="glass-card rounded-[20px] p-5 flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 cursor-pointer group hover:border-primary/30 transition-colors"
     >
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 border border-primary/20">
-            <Database className="h-4 w-4 text-primary" />
-          </div>
-          <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+      <div className="flex items-center gap-3 min-w-0 md:w-1/3">
+        <div className="flex shrink-0 h-10 w-10 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
+          <Database className="h-5 w-5 text-primary" />
+        </div>
+        <div className="min-w-0 flex flex-col">
+          <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors truncate" title={entry.name}>
             {entry.name}
           </h3>
+          {entry.business_domain && (
+            <span className="text-xs text-muted-foreground mt-1">
+              {entry.business_domain}
+            </span>
+          )}
         </div>
-        {entry.business_domain && (
-          <span className="text-xs bg-surface border border-border/60 px-2 py-0.5 rounded-full text-muted-foreground">
-            {entry.business_domain}
-          </span>
+      </div>
+
+      <div className="flex-1 min-w-0 w-full md:w-auto">
+        {entry.description && (
+          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-1 break-words">
+            {entry.description}
+          </p>
+        )}
+        {entry.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mt-2">
+            {entry.tags.map((tag) => (
+              <span
+                key={tag}
+                className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/8 text-primary border border-primary/15"
+              >
+                <Tag className="h-2.5 w-2.5" />
+                {tag}
+              </span>
+            ))}
+          </div>
         )}
       </div>
 
-      {entry.description && (
-        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
-          {entry.description}
-        </p>
-      )}
-
-      <div className="flex items-center gap-4 text-xs text-muted-foreground mt-auto pt-2 border-t border-border/40">
-        <span className="flex items-center gap-1">
-          <Layers className="h-3 w-3" />
-          {entry.column_count} columns
+      <div className="flex items-center gap-4 text-xs text-muted-foreground shrink-0 border-t md:border-t-0 md:border-l border-border/40 pt-3 md:pt-0 md:pl-6 w-full md:w-auto justify-between md:justify-end">
+        <span className="flex items-center gap-1.5">
+          <Layers className="h-3.5 w-3.5" />
+          {entry.column_count} cols
         </span>
         {entry.last_updated && (
-          <span className="flex items-center gap-1">
-            <Clock className="h-3 w-3" />
+          <span className="flex items-center gap-1.5">
+            <Clock className="h-3.5 w-3.5" />
             {new Date(entry.last_updated).toLocaleDateString()}
           </span>
         )}
         {entry.owner && (
-          <span className="ml-auto text-xs text-muted-foreground/70">{entry.owner}</span>
+          <span className="hidden md:inline-block ml-2 text-xs text-muted-foreground/70">{entry.owner}</span>
         )}
       </div>
-
-      {entry.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
-          {entry.tags.slice(0, 4).map((tag) => (
-            <span
-              key={tag}
-              className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/8 text-primary border border-primary/15"
-            >
-              <Tag className="h-2.5 w-2.5" />
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
     </motion.div>
   );
 }
@@ -119,10 +120,10 @@ export default function DataCatalogPage() {
         />
       </div>
 
-      {/* Grid */}
+      {/* List */}
       {isLoading ? (
-        <div className="grid grid-cols-3 gap-5">
-          {Array.from({ length: 6 }).map((_, i) => <CardSkeleton key={i} lines={3} />)}
+        <div className="flex flex-col gap-4">
+          {Array.from({ length: 4 }).map((_, i) => <CardSkeleton key={i} lines={2} />)}
         </div>
       ) : isError ? (
         <ErrorState 
@@ -140,7 +141,7 @@ export default function DataCatalogPage() {
           variants={containerVariants}
           initial="hidden"
           animate="show"
-          className="grid grid-cols-3 gap-5"
+          className="flex flex-col gap-4"
         >
           {filtered.map((entry) => (
             <motion.div key={entry.id} variants={itemVariants}>

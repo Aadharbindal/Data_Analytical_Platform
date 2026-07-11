@@ -3,8 +3,8 @@ import { Sparkles } from "lucide-react";
 
 export default function ChatPage() {
   return (
-    <div className="flex flex-col h-[calc(100vh-2rem)] w-full p-4 md:p-6 overflow-hidden relative">
-      <div className="mb-4 shrink-0 px-4 md:px-8 max-w-5xl mx-auto w-full flex items-center justify-between">
+    <div className="flex flex-col h-full w-full overflow-hidden relative">
+      <div className="shrink-0 pt-6 pb-2 px-6 max-w-5xl mx-auto w-full flex items-center justify-between z-10">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground flex items-center gap-2">
             <Sparkles className="h-6 w-6 text-primary" />

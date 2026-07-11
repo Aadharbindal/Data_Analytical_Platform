@@ -30,3 +30,12 @@ export function formatPercent(value: number | null | undefined, includeSign = fa
   }
   return formatted;
 }
+
+export function formatDecimal(value: number | null | undefined, fractionDigits = 3): string {
+  if (value === null || value === undefined) return "N/A";
+  
+  return new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits
+  }).format(value);
+}
