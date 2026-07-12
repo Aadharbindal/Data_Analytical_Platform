@@ -52,11 +52,7 @@ export default function AnalyticsLayout({ children }: { children: React.ReactNod
     <div className="flex h-full bg-background text-foreground overflow-hidden">
       {/* Sidebar Navigation */}
       <aside className="w-[200px] border-r border-border/40 bg-surface/30 backdrop-blur-xl flex flex-col h-full z-10 shrink-0">
-        <div className="p-4 border-b border-white/[0.02]">
-          <h2 className="text-[13px] font-semibold tracking-tight text-foreground/90">Analytics Studio</h2>
-        </div>
-        
-        <nav className="flex-1 overflow-y-auto py-3 space-y-4">
+        <nav className="flex-1 overflow-y-auto py-3 space-y-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {NAV_GROUPS.map((group) => (
             <div key={group.title} className="px-3">
               <h3 className="px-2 mb-1.5 text-[10px] font-semibold tracking-wider text-muted-foreground/60 uppercase">

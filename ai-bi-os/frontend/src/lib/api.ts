@@ -189,6 +189,8 @@ export const rulesApi = {
     ),
   create: (body: Partial<import("./types").BusinessRule>) =>
     api.post<{id: string, success: boolean}>("/api/v1/rules", body),
+  update: (id: string, body: Partial<import("./types").BusinessRule>) =>
+    api.patch<{success: boolean}>(`/api/v1/rules/${id}`, body),
   delete: (id: string) =>
     api.delete<{success: boolean}>(`/api/v1/rules/${id}`),
   parseText: (text: string) =>

@@ -112,11 +112,12 @@ export const ChatUI: React.FC = () => {
       const params = new URLSearchParams(window.location.search);
       const query = params.get('q');
       if (query) {
-        setInput(query);
         // Clear query param so it doesn't stay in the URL
         window.history.replaceState({}, '', window.location.pathname);
+        setTimeout(() => handleSend(query), 100);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -127,11 +128,11 @@ export const ChatUI: React.FC = () => {
     }
   }, [messages]);
 
-  const handleSend = async () => {
-    if (!input.trim() || loading) return;
-    const userMsg = input.trim();
+  const handleSend = async (overrideMessage?: string | React.MouseEvent | React.KeyboardEvent) => {
+    const userMsg = typeof overrideMessage === 'string' ? overrideMessage.trim() : input.trim();
+    if (!userMsg || loading) return;
     setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
-    setInput('');
+    if (typeof overrideMessage !== 'string') setInput('');
     setLoading(true);
 
     try {
