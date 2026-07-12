@@ -2,10 +2,16 @@ import os
 import pandas as pd
 import uuid
 import json
+import hashlib
 from datetime import datetime
 import sqlite3
 
 from pathlib import Path
+
+class DuplicateDatasetError(Exception):
+    def __init__(self, existing_info):
+        self.existing_info = existing_info
+        super().__init__("Duplicate dataset")
 from app.core.config import DATA_DIR, DB_PATH
 
 def get_dataset_path(filename: str) -> str:
@@ -162,7 +168,8 @@ def init_db():
         ("version", "INTEGER", "1"),
         ("quality_score", "REAL", "0"),
         ("quality_breakdown", "TEXT", "NULL"),
-        ("user_id", "TEXT", "NULL")
+        ("user_id", "TEXT", "NULL"),
+        ("content_hash", "TEXT", "NULL")
     ]:
         try:
             cursor.execute(f"ALTER TABLE datasets ADD COLUMN {col} {ctype} DEFAULT {default}")
@@ -333,7 +340,24 @@ def parse_to_dataframe(file_content: bytes, filename: str):
     
     return df, metadata
 
-def save_dataset(file_content: bytes, filename: str, user_id: str):
+def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool = False):
+    content_hash = hashlib.sha256(file_content).hexdigest()
+
+    if not force:
+        conn = sqlite3.connect(str(DB_PATH))
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, name, version, created_at FROM datasets WHERE content_hash = ? AND user_id = ? LIMIT 1", (content_hash, user_id))
+        existing = cursor.fetchone()
+        conn.close()
+        
+        if existing:
+            raise DuplicateDatasetError({
+                "id": existing[0],
+                "name": existing[1],
+                "version": existing[2],
+                "uploaded_at": existing[3]
+            })
+
     # Determine version
     conn = sqlite3.connect(str(DB_PATH))
     cursor = conn.cursor()
@@ -402,13 +426,13 @@ def save_dataset(file_content: bytes, filename: str, user_id: str):
     conn = sqlite3.connect(str(DB_PATH))
     cursor = conn.cursor()
     cursor.execute('''
-        INSERT INTO datasets (id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score, quality_breakdown, user_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO datasets (id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score, quality_breakdown, user_id, content_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
         dataset_id, filename, dataset_info["status"], dataset_info["created_at"],
         json.dumps(dataset_info["latest_version"]), filename_db, json.dumps(columns),
         dataset_info["skipped_rows"], dataset_info["sheet_name"], dataset_info["version"],
-        dataset_info["quality_score"], dataset_info["quality_breakdown"], user_id
+        dataset_info["quality_score"], dataset_info["quality_breakdown"], user_id, content_hash
     ))
     
     cursor.execute('''

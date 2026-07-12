@@ -1,11 +1,12 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Form
 from pydantic import BaseModel
 from typing import List, Optional
 import uuid
 import sqlite3
 import json
 import os
-from app.services.data_processing import save_dataset, DB_PATH, get_dataset_path, get_active_dataset, get_dataframe
+from app.services.data_processing import save_dataset, DB_PATH, get_dataset_path, get_active_dataset, get_dataframe, DuplicateDatasetError
 from app.core.security import get_current_user
 from app.services.stats_service import compute_kpis
 
@@ -16,7 +17,7 @@ class UploadResponse(BaseModel):
     status: str
 
 @router.post("/upload", response_model=UploadResponse)
-async def upload_dataset(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
+async def upload_dataset(file: UploadFile = File(...), force: bool = Form(False), current_user: dict = Depends(get_current_user)):
     from app.core.config import MAX_UPLOAD_MB
     content = await file.read()
     
@@ -26,7 +27,13 @@ async def upload_dataset(file: UploadFile = File(...), current_user: dict = Depe
         raise HTTPException(status_code=400, detail=f"File size exceeds maximum limit of {MAX_UPLOAD_MB}MB.")
         
     try:
-        dataset_info = save_dataset(content, file.filename, current_user["id"])
+        dataset_info = save_dataset(content, file.filename, current_user["id"], force)
+    except DuplicateDatasetError as de:
+        raise HTTPException(status_code=409, detail={
+            "duplicate": True, 
+            "existing_dataset": de.existing_info, 
+            "message": f"This file is identical to an already-uploaded dataset ('{de.existing_info['name']}', v{de.existing_info['version']}). Upload anyway to create a duplicate copy, or cancel."
+        })
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:
