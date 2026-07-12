@@ -7,5 +7,3 @@ env/
 .env
 .next/
 *.log
-*.db
-**/data/
