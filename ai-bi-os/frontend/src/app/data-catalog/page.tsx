@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { catalogApi } from "@/lib/api";
+import { catalogApi, datasetsApi } from "@/lib/api";
 import type { CatalogEntry } from "@/lib/types";
 import { motion } from "framer-motion";
 import { Search, Database, Tag, Clock, Layers } from "lucide-react";
@@ -11,9 +11,19 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState, detectErrorType } from "@/components/ui/error-state";
 
 function CatalogCard({ entry }: { entry: CatalogEntry }) {
+  const handleDownload = async () => {
+    try {
+      await datasetsApi.download(entry.id);
+    } catch (err) {
+      console.error("Failed to download dataset", err);
+      alert("Failed to download the original file.");
+    }
+  };
+
   return (
     <motion.div
       whileHover={{ y: -2 }}
+      onClick={handleDownload}
       className="glass-card rounded-[20px] p-5 flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 cursor-pointer group hover:border-primary/30 transition-colors"
     >
       <div className="flex items-center gap-3 min-w-0 md:w-1/3">

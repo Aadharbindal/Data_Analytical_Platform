@@ -41,7 +41,7 @@ async def upload_dataset(file: UploadFile = File(...), force: bool = Form(False)
         
     return {"job_id": dataset_info["id"], "status": "processing"}
 
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
 import asyncio
 
 @router.get("/upload/status/{job_id}")
@@ -202,6 +202,25 @@ async def get_dataset(dataset_id: str, current_user: dict = Depends(get_current_
         "version": r[9],
         "quality_score": r[10]
     }
+
+@router.get("/{dataset_id}/download")
+async def download_dataset(dataset_id: str, current_user: dict = Depends(get_current_user)):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT filepath, name FROM datasets WHERE id=? AND user_id=?", (dataset_id, current_user["id"]))
+    row = cursor.fetchone()
+    conn.close()
+    
+    if not row:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+        
+    filename_db, original_name = row
+    disk_path = get_dataset_path(filename_db)
+    
+    if not os.path.exists(disk_path):
+        raise HTTPException(status_code=404, detail="File not found on disk")
+        
+    return FileResponse(disk_path, filename=original_name, media_type="text/csv")
 
 @router.post("/{dataset_id}/activate")
 async def activate_dataset(dataset_id: str, current_user: dict = Depends(get_current_user)):
