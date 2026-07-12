@@ -40,11 +40,13 @@ export function Header() {
             <DropdownMenu>
               <DropdownMenuTrigger 
                 disabled={activateMutation.isPending}
-                className="flex items-center gap-1.5 bg-surface border border-border/80 text-xs font-semibold text-foreground rounded-lg px-3 py-1.5 outline-none hover:bg-white/5 transition-colors focus:ring-2 focus:ring-primary/30 shadow-sm cursor-pointer ml-2"
+                className="flex items-center gap-1.5 bg-surface border border-border/80 text-xs font-semibold text-foreground rounded-lg px-3 py-1.5 outline-none hover:bg-white/5 transition-colors focus:ring-2 focus:ring-primary/30 shadow-sm cursor-pointer ml-2 max-w-[250px]"
               >
-                {activeDataset ? activeDataset.name : "Select Dataset"}
-                {activeDataset?.version && activeDataset.version > 1 && ` (v${activeDataset.version})`}
-                <svg className="h-3 w-3 text-muted-foreground ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                <span className="truncate">
+                  {activeDataset ? activeDataset.name : "Select Dataset"}
+                  {activeDataset?.version && activeDataset.version > 1 && ` (v${activeDataset.version})`}
+                </span>
+                <svg className="h-3 w-3 text-muted-foreground ml-1 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-56 bg-surface border border-border">
                 {datasets.map((ds) => (
@@ -53,8 +55,8 @@ export function Header() {
                     className={`cursor-pointer ${activeDataset?.id === ds.id ? "bg-primary/10 font-semibold text-primary" : ""}`}
                     onClick={() => activateMutation.mutate(ds.id)}
                   >
-                    <div className="flex items-center justify-between w-full">
-                      <span>{ds.name}</span>
+                    <div className="flex items-center justify-between w-full overflow-hidden">
+                      <span className="truncate mr-2" title={ds.name}>{ds.name}</span>
                       {ds.version && ds.version > 1 && (
                         <span className="text-[10px] bg-primary/10 text-primary border border-primary/20 px-1 py-0.2 rounded font-bold">
                           v{ds.version}

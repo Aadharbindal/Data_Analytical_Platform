@@ -31,6 +31,50 @@ const EXAMPLE_QUERIES = [
 
 import { useDatasetAnalytics } from "@/hooks/useAnalytics";
 
+function DynamicForecastGraph({ data }: { data?: any[] }) {
+  const pointsData = React.useMemo(() => {
+    if (!data || !Array.isArray(data)) return [];
+    return data.map((p: any) => typeof p === 'number' ? p : (p.forecast || p.value || 0));
+  }, [data]);
+
+  if (!pointsData || pointsData.length < 2) {
+    return (
+      <div className="h-8 w-16 bg-emerald-500/10 rounded overflow-hidden flex items-end opacity-70">
+        <div className="w-full h-1/2 border-t-2 border-emerald-500 border-dashed transform -rotate-12 translate-y-1"></div>
+      </div>
+    );
+  }
+
+  const min = Math.min(...pointsData);
+  const max = Math.max(...pointsData);
+  const range = max - min || 1;
+
+  const points = pointsData.map((val, i) => {
+    const x = (i / (pointsData.length - 1)) * 100;
+    const y = 50 - ((val - min) / range) * 40 - 5;
+    return `${x},${y}`;
+  }).join(' ');
+
+  const isUp = pointsData[pointsData.length - 1] >= pointsData[0];
+  const colorClass = isUp ? "text-emerald-500" : "text-rose-500";
+  const bgClass = isUp ? "bg-emerald-500/10" : "bg-rose-500/10";
+
+  return (
+    <div className={`h-8 w-16 ${bgClass} rounded overflow-hidden flex items-center justify-center opacity-70`}>
+      <svg width="100%" height="100%" viewBox="0 0 100 50" preserveAspectRatio="none" className="overflow-visible">
+        <polyline 
+          points={points} 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="3"
+          strokeDasharray="4 4"
+          className={colorClass}
+          vectorEffect="non-scaling-stroke"
+        />
+      </svg>
+    </div>
+  );
+}
 
 export default function AnalyticsDashboard() {
   const datasetId = "demo-dataset-1"; // Assume fixed for demo/integration
@@ -129,9 +173,7 @@ export default function AnalyticsDashboard() {
                       <div><span className="font-medium text-foreground">Model:</span> {(forecasts.data as any)?.method || "Auto-ARIMA"}</div>
                       <div><span className="font-medium text-foreground">Horizon:</span> {(forecasts.data as any)?.forecast?.length || 3} periods</div>
                     </div>
-                    <div className="h-8 w-16 bg-emerald-500/10 rounded overflow-hidden flex items-end opacity-70">
-                       <div className="w-full h-1/2 border-t-2 border-emerald-500 border-dashed transform -rotate-12 translate-y-1"></div>
-                    </div>
+                    <DynamicForecastGraph data={(forecasts.data as any)?.forecast} />
                   </div>
                 </div>
             </div>
