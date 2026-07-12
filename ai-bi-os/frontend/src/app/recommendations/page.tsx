@@ -35,47 +35,61 @@ const priorityConfig: Record<string, { color: string; icon: React.ReactNode; lab
 
 function RecommendationCard({ rec }: { rec: Recommendation }) {
   const config = priorityConfig[rec.priority] ?? priorityConfig.Medium;
-  
   const colorPrefix = config.color.replace('border-l-', 'bg-');
 
   return (
     <motion.div
-      className={`glass-card rounded-[24px] p-6 flex gap-5 relative overflow-hidden bg-gradient-to-r from-white/[0.03] to-transparent border border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 border-l-4 ${config.color}`}
+      className={`glass-card h-full rounded-[20px] p-5 flex flex-col relative bg-gradient-to-br from-white/[0.03] to-transparent border border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 border-l-4 ${config.color}`}
     >
       {/* Decorative gradient blob */}
-      <div className={`absolute -left-12 -top-12 w-40 h-40 blur-3xl opacity-[0.06] pointer-events-none ${colorPrefix}`} />
+      <div className={`absolute -right-12 -top-12 w-40 h-40 blur-3xl opacity-[0.06] pointer-events-none ${colorPrefix}`} />
 
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] bg-white/[0.06] border border-white/[0.05] shadow-inner mt-0.5 z-10">
-        {config.icon}
-      </div>
-
-      <div className="flex-1 min-w-0 z-10 flex flex-col">
-        <div className="flex items-start justify-between gap-3 mb-2.5">
-          <h3 className="text-base font-semibold text-foreground/90 leading-snug tracking-tight">{rec.title}</h3>
-          <div className="flex items-center flex-wrap justify-end gap-2 shrink-0">
-            {rec.verified && (
-              <span className="flex items-center gap-1 text-[10px] font-semibold tracking-wide uppercase text-success/80 bg-success/10 px-2 py-0.5 rounded-full border border-success/20">
-                <CheckCircle className="h-3 w-3" />
-                Verified Fact
+      {/* Top area: Title and badges */}
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <div className="flex items-start gap-3 flex-1 min-w-0 z-10">
+          <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/[0.06] border border-white/[0.05] shadow-inner`}>
+            {config.icon}
+          </div>
+          <div className="flex flex-col min-w-0">
+            <h3 className="text-base font-semibold text-foreground leading-snug line-clamp-2">
+              {rec.title}
+            </h3>
+            
+            {/* Badges directly under title */}
+            <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+              <span className={`text-[10px] font-semibold tracking-wide uppercase px-2 py-0.5 rounded-full border ${config.label}`}>
+                {rec.priority}
               </span>
-            )}
-            <span className={`text-[10px] font-semibold tracking-wide uppercase px-2.5 py-0.5 rounded-full border ${config.label}`}>
-              {rec.priority}
-            </span>
+              {rec.verified && (
+                <span className="flex items-center gap-1 text-[10px] font-semibold tracking-wide uppercase text-success bg-success/10 px-2 py-0.5 rounded-full">
+                  <CheckCircle className="h-3 w-3" />
+                  Verified Fact
+                </span>
+              )}
+            </div>
           </div>
         </div>
+      </div>
 
-        {rec.rationale && (
-          <p className="text-[13px] text-muted-foreground/80 leading-relaxed font-light mb-5">
+      {/* Rationale / Description */}
+      {rec.rationale && (
+        <div className="mb-4 z-10">
+          <p className="text-[13px] text-muted-foreground leading-relaxed">
             {rec.rationale}
           </p>
-        )}
-
-        <div className="mt-auto pt-1 flex items-center justify-between">
-          <span className="inline-flex items-center text-[11px] font-medium text-muted-foreground/70 tracking-wide uppercase bg-white/[0.03] border border-white/[0.05] px-3 py-1.5 rounded-xl shadow-sm">
-            Category: <span className="text-foreground/80 ml-1.5">{rec.category}</span>
-          </span>
         </div>
+      )}
+
+      {/* Growing flex area so footer sticks to bottom */}
+      <div className="flex-grow flex flex-col gap-4 z-10">
+         {/* Could put extra data here in future */}
+      </div>
+
+      {/* Footer */}
+      <div className="flex items-center justify-between pt-3 mt-4 border-t border-border/40 gap-3 z-10">
+        <span className="inline-flex items-center text-[11px] font-medium text-muted-foreground/70 tracking-wide uppercase">
+          Category: <span className="text-foreground/90 ml-1.5 font-semibold">{rec.category}</span>
+        </span>
       </div>
     </motion.div>
   );

@@ -61,6 +61,82 @@ async def get_eda(current_user: dict = Depends(get_current_user)):
         "summary": summary
     }
 
+@router.get("/eda/column/{column_name}")
+async def get_eda_column(column_name: str, current_user: dict = Depends(get_current_user)):
+    try:
+        dataset_info = get_active_dataset(current_user["id"])
+        if not dataset_info:
+            raise HTTPException(status_code=404, detail="No active dataset")
+        
+        df = get_dataframe(dataset_info["id"], current_user["id"])
+        if df is None:
+            raise HTTPException(status_code=404, detail="Dataframe not found")
+            
+        if column_name not in df.columns:
+            raise HTTPException(status_code=404, detail=f"Column {column_name} not found")
+            
+        import scipy.stats as st
+        
+        col_data = df[column_name]
+        col_type = str(col_data.dtype)
+        is_num = pd.api.types.is_numeric_dtype(col_data)
+        
+        null_count = int(col_data.isna().sum())
+        total_count = len(col_data)
+        
+        if is_num:
+            clean_col = col_data.dropna()
+            if len(clean_col) == 0:
+                return {"type": "numeric", "error": "No valid data"}
+                
+            # Histogram data
+            counts, bin_edges = np.histogram(clean_col, bins='auto')
+            histogram = [{"bin_start": float(bin_edges[i]), "bin_end": float(bin_edges[i+1]), "count": int(counts[i])} for i in range(len(counts))]
+            
+            # Stats
+            stats = {
+                "min": float(clean_col.min()),
+                "max": float(clean_col.max()),
+                "mean": float(clean_col.mean()),
+                "median": float(clean_col.median()),
+                "std": float(clean_col.std()) if len(clean_col) > 1 else 0,
+                "q1": float(clean_col.quantile(0.25)),
+                "q3": float(clean_col.quantile(0.75)),
+                "skewness": float(st.skew(clean_col)),
+                "kurtosis": float(st.kurtosis(clean_col)),
+                "nulls": null_count,
+                "total": total_count
+            }
+            
+            return {
+                "type": "numeric",
+                "column": column_name,
+                "histogram": histogram,
+                "stats": stats
+            }
+        else:
+            # Categorical
+            val_counts = col_data.value_counts(dropna=False).head(50)
+            frequencies = [{"value": str(k) if not pd.isna(k) else "null", "count": int(v)} for k, v in val_counts.items()]
+            
+            stats = {
+                "unique": int(col_data.nunique(dropna=False)),
+                "nulls": null_count,
+                "total": total_count,
+                "mode": str(col_data.mode().iloc[0]) if not col_data.mode().empty else "N/A"
+            }
+            
+            return {
+                "type": "categorical",
+                "column": column_name,
+                "frequencies": frequencies,
+                "stats": stats
+            }
+    except Exception as e:
+        import traceback
+        raise HTTPException(status_code=500, detail={"error": str(e), "traceback": traceback.format_exc()})
+
+
 @router.get("/statistics")
 async def get_statistics(current_user: dict = Depends(get_current_user)):
     dataset_info = get_active_dataset(current_user["id"])

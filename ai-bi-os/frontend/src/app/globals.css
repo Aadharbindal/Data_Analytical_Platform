@@ -210,3 +210,10 @@ input::-ms-reveal,
 input::-ms-clear {
   display: none;
 }
+
+/* Force hide Next.js Dev Indicator */
+nextjs-portal,
+#__next-build-watcher,
+#next-route-announcer {
+  display: none !important;
+}
