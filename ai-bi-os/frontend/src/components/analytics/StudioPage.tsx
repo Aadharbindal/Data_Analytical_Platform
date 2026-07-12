@@ -18,7 +18,7 @@ export function StudioPage({ title, toolbar, children, isLoading }: StudioPagePr
   });
 
   return (
-    <div className="flex flex-col h-full animate-in fade-in duration-150 relative">
+    <div className="flex flex-col min-h-full animate-in fade-in duration-150 relative">
       {/* Sticky Header */}
       <header className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-background/80 backdrop-blur-md border-b border-white/[0.04] shrink-0 h-14">
         <h1 className="text-sm font-semibold tracking-wide text-foreground/90">
@@ -43,7 +43,7 @@ export function StudioPage({ title, toolbar, children, isLoading }: StudioPagePr
       </header>
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto p-6 transition-all duration-150">
+      <div className="flex-1 p-6 transition-all duration-150">
         <div className="mx-auto max-w-full">
           {isLoading ? (
             <div className="flex items-center justify-center h-48 opacity-50">

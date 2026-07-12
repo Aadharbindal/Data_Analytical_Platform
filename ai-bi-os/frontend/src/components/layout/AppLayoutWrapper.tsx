@@ -34,7 +34,7 @@ export function AppLayoutWrapper({ children }: { children: React.ReactNode }) {
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         <Header />
-        <main className={`flex-1 overflow-y-auto bg-background ${isAnalytics ? "" : "p-6 pb-12"}`}>
+        <main className={`flex-1 bg-background ${isAnalytics ? "overflow-hidden" : "overflow-y-auto p-6 pb-12"}`}>
           <div className={`${isAnalytics ? "h-full" : "mx-auto max-w-7xl"}`}>
             {children}
           </div>

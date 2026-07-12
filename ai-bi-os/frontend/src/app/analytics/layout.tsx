@@ -49,7 +49,7 @@ export default function AnalyticsLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
 
   return (
-    <div className="flex h-screen bg-background text-foreground overflow-hidden">
+    <div className="flex h-full bg-background text-foreground overflow-hidden">
       {/* Sidebar Navigation */}
       <aside className="w-[200px] border-r border-border/40 bg-surface/30 backdrop-blur-xl flex flex-col h-full z-10 shrink-0">
         <div className="p-4 border-b border-white/[0.02]">
@@ -92,7 +92,7 @@ export default function AnalyticsLayout({ children }: { children: React.ReactNod
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 h-full overflow-hidden bg-background">
+      <main className="flex-1 h-full overflow-y-auto bg-background relative">
         {children}
       </main>
     </div>

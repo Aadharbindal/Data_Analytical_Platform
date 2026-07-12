@@ -148,6 +148,7 @@ export const analyticsApi = {
   kpis: () => api.get<import("./types").AnalyticsKPIs>("/api/v1/analytics/kpis"),
   kpiCenter: () => api.get<any>("/api/v1/analytics/kpi-center"),
   eda: () => api.get<any>("/api/v1/analytics/eda"),
+  edaColumn: (column: string) => api.get<any>(`/api/v1/analytics/eda/column/${encodeURIComponent(column)}`),
   statistics: () => api.get<any>("/api/v1/analytics/statistics"),
   correlation: () => api.get<any>("/api/v1/analytics/correlation"),
   distribution: () => api.get<any>("/api/v1/analytics/distribution"),
