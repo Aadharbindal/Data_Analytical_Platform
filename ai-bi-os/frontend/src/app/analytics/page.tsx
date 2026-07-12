@@ -170,7 +170,7 @@ export default function AnalyticsDashboard() {
                   <h3 className="font-semibold text-foreground">Revenue Forecast</h3>
                   <div className="flex justify-between items-end mt-2">
                     <div className="text-sm text-muted-foreground">
-                      <div><span className="font-medium text-foreground">Model:</span> {(forecasts.data as any)?.method || "Auto-ARIMA"}</div>
+                      <div><span className="font-medium text-foreground">Model:</span> {(forecasts.data as any)?.method ?? (forecasts.isLoading ? "Loading..." : "Unavailable")}</div>
                       <div><span className="font-medium text-foreground">Horizon:</span> {(forecasts.data as any)?.forecast?.length || 3} periods</div>
                     </div>
                     <DynamicForecastGraph data={(forecasts.data as any)?.forecast} />
