@@ -115,7 +115,7 @@ export function RevenueCard({ data }: RevenueCardProps) {
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={filteredData} margin={{ top: 10, right: 30, left: 10, bottom: 20 }} onClick={handleChartClick}>
+              <AreaChart data={filteredData} margin={{ top: 10, right: 30, left: 20, bottom: 20 }} onClick={handleChartClick}>
               <defs>
                 <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#0070F3" stopOpacity={0.4} />
@@ -135,6 +135,7 @@ export function RevenueCard({ data }: RevenueCardProps) {
                 dy={15}
               />
               <YAxis 
+                width={80}
                 axisLine={false} 
                 tickLine={false} 
                 tick={{ fill: 'var(--muted-foreground)', fontSize: 11, fontWeight: 500 }}

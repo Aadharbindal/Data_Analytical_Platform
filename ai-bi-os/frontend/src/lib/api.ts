@@ -81,6 +81,25 @@ export const datasetsApi = {
   delete: (id: string) => api.delete(`/api/v1/datasets/${id}`),
   getActive: () => api.get<import("./types").ActiveDatasetInfo | null>("/api/v1/datasets/active"),
   activate: (id: string) => api.post(`/api/v1/datasets/${id}/activate`, {}),
+  download: async (id: string) => {
+    const res = await fetch(`${BASE_URL}/api/v1/datasets/${id}/download`, { credentials: 'include' });
+    if (!res.ok) throw new Error("Failed to download dataset");
+    const blob = await res.blob();
+    const contentDisposition = res.headers.get('Content-Disposition');
+    let filename = 'dataset.csv';
+    if (contentDisposition) {
+      const match = contentDisposition.match(/filename="?([^"]+)"?/);
+      if (match && match[1]) filename = match[1];
+    }
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  },
 };
 
 // Schema (Module 3)
