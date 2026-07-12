@@ -320,15 +320,12 @@ export default function RulesPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground">Rules & Decisions</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Deterministic business rules evaluated against your latest data.
-          </p>
-        </div>
-        <Button onClick={() => setShowModal(true)} className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
-          <Plus className="h-4 w-4" /> New Rule
-        </Button>
+        <div></div>
+        {rules && rules.length > 0 && (
+          <Button onClick={() => setShowModal(true)} className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
+            <Plus className="h-4 w-4" /> New Rule
+          </Button>
+        )}
       </div>
 
       {isLoading ? (
