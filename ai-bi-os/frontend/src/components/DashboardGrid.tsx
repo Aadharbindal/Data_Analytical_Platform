@@ -124,8 +124,8 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
       >
         {loading.analytics
           ? Array.from({ length: 4 }).map((_, i) => <MetricCardSkeleton key={i} />)
-          : metricCards.map((card) => (
-              <MetricCard key={card.title} {...card} />
+          : metricCards.map((card, idx) => (
+              <MetricCard key={card.title} index={idx} {...card} />
             ))}
       </motion.div>
 

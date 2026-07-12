@@ -121,7 +121,7 @@ function UploadZone({ onSuccess, onRedirect }: { onSuccess: () => void, onRedire
         className={`relative flex flex-col items-center justify-center gap-3 rounded-[20px] border-2 border-dashed p-10 cursor-pointer transition-all duration-200 ${
           isDragging
             ? "border-primary bg-primary/5 scale-[1.01]"
-            : "border-border/60 hover:border-primary/40 hover:bg-white/[0.01]"
+            : "border-border hover:border-primary/60 hover:bg-white/[0.02]"
         }`}
       >
         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
