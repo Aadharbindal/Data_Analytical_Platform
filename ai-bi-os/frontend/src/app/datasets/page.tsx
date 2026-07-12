@@ -46,6 +46,11 @@ const statusConfig: Record<string, { color: string; icon: React.ReactNode }> = {
 
 function UploadZone({ onSuccess, onRedirect }: { onSuccess: () => void, onRedirect?: () => void }) {
   const [isDragging, setIsDragging] = useState(false);
+  const [duplicateInfo, setDuplicateInfo] = useState<{
+    file: File;
+    existing_dataset: any;
+    message: string;
+  } | null>(null);
   const [uploadProgress, setUploadProgress] = useState<{
     filename: string;
     status: "uploading" | "processing" | "done" | "error";
@@ -55,12 +60,15 @@ function UploadZone({ onSuccess, onRedirect }: { onSuccess: () => void, onRedire
   } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFile = async (file: File) => {
+  const handleFile = async (file: File, force: boolean = false) => {
     setUploadProgress({ filename: file.name, status: "uploading" });
     try {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("dataset_name", file.name.replace(/\.[^/.]+$/, ""));
+      if (force) {
+        formData.append("force", "true");
+      }
       const res = await datasetsApi.upload(formData);
       setUploadProgress({ filename: file.name, status: "processing", jobId: res.job_id, currentStep: "Initializing", progress: 0 });
 
@@ -98,6 +106,11 @@ function UploadZone({ onSuccess, onRedirect }: { onSuccess: () => void, onRedire
       let errorMessage = "Upload failed";
       try {
           const parsed = JSON.parse(err.message);
+          if (parsed.duplicate) {
+              setDuplicateInfo({ file, existing_dataset: parsed.existing_dataset, message: parsed.message });
+              setUploadProgress(null);
+              return;
+          }
           if (parsed.detail) errorMessage = parsed.detail;
       } catch (e) {
           if (err.message) errorMessage = err.message;
@@ -170,6 +183,52 @@ function UploadZone({ onSuccess, onRedirect }: { onSuccess: () => void, onRedire
                 />
               </div>
             )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {duplicateInfo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative w-full max-w-md overflow-hidden rounded-[24px] border border-border/50 bg-surface/95 backdrop-blur-xl p-6 shadow-2xl"
+            >
+              <div className="flex flex-col gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-warning/10">
+                  <AlertCircle className="h-6 w-6 text-warning" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-foreground">Duplicate Detected</h2>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {duplicateInfo.message}
+                  </p>
+                </div>
+                <div className="mt-4 flex justify-end gap-3">
+                  <Button variant="outline" onClick={() => setDuplicateInfo(null)}>
+                    Cancel
+                  </Button>
+                  <Button 
+                    variant="default" 
+                    className="bg-warning hover:bg-warning/90 text-warning-foreground"
+                    onClick={() => {
+                      const file = duplicateInfo.file;
+                      setDuplicateInfo(null);
+                      handleFile(file, true);
+                    }}
+                  >
+                    Upload Anyway
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
