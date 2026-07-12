@@ -208,6 +208,28 @@ def init_db():
     
     # Run absolute path migration
     run_filepath_migration()
+    
+    # Run content hash migration
+    conn = sqlite3.connect(str(DB_PATH))
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT id, filepath FROM datasets WHERE content_hash IS NULL")
+        rows = cursor.fetchall()
+        for row in rows:
+            dataset_id, filepath = row
+            if filepath:
+                disk_path = get_dataset_path(filepath)
+                if os.path.exists(disk_path):
+                    import hashlib
+                    with open(disk_path, "rb") as f:
+                        file_content = f.read()
+                        content_hash = hashlib.sha256(file_content).hexdigest()
+                        cursor.execute("UPDATE datasets SET content_hash = ? WHERE id = ?", (content_hash, dataset_id))
+        conn.commit()
+    except Exception as e:
+        print(f"Error running hash migration: {e}")
+    finally:
+        conn.close()
 
 init_db()
 
