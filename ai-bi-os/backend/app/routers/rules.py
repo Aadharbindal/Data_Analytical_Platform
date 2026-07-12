@@ -114,6 +114,50 @@ async def create_rule(data: dict = Body(...), current_user: dict = Depends(get_c
     conn.close()
     return {"id": rule_id, "success": True}
 
+@router.patch("/{rule_id}")
+async def update_rule(rule_id: str, data: dict = Body(...), current_user: dict = Depends(get_current_user)):
+    conn = sqlite3.connect(str(DB_PATH))
+    cursor = conn.cursor()
+    
+    # Get current rule
+    cursor.execute('SELECT * FROM rules WHERE id = ? AND user_id = ?', (rule_id, current_user["id"]))
+    rule = cursor.fetchone()
+    if not rule:
+        conn.close()
+        return {"error": "Rule not found or unauthorized"}
+        
+    # Build update query dynamically based on provided fields
+    update_fields = []
+    params = []
+    
+    if "is_active" in data:
+        update_fields.append("is_active = ?")
+        params.append(1 if data["is_active"] else 0)
+    if "name" in data:
+        update_fields.append("name = ?")
+        params.append(data["name"])
+    if "metric_column" in data:
+        update_fields.append("metric_column = ?")
+        params.append(data["metric_column"])
+    if "condition" in data:
+        update_fields.append("condition = ?")
+        params.append(data["condition"])
+    if "threshold" in data:
+        update_fields.append("threshold = ?")
+        params.append(float(data["threshold"]))
+    if "window" in data:
+        update_fields.append("window = ?")
+        params.append(data["window"])
+        
+    if update_fields:
+        query = f"UPDATE rules SET {', '.join(update_fields)} WHERE id = ? AND user_id = ?"
+        params.extend([rule_id, current_user["id"]])
+        cursor.execute(query, tuple(params))
+        conn.commit()
+        
+    conn.close()
+    return {"success": True}
+
 @router.delete("/{rule_id}")
 async def delete_rule(rule_id: str, current_user: dict = Depends(get_current_user)):
     conn = sqlite3.connect(str(DB_PATH))
