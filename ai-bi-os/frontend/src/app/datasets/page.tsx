@@ -257,16 +257,14 @@ export default function DatasetsPage() {
   const activateMutation = useMutation({
     mutationFn: (id: string) => datasetsApi.activate(id),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["datasets"] });
-      qc.invalidateQueries({ queryKey: ["activeDataset"] });
+      qc.invalidateQueries();
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => datasetsApi.delete(id),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["datasets"] });
-      qc.invalidateQueries({ queryKey: ["activeDataset"] });
+      qc.invalidateQueries();
       setDeleteConfirmId(null);
     },
   });

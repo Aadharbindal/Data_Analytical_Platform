@@ -9,11 +9,48 @@ def find_column(df: pd.DataFrame, pattern: str, numeric_only: bool = False) -> s
             return col
     return None
 
-def compute_kpis(df: pd.DataFrame) -> dict:
+def compute_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict:
     if df is None:
         return {"kpis": [], "chart_data": []}
         
+    if not semantic_dict:
+        # Fallback to local heuristic detection
+        from app.services.semantic_classification import fallback_classify
+        _, semantic_dict = fallback_classify(df, "Active Dataset")
+    else:
+        # Always run sanitization dynamically in compute_kpis as a failsafe
+        from app.services.semantic_classification import validate_and_sanitize_business_terminology
+        domain = semantic_dict.get("domain", "generic")
+        bus_term = semantic_dict.get("business_terminology", {})
+        validate_and_sanitize_business_terminology(df, domain, bus_term)
+        
+    original_df = df.copy()
     kpis = []
+    
+    # Extract terms
+    bus_term = semantic_dict.get("business_terminology", {})
+    sem_dict = semantic_dict.get("semantic_dictionary", {})
+    
+    primary_metric = bus_term.get("primary_metric")
+    primary_label = bus_term.get("primary_metric_label", "Total Value")
+    primary_op = bus_term.get("primary_metric_op", "sum")
+    primary_type = bus_term.get("primary_metric_type", "currency")
+    
+    entity_col = bus_term.get("entity_col")
+    entity_label = bus_term.get("entity_count_label", "Total Items")
+    
+    secondary_metric = bus_term.get("secondary_metric")
+    secondary_label = bus_term.get("secondary_metric_label", "Average Value")
+    secondary_op = bus_term.get("secondary_metric_op", "mean")
+    secondary_type = bus_term.get("secondary_metric_type", "generic")
+    
+    status_col = bus_term.get("status_col")
+    status_label = bus_term.get("status_metric_label", "Success Rate")
+    status_healthy = bus_term.get("status_healthy_regex", "won|active|discharged|completed|approved|paid")
+    status_unhealthy = bus_term.get("status_unhealthy_regex", "lost|terminated|churned|inactive|overdue|failed")
+    
+    date_cols = sem_dict.get("date_columns", [])
+    date_col = date_cols[0] if date_cols and date_cols[0] in df.columns else None
     
     def safe_divide(a, b):
         return a / b if b else 0.0
@@ -22,39 +59,6 @@ def compute_kpis(df: pd.DataFrame) -> dict:
         if previous == 0 or pd.isna(previous):
             return 0.0
         return round(((current - previous) / previous) * 100, 1)
-    
-    # 1. Total Revenue
-    rev_col = find_column(df, r'revenue|sales|amount|\bmrr\b|\barr\b|turnover|income|earnings|\bgmv\b|sales_amount|order_value|net_revenue|total_revenue', numeric_only=True)
-    
-    # 2. Active Users / Customers
-    user_col = None
-    for col in df.columns:
-        if re.search(r'customer|user|client|account|seats?|members?|subscribers?|licenses?|headcount|active_users|end_users', col, re.IGNORECASE):
-            # Exclude categorical dimensions that just happen to contain the word
-            if not re.search(r'region|country|state|type|category|group|segment|tier', col, re.IGNORECASE):
-                user_col = col
-                break
-                
-    # 3. Deals / Transactions
-    deal_candidates = []
-    for col in df.columns:
-        if re.search(r'deal|order|transaction|invoice', col, re.IGNORECASE):
-            if not re.search(r'date|month|year|time', col, re.IGNORECASE) and not pd.core.dtypes.common.is_datetime64_any_dtype(df[col]):
-                deal_candidates.append(col)
-                
-    deal_col = None
-    if deal_candidates:
-        id_candidates = [c for c in deal_candidates if re.search(r'id|number|no|code', c, re.IGNORECASE)]
-        if id_candidates:
-            deal_col = id_candidates[0]
-        else:
-            deal_col = deal_candidates[0]
-    
-    # 4. Pipeline / Status
-    status_col = find_column(df, r'stage|status|pipeline')
-    
-    # Date column
-    date_col = find_column(df, r'date|month|year|time')
     
     if date_col:
         try:
@@ -77,116 +81,167 @@ def compute_kpis(df: pd.DataFrame) -> dict:
         except Exception:
             pass
 
-    # 1. KPI: Total Revenue
-    if rev_col and pd.api.types.is_numeric_dtype(df[rev_col]):
-        curr_rev = recent_df[rev_col].sum()
-        prev_rev = prior_df[rev_col].sum() if prior_df is not None else curr_rev
+    # 1. Primary Metric KPI
+    if primary_metric and primary_metric in original_df.columns:
+        def agg_metric(subset_df):
+            if subset_df.empty:
+                return 0.0
+            col_data = subset_df[primary_metric]
+            if primary_op == "sum":
+                return float(col_data.sum())
+            elif primary_op == "mean":
+                return float(col_data.mean())
+            elif primary_op == "count":
+                return float(col_data.count())
+            elif primary_op == "nunique":
+                return float(col_data.nunique())
+            return float(col_data.sum())
+            
+        curr_val = agg_metric(original_df)
+        
+        # Calculate trend if date exists
+        trend = 0.0
+        prev_val = 0.0
+        if prior_df is not None and not prior_df.empty:
+            curr_period_val = agg_metric(recent_df)
+            prior_period_val = agg_metric(prior_df)
+            trend = calc_trend(curr_period_val, prior_period_val)
+            prev_val = prior_period_val
+            
         kpis.append({
             "id": "kpi_rev",
-            "name": "Total Revenue",
-            "column": rev_col,
-            "value": round(float(curr_rev), 2),
-            "previous_value": round(float(prev_rev), 2),
-            "trend": calc_trend(curr_rev, prev_rev),
-            "type": "currency",
+            "name": primary_label,
+            "column": primary_metric,
+            "value": round(curr_val, 2),
+            "previous_value": round(prev_val, 2),
+            "trend": trend,
+            "type": primary_type,
             "history": []
         })
 
-    # 2. KPI: Active Users
-    if user_col:
-        if pd.api.types.is_numeric_dtype(df[user_col]) and not re.search(r'id\b', user_col, re.IGNORECASE):
-            curr_users = recent_df[user_col].sum()
-            prev_users = prior_df[user_col].sum() if prior_df is not None else curr_users
-        else:
-            curr_users = recent_df[user_col].nunique()
-            prev_users = prior_df[user_col].nunique() if prior_df is not None else curr_users
+    # 2. Entity Count KPI
+    if entity_col and entity_col in original_df.columns:
+        def agg_entity(subset_df):
+            if subset_df.empty:
+                return 0.0
+            col_data = subset_df[entity_col]
+            if pd.api.types.is_numeric_dtype(col_data) and not re.search(r'id\b|code\b|uuid\b', entity_col, re.IGNORECASE):
+                try:
+                    return float(col_data.sum())
+                except Exception:
+                    return float(col_data.nunique())
+            else:
+                return float(col_data.nunique())
+                
+        curr_val = agg_entity(original_df)
+        
+        trend = 0.0
+        prev_val = 0.0
+        if prior_df is not None and not prior_df.empty:
+            curr_period_val = agg_entity(recent_df)
+            prior_period_val = agg_entity(prior_df)
+            trend = calc_trend(curr_period_val, prior_period_val)
+            prev_val = prior_period_val
             
         kpis.append({
             "id": "kpi_users",
-            "name": "Active Users",
-            "column": user_col,
-            "value": float(curr_users),
-            "previous_value": float(prev_users),
-            "trend": calc_trend(curr_users, prev_users),
+            "name": entity_label,
+            "column": entity_col,
+            "value": float(curr_val),
+            "previous_value": float(prev_val),
+            "trend": trend,
             "type": "count",
             "history": []
         })
 
-    # 3. KPI: Avg. Deal Size
-    if rev_col and pd.api.types.is_numeric_dtype(df[rev_col]):
-        curr_rev = recent_df[rev_col].sum()
-        prev_rev = prior_df[rev_col].sum() if prior_df is not None else curr_rev
-        
-        if deal_col:
-            if pd.api.types.is_numeric_dtype(df[deal_col]) and not re.search(r'id\b', deal_col, re.IGNORECASE):
-                curr_deals = recent_df[deal_col].sum()
-                prev_deals = prior_df[deal_col].sum() if prior_df is not None else curr_deals
-            else:
-                curr_deals = recent_df[deal_col].nunique()
-                prev_deals = prior_df[deal_col].nunique() if prior_df is not None else curr_deals
-        else:
-            curr_deals = len(recent_df)
-            prev_deals = len(prior_df) if prior_df is not None else curr_deals
+    # 3. Secondary Metric KPI
+    if secondary_metric and secondary_metric in original_df.columns:
+        def agg_sec(subset_df):
+            if subset_df.empty:
+                return 0.0
+            col_data = subset_df[secondary_metric]
+            if secondary_op == "sum":
+                return float(col_data.sum())
+            elif secondary_op == "mean":
+                return float(col_data.mean())
+            elif secondary_op == "count":
+                return float(col_data.count())
+            elif secondary_op == "nunique":
+                return float(col_data.nunique())
+            return float(col_data.mean())
             
-        curr_avg = safe_divide(curr_rev, curr_deals)
-        prev_avg = safe_divide(prev_rev, prev_deals)
+        curr_val = agg_sec(original_df)
         
+        trend = 0.0
+        prev_val = 0.0
+        if prior_df is not None and not prior_df.empty:
+            curr_period_val = agg_sec(recent_df)
+            prior_period_val = agg_sec(prior_df)
+            trend = calc_trend(curr_period_val, prior_period_val)
+            prev_val = prior_period_val
+            
         kpis.append({
             "id": "kpi_deal_size",
-            "name": "Avg. Deal Size",
-            "column": deal_col if deal_col else "(Row Count)",
-            "value": round(float(curr_avg), 2),
-            "previous_value": round(float(prev_avg), 2),
-            "trend": calc_trend(curr_avg, prev_avg),
-            "type": "currency",
+            "name": secondary_label,
+            "column": secondary_metric,
+            "value": round(curr_val, 2),
+            "previous_value": round(prev_val, 2),
+            "trend": trend,
+            "type": secondary_type,
             "history": []
         })
 
-    # 4. KPI: Pipeline Health
-    if status_col:
+    # 4. Status / Health KPI
+    if status_col and status_col in original_df.columns:
         def calc_health(df_subset):
             if df_subset.empty:
                 return 0.0
             s = df_subset[status_col].astype(str)
-            healthy = s.str.contains(r'won|active|open|closed', case=False, na=False)
-            unhealthy = s.str.contains(r'lost|churn|cancel|reject|fail', case=False, na=False)
-            mask = healthy & ~unhealthy
-            return float(mask.mean() * 100)
+            healthy = s.str.contains(status_healthy, case=False, na=False)
+            unhealthy = s.str.contains(status_unhealthy, case=False, na=False)
+            total = healthy.sum() + unhealthy.sum()
+            if total > 0:
+                return float(healthy.sum() / total * 100)
+            return float(healthy.mean() * 100)
             
-        s_full = df[status_col].astype(str)
-        healthy_mask = s_full.str.contains(r'won|active|open|closed', case=False, na=False)
-        unhealthy_mask = s_full.str.contains(r'lost|churn|cancel|reject|fail', case=False, na=False)
+        curr_health = calc_health(original_df)
         
-        classified_pct = (healthy_mask | unhealthy_mask).mean()
-        
-        if classified_pct >= 0.6:
-            curr_health = calc_health(recent_df)
-            prev_health = calc_health(prior_df) if prior_df is not None else curr_health
+        trend = 0.0
+        prev_val = 0.0
+        if prior_df is not None and not prior_df.empty:
+            curr_period_val = calc_health(recent_df)
+            prior_period_val = calc_health(prior_df)
+            trend = calc_trend(curr_period_val, prior_period_val)
+            prev_val = prior_period_val
             
-            kpis.append({
-                "id": "kpi_pipeline",
-                "name": "Pipeline Health",
-                "column": status_col,
-                "value": round(curr_health, 1),
-                "previous_value": round(prev_health, 1),
-                "trend": calc_trend(curr_health, prev_health),
-                "type": "percent",
-                "history": []
-            })
+        kpis.append({
+            "id": "kpi_pipeline",
+            "name": status_label,
+            "column": status_col,
+            "value": round(curr_health, 1),
+            "previous_value": round(prev_val, 1),
+            "trend": trend,
+            "type": "percent",
+            "history": []
+        })
 
     chart_data = []
-    if date_col and rev_col and pd.api.types.is_numeric_dtype(df[rev_col]):
+    if date_col and primary_metric and primary_metric in df.columns:
         try:
-            monthly_rev = df.groupby(df[date_col].dt.strftime('%b %Y'))[rev_col].sum().reset_index()
-            monthly_rev['temp_date'] = pd.to_datetime(monthly_rev[date_col], format='%b %Y')
-            monthly_rev = monthly_rev.sort_values(by='temp_date')
-            for _, row in monthly_rev.iterrows():
+            if primary_op == "mean":
+                grouped_res = df.groupby(df[date_col].dt.strftime('%b %Y'))[primary_metric].mean().reset_index()
+            else:
+                grouped_res = df.groupby(df[date_col].dt.strftime('%b %Y'))[primary_metric].sum().reset_index()
+                
+            grouped_res['temp_date'] = pd.to_datetime(grouped_res[date_col], format='%b %Y')
+            grouped_res = grouped_res.sort_values(by='temp_date')
+            for _, row in grouped_res.iterrows():
                 chart_data.append({
                     "name": row[date_col],
-                    "value": round(float(row[rev_col]), 2)
+                    "value": round(float(row[primary_metric]), 2)
                 })
                 
-            fc = forecast_series(df, rev_col, periods=2)
+            fc = forecast_series(df, primary_metric, periods=2)
             if fc.get("available"):
                 if chart_data:
                     chart_data[-1]["forecast"] = chart_data[-1]["value"]
@@ -207,33 +262,24 @@ def compute_kpis(df: pd.DataFrame) -> dict:
             
             for k in kpis:
                 hist = []
-                # Sort periods chronologically
                 sorted_p = sorted(periods_list.groups.keys())
                 for p in sorted_p:
                     group_df = periods_list.get_group(p)
                     val = 0.0
                     
-                    if k["id"] == "kpi_rev" and rev_col and pd.api.types.is_numeric_dtype(group_df[rev_col]):
-                        val = group_df[rev_col].sum()
-                        
-                    elif k["id"] == "kpi_users" and user_col:
-                        if pd.api.types.is_numeric_dtype(group_df[user_col]) and not re.search(r'id\b', user_col, re.IGNORECASE):
-                            val = group_df[user_col].sum()
+                    if k["id"] == "kpi_rev" and primary_metric and primary_metric in group_df.columns:
+                        if primary_op == "mean":
+                            val = group_df[primary_metric].mean()
                         else:
-                            val = group_df[user_col].nunique()
+                            val = group_df[primary_metric].sum()
                             
-                    elif k["id"] == "kpi_deal_size":
-                        r = group_df[rev_col].sum() if (rev_col and pd.api.types.is_numeric_dtype(group_df[rev_col])) else 0.0
-                        if deal_col:
-                            if pd.api.types.is_numeric_dtype(group_df[deal_col]) and not re.search(r'id\b', deal_col, re.IGNORECASE):
-                                d = group_df[deal_col].sum()
-                            else:
-                                d = group_df[deal_col].nunique()
-                        else:
-                            d = len(group_df)
-                        val = safe_divide(r, d)
+                    elif k["id"] == "kpi_users" and entity_col and entity_col in group_df.columns:
+                        val = agg_entity(group_df)
+                            
+                    elif k["id"] == "kpi_deal_size" and secondary_metric and secondary_metric in group_df.columns:
+                        val = agg_sec(group_df)
                         
-                    elif k["id"] == "kpi_pipeline" and status_col:
+                    elif k["id"] == "kpi_pipeline" and status_col and status_col in group_df.columns:
                         val = calc_health(group_df)
                         
                     hist.append({"date": p.strftime('%b %Y'), "value": round(float(val), 2)})

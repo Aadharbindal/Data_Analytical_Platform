@@ -36,6 +36,11 @@ export const Dashboard: React.FC = () => {
     queryFn: () => datasetsApi.list(),
   });
 
+  const { data: activeDataset, isLoading: activeDatasetLoading } = useQuery({
+    queryKey: ["active-dataset"],
+    queryFn: () => datasetsApi.getActive(),
+  });
+
   const chartData =
     analytics?.chart_data && analytics.chart_data.length > 0
       ? analytics.chart_data
@@ -50,10 +55,12 @@ export const Dashboard: React.FC = () => {
         kpis={kpis}
         insights={insights ?? []}
         datasets={datasets ?? []}
+        activeDataset={activeDataset ?? null}
         loading={{
           analytics: analyticsLoading,
           insights: insightsLoading,
           datasets: datasetsLoading,
+          activeDataset: activeDatasetLoading,
         }}
       />
 

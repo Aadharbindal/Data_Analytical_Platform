@@ -41,7 +41,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ data, title = "Revenue A
           <h3 className="text-lg font-semibold text-white mb-1">{title}</h3>
           <div className="flex items-center gap-3">
             <span className="text-2xl font-bold text-white">
-              ${data[data.length - 1]?.value.toLocaleString() || '130,800'}
+              ₹{data[data.length - 1]?.value.toLocaleString() || '130,800'}
             </span>
             <span className="text-[#a3e635] text-sm font-medium bg-[#1e2a14] px-2 py-0.5 rounded-full">
               ▲ +12.5%
@@ -65,7 +65,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ data, title = "Revenue A
             </defs>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#2a2a2a" />
             <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#666', fontSize: 11}} dy={10} />
-            <YAxis axisLine={false} tickLine={false} tick={{fill: '#666', fontSize: 11}} tickFormatter={(val) => `${val/1000}K`} />
+            <YAxis axisLine={false} tickLine={false} tick={{fill: '#666', fontSize: 11}} tickFormatter={(val) => `₹${val/1000}K`} />
             <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#555', strokeWidth: 1, strokeDasharray: '4 4' }} />
             <Area type="monotone" dataKey="value" stroke="#a3e635" strokeWidth={3} fillOpacity={1} fill="url(#neonGreen)" />
           </AreaChart>

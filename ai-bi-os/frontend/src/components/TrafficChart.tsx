@@ -35,12 +35,15 @@ export const TrafficChart: React.FC = () => {
       </div>
 
       <div className="mt-4">
-        <div className="flex justify-between items-end mb-1">
-          <span className="text-2xl font-bold text-white">$130,800</span>
-          <span className="text-[#a3e635] text-xs font-medium">▲ +12.5%</span>
-        </div>
-        <div className="flex justify-between text-[10px] text-gray-500">
-          <span>▲ +12.5% vs last week</span>
+        <div className="flex justify-between items-end mb-6">
+          <div className="flex flex-col gap-1">
+            <h3 className="text-gray-400 font-medium">Total Volume</h3>
+            <span className="text-2xl font-bold text-white">₹130,800</span>
+          </div>
+          <div className="bg-[#1e2a14] px-2 py-1 rounded flex items-center gap-1">
+            <ArrowUpRight className="w-3 h-3 text-[#a3e635]" />
+            <span className="text-[#a3e635] text-xs font-semibold">12.5%</span>
+          </div>
         </div>
         <p className="text-[10px] text-gray-500 mt-2">Driven mainly by Paid traffic (+18%)</p>
       </div>

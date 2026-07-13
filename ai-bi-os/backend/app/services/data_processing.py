@@ -169,7 +169,9 @@ def init_db():
         ("quality_score", "REAL", "0"),
         ("quality_breakdown", "TEXT", "NULL"),
         ("user_id", "TEXT", "NULL"),
-        ("content_hash", "TEXT", "NULL")
+        ("content_hash", "TEXT", "NULL"),
+        ("domain", "TEXT", "'generic'"),
+        ("semantic_dict", "TEXT", "NULL")
     ]:
         try:
             cursor.execute(f"ALTER TABLE datasets ADD COLUMN {col} {ctype} DEFAULT {default}")
@@ -436,10 +438,15 @@ def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool =
         "quality_breakdown": quality_breakdown
     }
     
+    from app.services.semantic_classification import classify_dataset_and_build_dictionary
+    domain, semantic_dict = classify_dataset_and_build_dictionary(df, filename)
+    dataset_info["domain"] = domain
+    dataset_info["semantic_dict"] = semantic_dict
+
     catalog_entry = {
         "id": dataset_id,
         "name": filename,
-        "domain": "Sales" if "sales" in filename.lower() or "revenue" in filename.lower() else "General",
+        "domain": domain,
         "description": f"Auto-generated catalog entry for {filename}. Contains {row_count} rows and {col_count} columns.",
         "owner": "DataMind OS",
         "tags": ["auto-inferred", "raw-data"]
@@ -448,13 +455,14 @@ def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool =
     conn = sqlite3.connect(str(DB_PATH))
     cursor = conn.cursor()
     cursor.execute('''
-        INSERT INTO datasets (id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score, quality_breakdown, user_id, content_hash)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO datasets (id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score, quality_breakdown, user_id, content_hash, domain, semantic_dict)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
         dataset_id, filename, dataset_info["status"], dataset_info["created_at"],
         json.dumps(dataset_info["latest_version"]), filename_db, json.dumps(columns),
         dataset_info["skipped_rows"], dataset_info["sheet_name"], dataset_info["version"],
-        dataset_info["quality_score"], dataset_info["quality_breakdown"], user_id, content_hash
+        dataset_info["quality_score"], dataset_info["quality_breakdown"], user_id, content_hash,
+        domain, json.dumps(semantic_dict)
     ))
     
     cursor.execute('''
@@ -487,7 +495,7 @@ def get_active_dataset(user_id: str):
         
     dataset_id = row[0]
     cursor.execute('''
-        SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score, quality_breakdown
+        SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score, quality_breakdown, domain, semantic_dict
         FROM datasets WHERE id = ? AND user_id = ?
     ''', (dataset_id, user_id))
     dataset_row = cursor.fetchone()
@@ -508,8 +516,38 @@ def get_active_dataset(user_id: str):
         "sheet_name": dataset_row[8],
         "version": dataset_row[9],
         "quality_score": dataset_row[10],
-        "quality_breakdown": json.loads(dataset_row[11]) if dataset_row[11] else {}
+        "quality_breakdown": json.loads(dataset_row[11]) if dataset_row[11] else {},
+        "domain": dataset_row[12] if len(dataset_row) > 12 and dataset_row[12] is not None else "generic",
+        "semantic_dict": json.loads(dataset_row[13]) if len(dataset_row) > 13 and dataset_row[13] is not None else None
     }
+    
+    # Lazy classification if domain or semantic_dict is missing
+    if not dataset_info.get("semantic_dict"):
+        df = get_dataframe(dataset_info["id"], user_id)
+        if df is not None and len(df) > 0:
+            from app.services.semantic_classification import classify_dataset_and_build_dictionary
+            domain, semantic_dict = classify_dataset_and_build_dictionary(df, dataset_info["name"])
+            dataset_info["domain"] = domain
+            dataset_info["semantic_dict"] = semantic_dict
+            
+            # Save back to database
+            conn_w = sqlite3.connect(str(DB_PATH))
+            cursor_w = conn_w.cursor()
+            cursor_w.execute('''
+                UPDATE datasets 
+                SET domain = ?, semantic_dict = ?
+                WHERE id = ?
+            ''', (domain, json.dumps(semantic_dict), dataset_info["id"]))
+            
+            # Update catalog domain if generic or General
+            cursor_w.execute('''
+                UPDATE catalog
+                SET domain = ?
+                WHERE id = ? AND (domain = 'General' OR domain = 'sales' OR domain = 'Sales')
+            ''', (domain, dataset_info["id"]))
+            
+            conn_w.commit()
+            conn_w.close()
     
     # Lazy computation for datasets where quality_score is 0.0 (from SQLite ALTER TABLE DEFAULT 0)
     if dataset_info["quality_score"] == 0.0:

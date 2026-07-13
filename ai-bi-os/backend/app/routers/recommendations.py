@@ -59,33 +59,51 @@ async def generate_recommendations(current_user: dict = Depends(get_current_user
     # 2. Deterministic Facts
     facts = []
     
-    cat_cols = df.select_dtypes(exclude=[np.number, 'datetime64']).columns
-    num_cols = df.select_dtypes(include=[np.number]).columns
+    domain = dataset_info.get("domain", "generic")
+    semantic_dict = dataset_info.get("semantic_dict", {})
+    bus_term = semantic_dict.get("business_terminology", {}) if semantic_dict else {}
+    sem_dict = semantic_dict.get("semantic_dictionary", {}) if semantic_dict else {}
     
-    if len(cat_cols) > 0 and len(num_cols) > 0:
-        main_cat = cat_cols[0]
-        main_num = num_cols[0]
-        for col in num_cols:
-            if re.search(r'revenue|sales|profit|amount|\bmrr\b|\barr\b|turnover|income|earnings|\bgmv\b|sales_amount|order_value|net_revenue|total_revenue', col, re.IGNORECASE):
-                main_num = col
+    main_num = bus_term.get("primary_metric") if bus_term else None
+    if not main_num or main_num not in df.columns:
+        num_cols = df.select_dtypes(include=[np.number]).columns
+        main_num = num_cols[0] if len(num_cols) > 0 else None
+        
+    main_cat = None
+    cat_fields = sem_dict.get("categorical_fields", []) if sem_dict else []
+    if cat_fields:
+        for col in cat_fields:
+            if col in df.columns and df[col].nunique() < 20 and df[col].nunique() > 1:
+                main_cat = col
                 break
+    if not main_cat:
+        cat_cols = df.select_dtypes(exclude=[np.number, 'datetime64']).columns
         for col in cat_cols:
             if df[col].nunique() < 20 and df[col].nunique() > 1:
                 main_cat = col
                 break
-                
-        grouped = df.groupby(main_cat)[main_num].sum().reset_index()
+
+    if main_cat and main_num:
+        primary_op = bus_term.get("primary_metric_op", "sum")
+        if primary_op == "mean":
+            grouped = df.groupby(main_cat)[main_num].mean().reset_index()
+        else:
+            grouped = df.groupby(main_cat)[main_num].sum().reset_index()
+            
         if len(grouped) > 1:
             grouped = grouped.sort_values(main_num, ascending=False)
             top_cat = grouped.iloc[0]
             bot_cat = grouped.iloc[-1]
+            
+            p_label = bus_term.get("primary_metric_label", main_num)
+            
             facts.append({
                 "type": "Performance",
-                "finding": f"Top performing {main_cat} is {top_cat[main_cat]} with {main_num} of {top_cat[main_num]}."
+                "finding": f"Top performing {main_cat} is {top_cat[main_cat]} with {p_label} of {top_cat[main_num]}."
             })
             facts.append({
                 "type": "Underperformance",
-                "finding": f"Lowest performing {main_cat} is {bot_cat[main_cat]} with {main_num} of {bot_cat[main_num]}."
+                "finding": f"Lowest performing {main_cat} is {bot_cat[main_cat]} with {p_label} of {bot_cat[main_num]}."
             })
 
     if not facts:
@@ -95,16 +113,21 @@ async def generate_recommendations(current_user: dict = Depends(get_current_user
         })
 
     # 3. LLM Translation
-    prompt = f"""Given these hard facts computed from the user's data:
+    prompt = f"""Given these hard facts computed from the user's data representing the business domain '{domain}':
 {json.dumps(facts)}
 
 Generate 3 actionable business recommendations. 
+CRITICAL: Never generate more than one recommendation from the same metric or analytical dimension. Each recommendation MUST be selected from a completely different analytical dimension — choose from: category breakdown, trend over time, anomaly detection, risk assessment, seasonality, operational efficiency, or data quality. This maximizes decision value by covering distinct areas of concern.
+CRITICAL: Terminology MUST strictly match the detected business domain vocabulary. Never use generic labels like Revenue, Customers, Deal Size unless those concepts explicitly exist in the provided facts.
+CRITICAL: Every recommendation MUST be directly traceable to the provided facts.
+CRITICAL: Do NOT recommend high-level, generic actions like "Invest", "Increase Marketing", "Improve Offering", or "Boost Revenue" unless the provided facts explicitly support and prove those conclusions.
+CRITICAL: Prefer conservative, data-focused action verbs for recommendations, such as: "Monitor", "Investigate", "Analyze", "Compare", "Validate", "Track", or "Review".
 CRITICAL: You MUST ONLY cite numbers that are explicitly present in the provided facts. Do not invent, estimate, or guess any figures.
 Return ONLY a valid JSON array of objects with keys:
 - title (string, action-oriented)
 - rationale (string, explain why using the facts and EXACT numbers)
 - priority (string, High, Medium, Low)
-- category (string)"""
+- category (string, one of: category_breakdown, trend, anomaly, risk, seasonality, operations, data_quality)"""
 
     import asyncio
     max_retries = 2

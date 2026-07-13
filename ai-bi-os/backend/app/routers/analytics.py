@@ -20,7 +20,7 @@ async def get_kpis_endpoint(current_user: dict = Depends(get_current_user)):
     if df is None:
         return {"kpis": [], "chart_data": []}
         
-    return compute_kpis(df)
+    return compute_kpis(df, dataset_info.get("semantic_dict"))
 
 @router.get("/eda")
 async def get_eda(current_user: dict = Depends(get_current_user)):
@@ -263,19 +263,36 @@ async def get_timeseries(metric: str = None, current_user: dict = Depends(get_cu
     if df is None:
         raise HTTPException(status_code=400, detail="Dataset not loaded")
         
-    from app.services.stats_service import find_column
+    semantic_dict = dataset_info.get("semantic_dict")
+    
     if not metric:
-        metric = find_column(df, r'revenue|sales|amount|\bmrr\b|\barr\b|turnover|income|earnings|\bgmv\b|sales_amount|order_value|net_revenue|total_revenue', numeric_only=True)
+        if semantic_dict:
+            metric = semantic_dict.get("business_terminology", {}).get("primary_metric")
         if not metric:
-            raise HTTPException(status_code=400, detail="No metric column found")
+            from app.services.stats_service import find_column
+            metric = find_column(df, r'revenue|sales|amount|\bmrr\b|\barr\b|turnover|income|earnings|\bgmv\b|sales_amount|order_value|net_revenue|total_revenue', numeric_only=True)
+            if not metric:
+                num_cols = df.select_dtypes(include=[np.number]).columns
+                if len(num_cols) > 0:
+                    metric = num_cols[0]
+                else:
+                    raise HTTPException(status_code=400, detail="No metric column found")
     else:
         col_map = {c.lower(): c for c in df.columns}
         if metric.lower() not in col_map:
             raise HTTPException(status_code=400, detail="Invalid metric column")
         metric = col_map[metric.lower()]
 
-    from app.services.stats_service import find_column
-    date_col = find_column(df, r'date|month|year|time')
+    date_col = None
+    if semantic_dict:
+        date_cols = semantic_dict.get("semantic_dictionary", {}).get("date_columns", [])
+        if date_cols and date_cols[0] in df.columns:
+            date_col = date_cols[0]
+            
+    if not date_col:
+        from app.services.stats_service import find_column
+        date_col = find_column(df, r'date|month|year|time')
+        
     if not date_col:
         raise HTTPException(status_code=400, detail="No date column found")
 
@@ -352,17 +369,26 @@ async def get_kpi_center(current_user: dict = Depends(get_current_user)):
     if df is None:
         return {"kpis": []}
 
-    kpi_data = compute_kpis(df).get("kpis", [])
+    kpi_data = compute_kpis(df, dataset_info.get("semantic_dict")).get("kpis", [])
     
     available_kpis = []
     omitted_kpis = []
     
     expected_kpis = ["Total Revenue", "Active Users", "Avg. Deal Size", "Pipeline Health"]
     for expected in expected_kpis:
-        computed = next((k for k in kpi_data if k["name"] == expected), None)
+        computed = None
+        if expected == "Total Revenue":
+            computed = next((k for k in kpi_data if k.get("id") == "kpi_rev" or k["name"] == expected), None)
+        elif expected == "Active Users":
+            computed = next((k for k in kpi_data if k.get("id") == "kpi_users" or k["name"] == expected), None)
+        elif expected == "Avg. Deal Size":
+            computed = next((k for k in kpi_data if k.get("id") == "kpi_deal_size" or k["name"] == expected), None)
+        elif expected == "Pipeline Health":
+            computed = next((k for k in kpi_data if k.get("id") == "kpi_health" or k["name"] == expected), None)
+            
         if computed:
             available_kpis.append({
-                "name": expected,
+                "name": computed["name"],
                 "column": computed.get("column", "Unknown"),
                 "status": "Available",
                 "value": computed["value"],
@@ -402,10 +428,18 @@ async def get_forecast(metric: str = None, current_user: dict = Depends(get_curr
         metric = col_map[metric.lower()]
     
     if not metric:
-        from app.services.stats_service import find_column
-        metric = find_column(df, r'revenue|sales|amount|\bmrr\b|\barr\b|turnover|income|earnings|\bgmv\b|sales_amount|order_value|net_revenue|total_revenue', numeric_only=True)
+        semantic_dict = dataset_info.get("semantic_dict")
+        if semantic_dict:
+            metric = semantic_dict.get("business_terminology", {}).get("primary_metric")
         if not metric:
-            return {"available": False, "reason": "No revenue metric column found"}
+            from app.services.stats_service import find_column
+            metric = find_column(df, r'revenue|sales|amount|\bmrr\b|\barr\b|turnover|income|earnings|\bgmv\b|sales_amount|order_value|net_revenue|total_revenue', numeric_only=True)
+            if not metric:
+                num_cols = df.select_dtypes(include=[np.number]).columns
+                if len(num_cols) > 0:
+                    metric = num_cols[0]
+                else:
+                    return {"available": False, "reason": "No numeric metric column found"}
             
     res = forecast_series(df, metric)
     return res

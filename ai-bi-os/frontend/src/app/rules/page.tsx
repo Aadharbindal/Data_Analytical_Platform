@@ -24,7 +24,7 @@ function RuleCard({ rule }: { rule: BusinessRule }) {
 
   const isTriggered = rule.status === "TRIGGERED";
   const isOk = rule.status === "OK";
-  const isErrorStatus = rule.status.startsWith("ERROR");
+  const isErrorStatus = rule.status?.startsWith("ERROR") || false;
   const isInactive = !rule.is_active || rule.status === "INACTIVE";
   
   return (
