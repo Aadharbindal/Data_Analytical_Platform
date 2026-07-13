@@ -17,13 +17,21 @@ import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
 import { BarChart, Bar, CartesianGrid as BCartesianGrid, XAxis as BXAxis, YAxis as BYAxis, Tooltip as BTooltip, ResponsiveContainer as BResponsiveContainer, Cell } from "recharts";
 
+import { SemanticDict } from "@/lib/types";
+
 interface RevenueCardProps {
   data: any[];
+  semanticDict?: SemanticDict;
 }
 
-export function RevenueCard({ data }: RevenueCardProps) {
+export function RevenueCard({ data, semanticDict }: RevenueCardProps) {
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [range, setRange] = useState<'12m' | 'ytd' | 'all'>('12m');
+
+  const chartTitle = semanticDict?.business_terminology?.chart_title || "Value Forecast (Click to drill down)";
+  const primaryLabel = semanticDict?.business_terminology?.primary_metric_label || "Value";
+  const primaryMetric = semanticDict?.business_terminology?.primary_metric || "";
+  const metricType = semanticDict?.business_terminology?.primary_metric_type || "currency";
 
   const filteredData = useMemo(() => {
     if (!data || data.length === 0) return [];
@@ -65,21 +73,16 @@ export function RevenueCard({ data }: RevenueCardProps) {
   }, [data, range]);
 
   const hasHistoricalData = filteredData.some((d: any) => d.value !== undefined && d.value !== null);
-
-  // Note: hardcoding "Revenue" or "Sales" could fail if the column is named differently.
-  // The drill-down modal will try to fetch breakdown for the main revenue metric.
-  // In a real app we'd pass the exact column name, but for this exercise we will try to fetch for common revenue columns if needed,
-  // or assume the backend uses the main column.
   
   const { data: breakdownData, isLoading } = useQuery({
-    queryKey: ["breakdown", selectedMonth],
-    // The backend breakdown endpoint takes the column name. We'll use the metric from the chart data if possible,
-    // otherwise fallback to Revenue. The EDA page shows the column names. We'll try Revenue for now.
+    queryKey: ["breakdown", selectedMonth, primaryMetric],
     queryFn: async () => {
-      // First find numeric columns to guess revenue metric
-      const eda = await api.get<any>("/api/v1/analytics/eda");
-      const cols = eda.summary.map((s: any) => s.column);
-      const revCol = cols.find((c: string) => /rev|sale|total|amount|price/i.test(c)) || cols[0];
+      let revCol = primaryMetric;
+      if (!revCol || revCol === "records") {
+        const eda = await api.get<any>("/api/v1/analytics/eda");
+        const cols = eda.summary.map((s: any) => s.column);
+        revCol = cols.find((c: string) => /rev|sale|total|amount|price/i.test(c)) || cols[0];
+      }
       return api.get<any[]>(`/api/v1/analytics/breakdown?metric=${revCol}&period=${selectedMonth}`);
     },
     enabled: !!selectedMonth,
@@ -95,7 +98,7 @@ export function RevenueCard({ data }: RevenueCardProps) {
     <>
       <Card className="glass-card h-full flex flex-col p-1">
         <CardHeader className="pb-2 pt-4 px-5 flex flex-row items-center justify-between border-b border-border/40 mb-4">
-          <CardTitle className="text-base font-semibold tracking-tight text-foreground/90">Revenue Forecast (Click to drill down)</CardTitle>
+          <CardTitle className="text-base font-semibold tracking-tight text-foreground/90">{chartTitle} (Click to drill down)</CardTitle>
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-1.5 bg-surface border border-border text-xs font-medium text-foreground rounded-lg px-3 py-1.5 outline-none hover:bg-white/5 transition-colors focus:ring-2 focus:ring-primary/30 shadow-sm cursor-pointer">
               {range === '12m' ? 'Last 12 Months' : range === 'ytd' ? 'Year to Date' : 'All Time'}
@@ -139,7 +142,17 @@ export function RevenueCard({ data }: RevenueCardProps) {
                 axisLine={false} 
                 tickLine={false} 
                 tick={{ fill: 'var(--muted-foreground)', fontSize: 11, fontWeight: 500 }}
-                tickFormatter={(value) => `$${value / 1000}k`}
+                tickFormatter={(value) => {
+                  if (metricType === "currency") {
+                    if (value >= 1000) return `₹${(value / 1000).toFixed(0)}k`;
+                    return `₹${value}`;
+                  }
+                  if (metricType === "percent") {
+                    return `${value}%`;
+                  }
+                  if (value >= 1000) return `${(value / 1000).toFixed(0)}k`;
+                  return String(value);
+                }}
                 dx={-10}
               />
               <Tooltip
@@ -155,7 +168,14 @@ export function RevenueCard({ data }: RevenueCardProps) {
                   padding: '8px 12px'
                 }}
                 itemStyle={{ color: 'var(--foreground)', fontWeight: 600, fontSize: '13px' }}
-                formatter={(value: number) => [`$${value.toLocaleString()}`, 'Revenue']}
+                formatter={(value: number) => {
+                  const formatted = metricType === "currency"
+                    ? `₹${value.toLocaleString()}`
+                    : metricType === "percent"
+                    ? `${value.toFixed(1)}%`
+                    : value.toLocaleString();
+                  return [formatted, primaryLabel];
+                }}
                 cursor={{ stroke: 'var(--border)', strokeWidth: 1, strokeDasharray: '4 4' }}
               />
               <Area

@@ -60,6 +60,15 @@ class DeepInsightsEngine:
             ctx = get_schema_context(self.db_engine, "active_dataset")
             profile_str = ctx["formatted_context"]
             
+            from app.services.data_processing import get_active_dataset
+            dataset_info = get_active_dataset(user_id)
+            domain = "generic"
+            if dataset_info:
+                domain = dataset_info.get("domain", "generic")
+                sem_dict = dataset_info.get("semantic_dict")
+                if sem_dict:
+                    profile_str += f"\nDETECTED BUSINESS DOMAIN: {domain}\nSEMANTIC DATA DICTIONARY:\n{json.dumps(sem_dict, indent=2)}\n"
+            
             logging.info("=== SCHEMA CONTEXT ===")
             logging.info(profile_str)
             
@@ -110,6 +119,7 @@ class DeepInsightsEngine:
             
 Based on this schema, generate exactly 6 highly specific analytical questions that would reveal deep insights about the business. 
 Do NOT generate questions asking about future probability, likelihood, or prediction of events - this system can only query historical/existing data via SQL, not run predictive models. Only generate questions answerable by aggregating or filtering existing rows (sums, counts, averages, comparisons, rankings, time-based groupings of PAST data).
+CRITICAL: Never generate multiple questions or recommendations from the exact same metric or dimension. Select questions spanning completely different analytical dimensions (e.g., category breakdown, trend over time, anomaly detection, risk assessment, seasonality, operational efficiency, data quality) to maximize decision value.
 Return ONLY a valid JSON object with a single key "questions" containing an array of objects with keys: "question" (string) and "type" (string: descriptive, diagnostic, predictive, or prescriptive)."""
             questions = call_llm_with_retry(q_prompt, "LLM CALL 1 (Questions)")
             logging.info(f"Parsed questions: {questions}")
@@ -185,18 +195,38 @@ Return ONLY a valid JSON object with a single key "mappings" containing an array
                 
             # 4. EXPLANATION WRITER (LLM Call 3)
             exp_prompt = """Given the following analytical questions and their EXACT SQL result rows, write a deep insight for each.
-CRITICAL: You MUST ONLY cite numbers that are explicitly present in the provided result rows. Do not invent, estimate, or guess any figures.
+CRITICAL: Terminology MUST strictly match the detected business domain vocabulary. Never use generic labels like Revenue, Customers, Deal Size unless those concepts explicitly exist in the dataset. Use terminology consistent with the SEMANTIC DATA DICTIONARY columns and names.
+CRITICAL: You MUST ONLY cite numbers and metrics that are explicitly present in the provided result rows and SQL query. Do not invent, estimate, or guess any figures.
+CRITICAL: DO NOT infer or mention columns/metrics that do not exist in the results (e.g., do not talk about 'loss', 'profit', or 'cost' if the query only returns 'revenue' or 'transaction count').
+CRITICAL: Terminology MUST be strictly consistent between title, description, and recommendation. For example, if the query and title talk about 'top payees' or 'payers', the description/finding must not mismatch and talk about 'payers' or 'payees' (or vice versa). Keep them strictly consistent.
+CRITICAL: Recommendations MUST be directly traceable to the SQL evidence. Do NOT recommend high-level business actions like "Invest", "Increase Marketing", "Improve Offering", or "Boost Revenue" unless the dataset explicitly supports and proves those conclusions. Prefer conservative, data-focused action verbs for recommendations, such as: "Monitor", "Investigate", "Analyze", "Compare", "Validate", "Track", or "Review".
 CRITICAL: If the data does not support a clear conclusion, do not generate an insight for this question at all - simply skip it.
 CRITICAL: If you cannot state a specific, real impact number for this insight, do not generate it - skip the question entirely rather than describing the absence of an answer.
-CRITICAL: Do NOT use speculative or forward-looking language such as 'might', 'could', 'anticipate', 'projected', 'likely to', 'expected to' unless the underlying data genuinely contains a forecast/projection value computed by the system (i.e. from the actual forecast endpoint, not invented). Insights must describe what the data ALREADY shows (past/current, per the query results), not predict what might happen next - that is a different feature (Forecast), and this pipeline must not blur into speculation.
+CRITICAL: Do NOT use speculative or forward-looking language such as 'might', 'could', 'anticipate', 'projected', 'likely to', 'expected to' unless the underlying data genuinely contains a forecast/projection value computed by the system.
+CRITICAL: State the SQL aggregate function accurately - if the query used SUM(), call it a total; if AVG(), call it an average; never substitute one for the other.
+CRITICAL: The Impact value MUST logically match the metric discussed in the finding. If finding is about Average Amount, Impact must be the Average Amount. If Total Amount, Impact must be Total Amount. If Count, Impact must be Count. Do not mix Average and Total.
+CRITICAL: For confidence, do not default to 1.0 or 0.0. Provide realistic values like 0.92, 0.95, or 0.98 based on data clarity and sample size.
+CRITICAL: Do NOT generate long prose paragraphs. Instead, the description field MUST be short and structured (strictly using key-value lines followed by a Finding).
 Return ONLY a valid JSON object with a single key "insights" containing an array of objects with the following keys:
 - title (string)
-- description (string, 2-3 sentences citing actual numbers)
+- description (string, structured key-value lines followed by finding, formatted EXACTLY as follows:
+Key1: Value1
+Key2: Value2
+
+Finding: The actual textual finding explaining the trend or insight in 1-2 sentences.
+
+Do not use bolding or markdown inside the description. Example format:
+Highest Month: June ₹13,985
+Lowest Month: January ₹9,275
+Difference: +51%
+
+Finding: Average transaction value peaked in June.
+)
 - category (string: Risk, Opportunity, Trend, or Anomaly)
 - insight_level (string, e.g., "Strategic", "Operational")
-- confidence (number between 0 and 1)
+- confidence (MUST be a numeric float between 0.0 and 1.0)
 - impact (number, a real computed figure from the data representing business impact)
-- recommendation (string, one concrete step)
+- recommendation (string, one concrete, conservative step grounded in the actual data)
 - sql (string, copy it exactly from the input)"""
             res_json_str = json.dumps(successful_results, default=str)
             insights_data = call_llm_with_retry(exp_prompt + "\n\nResults:\n" + res_json_str, "LLM CALL 3 (Explanations)")
@@ -209,6 +239,12 @@ Return ONLY a valid JSON object with a single key "insights" containing an array
             final_insights = []
             conn = sqlite3.connect(str(DB_PATH))
             cursor = conn.cursor()
+            
+            try:
+                cursor.execute("DELETE FROM insights WHERE user_id = ? AND dataset_id = ?", (user_id, dataset_id))
+                conn.commit()
+            except Exception as e:
+                logging.error(f"Failed to clear old insights: {e}")
             
             hedging_phrases = [
                 "can't draw any conclusions", "unobtainable", "insufficient data", "unable to determine", "no clear pattern",
@@ -243,6 +279,20 @@ Return ONLY a valid JSON object with a single key "insights" containing an array
                     logging.info(f"Skipping insight due to unparseable impact value ({impact_val}): {ins.get('title')}")
                     continue
                     
+                # Filter Problem 4: Missing/Invalid Confidence
+                confidence_val = ins.get('confidence')
+                if confidence_val in (None, "N/A", "", "null", "None") or not isinstance(confidence_val, (int, float)):
+                    logging.info(f"Skipping insight due to missing or non-numeric confidence value: {ins.get('title')}")
+                    continue
+                try:
+                    conf = float(confidence_val)
+                    if conf <= 0.0 or conf > 1.0:
+                        logging.info(f"Skipping insight due to out of bounds or zero confidence ({conf}): {ins.get('title')}")
+                        continue
+                except (ValueError, TypeError):
+                    logging.info(f"Skipping insight due to unparseable confidence value ({confidence_val}): {ins.get('title')}")
+                    continue
+                    
                 # find matching result rows
                 matching_sql = ins.get("sql", "")
                 orig_res = next((r for r in successful_results if r["sql"] == matching_sql), None)
@@ -268,7 +318,7 @@ Return ONLY a valid JSON object with a single key "insights" containing an array
                         ins.get("description", ""),
                         ins.get("category", "Trend"),
                         ins.get("insight_level", "Operational"),
-                        float(str(ins.get("confidence", 0.5)).replace('$', '').replace(',', '')),
+                        conf,
                         float(str(ins.get("impact", 0.0)).replace('$', '').replace(',', '')),
                         ins.get("recommendation", ""),
                         1 if verified else 0,

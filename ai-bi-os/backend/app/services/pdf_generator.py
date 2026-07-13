@@ -271,7 +271,13 @@ def generate_pdf_report(dataset_info, df):
     # ================= EXECUTIVE SUMMARY =================
     section_header("01", "Executive Summary")
     
-    kpi_results = compute_kpis(df)
+    semantic_dict = dataset_info.get("semantic_dict", {})
+    bus_term = semantic_dict.get("business_terminology", {}) if semantic_dict else {}
+    rev_col = bus_term.get("primary_metric") if bus_term else None
+    rev_label = bus_term.get("primary_metric_label", "Total Revenue") if bus_term else "Total Revenue"
+    rev_type = bus_term.get("primary_metric_type", "currency") if bus_term else "currency"
+    
+    kpi_results = compute_kpis(df, semantic_dict)
     kpis = kpi_results.get("kpis", [])
     
     if kpis:
@@ -281,18 +287,26 @@ def generate_pdf_report(dataset_info, df):
             story.append(Spacer(1, 8))
             
     # AI Summary placeholder
-    date_col = find_column(df, r'date|month|year|time')
-    story.append(Paragraph("This report presents a synthesized view of core business metrics and underlying data trends. The executive dashboard above highlights top-line performance. Further sections detail revenue analytics, forecast modeling, segment distribution, and data quality indicators.", body_style))
+    date_col = None
+    if semantic_dict:
+        date_cols = semantic_dict.get("semantic_dictionary", {}).get("date_columns", [])
+        if date_cols and date_cols[0] in df.columns:
+            date_col = date_cols[0]
+            
+    if not date_col:
+        date_col = find_column(df, r'date|month|year|time')
+        
+    story.append(Paragraph(f"This report presents a synthesized view of core business metrics and underlying data trends. The executive dashboard above highlights top-line performance. Further sections detail {rev_label.lower()} analytics, forecast modeling, segment distribution, and data quality indicators.", body_style))
     story.append(Spacer(1, 8))
     
     # Key Observations
     story.append(Paragraph("<b>Key Observations</b>", h2_style))
-    rev_kpi = next((k for k in kpis if k.get('name', '').lower() in ['total revenue', 'revenue', 'sales']), None)
+    rev_kpi = next((k for k in kpis if k.get('name', '') == rev_label or k.get('column', '') == rev_col), None)
     obs = []
     if rev_kpi:
         trend = rev_kpi.get('trend', 0)
         direction = "increased" if trend >= 0 else "decreased"
-        obs.append(f"Top-line performance has {direction} by {abs(trend)}% compared to the prior period.")
+        obs.append(f"Top-line performance ({rev_label}) has {direction} by {abs(trend)}% compared to the prior period.")
         
     obs.append(f"Data Quality stands at {dataset_info.get('quality_score', 0)}/100, indicating reliable inputs.")
     
@@ -339,10 +353,9 @@ def generate_pdf_report(dataset_info, df):
     story.append(PageBreak())
     
     # ================= REVENUE ANALYTICS =================
-    section_header("03", "Revenue Analytics")
+    section_header("03", f"{rev_label} Analytics")
     
     chart_data = kpi_results.get("chart_data", [])
-    rev_col = find_column(df, r'revenue|sales|amount|\bmrr\b|\barr\b|turnover|income|earnings|\bgmv\b|sales_amount|order_value|net_revenue|total_revenue', numeric_only=True)
     
     if date_col and rev_col and chart_data:
         plt.figure(figsize=(8, 4), dpi=200)
@@ -371,7 +384,8 @@ def generate_pdf_report(dataset_info, df):
         ax.plot(x_hist, y_hist, color=ACCENT_STR, marker='o', markersize=4, linestyle='-', linewidth=2, label='Actual')
         
         if hist_data:
-            ax.annotate(format_number(y_hist[-1]), (len(x_hist)-1, y_hist[-1]), textcoords="offset points", xytext=(0,10), ha='center', fontsize=8, color=INK_STR, fontweight='bold')
+            lbl_val = f"${format_number(y_hist[-1])}" if rev_type == "currency" else format_number(y_hist[-1])
+            ax.annotate(lbl_val, (len(x_hist)-1, y_hist[-1]), textcoords="offset points", xytext=(0,10), ha='center', fontsize=8, color=INK_STR, fontweight='bold')
             
         if fcst_data:
             x_fcst = [d["name"] for d in fcst_data]
@@ -384,9 +398,16 @@ def generate_pdf_report(dataset_info, df):
                 y_upper = [y_fcst[0]] + [b["upper"] for b in fcst_bounds]
                 ax.fill_between(x_idx, y_lower, y_upper, alpha=0.1, color=ACCENT_STR)
                 
-            ax.annotate(format_number(y_fcst[-1]), (x_idx[-1], y_fcst[-1]), textcoords="offset points", xytext=(0,10), ha='center', fontsize=8, color=INK_STR, fontweight='bold')
+            lbl_fc = f"${format_number(y_fcst[-1])}" if rev_type == "currency" else format_number(y_fcst[-1])
+            ax.annotate(lbl_fc, (x_idx[-1], y_fcst[-1]), textcoords="offset points", xytext=(0,10), ha='center', fontsize=8, color=INK_STR, fontweight='bold')
 
-        ax.yaxis.set_major_formatter(FuncFormatter(matplotlib_formatter))
+        def custom_formatter(x, pos):
+            val_str = format_number(x)
+            if rev_type == "currency":
+                return f"${val_str}"
+            return val_str
+
+        ax.yaxis.set_major_formatter(FuncFormatter(custom_formatter))
         ax.grid(axis='y', linestyle='-', alpha=0.08, color=MUTED_STR)
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
@@ -410,9 +431,9 @@ def generate_pdf_report(dataset_info, df):
         story.append(Spacer(1, 20))
         
         # Monthly Table
-        section_header("04", "Monthly Values")
+        section_header("04", f"Monthly {rev_label} Values")
         h_row = [Paragraph("<b>Period</b>", ParagraphStyle('h', fontName='Helvetica-Bold', fontSize=9, textColor=PAPER)),
-                 Paragraph("<b>Value</b>", ParagraphStyle('h', fontName='Helvetica-Bold', fontSize=9, textColor=PAPER, alignment=2)),
+                 Paragraph(f"<b>{rev_label}</b>", ParagraphStyle('h', fontName='Helvetica-Bold', fontSize=9, textColor=PAPER, alignment=2)),
                  Paragraph("<b>MoM %</b>", ParagraphStyle('h', fontName='Helvetica-Bold', fontSize=9, textColor=PAPER, alignment=2)),
                  Paragraph("<b>Type</b>", ParagraphStyle('h', fontName='Helvetica-Bold', fontSize=9, textColor=PAPER, alignment=2))]
         
@@ -433,9 +454,11 @@ def generate_pdf_report(dataset_info, df):
             p_style = ParagraphStyle('italic', fontName='Helvetica-Oblique', fontSize=9, textColor=MUTED) if typ == "Forecast" else body_style
             right_align = ParagraphStyle('ra', parent=p_style, alignment=2)
             
+            v_formatted = f"${format_number(v)}" if rev_type == "currency" else format_number(v)
+            
             rows.append([
                 Paragraph(d["name"], p_style),
-                Paragraph(format_number(v), right_align),
+                Paragraph(v_formatted, right_align),
                 Paragraph(mom, right_align),
                 Paragraph(typ, right_align)
             ])

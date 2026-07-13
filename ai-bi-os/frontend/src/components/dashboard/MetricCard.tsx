@@ -73,17 +73,6 @@ export function MetricCard({ title, value, trend, trendDown = false, index = 0 }
             <div className="text-3xl font-bold tracking-tight mb-2 text-foreground">
               {value}
             </div>
-            
-            <div className="flex items-center text-xs text-muted-foreground">
-              <span className={cn(
-                "flex items-center mr-2 font-medium",
-                trendDown ? "text-error" : "text-success"
-              )}>
-                {trendDown ? <ArrowDownRight className="w-3 h-3 mr-0.5"/> : <ArrowUpRight className="w-3 h-3 mr-0.5"/>}
-                {trend}
-              </span>
-              vs last period
-            </div>
           </div>
         </div>
       </Card>

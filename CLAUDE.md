@@ -88,3 +88,22 @@ Next.js App Router under `frontend/src/app/`, organized by top-level feature: `a
 - `app/auth.py` hardcodes `SECRET_KEY = "enterprise_super_secret_key"` and uses an in-memory rate-limit store — not production auth.
 - `app/core/database.py` is explicitly labeled a "Temporary SQLite DB for Module 1".
 - CORS in `main.py` allows `["http://localhost:3000", "*"]` together (the wildcard makes the explicit origin redundant).
+
+## Recommendation diversity rule
+
+**Never generate two or more recommendations that originate from the same metric or analytical dimension.**
+
+When generating or editing code that produces AI recommendations (e.g. `app/routers/recommendations.py`, `app/services/insights_engine.py`, or any future module), each recommendation MUST be drawn from a **distinct** analytical dimension. The canonical dimension vocabulary is:
+
+| Dimension | Description |
+|---|---|
+| `category_breakdown` | Performance comparison across categorical segments |
+| `trend` | Direction or rate of change over time |
+| `anomaly` | Outliers, spikes, or unexpected deviations |
+| `risk` | Exposure, concentration, or vulnerability signals |
+| `seasonality` | Recurring periodic patterns |
+| `operations` | Process efficiency, throughput, or resource utilisation |
+| `data_quality` | Completeness, consistency, or accuracy issues |
+
+This constraint must be enforced both in LLM prompts (as a `CRITICAL:` instruction) and in the `category` field returned in the JSON response (use the slug values above). The goal is to **maximise decision value** by ensuring recommendations address distinct areas of concern rather than repeating the same metric from multiple angles.
+

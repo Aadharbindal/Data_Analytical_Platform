@@ -2,6 +2,36 @@
 // Shared TypeScript types mirroring backend Pydantic models
 // ============================================================
 
+export interface SemanticDict {
+  domain: string;
+  semantic_dictionary: {
+    date_columns: string[];
+    numeric_metrics: string[];
+    categorical_fields: string[];
+    entity_identifiers: string[];
+    status_fields: string[];
+    geographic_fields: string[];
+  };
+  business_terminology: {
+    dashboard_title: string;
+    primary_metric: string;
+    primary_metric_label: string;
+    primary_metric_op: string;
+    primary_metric_type: "currency" | "count" | "percent" | "generic";
+    entity_col: string;
+    entity_count_label: string;
+    secondary_metric?: string;
+    secondary_metric_label?: string;
+    secondary_metric_op?: string;
+    secondary_metric_type?: "currency" | "count" | "percent" | "generic";
+    status_col?: string;
+    status_metric_label?: string;
+    status_healthy_regex?: string;
+    status_unhealthy_regex?: string;
+    chart_title: string;
+  };
+}
+
 export interface Dataset {
   id: string;
   workspace_id: string;
@@ -23,6 +53,8 @@ export interface Dataset {
     type_consistency: number;
     validity: number;
   };
+  domain?: string;
+  semantic_dict?: SemanticDict;
 }
 
 export interface ActiveDatasetInfo {
@@ -40,6 +72,8 @@ export interface ActiveDatasetInfo {
     type_consistency: number;
     validity: number;
   };
+  domain?: string;
+  semantic_dict?: SemanticDict;
 }
 
 export interface DatasetVersion {

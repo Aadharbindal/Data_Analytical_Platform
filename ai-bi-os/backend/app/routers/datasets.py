@@ -87,7 +87,9 @@ async def get_active_dataset_route(current_user: dict = Depends(get_current_user
         "skipped_rows": dataset_info.get("skipped_rows", 0),
         "sheet_name": dataset_info.get("sheet_name"),
         "version": dataset_info.get("version", 1),
-        "quality_score": dataset_info.get("quality_score", 0)
+        "quality_score": dataset_info.get("quality_score", 0),
+        "domain": dataset_info.get("domain", "generic"),
+        "semantic_dict": dataset_info.get("semantic_dict")
     }
 
 @router.get("/")
