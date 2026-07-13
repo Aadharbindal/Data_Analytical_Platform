@@ -279,6 +279,11 @@ async def list_insights(dataset_version_id: str = None, current_user: dict = Dep
                 pass
                 
             d['recommendation'] = replace_revenue_terminology(reformat_currency(d.get('recommendation', '')))
+            
+            created_at = d.get('created_at')
+            if created_at and not created_at.endswith('Z'):
+                d['created_at'] = created_at.replace(' ', 'T') + 'Z'
+                
             result_list.append(d)
         return result_list
         
@@ -348,7 +353,7 @@ async def list_insights(dataset_version_id: str = None, current_user: dict = Dep
                                 "impact": formatted_impact,
                                 "recommendation": formatted_rec,
                                 "verified": 1,
-                                "created_at": datetime.utcnow().isoformat()
+                                "created_at": datetime.utcnow().isoformat() + "Z"
                             })
         except Exception:
             pass

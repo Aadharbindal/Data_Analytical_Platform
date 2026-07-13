@@ -56,18 +56,20 @@ class DeepInsightsEngine:
             return []
 
         try:
-            # 1. PROFILE
-            ctx = get_schema_context(self.db_engine, "active_dataset")
-            profile_str = ctx["formatted_context"]
-            
             from app.services.data_processing import get_active_dataset
             dataset_info = get_active_dataset(user_id)
             domain = "generic"
+            sem_dict = {}
             if dataset_info:
                 domain = dataset_info.get("domain", "generic")
-                sem_dict = dataset_info.get("semantic_dict")
-                if sem_dict:
-                    profile_str += f"\nDETECTED BUSINESS DOMAIN: {domain}\nSEMANTIC DATA DICTIONARY:\n{json.dumps(sem_dict, indent=2)}\n"
+                sem_dict = dataset_info.get("semantic_dict") or {}
+                
+            # 1. PROFILE
+            ctx = get_schema_context(self.db_engine, "active_dataset", semantic_dict=sem_dict)
+            profile_str = ctx["formatted_context"]
+            
+            if dataset_info and sem_dict:
+                profile_str += f"\nDETECTED BUSINESS DOMAIN: {domain}\nSEMANTIC DATA DICTIONARY:\n{json.dumps(sem_dict, indent=2)}\n"
             
             logging.info("=== SCHEMA CONTEXT ===")
             logging.info(profile_str)
@@ -117,10 +119,25 @@ class DeepInsightsEngine:
             # 2. QUESTION GENERATOR (LLM Call 1)
             q_prompt = f"""{profile_str}
             
-Based on this schema, generate exactly 6 highly specific analytical questions that would reveal deep insights about the business. 
-Do NOT generate questions asking about future probability, likelihood, or prediction of events - this system can only query historical/existing data via SQL, not run predictive models. Only generate questions answerable by aggregating or filtering existing rows (sums, counts, averages, comparisons, rankings, time-based groupings of PAST data).
-CRITICAL: Never generate multiple questions or recommendations from the exact same metric or dimension. Select questions spanning completely different analytical dimensions (e.g., category breakdown, trend over time, anomaly detection, risk assessment, seasonality, operational efficiency, data quality) to maximize decision value.
-Return ONLY a valid JSON object with a single key "questions" containing an array of objects with keys: "question" (string) and "type" (string: descriptive, diagnostic, predictive, or prescriptive)."""
+You are the Insight Generation Engine for an enterprise AI analytics platform. Your goal is to generate the FEW MOST IMPORTANT BUSINESS INSIGHTS with extremely high factual accuracy.
+Based on this schema, generate exactly 20 candidate analytical questions that would reveal deep insights about the business. 
+Do NOT generate questions asking about future probability, likelihood, or prediction of events.
+
+Generate questions ONLY from these categories:
+- Financial Performance (Revenue, Growth, Decline, Contribution, Top/Bottom Categories, Seasonality)
+- Risk (Failure Rate, Success Rate, Outliers, Anomalies)
+- Data Quality (Duplicate IDs, Missing Values, Invalid Categories, Unexpected Nulls)
+- Customer (Top Customers, High Value Customers, Repeat Users)
+- Merchant (Top Merchants, Merchant Concentration, Merchant Growth)
+- Operations (Peak Hours, Peak Days, Peak Months)
+- Trend Analysis (Moving Average, Rolling Average, MoM, QoQ, YoY)
+- Pareto, Contribution Analysis, Correlation.
+
+NEVER GENERATE questions about:
+- Account number digit frequency, Random string frequency, Character counts, Random IDs, Meaningless percentages, Arbitrary month summaries, Random column statistics.
+
+CRITICAL: Never generate multiple questions or recommendations from the exact same metric or dimension. Select questions spanning completely different analytical dimensions to maximize decision value.
+Return ONLY a valid JSON object with a single key "questions" containing an array of objects with keys: "question" (string) and "type" (string)."""
             questions = call_llm_with_retry(q_prompt, "LLM CALL 1 (Questions)")
             logging.info(f"Parsed questions: {questions}")
             if not questions:
@@ -228,23 +245,21 @@ Return ONLY a valid JSON object with a single key "mappings" containing an array
                 
             # 4. EXPLANATION WRITER (LLM Call 3)
             exp_prompt = """Given the following analytical questions and their EXACT SQL result rows, write a deep insight for each.
-CRITICAL: Terminology MUST strictly match the detected business domain vocabulary. Never use generic labels like Revenue, Customers, Deal Size unless those concepts explicitly exist in the dataset. Use terminology consistent with the SEMANTIC DATA DICTIONARY columns and names.
+CRITICAL: BUSINESS REASONING. Never infer. Never hallucinate. Never assume. Never say Revenue, Profit, Customer Satisfaction, Fraud, Marketing Opportunity, or Operational Problem unless SQL explicitly proves it. Only state what data supports.
+CRITICAL: Terminology MUST strictly match the detected business domain vocabulary. Never use generic labels unless those concepts explicitly exist in the dataset. Use terminology consistent with the SEMANTIC DATA DICTIONARY columns and names.
 CRITICAL: You MUST ONLY cite numbers and metrics that are explicitly present in the provided result rows and SQL query. Do not invent, estimate, or guess any figures.
-CRITICAL: DO NOT infer or mention columns/metrics that do not exist in the results (e.g., do not talk about 'loss', 'profit', or 'cost' if the query only returns 'revenue' or 'transaction count').
-CRITICAL: Terminology MUST be strictly consistent between title, description, and recommendation. For example, if the query and title talk about 'top payees' or 'payers', the description/finding must not mismatch and talk about 'payers' or 'payees' (or vice versa). Keep them strictly consistent.
-CRITICAL: Recommendations MUST be directly traceable to the SQL evidence. Do NOT recommend high-level business actions like "Invest", "Increase Marketing", "Improve Offering", or "Boost Revenue" unless the dataset explicitly supports and proves those conclusions. Prefer conservative, data-focused action verbs for recommendations, such as: "Monitor", "Investigate", "Analyze", "Compare", "Validate", "Track", or "Review". Do not recommend "Validate data quality" unless there is actual evidence of bad data.
+CRITICAL: DO NOT infer or mention columns/metrics that do not exist in the results.
+CRITICAL: Recommendations MUST be directly traceable to the SQL evidence. Do NOT recommend high-level business actions like "Invest", "Increase Marketing", or "Boost Revenue" unless the dataset explicitly supports and proves those conclusions.
 CRITICAL: If the data does not support a clear conclusion, do not generate an insight for this question at all - simply skip it.
-CRITICAL: If you cannot state a specific, real impact number for this insight, do not generate it - skip the question entirely rather than describing the absence of an answer.
-CRITICAL: Do NOT use speculative or forward-looking language such as 'might', 'could', 'anticipate', 'projected', 'likely to', 'expected to' unless the underlying data genuinely contains a forecast/projection value computed by the system.
+CRITICAL: FINAL QUALITY GATE. Before outputting an insight, ask: "Would a CFO or CEO care about this insight?" If NO, Discard it. Only render if YES.
 CRITICAL: State the SQL aggregate function accurately - if the query used SUM(), call it a total; if AVG(), call it an average; never substitute one for the other.
-CRITICAL: The Impact value MUST logically match the metric discussed in the finding. If finding is about Average Amount, Impact must be the Average Amount. If Total Amount, Impact must be Total Amount. If Count, Impact must be Count. Do not mix Average and Total.
-CRITICAL: For confidence, do not default to 1.0 or 0.0. Provide realistic values like 0.92, 0.95, or 0.98 based on data clarity and sample size.
+CRITICAL: The Impact value MUST logically match the metric discussed in the finding.
 CRITICAL: Do NOT generate long prose paragraphs. Instead, the description field MUST be short and structured (strictly using key-value lines followed by a Finding).
-CRITICAL CURRENCY RULE: ALWAYS use the ₹ (Indian Rupee) symbol for ALL monetary values. NEVER use $ (dollar) or £ (pound) or any other currency symbol under any circumstances. Every currency value in title, description, and finding MUST use ₹ only.
-CRITICAL NUMBER FORMAT RULE: Format all monetary values using the Indian numbering system (commas after the first 3 digits from the right, and then every 2 digits). Example CORRECT: ₹29,97,663.92.
-CRITICAL CONCLUSION ACCURACY RULE: We have provided `explicit_stats_for_llm` showing the exact highest and lowest values and their corresponding rows (`highest_row_data`, `lowest_row_data`). You MUST strictly use these pre-computed stats to form your finding. NEVER infer or compute highest/lowest yourself. Look at the dimension inside `highest_row_data` to see which category actually had the highest value. Do not contradict the explicit stats.
-CRITICAL IMPACT MAGNITUDE RULE: The impact field MUST be a meaningful metric WITH context. Examples of valid impact values: "₹3.17M Processed", "358 Transactions", "₹51.9K Average". NEVER output raw isolated numbers like "7" or "4.3". You MUST output a formatted string containing the number, the unit (₹, %, etc.), and a 1-2 word context (e.g. Average, Processed, Drop).
-CRITICAL TERMINOLOGY: If the metric is 'Transaction Value', do not call it 'revenue stream'. Stick to 'transaction value'.
+CRITICAL CURRENCY RULE: ALWAYS use the ₹ (Indian Rupee) symbol for ALL monetary values. Every currency value in title, description, and finding MUST use ₹ only.
+CRITICAL NUMBER FORMAT RULE: Format all monetary values using the Indian numbering system.
+CRITICAL CONCLUSION ACCURACY RULE: We have provided `explicit_stats_for_llm` showing the exact highest and lowest values and their corresponding rows. You MUST strictly use these pre-computed stats to form your finding. NEVER infer or compute highest/lowest yourself. Do not contradict the explicit stats.
+CRITICAL IMPACT MAGNITUDE RULE: The impact field MUST be a meaningful metric WITH context. Examples of valid impact values: "₹3.25M Processed", "42 Failed Transactions", "91.6% Success Rate". NEVER output raw isolated numbers like "7" or "4.3" or "0". You MUST output a formatted string containing the number, the unit (₹, %, etc.), and a context (e.g. Average, Processed, Drop).
+CRITICAL RECOMMENDATION RULE: Recommendations MUST directly reference the finding. Bad: "Analyze data." Good: "Review IMPS Transfer transactions because they contributed 61% of the total transaction value." The recommendation MUST contain exactly three elements: WHAT to do, WHY to do it (referencing the finding/data), and the EXPECTED OUTCOME.
 Return ONLY a valid JSON object with a single key "insights" containing an array of objects with the following keys:
 - title (string)
 - description (string, structured key-value lines followed by finding, formatted EXACTLY as follows:
@@ -260,11 +275,11 @@ Difference: +51%
 
 Finding: Average transaction value peaked in June.
 )
-- category (string: Risk, Opportunity, Trend, or Anomaly)
+- category (string: Risk, Opportunity, Trend, Anomaly, or Operational)
 - insight_level (string, e.g., "Strategic", "Operational")
 - confidence (MUST be a numeric float between 0.0 and 1.0)
 - impact (string, MUST include metric, unit, and context e.g. "₹51.9K Average" or "358 Transactions")
-- recommendation (string, one concrete, conservative step grounded in the actual data)
+- recommendation (string, formatted strictly according to the CRITICAL RECOMMENDATION RULE)
 - sql (string, copy it exactly from the input)"""
             # Build explicit constraints to prevent LLM reasoning bugs and ensure correctness
             constraint_str = ""
@@ -463,17 +478,43 @@ Finding: Average transaction value peaked in June.
                     pct_diff = ((high_val - low_val) / low_val) * 100
                     diff_str = f"\nDifference: +{pct_diff:,.1f}%" if pct_diff >= 0 else f"\nDifference: {pct_diff:,.1f}%"
                 
+                orig_desc = ins.get("description", "")
+                desc_lower = orig_desc.lower()
+                
+                # Extract the LLM's original finding
+                llm_finding = ""
+                if "finding:" in desc_lower:
+                    # Find the actual case-sensitive finding text
+                    idx = desc_lower.find("finding:")
+                    llm_finding = orig_desc[idx + 8:].strip()
+                else:
+                    # If it didn't format properly, take the whole thing or last sentence
+                    llm_finding = orig_desc.strip()
+                    
+                # Verify logic: if finding contradicts facts, drop it
+                if high_cat and high_cat.lower() not in desc_lower and low_cat and low_cat.lower() not in desc_lower:
+                    # Mismatch or fabrication of highest/lowest
+                    return None
+                    
+                # Strict check: If the LLM completely hallucinated numbers, drop it.
+                orig_text = f"{ins.get('title', '')} {orig_desc} {ins.get('impact', '')}"
+                if not verify_numbers_against_facts(orig_text, json.dumps(rows, default=str)):
+                    return None
+                    
                 rebuilt_desc = (
                     f"Highest {cat_label}: {high_cat} {formatted_high}\n"
                     f"Lowest {cat_label}: {low_cat} {formatted_low}"
                     f"{diff_str}\n\n"
-                    f"Finding: {high_cat} had the highest {val_label.lower()} of {formatted_high}, "
-                    f"while {low_cat} had the lowest {val_label.lower()} of {formatted_low}."
+                    f"Finding: {llm_finding}"
                 )
                 
                 # Verify and rewrite impact
                 impact = ins.get("impact", "")
                 numeric_part = re.findall(r'[0-9]+(?:\.[0-9]+)?', impact.replace(',', ''))
+                if not numeric_part and not "null" in impact.lower():
+                    # Impact missing numeric part, drop it
+                    return None
+                    
                 if numeric_part:
                     try:
                         imp_val = float(numeric_part[0])
@@ -507,6 +548,46 @@ Finding: Average transaction value peaked in June.
                 ins["recommendation"] = rec
                 return ins
 
+            def score_insight(ins, orig_res):
+                score = 0.0
+                try:
+                    conf = float(ins.get('confidence', 0))
+                    score += conf * 20
+                except:
+                    pass
+                impact = ins.get('impact', '')
+                if any(x in impact.lower() for x in ['cr', 'm', 'million']):
+                    score += 30
+                elif any(x in impact.lower() for x in ['l', 'k', 'thousand']):
+                    score += 15
+                else:
+                    score += 5
+                rec = ins.get('recommendation', '')
+                if any(verb in rec.lower() for verb in ['monitor', 'investigate', 'analyze', 'compare', 'validate', 'track', 'review']):
+                    score += 20
+                desc = ins.get('description', '')
+                if 'Difference: +' in desc or 'Difference: -' in desc:
+                    try:
+                        pct_str = desc.split('Difference: ')[1].split('%')[0].replace('+', '').replace(',', '').strip()
+                        pct = float(pct_str)
+                        if abs(pct) > 50:
+                            score += 20
+                        elif abs(pct) > 20:
+                            score += 10
+                    except:
+                        pass
+                return score
+
+            def get_dimension_type_and_penalty(sql, sem_dict):
+                sql_lower = sql.lower()
+                sem = sem_dict.get("semantic_dictionary", {})
+                identifiers = sem.get("entity_identifiers", [])
+                for ident in identifiers:
+                    if ident.lower() in sql_lower:
+                        return "identifier", -50
+                return "generic", 0
+
+            valid_insights = []
             for ins in insights_data:
                 # Forcefully fix currency formatting and terminology
                 ins['title'] = replace_revenue_terminology(reformat_currency(ins.get('title', '')))
@@ -520,6 +601,9 @@ Finding: Average transaction value peaked in June.
                 
                 if orig_res:
                     ins = validate_and_correct_insight(ins, orig_res)
+                    if ins is None:
+                        logging.warning(f"Validation Layer dropped insight due to mismatch: {ins}")
+                        continue
                     # Reformat again post-correction
                     ins['description'] = replace_revenue_terminology(reformat_currency(ins.get('description', '')))
                     ins['recommendation'] = replace_revenue_terminology(reformat_currency(ins.get('recommendation', '')))
@@ -541,7 +625,6 @@ Finding: Average transaction value peaked in June.
                 if impact_val in (None, "N/A", "", "null", "None"):
                     logging.info(f"Skipping insight due to missing impact value: {ins.get('title')}")
                     continue
-                # We no longer strictly test if it's floatable, because we want strings like "₹3.17M Processed"
                     
                 # Filter Problem 4: Missing/Invalid Confidence
                 confidence_val = ins.get('confidence')
@@ -557,44 +640,64 @@ Finding: Average transaction value peaked in June.
                     logging.info(f"Skipping insight due to unparseable confidence value ({confidence_val}): {ins.get('title')}")
                     continue
                     
-                # find matching result rows
-                matching_sql = ins.get("sql", "")
-                orig_res = next((r for r in successful_results if r["sql"] == matching_sql), None)
-                
                 verified = False
                 if orig_res:
                     text_to_check = f"{ins.get('title', '')} {ins.get('description', '')} {ins.get('impact', '')}"
                     res_str = json.dumps(orig_res["rows"], default=str)
                     verified = verify_numbers_against_facts(text_to_check, res_str)
-                            
-                ins_id = f"ins_{uuid.uuid4().hex[:8]}"
-                created_at = datetime.utcnow().isoformat()
                 
+                if not verified:
+                    continue
+                    
+                dim_type, penalty = get_dimension_type_and_penalty(matching_sql, sem_dict)
+                score = score_insight(ins, orig_res) + penalty
+                
+                ins["score"] = score
+                ins["dimension_type"] = dim_type
+                ins["verified"] = verified
+                ins["id"] = f"ins_{uuid.uuid4().hex[:8]}"
+                ins["created_at"] = datetime.utcnow().isoformat() + "Z"
+                
+                valid_insights.append(ins)
+                
+            valid_insights.sort(key=lambda x: x.get("score", 0), reverse=True)
+            
+            top_insights = []
+            used_categories = set()
+            for ins in valid_insights:
+                cat = ins.get("category", "").title().strip()
+                if cat not in used_categories:
+                    top_insights.append(ins)
+                    used_categories.add(cat)
+                if len(top_insights) == 5:
+                    break
+
+            for ins in top_insights:
                 try:
                     cursor.execute('''
-                        INSERT INTO insights (id, user_id, dataset_id, title, description, category, insight_level, confidence, impact, recommendation, verified, audit_sql, created_at)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        INSERT INTO insights (id, user_id, dataset_id, title, description, category, insight_level, confidence, impact, recommendation, verified, audit_sql, score, dimension_type, created_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     ''', (
-                        ins_id,
+                        ins["id"],
                         user_id,
                         dataset_id,
                         ins.get("title", "Insight"),
                         ins.get("description", ""),
                         ins.get("category", "Trend"),
                         ins.get("insight_level", "Operational"),
-                        conf,
+                        float(ins.get("confidence", 0.0)),
                         str(ins.get("impact", "")),
                         ins.get("recommendation", ""),
-                        1 if verified else 0,
-                        matching_sql,
-                        created_at
+                        1,
+                        ins.get("sql", ""),
+                        ins.get("score", 0.0),
+                        ins.get("dimension_type", "generic"),
+                        ins["created_at"]
                     ))
                 except Exception as e:
                     logging.error(f"Failed to insert insight: {e}\nInsight data: {ins}")
                     logging.error(traceback.format_exc())
                 
-                ins["id"] = ins_id
-                ins["verified"] = verified
                 final_insights.append(ins)
                 
             conn.commit()

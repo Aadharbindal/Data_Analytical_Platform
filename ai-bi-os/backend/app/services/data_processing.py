@@ -128,6 +128,8 @@ def init_db():
             recommendation TEXT,
             verified INTEGER,
             audit_sql TEXT,
+            score REAL DEFAULT 0.0,
+            dimension_type TEXT DEFAULT 'generic',
             created_at TEXT
         )
     ''')
@@ -175,6 +177,15 @@ def init_db():
     ]:
         try:
             cursor.execute(f"ALTER TABLE datasets ADD COLUMN {col} {ctype} DEFAULT {default}")
+        except sqlite3.OperationalError:
+            pass
+            
+    for col, ctype, default in [
+        ("score", "REAL", "0.0"),
+        ("dimension_type", "TEXT", "'generic'")
+    ]:
+        try:
+            cursor.execute(f"ALTER TABLE insights ADD COLUMN {col} {ctype} DEFAULT {default}")
         except sqlite3.OperationalError:
             pass
             
