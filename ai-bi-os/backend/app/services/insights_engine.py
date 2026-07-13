@@ -86,6 +86,7 @@ class DeepInsightsEngine:
                             messages=[{"role": "user", "content": prompt}],
                             api_key=os.getenv("GROQ_API_KEY"),
                             max_tokens=2000,
+                            temperature=0.7,
                             response_format={"type": "json_object"}
                         )
                         content = res.choices[0].message.content
@@ -120,8 +121,9 @@ class DeepInsightsEngine:
             q_prompt = f"""{profile_str}
             
 You are the Insight Generation Engine for an enterprise AI analytics platform. Your goal is to generate the FEW MOST IMPORTANT BUSINESS INSIGHTS with extremely high factual accuracy.
-Based on this schema, generate exactly 20 candidate analytical questions that would reveal deep insights about the business. 
+Based on this schema, generate exactly 10 candidate analytical questions that would reveal deep insights about the business. 
 Do NOT generate questions asking about future probability, likelihood, or prediction of events.
+To ensure variety across regenerations, focus on unique, unexpected angles. (Context Seed: {datetime.utcnow().timestamp()})
 
 Generate questions ONLY from these categories:
 - Financial Performance (Revenue, Growth, Decline, Contribution, Top/Bottom Categories, Seasonality)
@@ -153,6 +155,7 @@ Given these questions, write exactly one DuckDB SQL query for each question to f
 The table is named 'active_dataset'.
 When grouping by a high-cardinality dimension like exact date, prefer using COUNT(*) alongside any AVG/SUM and note that group-by-exact-date often produces tiny, statistically unreliable groups - consider grouping by week, month, or day-of-week instead for anything claiming a 'trend'.
 IMPORTANT: Whenever you use GROUP BY, you MUST include COUNT(*) AS sample_size in your SELECT clause so sample sizes can be verified.
+CRITICAL: DuckDB does NOT support 'to_char'. If you need to format dates as strings (e.g. for month/year), use strftime(date_column, '%Y-%m') or date_trunc().
 Return ONLY a valid JSON object with a single key "mappings" containing an array of objects with keys: "question" (string) and "sql" (string)."""
             q_json_str = json.dumps(questions)
             sql_mappings = call_llm_with_retry(sql_prompt + "\n\nQuestions:\n" + q_json_str, "LLM CALL 2 (SQL Mappings)")
@@ -283,13 +286,14 @@ Finding: Average transaction value peaked in June.
 - sql (string, copy it exactly from the input)"""
             # Build explicit constraints to prevent LLM reasoning bugs and ensure correctness
             constraint_str = ""
+            successful_results = successful_results[:8] # Prevent rate limits by capping to top 8
             for i, res in enumerate(successful_results):
                 q = res["question"]
                 stats = res.get("explicit_stats_for_llm", {})
                 rows = res.get("rows", [])
                 
                 constraint_str += f"\nResult {i+1} for Question: \"{q}\"\n"
-                constraint_str += f"Rows: {json.dumps(rows)}\n"
+                constraint_str += f"Rows: {json.dumps(rows, default=str)}\n"
                 
                 num_col = None
                 for k in stats:
@@ -662,15 +666,7 @@ Finding: Average transaction value peaked in June.
                 
             valid_insights.sort(key=lambda x: x.get("score", 0), reverse=True)
             
-            top_insights = []
-            used_categories = set()
-            for ins in valid_insights:
-                cat = ins.get("category", "").title().strip()
-                if cat not in used_categories:
-                    top_insights.append(ins)
-                    used_categories.add(cat)
-                if len(top_insights) == 5:
-                    break
+            top_insights = valid_insights[:5]
 
             for ins in top_insights:
                 try:
