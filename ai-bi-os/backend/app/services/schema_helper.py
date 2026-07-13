@@ -1,4 +1,4 @@
-def get_schema_context(db_engine, table_name="active_dataset", dataset_display_name=None):
+def get_schema_context(db_engine, table_name="active_dataset", dataset_display_name=None, semantic_dict=None):
     """
     Returns a formatted string containing the schema, row count,
     and a few sample rows of the specified table using the DuckDB engine.
@@ -13,7 +13,29 @@ def get_schema_context(db_engine, table_name="active_dataset", dataset_display_n
     try:
         desc_res = db_engine.execute(f"DESCRIBE {table_name}")
         cols = desc_res.get("rows", [])
-        schema_str = "\n".join([f"- {c['column_name']} ({c['column_type']})" for c in cols])
+        
+        sem = semantic_dict.get("semantic_dictionary", {}) if semantic_dict else {}
+        bus_term = semantic_dict.get("business_terminology", {}) if semantic_dict else {}
+        
+        primary_metric = bus_term.get("primary_metric")
+        primary_date = bus_term.get("primary_date")
+        identifiers = sem.get("entity_identifiers", [])
+        
+        schema_lines = []
+        for c in cols:
+            col_name = c['column_name']
+            roles = []
+            if col_name == primary_metric:
+                roles.append("primary_metric")
+            if col_name == primary_date:
+                roles.append("primary_date")
+            if col_name in identifiers:
+                roles.append("identifier")
+                
+            role_str = f" [Role: {','.join(roles)}]" if roles else ""
+            schema_lines.append(f"- {col_name} ({c['column_type']}){role_str}")
+            
+        schema_str = "\n".join(schema_lines)
         
         count_res = db_engine.execute(f"SELECT COUNT(*) as cnt FROM {table_name}")
         if count_res.get("rows"):
@@ -27,9 +49,13 @@ def get_schema_context(db_engine, table_name="active_dataset", dataset_display_n
         schema_str = f"(Error loading schema: {e})"
         sample_str = "(Could not load samples)"
         
+    instruction_str = ""
+    if semantic_dict:
+        instruction_str = "\nCRITICAL SEMANTIC RULES:\n- DO NOT perform pattern-matching (e.g. LIKE), aggregations (SUM, AVG), or arithmetic on columns marked as [Role: identifier]. They are strictly for grouping or counting unique entities.\n"
+        
     return {
         "schema_str": schema_str,
         "sample_str": sample_str,
         "row_count": row_count,
-        "formatted_context": f"DATABASE SCHEMA:\n{dataset_name_str}The data is in a table named '{table_name}'. Use ONLY this table name.\nRow Count: {row_count}\nColumns:\n{schema_str}\n\nSample data:\n{sample_str}"
+        "formatted_context": f"DATABASE SCHEMA:\n{dataset_name_str}The data is in a table named '{table_name}'. Use ONLY this table name.\nRow Count: {row_count}\nColumns:\n{schema_str}\n\nSample data:\n{sample_str}{instruction_str}"
     }
