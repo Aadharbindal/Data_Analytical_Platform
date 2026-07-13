@@ -38,7 +38,7 @@ def validate_and_sanitize_business_terminology(df: pd.DataFrame, domain: str, bu
         elif "order" in ent_lower or "invoice" in ent_lower:
             bus_term["entity_count_label"] = "Total Orders"
         elif "upi" in ent_lower:
-            bus_term["entity_count_label"] = "Total UPI Users"
+            bus_term["entity_count_label"] = "Unique UPI IDs"
         elif "account" in ent_lower:
             bus_term["entity_count_label"] = "Total Accounts"
         elif "customer" in ent_lower or "client" in ent_lower:
@@ -61,6 +61,17 @@ def validate_and_sanitize_business_terminology(df: pd.DataFrame, domain: str, bu
                 bus_term["entity_count_label"] = entity_label
     else:
         bus_term["entity_count_label"] = "Total Records"
+        
+    healthy_regex = bus_term.get("status_healthy_regex", "")
+    if healthy_regex:
+        # Strip empty clauses that would match everything (e.g. "Success||Active")
+        clean_regex = "|".join([r.strip() for r in healthy_regex.split("|") if r.strip()])
+        # Prevent LLM from mistakenly including negative/neutral terms in the healthy regex
+        bad_words = ["fail", "cancel", "pend", "error", "reject", "decline", "suspend", "lost", "unpaid", "return", "void"]
+        filtered_regex = "|".join([r for r in clean_regex.split("|") if not any(b in r.lower() for b in bad_words)])
+        if not filtered_regex:
+            filtered_regex = "won|active|discharged|completed|approved|paid|success"
+        bus_term["status_healthy_regex"] = filtered_regex
 
 def fallback_classify(df: pd.DataFrame, filename: str) -> tuple[str, dict]:
     """

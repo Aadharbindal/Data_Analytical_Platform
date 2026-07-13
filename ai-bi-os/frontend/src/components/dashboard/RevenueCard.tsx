@@ -170,10 +170,10 @@ export function RevenueCard({ data, semanticDict }: RevenueCardProps) {
                 itemStyle={{ color: 'var(--foreground)', fontWeight: 600, fontSize: '13px' }}
                 formatter={(value: number) => {
                   const formatted = metricType === "currency"
-                    ? `₹${value.toLocaleString()}`
+                    ? `₹${value.toLocaleString('en-IN')}`
                     : metricType === "percent"
                     ? `${value.toFixed(1)}%`
-                    : value.toLocaleString();
+                    : value.toLocaleString('en-IN');
                   return [formatted, primaryLabel];
                 }}
                 cursor={{ stroke: 'var(--border)', strokeWidth: 1, strokeDasharray: '4 4' }}

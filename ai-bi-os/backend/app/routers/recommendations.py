@@ -123,6 +123,9 @@ CRITICAL: Every recommendation MUST be directly traceable to the provided facts.
 CRITICAL: Do NOT recommend high-level, generic actions like "Invest", "Increase Marketing", "Improve Offering", or "Boost Revenue" unless the provided facts explicitly support and prove those conclusions.
 CRITICAL: Prefer conservative, data-focused action verbs for recommendations, such as: "Monitor", "Investigate", "Analyze", "Compare", "Validate", "Track", or "Review".
 CRITICAL: You MUST ONLY cite numbers that are explicitly present in the provided facts. Do not invent, estimate, or guess any figures.
+CRITICAL ANOMALY RULE: Do NOT label a difference in totals between categories as an "anomaly". Different categories naturally have different totals. An anomaly ONLY exists when a metric deviates significantly from its OWN historical baseline or expected distribution. Without historical data per category, do NOT use category "anomaly".
+CRITICAL DATA QUALITY RULE: Do NOT infer a data quality problem from differences in category totals. Different categories naturally process different volumes and values — a large gap between category totals (e.g., IMPS at 207M vs Mobile Recharge at 749K) is expected business reality, NOT evidence of bad data. Only flag data_quality if the facts explicitly contain evidence such as: missing values, duplicate records, format errors, impossible values, or zero-value anomalies that are confirmed to be erroneous. If no such explicit evidence exists in the facts, do NOT use the data_quality category.
+CRITICAL OPPORTUNITY RULE: Do NOT label something as an "opportunity" without explicit evidence from the facts that improvement is achievable. State the observed fact and suggest a specific investigative action instead.
 Return ONLY a valid JSON array of objects with keys:
 - title (string, action-oriented)
 - rationale (string, explain why using the facts and EXACT numbers)

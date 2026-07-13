@@ -9,7 +9,7 @@ export function formatNumber(value: number | null | undefined): string {
   if (value === null || value === undefined) return "N/A";
   
   // Use Intl.NumberFormat for compact notation (K, M, B)
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-IN', {
     notation: 'compact',
     compactDisplay: 'short',
     maximumFractionDigits: 1
@@ -19,7 +19,7 @@ export function formatNumber(value: number | null | undefined): string {
 export function formatPercent(value: number | null | undefined, includeSign = false): string {
   if (value === null || value === undefined) return "N/A";
   
-  const formatted = new Intl.NumberFormat('en-US', {
+  const formatted = new Intl.NumberFormat('en-IN', {
     style: 'percent',
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
@@ -34,7 +34,7 @@ export function formatPercent(value: number | null | undefined, includeSign = fa
 export function formatDecimal(value: number | null | undefined, fractionDigits = 3): string {
   if (value === null || value === undefined) return "N/A";
   
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-IN', {
     minimumFractionDigits: fractionDigits,
     maximumFractionDigits: fractionDigits
   }).format(value);

@@ -222,7 +222,7 @@ export interface TrendData {
 
 export interface InsightScore {
   confidence: number;
-  impact?: number;
+  impact?: number | string;
 }
 
 export interface Insight {
@@ -234,7 +234,7 @@ export interface Insight {
   metric_value?: number;
   insight_level?: string;
   confidence?: number;
-  impact?: number;
+  impact?: number | string;
   recommendation?: string;
   verified?: boolean;
   audit_sql?: string;

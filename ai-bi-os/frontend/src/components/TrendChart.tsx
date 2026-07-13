@@ -26,7 +26,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ data, title = "Revenue A
       return (
         <div className="bg-[#1e1e1e] border border-[#333] p-3 rounded-lg shadow-xl">
           <p className="text-gray-400 text-xs mb-1">{label}</p>
-          <p className="text-white font-bold text-lg">${payload[0].value.toLocaleString()}</p>
+          <p className="text-white font-bold text-lg">₹{payload[0].value.toLocaleString()}</p>
           <p className="text-[#a3e635] text-xs font-medium mt-1">▲ +12.5% vs last week</p>
         </div>
       );
