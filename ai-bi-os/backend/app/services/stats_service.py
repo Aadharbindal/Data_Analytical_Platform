@@ -198,11 +198,14 @@ def compute_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict:
                 return 0.0
             s = df_subset[status_col].astype(str)
             healthy = s.str.contains(status_healthy, case=False, na=False)
-            unhealthy = s.str.contains(status_unhealthy, case=False, na=False)
-            total = healthy.sum() + unhealthy.sum()
+            # FIXED: divide by ALL rows (including Pending / unclassified),
+            # not just (healthy + unhealthy). The old formula silently excluded
+            # rows that matched neither regex, inflating the rate to ~100%.
+            total = len(df_subset)
             if total > 0:
                 return float(healthy.sum() / total * 100)
-            return float(healthy.mean() * 100)
+            return 0.0
+
             
         curr_health = calc_health(original_df)
         

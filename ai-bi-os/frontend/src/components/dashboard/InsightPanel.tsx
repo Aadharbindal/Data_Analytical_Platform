@@ -10,14 +10,20 @@ interface InsightPanelProps {
   title: string;
   severity: "high" | "medium" | "low";
   confidence: number;
-  impact?: number;
+  impact?: number | string;
   description: string;
   category: string;
   verified?: boolean;
 }
 
-function formatImpact(val: number | undefined | null, title: string): string {
-  if (val === undefined || val === null || isNaN(val)) return "N/A";
+function formatImpact(val: number | string | undefined | null, title: string): string {
+  if (val === undefined || val === null) return "N/A";
+  if (typeof val === "string") {
+    const trimmed = val.trim();
+    if (trimmed === "" || trimmed.toLowerCase() === "n/a" || trimmed.toLowerCase() === "null") return "N/A";
+    return trimmed;
+  }
+  if (isNaN(val as any)) return "N/A";
   
   const isCount = /count|transactions|volume|number of/i.test(title);
   const isAverage = /average|avg/i.test(title);
@@ -28,9 +34,10 @@ function formatImpact(val: number | undefined | null, title: string): string {
   }
   
   if (isCount) {
-    if (val >= 1_000_000) return `${(val / 1_000_000).toFixed(1)}M`;
+    if (val >= 10_000_000) return `${(val / 10_000_000).toFixed(1)}Cr`;
+    if (val >= 100_000) return `${(val / 100_000).toFixed(1)}L`;
     if (val >= 1_000) return `${(val / 1_000).toFixed(1)}K`;
-    return `${val.toLocaleString()}`;
+    return `${val.toLocaleString('en-IN')}`;
   }
   
   const useDollar = title.includes('$');
@@ -45,7 +52,7 @@ function formatImpact(val: number | undefined | null, title: string): string {
   } else if (val >= 1_000) {
     formatted = `${symbol}${(val / 1_000).toFixed(1)}K`;
   } else {
-    formatted = `${symbol}${val.toLocaleString()}`;
+    formatted = `${symbol}${val.toLocaleString('en-IN')}`;
   }
   
   if (isAverage) {
@@ -186,22 +193,21 @@ export function InsightPanel({ title, severity, confidence, impact, description,
             </span>
           </div>
 
-          <div className="flex items-center gap-3">
-            {verified && (
-              <div className="flex items-center gap-1 text-[11px] text-success font-medium">
-                <CheckCircle className="h-3 w-3" />
-                <span>SQL Verified</span>
-              </div>
-            )}
-            
-            <div className="flex flex-col items-end">
-              <span className="text-[9px] uppercase tracking-widest font-semibold text-muted-foreground/50 mb-0.5">Confidence</span>
-              <Badge variant="outline" className="mt-0.5 bg-background/50 tabular-metrics border-border/50 text-foreground/80 rounded-full px-2 py-0 text-[10px]">
-                {Number(confidence) ? `${Number(confidence)}%` : '0%'}
-              </Badge>
-            </div>
+          <div className="flex flex-col items-end">
+            <span className="text-[9px] uppercase tracking-widest font-semibold text-muted-foreground/50 mb-0.5">Confidence</span>
+            <Badge variant="outline" className="mt-0.5 bg-background/50 tabular-metrics border-border/50 text-foreground/80 rounded-full px-2 py-0 text-[10px]">
+              {Number(confidence) ? `${Number(confidence)}%` : '0%'}
+            </Badge>
           </div>
         </div>
+
+        {verified && (
+          <div className="flex items-center gap-1.5 pt-2.5 mt-2 border-t border-border/20">
+            <CheckCircle className="h-3 w-3 text-success" />
+            <span className="text-[11px] text-success font-medium">SQL Verified</span>
+          </div>
+        )}
+
       </CardContent>
     </Card>
   );

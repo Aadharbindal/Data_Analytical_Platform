@@ -44,9 +44,11 @@ function formatValue(value: number, type?: string): string {
     return `${value.toFixed(1)}%`;
   }
   
-  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`;
-  if (value >= 1_000) return `$${(value / 1_000).toFixed(0)}K`;
-  return `$${value.toLocaleString()}`;
+  // Indian Rupee formatting: Cr / L / K
+  if (value >= 1_00_00_000) return `₹${(value / 1_00_00_000).toFixed(2)}Cr`;
+  if (value >= 1_00_000) return `₹${(value / 1_00_000).toFixed(2)}L`;
+  if (value >= 1_000) return `₹${(value / 1_000).toFixed(1)}K`;
+  return `₹${value.toLocaleString('en-IN')}`;
 }
 
 function getStableHash(str: string): number {

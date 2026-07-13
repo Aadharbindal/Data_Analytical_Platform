@@ -5,20 +5,39 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { insightsApi } from "@/lib/api";
 import type { Insight } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lightbulb, Database, CheckCircle, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Lightbulb, Database, CheckCircle, RefreshCw,
+  TrendingUp, AlertTriangle, Zap, Activity, ShieldAlert, BarChart2, Sparkles
+} from "lucide-react";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState, detectErrorType } from "@/components/ui/error-state";
 import { Button } from "@/components/ui/button";
 import { formatNumber } from "@/lib/utils";
 
-const categoryColors: Record<string, { border: string; bg: string; text: string }> = {
-  revenue: { border: "border-success", bg: "bg-success/10", text: "text-success" },
-  risk: { border: "border-error", bg: "bg-error/10", text: "text-error" },
-  opportunity: { border: "border-primary", bg: "bg-primary/10", text: "text-primary" },
-  trend: { border: "border-purple-500", bg: "bg-purple-500/10", text: "text-purple-500" },
-  anomaly: { border: "border-amber-500", bg: "bg-amber-500/10", text: "text-amber-500" },
+// ─── Category theme map ────────────────────────────────────────────────────
+const CATEGORY_THEMES: Record<string, {
+  accent: string;        // Tailwind border colour
+  glow: string;          // box-shadow style value
+  iconBg: string;        // icon wrapper background
+  iconText: string;      // icon colour
+  pillBg: string;        // category pill background
+  pillText: string;      // category pill text colour
+  bannerFrom: string;    // gradient start
+  icon: React.ReactNode;
+}> = {
+  revenue:     { accent: "border-emerald-500",  glow: "0 0 0 1px rgba(16,185,129,.25), 0 4px 24px rgba(16,185,129,.08)",  iconBg: "bg-emerald-500/15",  iconText: "text-emerald-400",  pillBg: "bg-emerald-500/10", pillText: "text-emerald-400", bannerFrom: "from-emerald-500/10", icon: <TrendingUp className="h-4 w-4" /> },
+  risk:        { accent: "border-rose-500",     glow: "0 0 0 1px rgba(244,63,94,.25),  0 4px 24px rgba(244,63,94,.08)",   iconBg: "bg-rose-500/15",     iconText: "text-rose-400",     pillBg: "bg-rose-500/10",    pillText: "text-rose-400",    bannerFrom: "from-rose-500/10",    icon: <ShieldAlert className="h-4 w-4" /> },
+  opportunity: { accent: "border-violet-500",   glow: "0 0 0 1px rgba(139,92,246,.25), 0 4px 24px rgba(139,92,246,.08)", iconBg: "bg-violet-500/15",   iconText: "text-violet-400",   pillBg: "bg-violet-500/10",  pillText: "text-violet-400",  bannerFrom: "from-violet-500/10",  icon: <Zap className="h-4 w-4" /> },
+  trend:       { accent: "border-purple-500",   glow: "0 0 0 1px rgba(168,85,247,.25), 0 4px 24px rgba(168,85,247,.08)", iconBg: "bg-purple-500/15",   iconText: "text-purple-400",   pillBg: "bg-purple-500/10",  pillText: "text-purple-400",  bannerFrom: "from-purple-500/10",  icon: <Activity className="h-4 w-4" /> },
+  anomaly:     { accent: "border-amber-500",    glow: "0 0 0 1px rgba(245,158,11,.25), 0 4px 24px rgba(245,158,11,.08)", iconBg: "bg-amber-500/15",    iconText: "text-amber-400",    pillBg: "bg-amber-500/10",   pillText: "text-amber-400",   bannerFrom: "from-amber-500/10",   icon: <AlertTriangle className="h-4 w-4" /> },
+  default:     { accent: "border-sky-500",      glow: "0 0 0 1px rgba(14,165,233,.25),  0 4px 24px rgba(14,165,233,.08)",  iconBg: "bg-sky-500/15",      iconText: "text-sky-400",      pillBg: "bg-sky-500/10",     pillText: "text-sky-400",     bannerFrom: "from-sky-500/10",     icon: <BarChart2 className="h-4 w-4" /> },
 };
+
+function getCategoryTheme(category?: string) {
+  const key = (category ?? "").toLowerCase();
+  return CATEGORY_THEMES[key] ?? CATEGORY_THEMES.default;
+}
 
 function formatRelativeTime(dateString?: string) {
   if (!dateString) return "Just now";
@@ -34,145 +53,208 @@ function formatRelativeTime(dateString?: string) {
   return `${Math.floor(diffInSeconds / 86400)} days ago`;
 }
 
+// ─── Segmented confidence bar (5 blocks) ───────────────────────────────────
+function ConfidenceBar({ pct }: { pct: number }) {
+  const filled = Math.round((pct / 100) * 5);
+  const color = pct >= 80 ? "bg-emerald-500" : pct >= 50 ? "bg-amber-400" : "bg-rose-500";
+  const textColor = pct >= 80 ? "text-emerald-400" : pct >= 50 ? "text-amber-400" : "text-rose-400";
+  return (
+    <div className="flex items-center gap-2">
+      <div className="flex gap-[3px]">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div
+            key={i}
+            className={`h-[5px] w-[10px] rounded-sm transition-all duration-300 ${
+              i < filled ? color : "bg-white/10"
+            }`}
+          />
+        ))}
+      </div>
+      <span className={`text-[11px] font-bold tabular-nums ${textColor}`}>{pct}%</span>
+    </div>
+  );
+}
+
+// ─── Main card ─────────────────────────────────────────────────────────────
 function InsightCard({ insight }: { insight: Insight }) {
   const [showSql, setShowSql] = useState(false);
   const [expanded, setExpanded] = useState(false);
-  const confidence = Math.round((insight.confidence ?? (insight.score?.confidence ?? 0.75)) * 100);
-  
-  const colorKey = (insight.category?.toLowerCase() || "trend");
-  const categoryColor = categoryColors[colorKey] || categoryColors.trend;
 
-  // Smart impact formatting
+  const confidence = Math.round(
+    (insight.confidence ?? (insight.score?.confidence ?? 0.75)) * 100
+  );
+  const theme = getCategoryTheme(insight.category);
+
+  // ── Smart impact formatting
   const titleLower = (insight.title || "").toLowerCase();
-  const isCurrency = titleLower.includes('revenue') || titleLower.includes('cost') || titleLower.includes('price') || titleLower.includes('sales') || (insight.impact !== undefined && insight.impact % 1 !== 0) || (insight.impact !== undefined && insight.impact > 10000);
-  const isPercent = titleLower.includes('percentage') || titleLower.includes('rate');
-  const unit = isCurrency ? "" : isPercent ? "%" : (titleLower.includes('quantity') || titleLower.includes('units') || titleLower.includes('count') ? " units" : "");
-  
+  const isCurrency =
+    titleLower.includes("revenue") ||
+    titleLower.includes("cost") ||
+    titleLower.includes("price") ||
+    titleLower.includes("sales") ||
+    (insight.impact !== undefined && insight.impact > 10_000);
+  const isPercent =
+    titleLower.includes("percentage") || titleLower.includes("rate");
+  const isCount =
+    titleLower.includes("count") ||
+    titleLower.includes("units") ||
+    titleLower.includes("quantity");
+
   const formatImpact = (val: number) => {
-    if (isCurrency) return `$${formatNumber(val)}`;
-    if (isPercent) return `${val}%`;
-    return `${val.toLocaleString()}${unit}`;
+    if (isCurrency) {
+      if (val >= 1_00_00_000) return `₹${(val / 1_00_00_000).toFixed(1)}Cr`;
+      if (val >= 1_00_000) return `₹${(val / 1_00_000).toFixed(1)}L`;
+      if (val >= 1_000) return `₹${(val / 1_000).toFixed(1)}K`;
+      return `₹${val.toLocaleString()}`;
+    }
+    if (isPercent) return `${val.toFixed(1)}%`;
+    if (isCount) {
+      if (val >= 1_000_000) return `${(val / 1_000_000).toFixed(1)}M`;
+      if (val >= 1_000) return `${(val / 1_000).toFixed(1)}K`;
+      return val.toLocaleString();
+    }
+    return formatNumber(val);
   };
 
-  const confidenceColor = confidence >= 80 ? "bg-success" : confidence >= 50 ? "bg-warning" : "bg-error";
+  const hasImpact = insight.impact !== undefined && insight.impact > 0;
 
   return (
     <div
-      className={`glass-card h-full rounded-[20px] p-5 flex flex-col relative bg-gradient-to-br from-white/[0.03] to-transparent border border-white/[0.08] shadow-sm hover:shadow-md transition-all duration-300 border-l-4 ${categoryColor.border}`}
+      className="relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-[hsl(var(--card))] transition-all duration-300 hover:-translate-y-[2px] hover:border-white/[0.14] shadow-sm hover:shadow-md"
     >
-      {/* Decorative gradient blob */}
-      <div className={`absolute -right-12 -top-12 w-40 h-40 blur-3xl opacity-[0.06] pointer-events-none ${categoryColor.bg.split('/')[0].replace('bg-', '')}`} />
 
-      {/* Top area: Title and badges */}
-      <div className="flex items-start justify-between gap-3 mb-3">
-        <div className="flex items-start gap-3 flex-1 min-w-0">
-          <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${categoryColor.bg}`}>
-            <Lightbulb className={`h-4 w-4 ${categoryColor.text}`} />
+      <div className="relative flex flex-col gap-0 p-5">
+
+        {/* ── Header row ── */}
+        <div className="flex items-start gap-3 mb-4">
+          {/* Icon badge */}
+          <div
+            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+              theme.iconBg
+            } ring-1 ring-white/10`}
+          >
+            <span className={theme.iconText}>{theme.icon}</span>
           </div>
-          <div className="flex flex-col min-w-0">
-            <h3 
-              className="text-base font-semibold text-foreground leading-snug line-clamp-2"
+
+          <div className="flex-1 min-w-0">
+            {/* Category pill */}
+            <span
+              className={`inline-flex items-center gap-1 text-[9px] font-bold tracking-[0.12em] uppercase px-2 py-0.5 rounded-full mb-1.5 ${
+                theme.pillBg
+              } ${theme.pillText}`}
+            >
+              {insight.category || "Insight"}
+            </span>
+
+            {/* Title */}
+            <h3
+              className="text-[15px] font-semibold text-foreground leading-snug"
               title={insight.title}
             >
               {insight.title}
             </h3>
-            
-            {/* Badges directly under title */}
-            <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-              <span className={`text-[10px] font-semibold tracking-wide uppercase px-2 py-0.5 rounded-full ${categoryColor.bg} ${categoryColor.text}`}>
-                {insight.category}
-              </span>
-              {insight.verified && (
-                <span className="flex items-center gap-1 text-[10px] font-semibold tracking-wide uppercase text-success bg-success/10 px-2 py-0.5 rounded-full">
-                  <CheckCircle className="h-3 w-3" />
-                  Verified
+          </div>
+
+          {/* Verified badge — top-right */}
+          {insight.verified && (
+            <span className="shrink-0 flex items-center gap-1 text-[9px] font-bold tracking-widest uppercase text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-full">
+              <CheckCircle className="h-2.5 w-2.5" />
+              Verified
+            </span>
+          )}
+        </div>
+
+        {/* ── Description ── */}
+        {insight.description && (
+          <div className="mb-4">
+            <p
+              className={`text-[13px] text-muted-foreground leading-relaxed ${
+                expanded ? "" : "line-clamp-3"
+              }`}
+            >
+              {insight.description}
+            </p>
+            {insight.description.length > 160 && (
+              <button
+                onClick={() => setExpanded(!expanded)}
+                className={`text-[11px] font-semibold mt-1.5 ${theme.pillText} hover:underline`}
+              >
+                {expanded ? "Show less ↑" : "Read more ↓"}
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* ── Impact + Recommendation row ── */}
+        <div className="flex flex-col gap-3 flex-grow">
+          {hasImpact && (
+            <div className="flex items-center gap-2 self-start">
+              <div className="flex items-center gap-1.5 rounded-lg border border-white/[0.07] bg-white/[0.03] px-3 py-1.5">
+                <Sparkles className={`h-3 w-3 ${theme.iconText}`} />
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Business Impact
                 </span>
-              )}
+                <span className="text-sm font-bold text-foreground tabular-nums ml-1">
+                  {formatImpact(insight.impact!)}
+                </span>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
+          )}
 
-      {/* Description */}
-      {insight.description && (
-        <div className="mb-4">
-          <p className={`text-[13px] text-muted-foreground leading-relaxed ${expanded ? "" : "line-clamp-3"}`}>
-            {insight.description}
-          </p>
-          {insight.description.length > 120 && (
-            <button 
-              onClick={() => setExpanded(!expanded)} 
-              className="text-xs text-primary hover:underline mt-1 font-medium"
+          {insight.recommendation && (
+            <div
+              className={`mt-auto rounded-xl border px-4 py-3 ${
+                theme.pillBg
+              } border-current/10`}
+              style={{ borderColor: "rgba(255,255,255,0.06)" }}
             >
-              {expanded ? "Show less" : "Read more"}
-            </button>
+              <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${theme.pillText}`}>
+                💡 Recommendation
+              </p>
+              <p className="text-[12.5px] text-muted-foreground/90 leading-relaxed">
+                {insight.recommendation}
+              </p>
+            </div>
           )}
         </div>
-      )}
 
-      {/* Growing flex area so footer sticks to bottom */}
-      <div className="flex-grow flex flex-col gap-4">
-        {/* Impact Value */}
-        {insight.impact !== undefined && insight.impact > 0 && (
-          <div className="self-start inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.05]">
-            <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Impact</span>
-            <span className="text-sm font-semibold text-foreground tabular-metrics" title={insight.impact.toString()}>
-              {formatImpact(insight.impact)}
+        {/* ── Footer ── */}
+        <div className="flex items-center justify-between pt-3 mt-4 border-t border-white/[0.06]">
+          <ConfidenceBar pct={confidence} />
+
+          <div className="flex items-center gap-3">
+            <span className="text-[10px] text-muted-foreground/50 font-medium">
+              {formatRelativeTime(insight.created_at)}
             </span>
+            {insight.audit_sql && (
+              <button
+                onClick={() => setShowSql(!showSql)}
+                className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 hover:text-foreground transition-colors"
+              >
+                <Database className="h-3 w-3" />
+                {showSql ? "Hide SQL" : "SQL"}
+              </button>
+            )}
           </div>
-        )}
-
-        {/* Recommendation */}
-        {insight.recommendation && (
-          <div className="text-[13px] p-3 rounded-xl bg-primary/5 border border-primary/10 leading-relaxed mt-auto">
-            <span className="font-semibold text-primary flex items-center gap-1.5 mb-1">
-              <Lightbulb className="h-3.5 w-3.5" /> Recommendation
-            </span>
-            <span className="text-muted-foreground/90">{insight.recommendation}</span>
-          </div>
-        )}
-      </div>
-
-      {/* Footer */}
-      <div className="flex items-center justify-between pt-3 mt-4 border-t border-border/40 gap-3">
-        {/* Confidence scale + % */}
-        <div className="flex items-center gap-2 shrink-0">
-          <div className="flex gap-0.5 h-1.5 w-8 rounded-full overflow-hidden bg-black/20">
-             <div className={`h-full w-full ${confidenceColor}`} />
-          </div>
-          <span className={`text-[11px] font-bold ${confidenceColor.replace('bg-', 'text-')}`}>{confidence}%</span>
         </div>
 
-        <div className="flex items-center gap-3">
-          <span className="text-[10px] font-medium text-muted-foreground/60 whitespace-nowrap">
-            {formatRelativeTime(insight.created_at)}
-          </span>
-          {insight.audit_sql && (
-            <button
-              onClick={() => setShowSql(!showSql)}
-              className="text-[10px] font-semibold tracking-wide uppercase text-muted-foreground/70 hover:text-foreground flex items-center gap-1 transition-colors whitespace-nowrap"
+        {/* ── SQL block ── */}
+        <AnimatePresence>
+          {showSql && insight.audit_sql && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden"
             >
-              <Database className="h-3 w-3" />
-              {showSql ? "Hide SQL" : "View SQL"}
-            </button>
+              <pre className="mt-3 rounded-xl border border-white/[0.05] bg-black/50 p-3 text-[10px] font-mono text-muted-foreground/80 whitespace-pre-wrap overflow-x-auto shadow-inner">
+                {insight.audit_sql}
+              </pre>
+            </motion.div>
           )}
-        </div>
+        </AnimatePresence>
       </div>
-
-      <AnimatePresence>
-        {showSql && insight.audit_sql && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="p-3 bg-black/40 border border-white/[0.05] rounded-xl mt-3 text-[10px] font-mono text-muted-foreground/80 whitespace-pre-wrap overflow-x-auto shadow-inner">
-              {insight.audit_sql}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
@@ -251,10 +333,10 @@ export default function InsightsPage() {
           variants={containerVariants}
           initial="hidden"
           animate="show"
-          className="grid grid-cols-1 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 gap-5"
         >
           {insights.map((insight) => (
-            <motion.div key={insight.id} variants={itemVariants} className="h-full">
+            <motion.div key={insight.id} variants={itemVariants}>
               <InsightCard insight={insight} />
             </motion.div>
           ))}
