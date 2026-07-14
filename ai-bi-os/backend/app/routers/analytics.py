@@ -6,7 +6,7 @@ from fastapi.responses import PlainTextResponse, HTMLResponse
 from typing import Optional
 from app.services.data_processing import get_active_dataset, get_dataframe
 from app.core.security import get_current_user
-from app.services.stats_service import compute_kpis, forecast_series
+from app.services.stats_service import compute_kpis, compute_executive_kpis, forecast_series
 
 router = APIRouter()
 
@@ -363,53 +363,34 @@ async def get_trend(current_user: dict = Depends(get_current_user)):
 async def get_kpi_center(current_user: dict = Depends(get_current_user)):
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
-        return {"kpis": []}
+        return {"available_kpis": [], "omitted_kpis": [], "pipeline_health": {}}
     
     df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
-        return {"kpis": []}
+        return {"available_kpis": [], "omitted_kpis": [], "pipeline_health": {}}
 
-    kpi_data = compute_kpis(df, dataset_info.get("semantic_dict")).get("kpis", [])
+    kpi_data = compute_executive_kpis(df, dataset_info.get("semantic_dict")).get("kpis", [])
     
-    available_kpis = []
-    omitted_kpis = []
+    from app.services.stats_service import quality_report
+    q_report = quality_report(df)
     
-    expected_kpis = ["Total Revenue", "Active Users", "Avg. Deal Size", "Pipeline Health"]
-    for expected in expected_kpis:
-        computed = None
-        if expected == "Total Revenue":
-            computed = next((k for k in kpi_data if k.get("id") == "kpi_rev" or k["name"] == expected), None)
-        elif expected == "Active Users":
-            computed = next((k for k in kpi_data if k.get("id") == "kpi_users" or k["name"] == expected), None)
-        elif expected == "Avg. Deal Size":
-            computed = next((k for k in kpi_data if k.get("id") == "kpi_deal_size" or k["name"] == expected), None)
-        elif expected == "Pipeline Health":
-            computed = next((k for k in kpi_data if k.get("id") == "kpi_health" or k["name"] == expected), None)
-            
-        if computed:
-            available_kpis.append({
-                "name": computed["name"],
-                "column": computed.get("column", "Unknown"),
-                "status": "Available",
-                "value": computed["value"],
-                "trend": computed.get("trend"),
-                "history": computed.get("history", [])
-            })
-        else:
-            reason = "No matching column found"
-            if expected == "Total Revenue": reason = "No revenue/sales/amount column found"
-            elif expected == "Active Users": reason = "No customer/user column found"
-            elif expected == "Avg. Deal Size": reason = "Missing deal or revenue columns"
-            elif expected == "Pipeline Health": 
-                from app.services.stats_service import find_column
-                status_col = find_column(df, r'stage|status|pipeline')
-                if status_col:
-                    reason = f"{status_col} values don't match a recognized pipeline stage pattern"
-                else:
-                    reason = "No column matching stage|status|pipeline found"
-            omitted_kpis.append({"name": expected, "reason": reason})
+    sem_conf = 85
+    if dataset_info.get("semantic_dict"):
+         sem_conf = 95
+         
+    overall = (q_report.get("quality_score", 0) + sem_conf) / 2
     
-    return {"available_kpis": available_kpis, "omitted_kpis": omitted_kpis}
+    pipeline_health = {
+        "dataset_quality": round(q_report.get("quality_score", 0), 1),
+        "completeness": round(q_report.get("breakdown", {}).get("completeness", 0), 1),
+        "missing_percentage": round(100 - q_report.get("breakdown", {}).get("completeness", 0), 1),
+        "duplicate_percentage": round(100 - q_report.get("breakdown", {}).get("uniqueness", 0), 1),
+        "schema_confidence": round(q_report.get("breakdown", {}).get("type_consistency", 0), 1),
+        "semantic_confidence": sem_conf,
+        "overall_reliability": round(overall, 1)
+    }
+    
+    return {"available_kpis": kpi_data, "omitted_kpis": [], "pipeline_health": pipeline_health}
 
 @router.get("/forecast")
 async def get_forecast(metric: str = None, current_user: dict = Depends(get_current_user)):

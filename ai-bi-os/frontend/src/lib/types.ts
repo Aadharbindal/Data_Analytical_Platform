@@ -273,3 +273,53 @@ export interface ExecutiveSummary {
   summary: string;
   highlights?: string[];
 }
+
+export interface ExecutiveKPIReport {
+  category: "Primary" | "Volume" | "Efficiency" | "Health" | "Other" | string;
+  name: string;
+  current: number;
+  previous: number | null;
+  difference: number | null;
+  percentage: number | null;
+  trend: "up" | "down" | "flat" | null;
+  history: {
+    monthly: Array<{name: string, value: number}>;
+    quarterly: Array<{name: string, value: number}>;
+    yearly: Array<{name: string, value: number}>;
+  };
+  coverage: number;
+  rows_used: number;
+  aggregation: string;
+  query_id: string;
+  confidence: number;
+  last_refresh: string;
+  source_column: string;
+  formulas: {
+    logic: string;
+    sql: string;
+    python: string;
+  };
+  type: "currency" | "percent" | "count" | "generic" | "numeric";
+  rationale?: string;
+  insight: string;
+  reporting_period: string;
+  comparison_period: string;
+  drilldown_metadata?: Record<string, any>;
+  scores: {
+    business_importance: number;
+    data_reliability: number;
+    semantic_confidence: number;
+    coverage: number;
+  };
+  dependencies: string[];
+}
+
+export interface PipelineHealth {
+  dataset_quality: number;
+  completeness: number;
+  missing_percentage: number;
+  duplicate_percentage: number;
+  schema_confidence: number;
+  semantic_confidence: number;
+  overall_reliability: number;
+}
