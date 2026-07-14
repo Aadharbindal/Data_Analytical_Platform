@@ -150,11 +150,10 @@ export function Sidebar() {
                 {user?.full_name ? user.full_name.charAt(0).toUpperCase() : <User className="h-4 w-4" />}
               </div>
               <div className={cn(
-                "flex flex-col overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.25,0.1,0.25,1.0)]",
+                "flex flex-col overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] justify-center",
                 isCollapsed ? "max-w-0 opacity-0 ml-0" : "max-w-[150px] opacity-100 ml-3"
               )}>
                 <span className="text-[13px] font-semibold text-foreground/90 group-hover:text-foreground transition-colors truncate">{user?.full_name || "Guest"}</span>
-                <span className="text-[11px] text-muted-foreground tracking-wide font-medium truncate w-24">{user?.email || "guest@example.com"}</span>
               </div>
             </div>
             <button onClick={logout} className={cn(
