@@ -92,7 +92,7 @@ function InsightCard({ insight }: { insight: Insight }) {
     titleLower.includes("cost") ||
     titleLower.includes("price") ||
     titleLower.includes("sales") ||
-    (insight.impact !== undefined && insight.impact > 10_000);
+    (insight.impact !== undefined && Number(insight.impact) > 10_000);
   const isPercent =
     titleLower.includes("percentage") || titleLower.includes("rate");
   const isCount =
@@ -116,7 +116,7 @@ function InsightCard({ insight }: { insight: Insight }) {
     return formatNumber(val);
   };
 
-  const hasImpact = insight.impact !== undefined && insight.impact > 0;
+  const hasImpact = insight.impact !== undefined && Number(insight.impact) > 0;
 
   return (
     <div
@@ -195,7 +195,7 @@ function InsightCard({ insight }: { insight: Insight }) {
                   Business Impact
                 </span>
                 <span className="text-sm font-bold text-foreground tabular-nums ml-1">
-                  {formatImpact(insight.impact!)}
+                  {formatImpact(Number(insight.impact!))}
                 </span>
               </div>
             </div>

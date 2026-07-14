@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
+import { ArrowUpRight } from 'lucide-react';
 
 export const TrafficChart: React.FC = () => {
   const data = [
