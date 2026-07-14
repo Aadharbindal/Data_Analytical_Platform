@@ -72,9 +72,6 @@ def verify_numbers_against_facts(llm_text: str, facts_text: str) -> bool:
             if abs(l_num - f_num) < 1.0:
                 match_found = True
                 break
-            if abs(l_num - (f_num * 100)) < 1.0:
-                match_found = True
-                break
             if was_abbreviated and f_num != 0 and abs(l_num - f_num) / abs(f_num) < 0.05:
                 match_found = True
                 break

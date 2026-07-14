@@ -77,6 +77,21 @@ class DeepInsightsEngine:
             if ctx["row_count"] == 0:
                 return [] # No data
                 
+            # Compute dataset totals for Sanity-Bound checks
+            dataset_totals = {}
+            try:
+                desc_res = self.db_engine.execute("DESCRIBE active_dataset")
+                num_cols = [c['column_name'] for c in desc_res.get("rows", []) if c['column_type'] in ('DOUBLE', 'BIGINT', 'INTEGER', 'FLOAT', 'REAL', 'DECIMAL', 'NUMERIC')]
+                if num_cols:
+                    sum_queries = [f"SUM({c}) as sum_{c}" for c in num_cols]
+                    total_res = self.db_engine.execute(f"SELECT {', '.join(sum_queries)} FROM active_dataset")
+                    if total_res and total_res.get("rows"):
+                        for c in num_cols:
+                            val = total_res["rows"][0].get(f"sum_{c}")
+                            dataset_totals[c] = float(val) if val is not None else 0.0
+            except Exception as e:
+                logging.error(f"Failed to compute dataset totals: {e}")
+                
             def call_llm_with_retry(prompt, log_name):
                 import time
                 for attempt in range(3):
@@ -156,6 +171,8 @@ The table is named 'active_dataset'.
 When grouping by a high-cardinality dimension like exact date, prefer using COUNT(*) alongside any AVG/SUM and note that group-by-exact-date often produces tiny, statistically unreliable groups - consider grouping by week, month, or day-of-week instead for anything claiming a 'trend'.
 IMPORTANT: Whenever you use GROUP BY, you MUST include COUNT(*) AS sample_size in your SELECT clause so sample sizes can be verified.
 CRITICAL: DuckDB does NOT support 'to_char'. If you need to format dates as strings (e.g. for month/year), use strftime(date_column, '%Y-%m') or date_trunc().
+CRITICAL: For any question asking about the top/highest/most/lowest/least entity, your SQL MUST include an explicit ORDER BY on the relevant aggregate and the entity name column in the SELECT - never rely on implicit row order. Do NOT add WHERE filters that are not explicitly part of the question.
+CRITICAL: When computing percentages, always compute them fully in SQL (multiply by 100 in the query) and name the column with a _pct suffix, so the result value is the final displayable percentage.
 Return ONLY a valid JSON object with a single key "mappings" containing an array of objects with keys: "question" (string) and "sql" (string)."""
             q_json_str = json.dumps(questions)
             sql_mappings = call_llm_with_retry(sql_prompt + "\n\nQuestions:\n" + q_json_str, "LLM CALL 2 (SQL Mappings)")
@@ -251,6 +268,7 @@ Return ONLY a valid JSON object with a single key "mappings" containing an array
 CRITICAL: BUSINESS REASONING. Never infer. Never hallucinate. Never assume. Never say Revenue, Profit, Customer Satisfaction, Fraud, Marketing Opportunity, or Operational Problem unless SQL explicitly proves it. Only state what data supports.
 CRITICAL: Terminology MUST strictly match the detected business domain vocabulary. Never use generic labels unless those concepts explicitly exist in the dataset. Use terminology consistent with the SEMANTIC DATA DICTIONARY columns and names.
 CRITICAL: You MUST ONLY cite numbers and metrics that are explicitly present in the provided result rows and SQL query. Do not invent, estimate, or guess any figures.
+CRITICAL: Cite every numeric value EXACTLY as it appears in the result rows - never convert fractions to percentages or vice versa yourself. If a result column is already a percentage, use it as-is; if it is a fraction/ratio, present it as-is (e.g. 'ratio of 0.84').
 CRITICAL: DO NOT infer or mention columns/metrics that do not exist in the results.
 CRITICAL: Recommendations MUST be directly traceable to the SQL evidence. Do NOT recommend high-level business actions like "Invest", "Increase Marketing", or "Boost Revenue" unless the dataset explicitly supports and proves those conclusions.
 CRITICAL: If the data does not support a clear conclusion, do not generate an insight for this question at all - simply skip it.
@@ -286,7 +304,7 @@ Finding: Average transaction value peaked in June.
 - sql (string, copy it exactly from the input)"""
             # Build explicit constraints to prevent LLM reasoning bugs and ensure correctness
             constraint_str = ""
-            successful_results = successful_results[:8] # Prevent rate limits by capping to top 8
+            successful_results = successful_results[:5] # Prevent rate limits by capping to top 5
             for i, res in enumerate(successful_results):
                 q = res["question"]
                 stats = res.get("explicit_stats_for_llm", {})
@@ -434,7 +452,7 @@ Finding: Average transaction value peaked in June.
                      else:
                          return f"{prefix}{val:.2f} {label}".strip()
 
-            def validate_and_correct_insight(ins, orig_res):
+            def validate_and_correct_insight(ins, orig_res, ds_totals):
                 stats = orig_res.get("explicit_stats_for_llm", {})
                 rows = orig_res.get("rows", [])
                 if not rows or not stats:
@@ -504,7 +522,8 @@ Finding: Average transaction value peaked in June.
                 orig_text = f"{ins.get('title', '')} {orig_desc} {ins.get('impact', '')}"
                 if not verify_numbers_against_facts(orig_text, json.dumps(rows, default=str)):
                     return None
-                    
+
+
                 rebuilt_desc = (
                     f"Highest {cat_label}: {high_cat} {formatted_high}\n"
                     f"Lowest {cat_label}: {low_cat} {formatted_low}"
@@ -604,7 +623,8 @@ Finding: Average transaction value peaked in June.
                 orig_res = next((r for r in successful_results if r["sql"] == matching_sql), None)
                 
                 if orig_res:
-                    ins = validate_and_correct_insight(ins, orig_res)
+                    ins = validate_and_correct_insight(ins, orig_res, dataset_totals)
+
                     if ins is None:
                         logging.warning(f"Validation Layer dropped insight due to mismatch: {ins}")
                         continue
@@ -652,6 +672,55 @@ Finding: Average transaction value peaked in June.
                 
                 if not verified:
                     continue
+                    
+                # Filter Problem 6: Sanity-Bound Check
+                if orig_res:
+                    stats = orig_res.get("explicit_stats_for_llm", {})
+                    rows = orig_res.get("rows", [])
+                    if rows and stats:
+                        num_col = None
+                        for k in stats:
+                            if "highest_value" in stats[k]:
+                                num_col = k
+                                break
+                        if num_col:
+                            cat_col = None
+                            for k in rows[0].keys():
+                                if k != num_col and not isinstance(rows[0][k], (int, float)):
+                                    cat_col = k
+                                    break
+                            if not cat_col:
+                                for k in rows[0].keys():
+                                    if k != num_col:
+                                        cat_col = k
+                                        break
+                            if cat_col and len(rows) > 1:
+                                col_stats = stats[num_col]
+                                high_val = col_stats.get("highest_value")
+                                high_row = col_stats.get("highest_row_data", {})
+                                high_cat = str(high_row.get(cat_col, ''))
+                                sql_lower = orig_res.get("sql", "").lower()
+                                if not ("_pct" in sql_lower or "/" in sql_lower or "* 100" in sql_lower):
+                                    if num_col in dataset_totals and dataset_totals[num_col] > 0:
+                                        if high_val > 0.50 * dataset_totals[num_col]:
+                                            try:
+                                                safe_cat = str(high_cat).replace("'", "''")
+                                                verify_sql = f"SELECT SUM({num_col}) as val FROM active_dataset WHERE {cat_col} = '{safe_cat}'"
+                                                verify_res = self.db_engine.execute(verify_sql)
+                                                verify_rows = verify_res.get("rows", [])
+                                                if verify_rows and verify_rows[0].get("val") is not None:
+                                                    actual_sum = float(verify_rows[0]["val"])
+                                                    if abs(actual_sum - high_val) / max(abs(high_val), 1) <= 0.005:
+                                                        logging.info(f"Sanity-Bound check PASSED: Genuine concentration detected ({high_val} matches {actual_sum} for {high_cat})")
+                                                    else:
+                                                        logging.warning(f"Main loop dropped insight due to Sanity-Bound mismatch: {high_val} claimed, but actual sum is {actual_sum}")
+                                                        continue
+                                                else:
+                                                    logging.warning(f"Main loop dropped insight due to Sanity-Bound verification failing (no rows returned)")
+                                                    continue
+                                            except Exception as e:
+                                                logging.error(f"Failed to verify Sanity-Bound claim: {e}")
+                                                continue
                     
                 dim_type, penalty = get_dimension_type_and_penalty(matching_sql, sem_dict)
                 score = score_insight(ins, orig_res) + penalty
