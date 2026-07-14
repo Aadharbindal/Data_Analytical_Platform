@@ -37,8 +37,11 @@ export function DeepAnalysisDialog({ column, onClose }: DeepAnalysisDialogProps)
     <Dialog open={!!column} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-[95vw] sm:max-w-4xl md:max-w-5xl lg:max-w-6xl bg-surface/95 border-border/50 backdrop-blur-xl max-h-[90vh] overflow-y-auto p-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold flex items-center gap-2">
-            Analysis for <span className="text-primary">`{column}`</span>
+          <DialogTitle className="text-2xl font-semibold flex items-center gap-3 tracking-tight">
+            <span className="text-foreground/90">Column Analysis</span>
+            <div className="flex items-center px-3 py-1 rounded-lg bg-white/[0.06] border border-white/[0.1] shadow-sm">
+              <span className="text-sm font-mono text-white/90 font-medium tracking-wide">{column}</span>
+            </div>
           </DialogTitle>
         </DialogHeader>
 
@@ -61,49 +64,57 @@ export function DeepAnalysisDialog({ column, onClose }: DeepAnalysisDialogProps)
               <ResponsiveContainer width="100%" height="100%" className="relative z-10">
                 <BarChart
                   data={data.type === "numeric" ? data.histogram : data.frequencies}
-                  margin={{ top: 20, right: 20, left: -10, bottom: 90 }}
+                  margin={{ top: 20, right: 20, left: 0, bottom: 20 }}
                 >
                   <defs>
                     <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#60a5fa" stopOpacity={1} />
-                      <stop offset="100%" stopColor="#2563eb" stopOpacity={0.4} />
+                      <stop offset="0%" stopColor="#ffffff" stopOpacity={0.8} />
+                      <stop offset="100%" stopColor="#ffffff" stopOpacity={0.05} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                   <XAxis 
                     dataKey={data.type === "numeric" ? "bin_start" : "value"} 
-                    stroke="#ffffff50" 
-                    fontSize={12}
-                    tickMargin={16} 
+                    stroke="rgba(255,255,255,0.4)" 
+                    fontSize={11}
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={12} 
+                    minTickGap={30}
                     tickFormatter={(val) => {
                       if (data.type === "numeric") return formatNumber(val);
                       if (typeof val !== "string") return String(val);
-                      return val.length > 20 ? val.substring(0,18)+"..." : val;
+                      return val.length > 15 ? val.substring(0, 13) + "..." : val;
                     }}
-                    angle={data.type === "categorical" ? -45 : 0}
-                    textAnchor={data.type === "categorical" ? "end" : "middle"}
                   />
-                  <YAxis stroke="#ffffff50" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis 
+                    stroke="rgba(255,255,255,0.4)" 
+                    fontSize={11} 
+                    tickLine={false} 
+                    axisLine={false} 
+                    tickFormatter={(val) => val >= 1000 ? `${(val / 1000).toFixed(1)}k` : val}
+                  />
                   <RechartsTooltip 
-                    cursor={{fill: '#ffffff0a'}}
+                    cursor={{ fill: 'rgba(255,255,255,0.03)' }}
                     contentStyle={{ 
-                      backgroundColor: 'rgba(15, 23, 42, 0.9)', 
-                      backdropFilter: 'blur(12px)',
-                      borderColor: 'rgba(255, 255, 255, 0.1)', 
-                      borderRadius: '12px', 
-                      padding: '12px 16px',
-                      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.5)'
+                      backgroundColor: 'rgba(20, 25, 35, 0.7)', 
+                      backdropFilter: 'blur(20px)',
+                      WebkitBackdropFilter: 'blur(20px)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '16px', 
+                      padding: '14px 18px',
+                      boxShadow: '0 20px 40px -10px rgba(0,0,0,0.5)',
                     }}
-                    itemStyle={{ color: '#e0f2fe', fontWeight: 600, fontSize: '15px' }}
-                    labelStyle={{ color: '#94a3b8', marginBottom: '6px', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.5px' }}
+                    itemStyle={{ color: '#fff', fontWeight: 600, fontSize: '15px', padding: '0' }}
+                    labelStyle={{ color: 'rgba(255,255,255,0.6)', marginBottom: '6px', fontSize: '12px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em' }}
                     formatter={(val: number) => [formatNumber(val), "Count"]}
                     labelFormatter={(label) => data.type === "numeric" ? `Bin: ${formatNumber(Number(label))}` : `${label}`}
                   />
                   <Bar 
                     dataKey="count" 
                     fill="url(#colorCount)" 
-                    radius={[6, 6, 0, 0]}
-                    barSize={data.type === "numeric" ? undefined : 32}
+                    radius={[4, 4, 0, 0]}
+                    maxBarSize={40}
                   />
                 </BarChart>
               </ResponsiveContainer>
