@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DataMind AI BI OS",
+  title: "DataMind",
   description: "Enterprise AI Business Intelligence Operating System",
 };
 
