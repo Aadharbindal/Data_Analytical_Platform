@@ -146,8 +146,8 @@ export function Sidebar() {
             isCollapsed ? "justify-center py-2 px-0 flex-col" : "justify-between px-3 py-2.5"
           )} title={isCollapsed ? (user?.full_name || "User") : undefined}>
             <div className="flex items-center">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary border border-primary/30 shrink-0">
-                <User className="h-4 w-4" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary border border-primary/30 shrink-0 font-semibold text-sm">
+                {user?.full_name ? user.full_name.charAt(0).toUpperCase() : <User className="h-4 w-4" />}
               </div>
               <div className={cn(
                 "flex flex-col overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.25,0.1,0.25,1.0)]",
