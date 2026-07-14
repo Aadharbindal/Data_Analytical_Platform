@@ -28,7 +28,7 @@ export function RevenueCard({ data, semanticDict }: RevenueCardProps) {
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [range, setRange] = useState<'12m' | 'ytd' | 'all'>('12m');
 
-  const chartTitle = semanticDict?.business_terminology?.chart_title || "Value Forecast (Click to drill down)";
+  const chartTitle = semanticDict?.business_terminology?.chart_title || "Value Forecast";
   const primaryLabel = semanticDict?.business_terminology?.primary_metric_label || "Value";
   const primaryMetric = semanticDict?.business_terminology?.primary_metric || "";
   const metricType = semanticDict?.business_terminology?.primary_metric_type || "currency";
@@ -98,7 +98,7 @@ export function RevenueCard({ data, semanticDict }: RevenueCardProps) {
     <>
       <Card className="glass-card h-full flex flex-col p-1">
         <CardHeader className="pb-2 pt-4 px-5 flex flex-row items-center justify-between border-b border-border/40 mb-4">
-          <CardTitle className="text-base font-semibold tracking-tight text-foreground/90">{chartTitle} (Click to drill down)</CardTitle>
+          <CardTitle className="text-base font-semibold tracking-tight text-foreground/90">{chartTitle}</CardTitle>
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-1.5 bg-surface border border-border text-xs font-medium text-foreground rounded-lg px-3 py-1.5 outline-none hover:bg-white/5 transition-colors focus:ring-2 focus:ring-primary/30 shadow-sm cursor-pointer">
               {range === '12m' ? 'Last 12 Months' : range === 'ytd' ? 'Year to Date' : 'All Time'}
