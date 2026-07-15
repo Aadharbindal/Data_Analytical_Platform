@@ -84,7 +84,7 @@ function CatalogCard({ entry }: { entry: CatalogEntry }) {
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.06 } },
+  show: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.2 } },
 };
 const itemVariants = {
   hidden: { opacity: 0, y: 16 },
@@ -93,6 +93,7 @@ const itemVariants = {
 
 export default function DataCatalogPage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["catalog"],
@@ -107,9 +108,19 @@ export default function DataCatalogPage() {
   );
 
   return (
-    <div className="flex flex-col gap-6">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="flex flex-col gap-6"
+    >
       {/* Search and Entries */}
-      <div className="flex items-center justify-between gap-4">
+      <motion.div 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+        className="flex items-center justify-between gap-4"
+      >
         <div className="relative w-full max-w-lg">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
@@ -121,7 +132,7 @@ export default function DataCatalogPage() {
           />
         </div>
         <span className="text-sm text-muted-foreground whitespace-nowrap">{filtered.length} entries</span>
-      </div>
+      </motion.div>
 
       {/* List */}
       {isLoading ? (
@@ -140,19 +151,72 @@ export default function DataCatalogPage() {
           description={searchQuery ? `No results for "${searchQuery}"` : "Run the Metadata Catalog engine on a dataset to populate entries here."}
         />
       ) : (
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-          className="flex flex-col gap-4"
-        >
-          {filtered.map((entry) => (
-            <motion.div key={entry.id} variants={itemVariants}>
-              <CatalogCard entry={entry} />
-            </motion.div>
-          ))}
-        </motion.div>
+        <div className="flex flex-col">
+          <div className="flex justify-center mb-6 z-10 relative">
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="w-24 h-1.5 rounded-full bg-white/20 hover:bg-primary/60 transition-colors duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20"
+              title={isExpanded ? "Compress to stairs" : "Expand to list"}
+            />
+          </div>
+          
+          <motion.div
+            layout
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="relative w-full"
+            style={{ height: isExpanded ? 'auto' : `${120 + Math.min(filtered.length, 5) * 12}px` }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+          >
+            {filtered.map((entry, index) => {
+              const maxVisible = 6;
+              const isHidden = !isExpanded && index >= maxVisible;
+              
+              return (
+                <motion.div
+                  key={entry.id}
+                  layout
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={
+                    !isExpanded
+                      ? {
+                          y: index * 14,
+                          scale: Math.max(1 - index * 0.04, 0.8),
+                          opacity: isHidden ? 0 : Math.max(1 - index * 0.15, 0),
+                          zIndex: filtered.length - index,
+                        }
+                      : {
+                          y: 0,
+                          scale: 1,
+                          opacity: 1,
+                          zIndex: 1,
+                        }
+                  }
+                  transition={{ 
+                    type: "spring", 
+                    stiffness: 180, 
+                    damping: 24, 
+                    delay: isExpanded 
+                      ? Math.max(0, (Math.min(filtered.length, maxVisible) - 1 - index)) * 0.07 
+                      : index * 0.04 
+                  }}
+                  style={{
+                    position: isExpanded ? "relative" : "absolute",
+                    width: "100%",
+                    marginBottom: isExpanded ? "16px" : 0,
+                    top: 0,
+                    left: 0,
+                    transformOrigin: "top center",
+                    pointerEvents: isHidden ? "none" : "auto"
+                  }}
+                >
+                  <CatalogCard entry={entry} />
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
       )}
-    </div>
+    </motion.div>
   );
 }

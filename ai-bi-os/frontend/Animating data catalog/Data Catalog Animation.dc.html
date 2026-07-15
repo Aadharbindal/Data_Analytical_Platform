@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    html, body { margin: 0; padding: 0; background: #05070c; }
+    a { color: #3B82F6; } a:hover { color: #60A5FA; }
+  </style>
+  <script>window.OM_SCENES = '[{"name":"Opening","dur":3},{"name":"Ingest","dur":4},{"name":"Catalog","dur":5},{"name":"Search","dur":5},{"name":"Outro","dur":3}]';</script>
+  <script>window.OM_PLAYBACK = '{"mode":"loop"}';</script>
+  <script>window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{"accent":"#3B82F6","motionEditor":true}/*EDITMODE-END*/;</script>
+</helmet>
+<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #05070c;">
+  <x-import component-from-global-scope="CatalogVideo" from="./animations-v2.jsx ./tweaks-panel.jsx ./catalog-scenes.jsx" hint-size="1280px,720px"></x-import>
+</div>
+</x-dc>
+</body>
+</html>
