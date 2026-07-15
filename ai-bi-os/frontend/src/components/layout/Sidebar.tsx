@@ -46,8 +46,17 @@ export function Sidebar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const [isManualCollapsed, setIsManualCollapsed] = useState(false);
+  const [isManualExpanded, setIsManualExpanded] = useState(false);
   const isAnalyticsRoute = pathname?.startsWith("/analytics") ?? false;
-  const isCollapsed = isAnalyticsRoute || isManualCollapsed;
+  const isCollapsed = isAnalyticsRoute ? !isManualExpanded : isManualCollapsed;
+
+  const toggleSidebar = () => {
+    if (isAnalyticsRoute) {
+      setIsManualExpanded(!isManualExpanded);
+    } else {
+      setIsManualCollapsed(!isManualCollapsed);
+    }
+  };
 
   return (
     <div className={cn(
@@ -55,15 +64,13 @@ export function Sidebar() {
       isCollapsed ? "w-[64px]" : "w-[260px]"
     )}>
       {/* Floating Toggle Button */}
-      {!isAnalyticsRoute && (
-        <button
-          onClick={() => setIsManualCollapsed(!isManualCollapsed)}
-          className="absolute -right-3 top-[24px] flex h-6 w-6 items-center justify-center rounded-full bg-[#11131a] border border-border text-muted-foreground shadow-[0_0_10px_rgba(0,0,0,0.5)] hover:bg-white/[0.1] hover:text-foreground z-50 transition-all duration-300"
-          title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-        >
-          <ChevronLeft className={cn("h-3.5 w-3.5 transition-transform duration-400", isCollapsed && "rotate-180")} strokeWidth={2.5} />
-        </button>
-      )}
+      <button
+        onClick={toggleSidebar}
+        className="absolute -right-3 top-[24px] flex h-6 w-6 items-center justify-center rounded-full bg-[#11131a] border border-border text-muted-foreground shadow-[0_0_10px_rgba(0,0,0,0.5)] hover:bg-white/[0.1] hover:text-foreground z-50 transition-all duration-300"
+        title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+      >
+        <ChevronLeft className={cn("h-3.5 w-3.5 transition-transform duration-400", isCollapsed && "rotate-180")} strokeWidth={2.5} />
+      </button>
 
       {/* Brand / Logo */}
       <div className={cn("flex h-[72px] shrink-0 items-center border-b border-border/40 mb-2 transition-all duration-400", isCollapsed ? "px-0 justify-center" : "px-6")}>
