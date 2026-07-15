@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { Layers, Mail, Lock, Eye, EyeOff, Activity, ShieldCheck, Users } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -48,7 +49,12 @@ export default function LoginPage() {
       <div className="w-full max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 min-h-screen z-10">
         
         {/* Left Column - Branding & Features */}
-        <div className="hidden lg:flex flex-col justify-center px-16 py-12 relative">
+        <motion.div 
+          initial={{ opacity: 0, x: -80 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="hidden lg:flex flex-col justify-center px-16 py-12 relative"
+        >
           
           {/* Logo */}
           <div className="absolute top-12 left-16 flex items-center gap-2">
@@ -106,7 +112,7 @@ export default function LoginPage() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Right Column - Auth Card */}
         <div className="flex items-center justify-center p-6 lg:p-12 relative">
