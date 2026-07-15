@@ -26,12 +26,27 @@ interface DashboardGridProps {
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.08 } },
+  show: { 
+    opacity: 1, 
+    transition: { 
+      staggerChildren: 0.15,
+      delayChildren: 0.1 
+    } 
+  },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 300, damping: 24 } },
+  hidden: { opacity: 0, y: 30 },
+  show: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { 
+      type: "spring" as const, 
+      stiffness: 200, 
+      damping: 25,
+      mass: 0.8
+    } 
+  },
 };
 
 function formatValue(value: number, type?: string): string {
@@ -149,17 +164,19 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
     >
 
       {/* Top Row: Metrics */}
-      <motion.div 
-        variants={itemVariants} 
-        className="col-span-12 grid gap-6"
-        style={{ gridTemplateColumns: `repeat(${loading.analytics ? 4 : (metricCards.length || 4)}, minmax(0, 1fr))` }}
-      >
+      <div className="col-span-12 grid grid-cols-4 gap-6 w-full">
         {loading.analytics
-          ? Array.from({ length: 4 }).map((_, i) => <MetricCardSkeleton key={i} />)
+          ? Array.from({ length: 4 }).map((_, i) => (
+              <motion.div key={i} variants={itemVariants}>
+                <MetricCardSkeleton />
+              </motion.div>
+            ))
           : metricCards.map((card, idx) => (
-              <MetricCard key={card.title} index={idx} {...card} />
+              <motion.div key={card.title} variants={itemVariants}>
+                <MetricCard index={idx} {...card} />
+              </motion.div>
             ))}
-      </motion.div>
+      </div>
 
       {/* Main Middle Row: Hero Chart & AI Centerpiece */}
       <motion.div

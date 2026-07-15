@@ -211,4 +211,60 @@ nextjs-portal,
 #__next-build-watcher,
 #next-route-announcer {
   display: none !important;
+}/* Auth Page Animations */
+@keyframes authFadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
 }
+@keyframes authFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes authSlideInRight {
+  from { opacity: 0; transform: translateX(48px) scale(0.97); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+@keyframes authFloatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes authGlowPulse {
+  0%, 100% { box-shadow: 0 0 18px 2px rgba(59,130,246,0.35), 0 0 0 1px rgba(59,130,246,0.25) inset; }
+  50% { box-shadow: 0 0 30px 6px rgba(59,130,246,0.55), 0 0 0 1px rgba(59,130,246,0.4) inset; }
+}
+@keyframes authTextGlow {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(59,130,246,0.35)); }
+  50% { filter: drop-shadow(0 0 18px rgba(96,165,250,0.75)); }
+}
+@keyframes authShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes authBlobDrift1 {
+  0%, 100% { transform: translate(0,0) scale(1); }
+  50% { transform: translate(40px,-30px) scale(1.15); }
+}
+@keyframes authBlobDrift2 {
+  0%, 100% { transform: translate(0,0) scale(1); }
+  50% { transform: translate(-30px,30px) scale(1.1); }
+}
+@keyframes authBorderTravel {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes authIconFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(-3deg); }
+}
+
+.animate-auth-fade-up { animation: authFadeUp 0.7s ease-out forwards; opacity: 0; }
+.animate-auth-slide-in-right { animation: authSlideInRight 0.8s cubic-bezier(0.16,1,0.3,1) forwards; opacity: 0; }
+.animate-auth-blob-drift-1 { animation: authBlobDrift1 14s ease-in-out infinite; }
+.animate-auth-blob-drift-1-reverse { animation: authBlobDrift1 20s ease-in-out infinite reverse; }
+.animate-auth-blob-drift-2 { animation: authBlobDrift2 18s ease-in-out infinite; }
+.animate-auth-glow-pulse { animation: authGlowPulse 3.2s ease-in-out infinite, authFloatY 5s ease-in-out infinite; }
+.animate-auth-shimmer { animation: authShimmer 3s linear infinite; }
+.animate-auth-text-glow { animation: authTextGlow 3s ease-in-out infinite; }
+.animate-auth-icon-float { animation: authIconFloat 4.5s ease-in-out infinite; }
+.animate-auth-border-travel { animation: authBorderTravel 5s linear infinite; }
+.animate-auth-spin { animation: spin 0.7s linear infinite; }

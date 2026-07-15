@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@keyframes popIn {
+  0% { opacity: 0; transform: translateY(10px) scale(0.96); }
+  60% { opacity: 1; transform: translateY(-2px) scale(1.01); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
+}
+@keyframes pulseRing {
+  0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.35); }
+  100% { box-shadow: 0 0 0 14px rgba(239,68,68,0); }
+}
+body { margin: 0; background: #05060a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+</style>
+</helmet>
+
+<div style="width:1660px;height:897px;background:#05060a;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+
+  <!-- fake dashboard behind, blurred -->
+  <div style="position:absolute;inset:0;filter:blur(2px);opacity:0.5;padding:40px;box-sizing:border-box;">
+    <div style="display:flex;gap:24px;margin-bottom:40px;">
+      <div style="width:120px;height:28px;background:#151925;border-radius:8px;"></div>
+      <div style="width:200px;height:28px;background:#151925;border-radius:8px;"></div>
+      <div style="width:180px;height:28px;background:#151925;border-radius:8px;margin-left:auto;"></div>
+    </div>
+    <div style="width:240px;height:44px;background:#1a2333;border-radius:8px;margin-bottom:60px;"></div>
+    <sc-for list="{{ rows }}" as="row" hint-placeholder-count="4">
+      <div style="display:flex;gap:16px;align-items:center;margin-bottom:24px;">
+        <div style="width:36px;height:36px;border-radius:8px;background:{{ row.color }};"></div>
+        <div style="width:340px;height:20px;background:#151925;border-radius:6px;"></div>
+        <div style="width:80px;height:20px;background:#151925;border-radius:6px;"></div>
+        <div style="width:120px;height:24px;background:{{ row.tagBg }};border-radius:12px;"></div>
+        <div style="width:60px;height:20px;background:#151925;border-radius:6px;"></div>
+        <div style="width:60px;height:20px;background:#151925;border-radius:6px;"></div>
+      </div>
+    </sc-for>
+  </div>
+
+  <!-- backdrop -->
+  <div style="position:absolute;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);"></div>
+
+  <sc-if value="{{ !deleted }}" hint-placeholder-val="{{ true }}">
+    <div style="position:relative;width:634px;background:linear-gradient(180deg,#151a26,#101420);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:36px 40px 28px;box-shadow:0 30px 80px rgba(0,0,0,0.6);animation:{{ shakeAnim }} 0.5s ease;">
+
+      <div style="width:56px;height:56px;border-radius:50%;background:rgba(239,68,68,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:22px;animation:pulseRing 1.8s ease-out infinite;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="9" stroke="#ef4444" stroke-width="2"/>
+          <line x1="12" y1="7.5" x2="12" y2="12.5" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="12" cy="16" r="1.1" fill="#ef4444"/>
+        </svg>
+      </div>
+
+      <div style="font-size:26px;font-weight:700;color:#f4f5f7;margin-bottom:14px;letter-spacing:-0.01em;">Delete Dataset</div>
+
+      <div style="font-size:16px;line-height:1.6;color:#9aa0ac;margin-bottom:8px;">
+        Are you sure you want to delete <span style="color:#e5e7eb;font-weight:600;">{{ datasetName }}</span>? This action cannot be undone and will remove the file and all its associated metadata.
+      </div>
+
+      <sc-if value="{{ showRoast }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:14px;color:#f59e0b;margin-top:10px;font-style:italic;">
+          {{ roastText }}
+        </div>
+      </sc-if>
+
+      <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:26px;">
+        <button
+          onClick="{{ onCancel }}"
+          style="padding:11px 22px;border-radius:10px;background:#242938;color:#e5e7eb;border:1px solid rgba(255,255,255,0.08);font-size:15px;font-weight:600;cursor:pointer;transition:background 0.15s;"
+          style-hover="background:#2c3244;"
+        >Cancel</button>
+        <button
+          onClick="{{ onDelete }}"
+          style="padding:11px 26px;border-radius:10px;background:#ef4444;color:white;border:none;font-size:15px;font-weight:700;cursor:pointer;transition:transform 0.12s, background 0.15s;box-shadow:0 6px 16px rgba(239,68,68,0.3);"
+          style-hover="background:#dc2626;transform:translateY(-1px);"
+          style-active="transform:scale(0.96);"
+        >Delete</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ deleted }}" hint-placeholder-val="{{ false }}">
+    <div style="position:relative;width:460px;background:linear-gradient(180deg,#151a26,#101420);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:40px;box-shadow:0 30px 80px rgba(0,0,0,0.6);text-align:center;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);">
+      <div style="font-size:46px;margin-bottom:14px;">🗑️💨</div>
+      <div style="font-size:22px;font-weight:700;color:#f4f5f7;margin-bottom:10px;">Gone. Poof.</div>
+      <div style="font-size:15px;color:#9aa0ac;margin-bottom:24px;">{{ datasetName }} has left the building. No takebacks.</div>
+      <button
+        onClick="{{ onReset }}"
+        style="padding:10px 22px;border-radius:10px;background:#242938;color:#e5e7eb;border:1px solid rgba(255,255,255,0.08);font-size:14px;font-weight:600;cursor:pointer;"
+        style-hover="background:#2c3244;"
+      >Bring back the drama</button>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1660,&quot;height&quot;:897},&quot;datasetName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;customer_churn_v3.csv&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const ROASTS = [
+  "This is your villain-origin-story moment.",
+  "Delete first, panic later — the true developer way.",
+  "There is no undo button. Choose violence wisely.",
+  "The dataset trusted you. And yet, here we are.",
+];
+
+class Component extends DCLogic {
+  state = {
+    deleted: false,
+    shake: false,
+    showRoast: false,
+    roastIdx: 0,
+  };
+
+  onCancel = () => {
+    this.setState({ shake: true, showRoast: true, roastIdx: (this.state.roastIdx + 1) % ROASTS.length });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.setState({ shake: false }), 500);
+  };
+
+  onDelete = () => {
+    this.setState({ deleted: true });
+  };
+
+  onReset = () => {
+    this.setState({ deleted: false, showRoast: false });
+  };
+
+  renderVals() {
+    return {
+      datasetName: this.props.datasetName ?? "customer_churn_v3.csv",
+      deleted: this.state.deleted,
+      shakeAnim: this.state.shake ? "shake" : "popIn",
+      showRoast: this.state.showRoast,
+      roastText: ROASTS[this.state.roastIdx],
+      onCancel: this.onCancel,
+      onDelete: this.onDelete,
+      onReset: this.onReset,
+      rows: [
+        { color: "#2563eb", tagBg: "rgba(34,197,94,0.15)" },
+        { color: "#7c3aed", tagBg: "rgba(234,179,8,0.15)" },
+        { color: "#0891b2", tagBg: "rgba(34,197,94,0.15)" },
+        { color: "#db2777", tagBg: "rgba(239,68,68,0.15)" },
+      ],
+    };
+  }
+}
+
+</script>
+</body>
+</html>

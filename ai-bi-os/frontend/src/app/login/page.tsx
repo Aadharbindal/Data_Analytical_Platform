@@ -4,11 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import api from "@/lib/api";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { Layers, Mail, Lock, Eye, EyeOff, Activity, ShieldCheck, Users } from "lucide-react";
-import { motion } from "framer-motion";
+import { AuthLayout } from "@/components/auth/AuthLayout";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -40,161 +37,245 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex bg-background text-foreground overflow-hidden relative selection:bg-primary/30">
-      
-      {/* Background Effects */}
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-primary/5 blur-[150px] pointer-events-none" />
+    <AuthLayout>
+      <div
+        style={{
+          position: "absolute",
+          inset: "-2px",
+          borderRadius: "26px",
+          overflow: "hidden",
+          opacity: 0.6,
+          pointerEvents: "none",
+        }}
+      >
+        <div
+          className="animate-auth-border-travel"
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            width: "180%",
+            height: "180%",
+            background: "conic-gradient(from 0deg, transparent 0%, rgba(77,139,255,0.5) 8%, transparent 16%)",
+            transformOrigin: "center",
+            transform: "translate(-50%, -50%)",
+          }}
+        ></div>
+      </div>
 
-      <div className="w-full max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 min-h-screen z-10">
-        
-        {/* Left Column - Branding & Features */}
-        <motion.div 
-          initial={{ opacity: 0, x: -80 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="hidden lg:flex flex-col justify-center px-16 py-12 relative"
-        >
-          
-          {/* Logo */}
-          <div className="absolute top-12 left-16 flex items-center gap-2">
-            <div className="flex items-center justify-center bg-primary/10 p-2 rounded-xl border border-primary/20">
-              <Layers className="h-6 w-6 text-primary" />
+      <div
+        style={{
+          position: "relative",
+          background: "rgba(13,17,28,0.92)",
+          backdropFilter: "blur(20px)",
+          border: "1px solid rgba(59,130,246,0.18)",
+          borderRadius: "24px",
+          padding: "32px 36px",
+          boxShadow: "0 30px 80px rgba(0,0,0,0.55)",
+        }}
+      >
+        <h2 style={{ margin: 0, fontSize: "32px", fontWeight: 800, color: "#fff", letterSpacing: "-0.01em" }}>
+          Sign in
+        </h2>
+        <p style={{ margin: "10px 0 0", fontSize: "15px", color: "#8b93a3" }}>
+          Enter your credentials to continue
+        </p>
+
+        <form onSubmit={handleLogin}>
+          <div style={{ marginTop: "22px" }}>
+            <label style={{ display: "block", fontSize: "14px", fontWeight: 600, color: "#c5cbd6", marginBottom: "8px" }}>
+              Email address
+            </label>
+            <div style={{ position: "relative" }}>
+              <span style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#6b7280", display: "flex" }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M3 6h18v12H3z" stroke="currentColor" strokeWidth="1.6" />
+                  <path d="M3 6l9 7 9-7" stroke="currentColor" strokeWidth="1.6" />
+                </svg>
+              </span>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="name@example.com"
+                required
+                style={{
+                  width: "100%",
+                  boxSizing: "border-box",
+                  padding: "14px 16px 14px 46px",
+                  borderRadius: "14px",
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  color: "#fff",
+                  fontSize: "15px",
+                  fontFamily: "inherit",
+                  outline: "none",
+                  transition: "border-color 0.25s, box-shadow 0.25s",
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "#4d8bff";
+                  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(77,139,255,0.18)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              />
             </div>
-            <span className="text-xl font-bold tracking-tight text-foreground">DataMind</span>
           </div>
 
-          <div className="max-w-lg mt-12">
-            {/* Tag */}
-            <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-8 shadow-[0_0_15px_rgba(0,112,243,0.1)]">
-              <span>Smart Analytics. Better Decisions.</span>
-            </div>
-
-            {/* Heading */}
-            <h1 className="text-5xl font-bold tracking-tight mb-6 leading-[1.1]">
-              Welcome back <br /> to <span className="bg-gradient-to-r from-primary to-blue-400 text-transparent bg-clip-text">DataMind</span>
-            </h1>
-
-            <p className="text-lg text-muted-foreground leading-relaxed mb-16 max-w-md">
-              Access your analytics workspace and turn data into meaningful insights.
-            </p>
-
-            {/* Features Row */}
-            <div className="grid grid-cols-3 gap-6">
-              <div className="space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                  <Activity className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-sm text-foreground mb-1">Real-time Analytics</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed pr-2">Track metrics and KPIs as they happen.</p>
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                  <ShieldCheck className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-sm text-foreground mb-1">Secure & Reliable</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed pr-2">Enterprise-grade security to protect your data.</p>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                  <Users className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-sm text-foreground mb-1">Collaborate Easily</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed pr-2">Work with your team and share insights.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Right Column - Auth Card */}
-        <div className="flex items-center justify-center p-6 lg:p-12 relative">
-          
-          {/* Mobile Logo */}
-          <div className="absolute top-8 left-8 flex lg:hidden items-center gap-2">
-            <div className="flex items-center justify-center bg-primary/10 p-1.5 rounded-lg border border-primary/20">
-              <Layers className="h-5 w-5 text-primary" />
-            </div>
-            <span className="text-lg font-bold tracking-tight text-foreground">DataMind</span>
-          </div>
-
-          {/* Glassmorphic Card */}
-          <div className="w-full max-w-[440px] p-10 rounded-[32px] bg-surface/60 backdrop-blur-2xl border border-border shadow-2xl relative overflow-hidden">
-            {/* Card inner glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-            
-            <div className="mb-10">
-              <h2 className="text-[28px] font-bold text-foreground tracking-tight mb-2">Sign in</h2>
-              <p className="text-muted-foreground text-sm">Enter your credentials to continue</p>
-            </div>
-
-            <form onSubmit={handleLogin} className="space-y-6">
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-xs font-semibold text-muted-foreground">Email address</label>
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="name@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="w-full pl-11 h-12 bg-background/50 border-border focus-visible:border-primary/50 focus-visible:ring-1 focus-visible:ring-primary/50 text-foreground placeholder:text-muted-foreground rounded-xl transition-all"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="password" className="text-xs font-semibold text-muted-foreground">Password</label>
-                <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="w-full pl-11 pr-11 h-12 bg-background/50 border-border focus-visible:border-primary/50 focus-visible:ring-1 focus-visible:ring-primary/50 text-foreground placeholder:text-muted-foreground rounded-xl transition-all"
-                  />
-                  <button 
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-              </div>
-
-              {error && <div className="text-sm text-destructive font-medium bg-destructive/10 p-3 rounded-lg border border-destructive/20">{error}</div>}
-
-              <Button 
-                type="submit" 
-                className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-[15px] rounded-xl shadow-[0_4px_14px_rgba(0,112,243,0.3)] transition-all hover:shadow-[0_6px_20px_rgba(0,112,243,0.4)]" 
-                disabled={isLoading}
+          <div style={{ marginTop: "16px" }}>
+            <label style={{ display: "block", fontSize: "14px", fontWeight: 600, color: "#c5cbd6", marginBottom: "8px" }}>
+              Password
+            </label>
+            <div style={{ position: "relative" }}>
+              <span style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#6b7280", display: "flex" }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.6" />
+                  <path d="M8 10V7a4 4 0 018 0v3" stroke="currentColor" strokeWidth="1.6" />
+                </svg>
+              </span>
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                required
+                style={{
+                  width: "100%",
+                  boxSizing: "border-box",
+                  padding: "14px 46px 14px 46px",
+                  borderRadius: "14px",
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  color: "#fff",
+                  fontSize: "15px",
+                  fontFamily: "inherit",
+                  outline: "none",
+                  transition: "border-color 0.25s, box-shadow 0.25s",
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "#4d8bff";
+                  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(77,139,255,0.18)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: "absolute",
+                  right: "12px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  color: "#6b7280",
+                  cursor: "pointer",
+                  padding: "6px",
+                  display: "flex",
+                  transition: "color 0.2s, transform 0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "#9aa4b5";
+                  e.currentTarget.style.transform = "translateY(-50%) scale(1.12)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "#6b7280";
+                  e.currentTarget.style.transform = "translateY(-50%) scale(1)";
+                }}
               >
-                {isLoading ? "Signing in..." : "Sign in"}
-              </Button>
-            </form>
-
-            <div className="mt-8 text-center text-sm text-muted-foreground">
-              Don't have an account?{" "}
-              <Link href="/signup" className="text-primary hover:text-primary/80 font-medium hover:underline transition-colors">
-                Sign up
-              </Link>
+                {!showPassword ? (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 12s3.5-7 9-7 9 7 9 7-3.5 7-9 7-9-7-9-7z" stroke="currentColor" strokeWidth="1.6" />
+                    <circle cx="12" cy="12" r="2.6" stroke="currentColor" strokeWidth="1.6" />
+                  </svg>
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 12s3.5-7 9-7c1.6 0 3 .4 4.2 1M21 12s-3.5 7-9 7c-1.6 0-3-.4-4.2-1" stroke="currentColor" strokeWidth="1.6" />
+                    <path d="M3 3l18 18" stroke="currentColor" strokeWidth="1.6" />
+                  </svg>
+                )}
+              </button>
             </div>
           </div>
+
+          {error && (
+            <div style={{ marginTop: "16px", fontSize: "14px", color: "#f87171", background: "rgba(248,113,113,0.1)", padding: "10px 14px", borderRadius: "10px", border: "1px solid rgba(248,113,113,0.2)" }}>
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            style={{
+              position: "relative",
+              overflow: "hidden",
+              width: "100%",
+              marginTop: "22px",
+              padding: "14px",
+              border: "none",
+              borderRadius: "14px",
+              background: "linear-gradient(90deg,#2563eb,#3b82f6)",
+              color: "#fff",
+              fontSize: "16px",
+              fontWeight: 700,
+              fontFamily: "inherit",
+              cursor: isLoading ? "not-allowed" : "pointer",
+              boxShadow: "0 10px 30px rgba(37,99,235,0.4)",
+              transition: "transform 0.15s, boxShadow 0.25s",
+              opacity: isLoading ? 0.8 : 1,
+            }}
+            onMouseEnter={(e) => {
+              if (!isLoading) {
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow = "0 14px 36px rgba(37,99,235,0.55)";
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isLoading) {
+                e.currentTarget.style.transform = "translateY(0px)";
+                e.currentTarget.style.boxShadow = "0 10px 30px rgba(37,99,235,0.4)";
+              }
+            }}
+            onMouseDown={(e) => {
+              if (!isLoading) e.currentTarget.style.transform = "translateY(0px) scale(0.98)";
+            }}
+            onMouseUp={(e) => {
+              if (!isLoading) e.currentTarget.style.transform = "translateY(-2px)";
+            }}
+          >
+            <div
+              className="animate-auth-shimmer"
+              style={{
+                position: "absolute",
+                inset: 0,
+                background: "linear-gradient(100deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%)",
+                backgroundSize: "200% 100%",
+              }}
+            ></div>
+            {isLoading ? (
+              <span style={{ position: "relative", display: "inline-flex", alignItems: "center", gap: "10px", justifyContent: "center", width: "100%" }}>
+                <span className="animate-auth-spin" style={{ width: "16px", height: "16px", borderRadius: "50%", border: "2px solid rgba(255,255,255,0.35)", borderTopColor: "#fff", display: "inline-block" }}></span>
+                Signing in…
+              </span>
+            ) : (
+              <span style={{ position: "relative" }}>Sign in</span>
+            )}
+          </button>
+        </form>
+
+        <div style={{ marginTop: "18px", textAlign: "center", fontSize: "14px", color: "#8b93a3" }}>
+          Don't have an account?{" "}
+          <Link href="/signup" style={{ color: "#5b9dff", textDecoration: "none", fontWeight: 500 }} onMouseEnter={(e) => e.currentTarget.style.textDecoration = "underline"} onMouseLeave={(e) => e.currentTarget.style.textDecoration = "none"}>
+            Sign up
+          </Link>
         </div>
       </div>
-    </div>
+    </AuthLayout>
   );
 }
