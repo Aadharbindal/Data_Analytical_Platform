@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Sparkles, TrendingUp, ArrowRight, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,54 @@ import { useQuery } from "@tanstack/react-query";
 import { insightsApi } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton-loader";
+import { motion } from "framer-motion";
+
+function TypewriterText({ text }: { text: string }) {
+  const [displayedText, setDisplayedText] = useState("");
+  const words = text.split(" ");
+
+  useEffect(() => {
+    if (!text) return;
+    
+    setDisplayedText("");
+    let currentWordIndex = 0;
+    
+    const startDelay = setTimeout(() => {
+      const interval = setInterval(() => {
+        if (currentWordIndex < words.length) {
+          setDisplayedText((prev) => 
+            prev ? prev + " " + words[currentWordIndex] : words[currentWordIndex]
+          );
+          currentWordIndex++;
+        } else {
+          clearInterval(interval);
+        }
+      }, 50);
+      
+      return () => clearInterval(interval);
+    }, 1200);
+
+    return () => clearTimeout(startDelay);
+  }, [text]);
+
+  const isTyping = displayedText !== text && displayedText.length > 0;
+
+  return (
+    <p className="text-[15px] leading-relaxed text-foreground break-words">
+      {displayedText}
+      {isTyping && (
+        <motion.span 
+          animate={{ opacity: [1, 0, 1] }} 
+          transition={{ duration: 0.8, repeat: Infinity }}
+          className="text-primary ml-1"
+        >
+          ▍
+        </motion.span>
+      )}
+    </p>
+  );
+}
+
 
 export function AISummaryCard() {
   const router = useRouter();
@@ -51,9 +99,7 @@ export function AISummaryCard() {
             </div>
           ) : (
             <div className="space-y-4">
-              <p className="text-[15px] leading-relaxed text-foreground break-words">
-                {data.summary}
-              </p>
+              <TypewriterText text={data.summary} />
               {data.highlights && data.highlights.length > 0 && (
                 <ul className="space-y-2 mt-2">
                   {data.highlights.map((highlight: string, idx: number) => (

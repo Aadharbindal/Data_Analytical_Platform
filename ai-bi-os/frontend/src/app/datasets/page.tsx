@@ -22,6 +22,7 @@ import {
   FileUp,
   Power,
   X,
+  File,
 } from "lucide-react";
 import { DatasetDetailDrawer } from "@/components/datasets/DatasetDetailDrawer";
 
@@ -134,11 +135,11 @@ function UploadZone({ onSuccess, onRedirect }: { onSuccess: () => void, onRedire
         className={`relative flex flex-col items-center justify-center gap-3 rounded-[20px] border-2 border-dashed p-10 cursor-pointer transition-all duration-200 ${
           isDragging
             ? "border-primary bg-primary/5 scale-[1.01]"
-            : "border-border hover:border-primary/60 hover:bg-white/[0.02]"
+            : "border-[#333842] hover:border-primary/60 hover:bg-white/[0.02]"
         }`}
       >
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
-          <FileUp className="h-5 w-5 text-primary" />
+        <div className="flex h-14 w-14 items-center justify-center rounded-[18px] bg-[#0c1017] border border-[#1a2235] shadow-sm mb-2">
+          <Upload className="h-6 w-6 text-[#3b82f6]" strokeWidth={2.5} />
         </div>
         <div className="text-center">
           <p className="text-sm font-semibold text-foreground">
@@ -270,24 +271,46 @@ export default function DatasetsPage() {
   });
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-end">
-        <Badge variant="outline" className="text-muted-foreground">
-          {datasets?.length ?? 0} datasets
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="flex flex-col gap-6"
+    >
+      <motion.div 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+        className="flex items-center justify-end"
+      >
+        <Badge variant="outline" className="flex items-center gap-2 rounded-full border-[#1a2235] bg-[#0c1017] px-3 py-1 text-muted-foreground">
+          <div className="h-1.5 w-1.5 rounded-full bg-[#3b82f6] shadow-[0_0_8px_rgba(59,130,246,0.9)]"></div>
+          <span>{datasets?.length ?? 0} datasets</span>
         </Badge>
-      </div>
+      </motion.div>
 
       {/* Upload Zone */}
-      <UploadZone 
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
+      >
+        <UploadZone 
         onSuccess={() => {
           qc.invalidateQueries({ queryKey: ["datasets"] });
           qc.invalidateQueries({ queryKey: ["activeDataset"] });
         }} 
         onRedirect={() => router.push("/analytics")}
       />
+      </motion.div>
 
       {/* Dataset Table */}
-      {isLoading ? (
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
+      >
+        {isLoading ? (
         <TableSkeleton rows={6} />
       ) : isError ? (
         <ErrorState onRetry={refetch} />
@@ -330,11 +353,13 @@ export default function DatasetsPage() {
                     key={ds.id}
                     className="border-b border-border/40 hover:bg-white/[0.02] transition-colors group"
                   >
-                    <td 
-                      className="px-3 md:px-6 py-5 font-medium text-foreground truncate"
-                      title={ds.name}
-                    >
-                      {ds.name}
+                    <td className="px-3 md:px-6 py-5 font-medium text-foreground truncate" title={ds.name}>
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] bg-[#0c1017] border border-[#1a2235] shadow-sm">
+                          <File className="h-4 w-4 text-[#3b82f6]" strokeWidth={2} />
+                        </div>
+                        <span className="truncate">{ds.name}</span>
+                      </div>
                     </td>
                     <td className="px-3 md:px-6 py-5 text-muted-foreground text-sm font-mono truncate">
                       v{ds.version || 1}
@@ -392,6 +417,7 @@ export default function DatasetsPage() {
           </div>
         </div>
       )}
+      </motion.div>
 
       {/* Detail Drawer */}
       <DatasetDetailDrawer
@@ -409,39 +435,78 @@ export default function DatasetsPage() {
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm"
           >
             <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="relative w-full max-w-md overflow-hidden rounded-[24px] border border-border/50 bg-surface/95 backdrop-blur-xl p-6 shadow-2xl"
+              initial={{ scale: 0.8, opacity: 0, y: 15 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: 15 }}
+              transition={{ type: "spring", damping: 25, stiffness: 350 }}
+              className="relative w-full max-w-[420px] overflow-hidden rounded-[24px] border border-[#1f2937] bg-[#111520] p-7 shadow-2xl"
             >
-              <div className="flex flex-col gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-error/10">
-                  <AlertCircle className="h-6 w-6 text-error" />
+              <div className="flex flex-col">
+                <div className="relative mb-5 h-11 w-11">
+                  <motion.div
+                    animate={{ scale: [1, 2.2], opacity: [0.5, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
+                    className="absolute inset-0 rounded-full bg-[#ef4444]/20"
+                  />
+                  <motion.div
+                    animate={{ scale: [1, 1.6], opacity: [0.8, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeOut", delay: 0.4 }}
+                    className="absolute inset-0 rounded-full bg-[#ef4444]/30"
+                  />
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.1, type: "spring", damping: 12, stiffness: 300 }}
+                    className="relative flex h-11 w-11 items-center justify-center rounded-full bg-[#35191d]"
+                  >
+                    <AlertCircle className="h-5 w-5 text-[#ef4444]" strokeWidth={2.5} />
+                  </motion.div>
                 </div>
-                <div>
-                  <h2 className="text-xl font-semibold text-foreground">Delete Dataset</h2>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Are you sure you want to delete this dataset? This action cannot be undone and will remove the file and all its associated metadata.
-                  </p>
-                </div>
-                <div className="mt-4 flex justify-end gap-3">
-                  <Button variant="outline" onClick={() => setDeleteConfirmId(null)}>
+                
+                <motion.h2 
+                  initial={{ opacity: 0, x: -10 }} 
+                  animate={{ opacity: 1, x: 0 }} 
+                  transition={{ delay: 0.15 }}
+                  className="text-xl font-semibold text-white tracking-tight"
+                >
+                  Delete Dataset
+                </motion.h2>
+                <motion.p 
+                  initial={{ opacity: 0, x: -10 }} 
+                  animate={{ opacity: 1, x: 0 }} 
+                  transition={{ delay: 0.2 }}
+                  className="mt-3 text-sm text-[#94a3b8] leading-relaxed"
+                >
+                  Are you sure you want to delete this dataset? This action cannot be undone and will remove the file and all its associated metadata.
+                </motion.p>
+                
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }} 
+                  animate={{ opacity: 1, y: 0 }} 
+                  transition={{ delay: 0.25 }}
+                  className="mt-8 flex justify-end gap-3"
+                >
+                  <Button 
+                    variant="ghost" 
+                    className="rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-white px-6 hover:text-white transition-all hover:scale-105 active:scale-95"
+                    onClick={() => setDeleteConfirmId(null)}
+                  >
                     Cancel
                   </Button>
                   <Button 
                     variant="default" 
-                    className="bg-error hover:bg-error/90 text-error-foreground"
+                    className="rounded-full bg-[#ef4444] hover:bg-[#dc2626] text-white px-6 border-0 shadow-lg shadow-red-500/20 transition-all hover:scale-105 active:scale-95"
                     onClick={() => deleteConfirmId && deleteMutation.mutate(deleteConfirmId)}
                     disabled={deleteMutation.isPending}
                   >
                     {deleteMutation.isPending ? "Deleting..." : "Delete"}
                   </Button>
-                </div>
+                </motion.div>
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }
