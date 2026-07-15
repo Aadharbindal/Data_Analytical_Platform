@@ -129,7 +129,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
           
           <div className="animate-auth-fade-up" style={{ display: "flex", alignItems: "center", gap: "14px", animationDelay: "0.05s" }}>
             <AnimatedLogo size={56} className="animate-auth-glow-pulse" />
-            <div style={{ fontSize: "24px", fontWeight: 800, color: "#fff", letterSpacing: "-0.02em" }}>
+            <div style={{ fontSize: "24px", fontWeight: 800, color: "#fff", letterSpacing: "-0.02em", marginTop: "-4px" }}>
               DataMind
             </div>
           </div>
