@@ -6,10 +6,12 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { useAuth } from "@/context/AuthContext";
 import { Loader2 } from "lucide-react";
+import { useLayoutStore } from "@/hooks/useLayoutStore";
 
 export function AppLayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, loading } = useAuth();
+  const { isWelcomeActive } = useLayoutStore();
   const isAnalytics = (pathname?.startsWith("/analytics") || pathname?.startsWith("/chat")) ?? false;
   const isAuthPage = pathname === "/login" || pathname === "/signup";
 
@@ -29,13 +31,16 @@ export function AppLayoutWrapper({ children }: { children: React.ReactNode }) {
     return null; // Will redirect via AuthContext
   }
 
+  const isDashboard = pathname === "/";
+  const effectivelyWelcomeActive = isDashboard && isWelcomeActive;
+
   return (
     <>
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Header />
-        <main id="main-layout" className={`flex-1 relative bg-background [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isAnalytics ? "overflow-hidden" : "overflow-y-auto p-6 pb-12"}`}>
-          <div className={`${isAnalytics ? "h-full" : "mx-auto max-w-7xl"}`}>
+        {!effectivelyWelcomeActive && <Header />}
+        <main id="main-layout" className={`flex-1 relative bg-background [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isAnalytics || effectivelyWelcomeActive ? "overflow-hidden" : "overflow-y-auto p-6 pb-12"}`}>
+          <div className={`${isAnalytics || effectivelyWelcomeActive ? "h-full w-full" : "mx-auto max-w-7xl"}`}>
             {children}
           </div>
         </main>
