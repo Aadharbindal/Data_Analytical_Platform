@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface ExecutiveKPICardProps {
   kpi: ExecutiveKPIReport;
+  index?: number;
 }
 
 function formatValue(value: number | null, type: string): string {
@@ -30,7 +31,7 @@ function formatValue(value: number | null, type: string): string {
   return String(parseFloat(value.toFixed(2)));
 }
 
-export const ExecutiveKPICard: React.FC<ExecutiveKPICardProps> = ({ kpi }) => {
+export const ExecutiveKPICard: React.FC<ExecutiveKPICardProps> = ({ kpi, index = 0 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [historyView, setHistoryView] = useState<"monthly" | "quarterly" | "yearly">("monthly");
   const [compareMode, setCompareMode] = useState<"default" | "previous_month" | "previous_quarter" | "previous_year" | "dataset_average" | "rolling_average">("default");
@@ -265,7 +266,7 @@ export const ExecutiveKPICard: React.FC<ExecutiveKPICardProps> = ({ kpi }) => {
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative w-full max-w-4xl max-h-[80vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-surface border border-border shadow-2xl rounded-2xl p-6 sm:p-8"
+            className="relative w-full max-w-4xl max-h-[80vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-surface/60 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] rounded-2xl p-6 sm:p-8"
           >
             <div className="flex items-start justify-between mb-6">
               <div>
@@ -546,8 +547,8 @@ export const ExecutiveKPICard: React.FC<ExecutiveKPICardProps> = ({ kpi }) => {
         <div className="mt-3 z-10">
           <h3 className="text-sm font-medium text-muted-foreground truncate" title={kpi.name}>{kpi.name}</h3>
           <div className="flex items-end gap-2 mt-1">
-            <span className="text-3xl font-semibold tracking-tight text-foreground">
-              {formatValue(kpi.current, kpi.type)}
+            <span className="text-3xl font-semibold tracking-tight text-foreground font-variant-numeric-tabular">
+              <CountUpValue valueString={formatValue(kpi.current, kpi.type)} delayMs={index * 100} />
             </span>
           </div>
         </div>
@@ -589,7 +590,9 @@ export const ExecutiveKPICard: React.FC<ExecutiveKPICardProps> = ({ kpi }) => {
                   strokeWidth={2} 
                   fillOpacity={1} 
                   fill={`url(#gradient-${kpi.query_id})`}
-                  isAnimationActive={false}
+                  isAnimationActive={true}
+                  animationDuration={1500}
+                  animationEasing="ease-in-out"
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -606,3 +609,72 @@ export const ExecutiveKPICard: React.FC<ExecutiveKPICardProps> = ({ kpi }) => {
     </>
   );
 };
+
+function CountUpValue({ valueString, delayMs = 0 }: { valueString: string; delayMs?: number }) {
+  const [display, setDisplay] = useState(() => {
+    // Initial display is "0" with matching prefix/suffix
+    const match = valueString.match(/^([^\d]*)([\d.,]+)([^\d]*)$/);
+    if (!match) return valueString;
+    const prefix = match[1];
+    const numStr = match[2].replace(/,/g, '');
+    const suffix = match[3];
+    const target = parseFloat(numStr);
+    if (isNaN(target)) return valueString;
+    const decimalMatch = numStr.match(/\.(\d+)/);
+    const decimals = decimalMatch ? decimalMatch[1].length : 0;
+    return `${prefix}${(0).toFixed(decimals)}${suffix}`;
+  });
+
+  useEffect(() => {
+    const match = valueString.match(/^([^\d]*)([\d.,]+)([^\d]*)$/);
+    if (!match) {
+      setDisplay(valueString);
+      return;
+    }
+    
+    const prefix = match[1];
+    const numStr = match[2].replace(/,/g, '');
+    const suffix = match[3];
+    const target = parseFloat(numStr);
+    
+    if (isNaN(target)) {
+      setDisplay(valueString);
+      return;
+    }
+    
+    const decimalMatch = numStr.match(/\.(\d+)/);
+    const decimals = decimalMatch ? decimalMatch[1].length : 0;
+    
+    const duration = 1200; // Increased duration for smoother feel
+    let start = 0;
+    let frameId: number;
+    let timeoutId: any;
+    
+    const step = (timestamp: number) => {
+      if (!start) start = timestamp;
+      const progress = Math.min(1, (timestamp - start) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3); // cubic ease-out
+      const current = target * eased;
+      
+      const formattedNum = current.toFixed(decimals);
+      setDisplay(`${prefix}${formattedNum}${suffix}`);
+      
+      if (progress < 1) {
+        frameId = requestAnimationFrame(step);
+      } else {
+        setDisplay(valueString); 
+      }
+    };
+    
+    timeoutId = setTimeout(() => {
+      frameId = requestAnimationFrame(step);
+    }, delayMs);
+    
+    return () => {
+      clearTimeout(timeoutId);
+      if (frameId) cancelAnimationFrame(frameId);
+    };
+  }, [valueString, delayMs]);
+
+  return <>{display}</>;
+}
