@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { formatIndianCurrency } from "@/lib/utils";
 
 interface ChartDataPoint {
   name: string;
@@ -65,7 +66,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ data, title = "Revenue A
             </defs>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#2a2a2a" />
             <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#666', fontSize: 11}} dy={10} />
-            <YAxis axisLine={false} tickLine={false} tick={{fill: '#666', fontSize: 11}} tickFormatter={(val) => `₹${val/1000}K`} />
+            <YAxis axisLine={false} tickLine={false} tick={{fill: '#666', fontSize: 11}} tickFormatter={(val) => formatIndianCurrency(val)} />
             <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#555', strokeWidth: 1, strokeDasharray: '4 4' }} />
             <Area type="monotone" dataKey="value" stroke="#a3e635" strokeWidth={3} fillOpacity={1} fill="url(#neonGreen)" />
           </AreaChart>

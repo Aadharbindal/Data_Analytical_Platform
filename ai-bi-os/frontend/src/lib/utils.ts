@@ -5,15 +5,32 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatNumber(value: number | null | undefined): string {
+export function formatIndianNumber(value: number | null | undefined): string {
   if (value === null || value === undefined) return "N/A";
   
-  // Use Intl.NumberFormat for compact notation (K, M, B)
-  return new Intl.NumberFormat('en-IN', {
-    notation: 'compact',
-    compactDisplay: 'short',
-    maximumFractionDigits: 1
-  }).format(value);
+  const absValue = Math.abs(value);
+  const sign = value < 0 ? "-" : "";
+  
+  if (absValue >= 1_00_00_000) return `${sign}${parseFloat((absValue / 1_00_00_000).toFixed(2))}Cr`;
+  if (absValue >= 1_00_000) return `${sign}${parseFloat((absValue / 1_00_000).toFixed(2))}L`;
+  if (absValue >= 1_000) return `${sign}${parseFloat((absValue / 1_000).toFixed(1))}K`;
+  
+  return `${sign}${absValue.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+}
+
+export const formatNumber = formatIndianNumber;
+
+export function formatIndianCurrency(value: number | null | undefined): string {
+  if (value === null || value === undefined) return "N/A";
+  
+  const absValue = Math.abs(value);
+  const sign = value < 0 ? "-" : "";
+  
+  if (absValue >= 1_00_00_000) return `${sign}₹${parseFloat((absValue / 1_00_00_000).toFixed(2))}Cr`;
+  if (absValue >= 1_00_000) return `${sign}₹${parseFloat((absValue / 1_00_000).toFixed(2))}L`;
+  if (absValue >= 1_000) return `${sign}₹${parseFloat((absValue / 1_000).toFixed(1))}K`;
+  
+  return `${sign}₹${absValue.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
 }
 
 export function formatPercent(value: number | null | undefined, includeSign = false): string {

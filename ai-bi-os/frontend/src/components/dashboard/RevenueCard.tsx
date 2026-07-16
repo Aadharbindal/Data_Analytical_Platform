@@ -18,6 +18,7 @@ import api from "@/lib/api";
 import { BarChart, Bar, CartesianGrid as BCartesianGrid, XAxis as BXAxis, YAxis as BYAxis, Tooltip as BTooltip, ResponsiveContainer as BResponsiveContainer, Cell } from "recharts";
 
 import { SemanticDict } from "@/lib/types";
+import { formatIndianCurrency, formatIndianNumber } from "@/lib/utils";
 
 interface RevenueCardProps {
   data: any[];
@@ -106,10 +107,9 @@ export function RevenueCard({ data, semanticDict }: RevenueCardProps) {
 
   // Format Total Value dynamically
   const formatBigNumber = (val: number) => {
-    if (val >= 1_00_00_000) return `₹${(val / 1_00_00_000).toFixed(1)}Cr`;
-    if (val >= 1_00_000) return `₹${(val / 1_00_000).toFixed(1)}L`;
-    if (val >= 1_000) return `₹${(val / 1_000).toFixed(1)}K`;
-    return `₹${val.toLocaleString('en-IN')}`;
+    if (metricType === "currency") return formatIndianCurrency(val);
+    if (metricType === "percent") return `${val.toFixed(1)}%`;
+    return formatIndianNumber(val);
   };
 
   const { data: breakdownData, isLoading } = useQuery({
@@ -208,13 +208,9 @@ export function RevenueCard({ data, semanticDict }: RevenueCardProps) {
                     tickLine={false} 
                     tick={{ fill: '#646a77', fontSize: 11, fontWeight: 500 }}
                     tickFormatter={(value) => {
-                      if (metricType === "currency") {
-                        if (value >= 1000) return `₹${(value / 1000).toFixed(0)}k`;
-                        return `₹${value}`;
-                      }
+                      if (metricType === "currency") return formatIndianCurrency(value);
                       if (metricType === "percent") return `${value}%`;
-                      if (value >= 1000) return `${(value / 1000).toFixed(0)}k`;
-                      return String(value);
+                      return formatIndianNumber(value);
                     }}
                     dx={-10}
                   />
@@ -231,10 +227,10 @@ export function RevenueCard({ data, semanticDict }: RevenueCardProps) {
                     itemStyle={{ color: '#fff', fontWeight: 600 }}
                     formatter={(value: number) => {
                       const formatted = metricType === "currency"
-                        ? `₹${value.toLocaleString('en-IN')}`
+                        ? formatIndianCurrency(value)
                         : metricType === "percent"
                         ? `${value.toFixed(1)}%`
-                        : value.toLocaleString('en-IN');
+                        : formatIndianNumber(value);
                       return [formatted, primaryLabel];
                     }}
                     cursor={{ stroke: '#2a2d35', strokeWidth: 1, strokeDasharray: '4 4' }}
