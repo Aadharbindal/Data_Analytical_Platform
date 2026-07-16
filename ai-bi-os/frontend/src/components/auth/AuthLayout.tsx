@@ -176,8 +176,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
               animationDelay: "0.25s",
             }}
           >
-            Welcome back<br />
-            to{" "}
+            Welcome to{" "}
             <span
               className="animate-auth-text-glow"
               style={{

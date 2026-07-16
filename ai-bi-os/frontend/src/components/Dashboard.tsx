@@ -4,6 +4,10 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { DashboardGrid } from "./DashboardGrid";
 import { analyticsApi, insightsApi, datasetsApi, BASE_URL } from "@/lib/api";
+import { WelcomeFlow } from "./WelcomeFlow";
+import { useAuth } from "@/context/AuthContext";
+import { useLayoutStore } from "@/hooks/useLayoutStore";
+import { useEffect } from "react";
 
 const FALLBACK_CHART_DATA = [
   { name: "Jan", value: null, previous: null, forecast: null },
@@ -21,6 +25,9 @@ const FALLBACK_CHART_DATA = [
 ];
 
 export const Dashboard: React.FC = () => {
+  const { user } = useAuth();
+  const { setWelcomeActive } = useLayoutStore();
+  
   const { data: analytics, isLoading: analyticsLoading } = useQuery({
     queryKey: ["analytics-kpis"],
     queryFn: () => analyticsApi.kpis(),
@@ -40,6 +47,23 @@ export const Dashboard: React.FC = () => {
     queryKey: ["active-dataset"],
     queryFn: () => datasetsApi.getActive(),
   });
+
+  const hasDatasets = datasets && datasets.length > 0;
+  const showWelcome = !datasetsLoading && !hasDatasets;
+
+  useEffect(() => {
+    if (!datasetsLoading) {
+      setWelcomeActive(!!showWelcome);
+    }
+  }, [showWelcome, datasetsLoading, setWelcomeActive]);
+
+  if (datasetsLoading && !datasets) {
+    return null;
+  }
+
+  if (showWelcome) {
+    return <WelcomeFlow userName={user?.full_name?.split(" ")[0] || "User"} />;
+  }
 
   const chartData =
     analytics?.chart_data && analytics.chart_data.length > 0
