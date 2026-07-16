@@ -9,6 +9,7 @@ import {
   AlertTriangle, Clock, TrendingUp, LineChart,
   ChevronLeft, ChevronRight
 } from "lucide-react";
+import { motion } from "framer-motion";
 
 const NAV_GROUPS = [
   {
@@ -46,6 +47,32 @@ const NAV_GROUPS = [
   }
 ];
 
+const sidebarVariants = {
+  hidden: { opacity: 0, x: -16 },
+  show: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.5,
+      ease: [0.25, 1, 0.5, 1],
+      staggerChildren: 0.05,
+      delayChildren: 0.1,
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, x: -10 },
+  show: { 
+    opacity: 1, 
+    x: 0,
+    transition: {
+      duration: 0.5,
+      ease: [0.25, 1, 0.5, 1]
+    }
+  }
+};
+
 export default function AnalyticsLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = React.useState(false);
@@ -53,7 +80,12 @@ export default function AnalyticsLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex h-full bg-background text-foreground overflow-hidden">
       {/* Sidebar Navigation */}
-      <aside className={`border-r border-border/40 bg-surface/30 backdrop-blur-xl flex flex-col h-full z-10 shrink-0 relative transition-all duration-300 ${isCollapsed ? 'w-[60px]' : 'w-[200px]'}`}>
+      <motion.aside 
+        initial="hidden"
+        animate="show"
+        variants={sidebarVariants}
+        className={`border-r border-border/40 bg-surface/30 backdrop-blur-xl flex flex-col h-full z-10 shrink-0 relative transition-all duration-300 ${isCollapsed ? 'w-[60px]' : 'w-[200px]'}`}
+      >
         
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
@@ -66,9 +98,9 @@ export default function AnalyticsLayout({ children }: { children: React.ReactNod
           {NAV_GROUPS.map((group) => (
             <div key={group.title} className="px-3">
               {!isCollapsed ? (
-                <h3 className="px-2 mb-1.5 text-[10px] font-semibold tracking-wider text-muted-foreground/60 uppercase">
+                <motion.h3 variants={itemVariants} className="px-2 mb-1.5 text-[10px] font-semibold tracking-wider text-muted-foreground/60 uppercase">
                   {group.title}
-                </h3>
+                </motion.h3>
               ) : (
                 <div className="h-4 mb-1.5" />
               )}
@@ -76,31 +108,31 @@ export default function AnalyticsLayout({ children }: { children: React.ReactNod
                 {group.items.map((item) => {
                   const isActive = pathname === item.href;
                   const Icon = item.icon;
-                  
                   return (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      title={isCollapsed ? item.name : undefined}
-                      className={`group flex items-center gap-2.5 px-2 py-1.5 rounded-md text-[12px] font-medium transition-all duration-200 relative ${
-                        isActive 
-                          ? "bg-primary/[0.08] text-primary" 
-                          : "text-muted-foreground/80 hover:bg-white/[0.04] hover:text-foreground"
-                      } ${isCollapsed ? 'justify-center px-0' : ''}`}
-                    >
-                      {isActive && (
-                        <div className={`absolute left-[-12px] top-1/2 -translate-y-1/2 w-0.5 h-4 bg-primary rounded-r-full ${isCollapsed ? 'left-[-12px]' : ''}`} />
-                      )}
-                      <Icon className={`h-3.5 w-3.5 shrink-0 ${isActive ? "text-primary" : "text-muted-foreground/60 group-hover:text-foreground/80"}`} />
-                      {!isCollapsed && <span className="truncate">{item.name}</span>}
-                    </Link>
+                    <motion.div key={item.name} variants={itemVariants}>
+                      <Link
+                        href={item.href}
+                        title={isCollapsed ? item.name : undefined}
+                        className={`group flex items-center gap-2.5 px-2 py-1.5 rounded-md text-[12px] font-medium transition-all duration-200 relative ${
+                          isActive 
+                            ? "bg-primary/[0.08] text-primary" 
+                            : "text-muted-foreground/80 hover:bg-white/[0.04] hover:text-foreground"
+                        } ${isCollapsed ? 'justify-center px-0' : ''}`}
+                      >
+                        {isActive && (
+                          <div className={`absolute left-[-12px] top-1/2 -translate-y-1/2 w-0.5 h-4 bg-primary rounded-r-full ${isCollapsed ? 'left-[-12px]' : ''}`} />
+                        )}
+                        <Icon className={`h-3.5 w-3.5 shrink-0 ${isActive ? "text-primary" : "text-muted-foreground/60 group-hover:text-foreground/80"}`} />
+                        {!isCollapsed && <span className="truncate">{item.name}</span>}
+                      </Link>
+                    </motion.div>
                   );
                 })}
               </div>
             </div>
           ))}
         </nav>
-      </aside>
+      </motion.aside>
 
       {/* Main Content Area */}
       <main className="flex-1 h-full overflow-y-auto bg-background relative">

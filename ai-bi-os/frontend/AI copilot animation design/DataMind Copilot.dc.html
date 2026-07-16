@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:#080a0e;font-family:'Manrope',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+  a{color:#5b9dff;text-decoration:none}
+  a:hover{color:#87b8ff}
+  ::selection{background:rgba(47,127,240,.35)}
+  textarea{font-family:inherit}
+  textarea::placeholder{color:#586172}
+  .dm-scroll::-webkit-scrollbar{width:8px}
+  .dm-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:8px}
+  .dm-scroll::-webkit-scrollbar-track{background:transparent}
+
+  @keyframes dmOrb{0%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.12)}100%{transform:translate(0,0) scale(1)}}
+  @keyframes dmOrb2{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-50px,30px) scale(1.08)}100%{transform:translate(0,0) scale(1)}}
+  @keyframes dmGrid{0%{background-position:0 0}100%{background-position:0 48px}}
+  @keyframes dmSweep{0%{opacity:0;transform:translateX(-100%)}12%{opacity:.9}30%{opacity:0}100%{opacity:0;transform:translateX(160%)}}
+  @keyframes dmFadeDown{0%{opacity:0;transform:translateY(-14px)}100%{opacity:1;transform:translateY(0)}}
+  @keyframes dmFadeUp{0%{opacity:0;transform:translateY(28px)}100%{opacity:1;transform:translateY(0)}}
+  @keyframes dmBubbleIn{0%{opacity:0;transform:translateY(16px) scale(.97)}100%{opacity:1;transform:translateY(0) scale(1)}}
+  @keyframes dmAvatarPop{0%{opacity:0;transform:scale(.4) rotate(-25deg)}60%{transform:scale(1.15) rotate(4deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+  @keyframes dmRing{0%{transform:scale(.8);opacity:.7}100%{transform:scale(2.4);opacity:0}}
+  @keyframes dmChip{0%{opacity:0;transform:translateY(14px)}100%{opacity:1;transform:translateY(0)}}
+  @keyframes dmDot{0%,60%,100%{transform:translateY(0);opacity:.35}30%{transform:translateY(-6px);opacity:1}}
+  @keyframes dmBlink{0%,49%{opacity:1}50%,100%{opacity:0}}
+  @keyframes dmGlow{0%,100%{opacity:.5}50%{opacity:1}}
+  @keyframes dmSpin{to{transform:rotate(360deg)}}
+</style>
+</helmet>
+
+<div style="position:fixed;inset:0;background:radial-gradient(140% 120% at 50% -10%,#0e1524 0%,#080a0e 55%,#05070a 100%);overflow:hidden">
+
+  <!-- ambient background -->
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(80,120,200,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(80,120,200,.05) 1px,transparent 1px);background-size:48px 48px;animation:dmGrid 6s linear infinite;mask-image:radial-gradient(90% 70% at 50% 40%,#000 40%,transparent 100%);-webkit-mask-image:radial-gradient(90% 70% at 50% 40%,#000 40%,transparent 100%)"></div>
+  <div style="position:absolute;top:-160px;left:8%;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(47,127,240,.20),transparent 65%);filter:blur(30px);animation:dmOrb 14s ease-in-out infinite"></div>
+  <div style="position:absolute;bottom:-200px;right:6%;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(120,80,240,.16),transparent 65%);filter:blur(40px);animation:dmOrb2 18s ease-in-out infinite"></div>
+  <div style="position:absolute;top:0;left:0;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(120,170,255,.06),transparent);animation:dmSweep 3.4s cubic-bezier(.4,0,.2,1) .3s 1 forwards"></div>
+
+  <!-- top bar -->
+  <div style="position:absolute;top:0;left:0;right:0;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;z-index:5;animation:dmFadeDown .8s cubic-bezier(.2,.7,.2,1) both">
+    <div style="display:flex;align-items:center;gap:11px">
+      <div style="width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#2f7ff0,#6b5bff);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(47,127,240,.4)">
+        <div style="width:9px;height:9px;background:#fff;border-radius:2px;transform:rotate(45deg)"></div>
+      </div>
+      <span style="color:#e8edf4;font-weight:800;font-size:15px;letter-spacing:-.2px">DataMind</span>
+      <span style="color:#586172;font-weight:600;font-size:11px;border:1px solid rgba(255,255,255,.1);padding:2px 8px;border-radius:20px;letter-spacing:.3px">COPILOT</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:7px;color:#7f8a9a;font-size:12.5px;font-weight:600">
+      <span style="width:7px;height:7px;border-radius:50%;background:#39d98a;box-shadow:0 0 8px #39d98a;animation:dmGlow 2.2s ease-in-out infinite"></span>
+      Connected
+    </div>
+  </div>
+
+  <!-- chat column -->
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;padding-top:60px;z-index:2">
+
+    <div class="dm-scroll" ref="{{ scrollRef }}" style="flex:1;width:100%;max-width:860px;overflow-y:auto;padding:40px 28px 20px;display:flex;flex-direction:column;gap:22px">
+
+      <sc-for list="{{ messages }}" as="m" hint-placeholder-count="1">
+        <sc-if value="{{ m.isAssistant }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;gap:16px;align-items:flex-start;animation:dmBubbleIn .5s cubic-bezier(.2,.7,.2,1) both">
+            <div style="position:relative;flex-shrink:0;width:38px;height:38px;border-radius:50%;background:rgba(47,127,240,.14);border:1px solid rgba(47,127,240,.4);display:flex;align-items:center;justify-content:center;animation:dmAvatarPop .6s cubic-bezier(.3,1.4,.5,1) both;margin-top:2px">
+              <div style="position:absolute;inset:-1px;border-radius:50%;border:1px solid rgba(47,127,240,.5);animation:dmRing 2.4s ease-out infinite"></div>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#5b9dff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M12 7V4M8 13h.01M16 13h.01M9 17h6"/></svg>
+            </div>
+            <div style="color:#e8edf4;font-size:18px;line-height:1.62;font-weight:400;padding-top:6px;max-width:700px;text-wrap:pretty">{{ m.shown }}<sc-if value="{{ m.typing }}" hint-placeholder-val="{{ false }}"><span style="display:inline-block;width:9px;height:19px;background:#5b9dff;margin-left:2px;vertical-align:-3px;border-radius:1px;animation:dmBlink 1s step-end infinite"></span></sc-if></div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ m.isUser }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;justify-content:flex-end;animation:dmBubbleIn .45s cubic-bezier(.2,.7,.2,1) both">
+            <div style="max-width:560px;background:linear-gradient(135deg,#2f7ff0,#2b6fd8);color:#fff;font-size:16.5px;line-height:1.55;font-weight:500;padding:13px 18px;border-radius:18px 18px 4px 18px;box-shadow:0 8px 24px rgba(47,127,240,.28)">{{ m.shown }}</div>
+          </div>
+        </sc-if>
+      </sc-for>
+
+      <sc-if value="{{ showTyping }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:16px;align-items:center;animation:dmBubbleIn .4s ease both">
+          <div style="flex-shrink:0;width:38px;height:38px;border-radius:50%;background:rgba(47,127,240,.14);border:1px solid rgba(47,127,240,.4);display:flex;align-items:center;justify-content:center">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#5b9dff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M12 7V4M8 13h.01M16 13h.01M9 17h6"/></svg>
+          </div>
+          <div style="display:flex;gap:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);padding:14px 18px;border-radius:16px">
+            <span style="width:8px;height:8px;border-radius:50%;background:#5b9dff;animation:dmDot 1.3s ease-in-out infinite"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#5b9dff;animation:dmDot 1.3s ease-in-out .18s infinite"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#5b9dff;animation:dmDot 1.3s ease-in-out .36s infinite"></span>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+    <!-- composer -->
+    <div style="width:100%;max-width:860px;padding:0 28px 20px;animation:dmFadeUp .9s cubic-bezier(.2,.7,.2,1) .35s both">
+
+      <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px">
+        <sc-for list="{{ chips }}" as="c" hint-placeholder-count="3">
+          <button onClick="{{ c.onClick }}" style="animation:dmChip .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:{{ c.delay }};background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);color:#aeb7c6;font-family:inherit;font-size:13px;font-weight:600;padding:8px 15px;border-radius:20px;cursor:pointer;transition:all .2s" style-hover="background:rgba(47,127,240,.12);border-color:rgba(47,127,240,.4);color:#dbe6f7;transform:translateY(-2px)">{{ c.label }}</button>
+        </sc-for>
+      </div>
+
+      <div style="position:relative;display:flex;align-items:flex-end;gap:12px;background:linear-gradient(180deg,rgba(22,27,36,.92),rgba(16,20,28,.92));border:1px solid rgba(255,255,255,.09);border-radius:22px;padding:14px 14px 14px 22px;box-shadow:0 20px 50px -12px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.04);backdrop-filter:blur(10px)">
+        <textarea rows="1" value="{{ input }}" onInput="{{ onInput }}" onKeyDown="{{ onKey }}" placeholder="Ask DataMind to query datasets, generate charts, or predict trends…" style="flex:1;background:transparent;border:none;outline:none;resize:none;color:#e8edf4;font-size:16px;line-height:1.5;max-height:140px;padding:6px 0"></textarea>
+        <button onClick="{{ send }}" aria-label="Send" style="flex-shrink:0;width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#2f7ff0,#2b6fd8);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(47,127,240,.45);transition:transform .18s,box-shadow .18s" style-hover="transform:scale(1.08) rotate(8deg);box-shadow:0 8px 26px rgba(47,127,240,.6)" style-active="transform:scale(.94)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z"/></svg>
+        </button>
+      </div>
+
+      <div style="text-align:center;color:#586172;font-size:12.5px;font-weight:500;margin-top:14px;animation:dmFadeUp .9s ease .7s both">AI can make mistakes. Consider verifying critical business metrics.</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { messages: [], input: '', showTyping: false };
+  greeting = "Hello! I am DataMind Copilot. I can query your databases, generate charts, and provide strategic insights. What would you like to know today?";
+  respIdx = 0;
+  responses = [
+    "On it. I scanned the connected warehouse and pulled the relevant tables — here's what the numbers say. Revenue is trending up 14.2% quarter-over-quarter, with the strongest lift coming from the enterprise segment. Want me to break this down by region or plot it over time?",
+    "Good question. I ran a quick model across the last 8 quarters. The forecast points to continued momentum, though churn in the SMB tier is the variable to watch. I can generate a chart and flag the accounts most at risk — just say the word.",
+    "Done. I've queried the dataset and ranked the results for you. The top cohort accounts for roughly 38% of total lifetime value. I'd recommend a retention play here — shall I draft the segments and export them?"
+  ];
+
+  componentDidMount() {
+    setTimeout(() => this.setState({ showTyping: true }), 750);
+    setTimeout(() => {
+      this.setState({ showTyping: false });
+      this.pushAssistant(this.greeting);
+    }, 1750);
+  }
+  componentWillUnmount() { clearInterval(this._iv); }
+
+  scrollBottom() {
+    const el = this._scroll;
+    if (el) requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; });
+  }
+
+  pushAssistant(text) {
+    const id = Date.now() + Math.random();
+    this.setState(s => ({ messages: [...s.messages, { id, role: 'assistant', full: text, shown: '' }] }));
+    this.typewrite(id, text);
+  }
+
+  typewrite(id, text) {
+    let i = 0;
+    clearInterval(this._iv);
+    this._iv = setInterval(() => {
+      i += 2;
+      if (i > text.length) i = text.length;
+      this.setState(s => ({ messages: s.messages.map(m => m.id === id ? { ...m, shown: text.slice(0, i) } : m) }));
+      this.scrollBottom();
+      if (i >= text.length) clearInterval(this._iv);
+    }, 22);
+  }
+
+  send(text) {
+    const t = (text != null ? text : this.state.input).trim();
+    if (!t) return;
+    const id = Date.now() + Math.random();
+    this.setState(s => ({ messages: [...s.messages, { id, role: 'user', full: t, shown: t }], input: '' }));
+    this.scrollBottom();
+    setTimeout(() => { this.setState({ showTyping: true }); this.scrollBottom(); }, 500);
+    setTimeout(() => {
+      this.setState({ showTyping: false });
+      const r = this.responses[this.respIdx % this.responses.length];
+      this.respIdx++;
+      this.pushAssistant(r);
+    }, 1700);
+  }
+
+  renderVals() {
+    const chipLabels = ["Show Q3 revenue by region", "Forecast next month's churn", "Top 5 customers by LTV"];
+    return {
+      messages: this.state.messages.map(m => ({
+        ...m,
+        isAssistant: m.role === 'assistant',
+        isUser: m.role === 'user',
+        typing: m.role === 'assistant' && m.shown.length < m.full.length
+      })),
+      showTyping: this.state.showTyping,
+      input: this.state.input,
+      chips: chipLabels.map((label, i) => ({ label, delay: (0.5 + i * 0.1) + 's', onClick: () => this.send(label) })),
+      onInput: e => this.setState({ input: e.target.value }),
+      onKey: e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.send(); } },
+      send: () => this.send(),
+      scrollRef: el => { this._scroll = el; }
+    };
+  }
+}
+</script>
+</body>
+</html>
