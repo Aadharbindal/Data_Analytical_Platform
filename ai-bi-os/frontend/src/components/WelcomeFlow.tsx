@@ -10,6 +10,66 @@ interface WelcomeFlowProps {
   userName?: string;
 }
 
+function StatCard({ 
+  val, label, valColor, iconBg, delayMs, isActive 
+}: { 
+  val: number, label: string, valColor: string, iconBg: string, delayMs: number, isActive: boolean 
+}) {
+  const [mounted, setMounted] = useState(false);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let timer1: any;
+    let timer2: any;
+    if (isActive) {
+      timer1 = setTimeout(() => {
+        setMounted(true);
+        const duration = 900;
+        const countDelay = delayMs + 150;
+        
+        timer2 = setTimeout(() => {
+          const startTime = performance.now();
+          const step = (now: number) => {
+            const progress = Math.min(1, (now - startTime) / duration);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setCount(val * eased);
+            if (progress < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        }, countDelay);
+      }, 50);
+    } else {
+      setMounted(false);
+      setCount(0);
+    }
+    return () => { clearTimeout(timer1); clearTimeout(timer2); };
+  }, [isActive, val, delayMs]);
+
+  const baseStyle = {
+    opacity: mounted ? 1 : 0,
+    transform: mounted ? 'translateY(0) scale(1)' : 'translateY(18px) scale(0.97)',
+    transition: `opacity 0.55s cubic-bezier(0.22,1,0.36,1) ${delayMs}ms, transform 0.55s cubic-bezier(0.22,1,0.36,1) ${delayMs}ms`,
+  };
+
+  const iconStyle = {
+    transform: mounted ? 'scale(1)' : 'scale(0.5)',
+    opacity: mounted ? 1 : 0,
+    transition: `transform 0.5s cubic-bezier(0.34,1.56,0.64,1) ${delayMs + 120}ms, opacity 0.4s ease ${delayMs + 120}ms`,
+  };
+
+  return (
+    <div className="relative overflow-hidden bg-[oklch(0.2_0.012_260)] border border-[rgba(59,130,246,.15)] rounded-[20px] p-[28px_32px] shadow-[0_8px_24px_rgba(0,0,0,0.35)]" style={baseStyle}>
+      <div className="absolute top-0 left-0 bottom-0 w-[60%] bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.05)] to-transparent pointer-events-none -translate-x-[120%]" 
+           style={{ animation: mounted ? `wsGlowSweep 1.1s ease-out ${delayMs + 250}ms forwards` : 'none' }}></div>
+      <div className="flex items-center gap-[14px] relative z-10 mb-[18px]">
+        <div className={`w-[44px] h-[44px] rounded-[12px] flex items-center justify-center shrink-0 ${iconBg}`} style={iconStyle}></div>
+        <div className="text-[14px] font-medium text-[#8b93a3] leading-[1.3]">{label}</div>
+      </div>
+      <div className={`text-[34px] font-bold tracking-tight tabular-nums ${valColor}`}>{Math.round(count)}</div>
+    </div>
+  );
+}
+
 export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" }) => {
   const [phase, setPhase] = useState<"deck" | "loading" | "dashboard">("deck");
   const [active, setActive] = useState(0);
@@ -25,7 +85,7 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
   const queryClient = useQueryClient();
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const setLayoutState = useLayoutStore((s) => s.setLayoutState);
+  const setWelcomeActive = useLayoutStore((s) => s.setWelcomeActive);
 
   useEffect(() => {
     setIsClient(true);
@@ -63,7 +123,7 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
           queryClient.invalidateQueries({ queryKey: ["analytics-kpis"] });
           queryClient.invalidateQueries({ queryKey: ["insights"] });
           queryClient.invalidateQueries({ queryKey: ["executiveSummary"] });
-          setLayoutState({ isWelcomeActive: false });
+          setWelcomeActive(false);
       }, 4000);
 
       return () => {
@@ -186,21 +246,7 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
         <div className="absolute bottom-[-220px] right-[-140px] w-[560px] h-[560px] rounded-full blur-[18px] animate-ws-blob2" style={{background:'radial-gradient(circle,rgba(59,130,246,.1),transparent 70%)'}} />
       </div>
 
-      {/* progress rail */}
-      <div className="fixed right-[34px] top-[50%] -translate-y-1/2 z-40 flex flex-col gap-3 items-center" style={{opacity:inDeck?1:0, transition:'opacity .4s ease', pointerEvents:inDeck?'auto':'none'}}>
-        {railLabels.map((label, i) => (
-          <button key={i} onClick={() => goTo(i)} title={label} style={{
-            width: i === active ? '10px' : '8px',
-            height: i === active ? '26px' : '8px',
-            borderRadius: '99px',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 0,
-            transition: 'all .4s cubic-bezier(.16,1,.3,1)',
-            background: i === active ? 'linear-gradient(180deg,#4d8bff,#2563eb)' : 'rgba(255,255,255,.18)'
-          }} />
-        ))}
-      </div>
+
 
       {/* SCROLL DECK */}
       <div ref={scrollRef} onScroll={onScroll} className="ws-scroll absolute inset-0 h-screen overflow-y-auto z-10" style={{transition:'opacity .5s ease, transform .5s ease', opacity:inDeck?1:0, pointerEvents:inDeck?'auto':'none', transform:inDeck?'none':'scale(1.04)'}}>
@@ -219,12 +265,7 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
             </h1>
             <p style={{...rev(0,320), fontSize:'17px', lineHeight:1.55, color:'#9aa4b5', maxWidth:'540px', margin:'0 auto'}}>Let's get your workspace live. A quick 30-second tour, then drop in a dataset and your dashboard comes alive.</p>
           </div>
-          <div style={{...rev(0,620), position:'absolute', bottom:'42px', left:'50%', transform:'translateX(-50%)', display:'flex', flexDirection:'column', alignItems:'center', gap:'10px'}}>
-            <span className="text-[11px] tracking-[2px] text-[#5c6473]">SCROLL</span>
-            <div className="w-[22px] h-[36px] border-[1.5px] border-white/20 rounded-xl flex justify-center pt-[7px]">
-              <div className="w-[3px] h-[7px] rounded-sm bg-[#4d8bff] animate-ws-scroll-hint"></div>
-            </div>
-          </div>
+
         </section>
 
         {/* 01 — REAL-TIME ANALYTICS */}
@@ -236,10 +277,22 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
               <p style={{...rev(1,170), fontSize:'15.5px', lineHeight:1.6, color:'#9aa4b5', margin:0, maxWidth:'420px'}}>Four headline cards keep KPIs monitored, recent outliers, active trends and forecast horizons in view — refreshing the instant new data lands.</p>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div style={{...rev(1,180), background:'rgba(13,17,28,.92)', border:'1px solid rgba(59,130,246,.18)', borderRadius:'20px', padding:'22px', backdropFilter:'blur(16px)', boxShadow:'inset 0 1px 0 0 rgba(255,255,255,.05),0 16px 40px -8px rgba(0,0,0,.4)'}}><div className="w-[30px] h-[30px] rounded-[9px] bg-blue-600/20 mb-[34px]"></div><div className="text-[26px] font-extrabold">12</div><div className="text-[12px] text-[#8b93a3] mt-1">KPIs Monitored</div></div>
-              <div style={{...rev(1,260), background:'rgba(13,17,28,.92)', border:'1px solid rgba(59,130,246,.18)', borderRadius:'20px', padding:'22px', backdropFilter:'blur(16px)', boxShadow:'inset 0 1px 0 0 rgba(255,255,255,.05),0 16px 40px -8px rgba(0,0,0,.4)'}}><div className="w-[30px] h-[30px] rounded-[9px] bg-[#FFB020]/20 mb-[34px]"></div><div className="text-[26px] font-extrabold text-[#FFB020]">3</div><div className="text-[12px] text-[#8b93a3] mt-1">Recent Outliers</div></div>
-              <div style={{...rev(1,340), background:'rgba(13,17,28,.92)', border:'1px solid rgba(59,130,246,.18)', borderRadius:'20px', padding:'22px', backdropFilter:'blur(16px)', boxShadow:'inset 0 1px 0 0 rgba(255,255,255,.05),0 16px 40px -8px rgba(0,0,0,.4)'}}><div className="w-[30px] h-[30px] rounded-[9px] bg-[#37D67A]/20 mb-[34px]"></div><div className="text-[26px] font-extrabold text-[#37D67A]">8</div><div className="text-[12px] text-[#8b93a3] mt-1">Active Trends</div></div>
-              <div style={{...rev(1,420), background:'rgba(13,17,28,.92)', border:'1px solid rgba(59,130,246,.18)', borderRadius:'20px', padding:'22px', backdropFilter:'blur(16px)', boxShadow:'inset 0 1px 0 0 rgba(255,255,255,.05),0 16px 40px -8px rgba(0,0,0,.4)'}}><div className="w-[30px] h-[30px] rounded-[9px] bg-indigo-500/20 mb-[34px]"></div><div className="text-[26px] font-extrabold">3</div><div className="text-[12px] text-[#8b93a3] mt-1">Forecast Horizons</div></div>
+              {[
+                { val: 12, label: 'KPIs Monitored', valColor: 'text-white', iconBg: 'bg-[#1c325f]' },
+                { val: 3, label: 'Recent Outliers', valColor: 'text-[#FFB020]', iconBg: 'bg-[#5a4214]' },
+                { val: 8, label: 'Active Trends', valColor: 'text-[#37D67A]', iconBg: 'bg-[#144d28]' },
+                { val: 3, label: 'Forecast Horizons', valColor: 'text-[#8b5cf6]', iconBg: 'bg-[#361d6e]' }
+              ].map((c, i) => (
+                <StatCard 
+                  key={i}
+                  val={c.val}
+                  label={c.label}
+                  valColor={c.valColor}
+                  iconBg={c.iconBg}
+                  delayMs={i * 90}
+                  isActive={active === 1}
+                />
+              ))}
             </div>
           </div>
         </section>
