@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
+import { useLayoutStore } from "@/hooks/useLayoutStore";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard,
@@ -73,13 +74,17 @@ const itemVariants = {
 export function Sidebar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { isWelcomeActive } = useLayoutStore();
   const [isManualCollapsed, setIsManualCollapsed] = useState(false);
   const [isManualExpanded, setIsManualExpanded] = useState(false);
+  
   const isAnalyticsRoute = pathname?.startsWith("/analytics") ?? false;
-  const isCollapsed = isAnalyticsRoute ? !isManualExpanded : isManualCollapsed;
+  const isWelcomePage = pathname === "/" && isWelcomeActive;
+  
+  const isCollapsed = (isAnalyticsRoute || isWelcomePage) ? !isManualExpanded : isManualCollapsed;
 
   const toggleSidebar = () => {
-    if (isAnalyticsRoute) {
+    if (isAnalyticsRoute || isWelcomePage) {
       setIsManualExpanded(!isManualExpanded);
     } else {
       setIsManualCollapsed(!isManualCollapsed);
