@@ -164,6 +164,7 @@ export const queryApi = {
 
 // Analytics Engine (Module 11)
 export const analyticsApi = {
+  prefetch: () => api.get<{ active_dataset: any; kpis: any }>("/api/v1/analytics/prefetch"),
   kpis: () => api.get<import("./types").AnalyticsKPIs>("/api/v1/analytics/kpis"),
   kpiCenter: () => api.get<any>("/api/v1/analytics/kpi-center"),
   eda: () => api.get<any>("/api/v1/analytics/eda"),
@@ -185,6 +186,7 @@ export const analyticsApi = {
       `/api/v1/analytics/trends?dataset_version_id=${datasetVersionId}`
     ),
 };
+
 
 // Insights (Module 12)
 export const insightsApi = {

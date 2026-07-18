@@ -6,7 +6,7 @@ import uuid
 import sqlite3
 import json
 import os
-from app.services.data_processing import save_dataset, DB_PATH, get_dataset_path, get_active_dataset, get_dataframe, DuplicateDatasetError
+from app.services.data_processing import save_dataset, DB_PATH, get_dataset_path, get_active_dataset, get_dataframe, DuplicateDatasetError, invalidate_user_cache
 from app.core.security import get_current_user
 from app.services.stats_service import compute_kpis
 
@@ -232,10 +232,19 @@ async def activate_dataset(dataset_id: str, current_user: dict = Depends(get_cur
     if not cursor.fetchone():
         conn.close()
         raise HTTPException(status_code=404, detail="Dataset not found")
-        
+
     cursor.execute("INSERT OR REPLACE INTO active_dataset (user_id, dataset_id) VALUES (?, ?)", (current_user["id"], dataset_id))
     conn.commit()
     conn.close()
+
+    # Bust caches so the next request loads fresh data
+    invalidate_user_cache(current_user["id"])
+    try:
+        from app.routers.analytics import invalidate_analytics_cache
+        invalidate_analytics_cache(current_user["id"])
+    except Exception:
+        pass
+
     return {"status": "success", "message": f"Dataset {dataset_id} activated"}
 
 @router.delete("/{dataset_id}")
@@ -275,5 +284,13 @@ async def delete_dataset(dataset_id: str, current_user: dict = Depends(get_curre
             
     conn.commit()
     conn.close()
-    
+
+    # Bust caches so deleted dataset is not served from memory
+    invalidate_user_cache(current_user["id"])
+    try:
+        from app.routers.analytics import invalidate_analytics_cache
+        invalidate_analytics_cache(current_user["id"])
+    except Exception:
+        pass
+
     return {"status": "success", "message": "Dataset deleted"}

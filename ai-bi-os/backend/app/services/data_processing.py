@@ -1,4 +1,5 @@
 import os
+import threading
 import pandas as pd
 import uuid
 import json
@@ -7,6 +8,22 @@ from datetime import datetime
 import sqlite3
 
 from pathlib import Path
+
+# ─── In-memory performance caches ─────────────────────────────────────────────
+# Keyed by (dataset_id, user_id) → pd.DataFrame
+_df_cache: dict = {}
+# Keyed by user_id → dataset_info dict
+_active_cache: dict = {}
+_cache_lock = threading.Lock()
+
+
+def invalidate_user_cache(user_id: str) -> None:
+    """Clear all in-memory cache for a user. Call whenever dataset changes."""
+    with _cache_lock:
+        _active_cache.pop(user_id, None)
+        keys_to_del = [k for k in _df_cache if k[1] == user_id]
+        for k in keys_to_del:
+            del _df_cache[k]
 
 class DuplicateDatasetError(Exception):
     def __init__(self, existing_info):
@@ -490,10 +507,18 @@ def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool =
     
     conn.commit()
     conn.close()
-    
+
+    # Invalidate cache so next request picks up the new dataset
+    invalidate_user_cache(user_id)
+
     return dataset_info
 
 def get_active_dataset(user_id: str):
+    # ── Cache hit ──────────────────────────────────────────────────────────────
+    with _cache_lock:
+        if user_id in _active_cache:
+            return _active_cache[user_id]
+
     conn = sqlite3.connect(str(DB_PATH))
     cursor = conn.cursor()
     cursor.execute('''
@@ -503,7 +528,7 @@ def get_active_dataset(user_id: str):
     if not row:
         conn.close()
         return None
-        
+
     dataset_id = row[0]
     cursor.execute('''
         SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score, quality_breakdown, domain, semantic_dict
@@ -579,33 +604,45 @@ def get_active_dataset(user_id: str):
             ''', (dataset_info["quality_score"], json.dumps(dataset_info["quality_breakdown"]), dataset_info["id"]))
             conn.commit()
             conn.close()
-            
+
+    # ── Cache the resolved dataset_info ───────────────────────────────────────
+    with _cache_lock:
+        _active_cache[user_id] = dataset_info
+
     return dataset_info
 
 def get_dataframe(dataset_id: str, user_id: str):
+    # ── Cache hit — return instantly without any disk/DB I/O ──────────────────
+    cache_key = (dataset_id, user_id)
+    with _cache_lock:
+        if cache_key in _df_cache:
+            return _df_cache[cache_key]
+
     conn = sqlite3.connect(str(DB_PATH))
     cursor = conn.cursor()
     cursor.execute('SELECT filepath, sheet_name FROM datasets WHERE id = ? AND user_id = ?', (dataset_id, user_id))
     row = cursor.fetchone()
     conn.close()
-    
+
     if not row:
         return None
-        
+
     filename_db, sheet_name = row
     disk_path = get_dataset_path(filename_db)
     if not os.path.exists(disk_path):
         return None
-        
+
     lower_path = disk_path.lower()
+    df = None
     if lower_path.endswith(".csv"):
-        return pd.read_csv(disk_path, on_bad_lines='skip')
+        df = pd.read_csv(disk_path, on_bad_lines='skip')
     elif lower_path.endswith(".tsv"):
-        return pd.read_csv(disk_path, sep="\t", on_bad_lines='skip')
+        df = pd.read_csv(disk_path, sep="\t", on_bad_lines='skip')
     elif lower_path.endswith(".xlsx") or lower_path.endswith(".xls"):
         if sheet_name:
-            return pd.read_excel(disk_path, sheet_name=sheet_name)
-        return pd.read_excel(disk_path)
+            df = pd.read_excel(disk_path, sheet_name=sheet_name)
+        else:
+            df = pd.read_excel(disk_path)
     elif lower_path.endswith(".json"):
         with open(disk_path, "r", encoding="utf-8", errors="ignore") as f:
             text = f.read()
@@ -621,9 +658,15 @@ def get_dataframe(dataset_id: str, user_id: str):
         for col in df.columns:
             if df[col].apply(lambda x: isinstance(x, (dict, list))).any():
                 df[col] = df[col].apply(lambda x: json.dumps(x) if isinstance(x, (dict, list)) else x)
-        return df
     elif lower_path.endswith(".parquet"):
-        return pd.read_parquet(disk_path)
-        
-    return pd.read_csv(disk_path, on_bad_lines='skip')
+        df = pd.read_parquet(disk_path)
+    else:
+        df = pd.read_csv(disk_path, on_bad_lines='skip')
+
+    # ── Store in cache for all future requests ─────────────────────────────────
+    if df is not None:
+        with _cache_lock:
+            _df_cache[cache_key] = df
+
+    return df
 

@@ -76,6 +76,7 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
   const [loadPct, setLoadPct] = useState(0);
   const [currentStatusMsg, setCurrentStatusMsg] = useState("");
   const [isClient, setIsClient] = useState(false);
+  const [pageEntered, setPageEntered] = useState(false);
   
   // Dashboard mock animation state
   const [progress, setProgress] = useState(0);
@@ -89,6 +90,8 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
 
   useEffect(() => {
     setIsClient(true);
+    const t = setTimeout(() => setPageEntered(true), 80);
+    return () => clearTimeout(t);
   }, []);
 
   // Dashboard animation orchestration
@@ -197,7 +200,7 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
 
   // Helpers for inline styles based on scroll position
   const rev = (idx: number, delay: number, opts: React.CSSProperties = {}) => {
-    const on = active === idx;
+    const on = idx === 0 ? pageEntered : active === idx;
     return {
       transition: 'opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1)',
       transitionDelay: (on ? delay : 0) + 'ms',

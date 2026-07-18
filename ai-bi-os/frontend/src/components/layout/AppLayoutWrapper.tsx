@@ -7,13 +7,46 @@ import { Header } from "@/components/layout/Header";
 import { useAuth } from "@/context/AuthContext";
 import { Loader2 } from "lucide-react";
 import { useLayoutStore } from "@/hooks/useLayoutStore";
+import { useQueryClient } from "@tanstack/react-query";
+import { analyticsApi, datasetsApi } from "@/lib/api";
 
 export function AppLayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, loading } = useAuth();
   const { isWelcomeActive } = useLayoutStore();
+  const queryClient = useQueryClient();
   const isAnalytics = (pathname?.startsWith("/analytics") || pathname?.startsWith("/chat")) ?? false;
   const isAuthPage = pathname === "/login" || pathname === "/signup";
+
+  // ── Background prefetch: warm backend + React Query caches on mount ──────────
+  React.useEffect(() => {
+    if (!user) return;
+
+    // Fire-and-forget: calls /analytics/prefetch which warms backend DataFrame
+    // cache + result cache in one request. Seed React Query cache with results.
+    queryClient.prefetchQuery({
+      queryKey: ["analytics-prefetch"],
+      queryFn: async () => {
+        const data = await analyticsApi.prefetch();
+        // Seed individual query caches from the batch response
+        if (data?.kpis) {
+          queryClient.setQueryData(["analytics-kpis"], data.kpis);
+        }
+        if (data?.active_dataset) {
+          queryClient.setQueryData(["active-dataset"], data.active_dataset);
+        }
+        return data;
+      },
+      staleTime: 5 * 60 * 1000,
+    });
+
+    // Also prefetch the datasets list silently
+    queryClient.prefetchQuery({
+      queryKey: ["datasets"],
+      queryFn: () => datasetsApi.list(),
+      staleTime: 5 * 60 * 1000,
+    });
+  }, [user, queryClient]);
 
   if (loading) {
     return (
