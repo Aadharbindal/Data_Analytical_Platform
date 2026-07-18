@@ -60,8 +60,12 @@ export function AppLayoutWrapper({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
   }
 
-  if (!user) {
-    return null; // Will redirect via AuthContext
+  if (!user && !isAuthPage) {
+    // loading=false (spinner already shown above) and no user → redirect
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
+    }
+    return null;
   }
 
   const isDashboard = pathname === "/";

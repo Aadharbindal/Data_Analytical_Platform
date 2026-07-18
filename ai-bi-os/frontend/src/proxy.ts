@@ -1,23 +1,10 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const PUBLIC_PATHS = ['/login', '/signup'];
-
+// Auth is handled client-side via localStorage Bearer tokens (AuthContext).
+// Server-side middleware cannot access localStorage, so we do NOT redirect here.
+// All protected route guarding is done in AuthContext + AppLayoutWrapper.
 export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  
-  if (PUBLIC_PATHS.some(p => pathname.startsWith(p))) {
-    return NextResponse.next();
-  }
-  
-  const accessToken = request.cookies.get('access_token');
-  
-  if (!accessToken) {
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('redirect', pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-  
   return NextResponse.next();
 }
 
