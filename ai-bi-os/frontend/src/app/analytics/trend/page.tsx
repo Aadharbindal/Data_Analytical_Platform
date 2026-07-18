@@ -7,7 +7,22 @@ import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { ErrorState } from "@/components/ui/error-state";
 import { StudioPage } from "@/components/analytics/StudioPage";
 import { formatNumber, formatPercent } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useTransform, animate } from "framer-motion";
+import { useEffect } from "react";
+
+function AnimatedNumber({ value, isPercent = false }: { value: number, isPercent?: boolean }) {
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (latest) => 
+    isPercent ? formatPercent(latest * 100) : formatNumber(latest)
+  );
+
+  useEffect(() => {
+    const controls = animate(count, value, { duration: 1.5, ease: "easeOut" });
+    return controls.stop;
+  }, [count, value]);
+
+  return <motion.span>{rounded}</motion.span>;
+}
 
 export default function TrendAnalysis() {
   const { data, isLoading, isError } = useQuery({
@@ -104,7 +119,10 @@ export default function TrendAnalysis() {
                         {/* Glowing Wavy Path */}
                         {isUp && (
                           <>
-                            <path 
+                            <motion.path 
+                              initial={{ pathLength: 0, opacity: 0 }}
+                              animate={{ pathLength: 1, opacity: 1 }}
+                              transition={{ duration: 1.5, ease: "easeInOut", delay: i * 0.1 }}
                               d="M 0,95 C 20,90 35,75 50,80 C 65,85 70,100 80,100 C 90,100 95,55 110,60 C 125,65 130,105 140,105 C 150,105 160,40 180,45 C 200,50 205,110 220,110 C 235,110 240,30 260,30 C 280,30 285,115 300,115 C 315,115 320,25 340,25 C 360,25 365,100 375,100 C 385,100 390,50 395,50" 
                               fill="none" 
                               stroke="#60a5fa" 
@@ -115,7 +133,10 @@ export default function TrendAnalysis() {
                               }}
                             />
                             {/* End circle */}
-                            <circle 
+                            <motion.circle 
+                               initial={{ scale: 0, opacity: 0 }}
+                               animate={{ scale: 1, opacity: 1 }}
+                               transition={{ duration: 0.3, ease: "easeOut", delay: i * 0.1 + 1.5 }}
                                cx="395" cy="50" r="5" 
                                fill="#0A0E17" 
                                stroke="#60a5fa" 
@@ -126,7 +147,10 @@ export default function TrendAnalysis() {
                         )}
                         {isDown && (
                           <>
-                            <path 
+                            <motion.path 
+                              initial={{ pathLength: 0, opacity: 0 }}
+                              animate={{ pathLength: 1, opacity: 1 }}
+                              transition={{ duration: 1.5, ease: "easeInOut", delay: i * 0.1 }}
                               d="M 0,35 C 20,40 35,55 50,50 C 65,45 70,30 80,30 C 90,30 95,75 110,70 C 125,65 130,25 140,25 C 150,25 160,90 180,85 C 200,80 205,20 220,20 C 235,20 240,100 260,100 C 280,100 285,15 300,15 C 315,15 320,105 340,105 C 360,105 365,30 375,30 C 385,30 390,80 395,80" 
                               fill="none" 
                               stroke="#fb7185" 
@@ -136,7 +160,10 @@ export default function TrendAnalysis() {
                                 filter: "drop-shadow(0px 0px 10px rgba(244,63,94,1)) drop-shadow(0px 0px 25px rgba(244,63,94,0.7))"
                               }}
                             />
-                            <circle 
+                            <motion.circle 
+                               initial={{ scale: 0, opacity: 0 }}
+                               animate={{ scale: 1, opacity: 1 }}
+                               transition={{ duration: 0.3, ease: "easeOut", delay: i * 0.1 + 1.5 }}
                                cx="395" cy="80" r="5" 
                                fill="#0A0E17" 
                                stroke="#fb7185" 
@@ -147,7 +174,10 @@ export default function TrendAnalysis() {
                         )}
                         {!isUp && !isDown && (
                           <>
-                            <path 
+                            <motion.path 
+                              initial={{ pathLength: 0, opacity: 0 }}
+                              animate={{ pathLength: 1, opacity: 1 }}
+                              transition={{ duration: 1.5, ease: "easeInOut", delay: i * 0.1 }}
                               d="M 0,65 C 20,55 35,75 50,65 C 65,55 70,75 80,65 C 90,55 95,75 110,65 C 125,55 130,75 140,65 C 150,55 160,75 180,65 C 200,55 205,75 220,65 C 235,55 240,75 260,65 C 280,55 285,75 300,65 C 315,55 320,75 340,65 C 360,55 365,75 375,65 C 385,55 390,65 395,65" 
                               fill="none" 
                               stroke="#94a3b8" 
@@ -157,7 +187,10 @@ export default function TrendAnalysis() {
                                 filter: "drop-shadow(0px 0px 10px rgba(148,163,184,0.8)) drop-shadow(0px 0px 25px rgba(148,163,184,0.4))"
                               }}
                             />
-                            <circle 
+                            <motion.circle 
+                               initial={{ scale: 0, opacity: 0 }}
+                               animate={{ scale: 1, opacity: 1 }}
+                               transition={{ duration: 0.3, ease: "easeOut", delay: i * 0.1 + 1.5 }}
                                cx="395" cy="65" r="5" 
                                fill="#0A0E17" 
                                stroke="#94a3b8" 
@@ -181,7 +214,7 @@ export default function TrendAnalysis() {
                          <div className="text-[9px] text-slate-400/90 uppercase tracking-[0.15em] font-semibold mb-2">Growth Slope</div>
                          <div className="flex items-baseline gap-1">
                            <span className="text-[24px] font-extrabold text-white tracking-tight">
-                             {isUp ? '+' : ''}{formatNumber(trend.slope)}
+                             {isUp ? '+' : ''}<AnimatedNumber value={trend.slope} />
                            </span>
                            <span className="text-[11px] font-semibold text-slate-500">/ mo</span>
                          </div>
@@ -193,7 +226,7 @@ export default function TrendAnalysis() {
                          <div className="text-[9px] text-slate-400/90 uppercase tracking-[0.15em] font-semibold mb-2 leading-snug">R-Value •<br/>Confidence</div>
                          <div className="flex items-end gap-2">
                            <span className="text-[24px] font-extrabold text-white tracking-tight leading-none">
-                             {trend.r_value != null ? formatPercent(trend.r_value * 100) : "N/A"}
+                             {trend.r_value != null ? <AnimatedNumber value={trend.r_value} isPercent /> : "N/A"}
                            </span>
                            {trend.r_value != null && (
                              <span className="text-[11px] font-bold leading-tight" style={{ color: isUp ? '#60a5fa' : isDown ? '#fb7185' : '#94a3b8' }}>
