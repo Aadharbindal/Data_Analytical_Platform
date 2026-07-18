@@ -1,5 +1,22 @@
 import { useQuery } from "@tanstack/react-query";
-import { advancedAnalyticsApi } from "../api/analytics";
+import { analyticsApi } from "@/lib/api";
+
+// Alias so existing code below doesn't need to change
+const advancedAnalyticsApi = {
+  getKpis: (_id: string) => analyticsApi.kpis(),
+  getBusinessMetrics: (_id: string) => analyticsApi.kpis(),
+  getEDAProfile: (_id: string) => analyticsApi.eda(),
+  getCorrelations: (_id: string) => analyticsApi.correlation(),
+  getStatistics: (_id: string) => analyticsApi.statistics(),
+  getRegression: (_id: string) => analyticsApi.kpis(),
+  getValidation: (_id: string) => analyticsApi.eda(),
+  getDistributions: (_id: string) => analyticsApi.distribution(),
+  getOutliers: (_id: string) => analyticsApi.outliers(),
+  getTimeSeries: (_id: string) => analyticsApi.timeseries(),
+  getTrends: (_id: string) => analyticsApi.trend(),
+  getForecasts: (_id: string) => analyticsApi.forecast(),
+  getGovernance: (_id: string) => analyticsApi.kpis(),
+};
 
 // Helper hook to fetch everything for a dataset
 export function useDatasetAnalytics(datasetId: string, datasetVersionId: string) {
