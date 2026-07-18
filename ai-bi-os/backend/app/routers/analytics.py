@@ -419,7 +419,8 @@ async def get_trend(current_user: dict = Depends(get_current_user)):
             "column": col,
             "slope": float(slope),
             "trend": direction.upper(),
-            "r_value": float(r2)
+            "r_value": float(r2),
+            "sparkline": [float(val) for val in y]
         })
         
     return {"trend": trends_res}

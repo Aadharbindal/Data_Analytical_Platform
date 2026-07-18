@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  @keyframes cardIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes headIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes sheen { 0% { transform: translateX(-120%); } 100% { transform: translateX(220%); } }
+  @keyframes floatGlow { 0%,100% { opacity: .5; } 50% { opacity: .9; } }
+  a { color: oklch(0.8 0.12 205); text-decoration: none; }
+  a:hover { color: oklch(0.88 0.1 205); }
+</style>
+</helmet>
+<div style="min-height: 100vh; width: 100%; background: radial-gradient(1200px 700px at 20% -10%, #12203a 0%, #0a1020 45%, #060912 100%); font-family: 'Space Grotesk', sans-serif; color: #e8edf6; padding: 40px; display: flex; justify-content: center; align-items: flex-start;">
+  <div style="width: 100%; max-width: 1200px; background: linear-gradient(180deg, rgba(20,28,48,0.72) 0%, rgba(10,15,28,0.72) 100%); border: 1px solid rgba(120,160,220,0.12); border-radius: 22px; box-shadow: 0 40px 100px -30px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.04); backdrop-filter: blur(12px); overflow: hidden;">
+
+    <div style="display: flex; align-items: center; gap: 16px; padding: 26px 30px 20px; border-bottom: 1px solid rgba(120,160,220,0.08); animation: headIn .6s cubic-bezier(.2,.7,.2,1) both;">
+      <h1 style="margin: 0; font-size: 27px; font-weight: 700; letter-spacing: -0.02em;">Column Analysis</h1>
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; color: oklch(0.85 0.11 205); background: rgba(70,180,220,0.1); border: 1px solid rgba(90,190,230,0.28); padding: 6px 13px; border-radius: 999px;">Amount</span>
+      <div style="flex: 1;"></div>
+      <div onMouseEnter="{{ hoverClose }}" onMouseLeave="{{ leaveClose }}" style="width: 38px; height: 38px; display: grid; place-items: center; border-radius: 12px; cursor: pointer; color: #9fb0c8; background: {{ closeBg }}; transition: all .25s ease;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 3l10 10M13 3L3 13"/></svg>
+      </div>
+    </div>
+
+    <div style="padding: 26px 30px 32px;">
+      <div style="position: relative; background: linear-gradient(180deg, rgba(30,44,72,0.5) 0%, rgba(14,22,40,0.35) 100%); border: 1px solid rgba(120,160,220,0.12); border-radius: 18px; padding: 22px 26px 16px; overflow: hidden;">
+        <div style="position: absolute; inset: 0; background: radial-gradient(500px 300px at 15% 0%, rgba(80,170,220,0.1), transparent 70%); pointer-events: none; animation: floatGlow 6s ease-in-out infinite;"></div>
+
+        <div style="position: relative; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.14em; color: #6f829e; text-transform: uppercase;">Distribution</span>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: {{ readoutColor }}; transition: color .2s; min-height: 18px;">{{ readout }}</div>
+        </div>
+
+        <div style="position: relative; display: flex; height: 340px;">
+          <div style="display: flex; flex-direction: column; justify-content: space-between; padding-right: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5d6f8a; text-align: right;">
+            <sc-for list="{{ yTicks }}" as="t" hint-placeholder-count="4">
+              <div>{{ t }}</div>
+            </sc-for>
+          </div>
+
+          <div style="position: relative; flex: 1;">
+            <sc-for list="{{ gridLines }}" as="g" hint-placeholder-count="4">
+              <div style="position: absolute; left: 0; right: 0; bottom: {{ g }}%; border-top: 1px dashed rgba(120,160,220,0.08);"></div>
+            </sc-for>
+
+            <div style="position: absolute; inset: 0; display: flex; align-items: flex-end; gap: 2px;">
+              <sc-for list="{{ bars }}" as="b" hint-placeholder-count="52">
+                <div onMouseEnter="{{ b.enter }}" onMouseLeave="{{ leaveBar }}" style="flex: 1; height: 100%; display: flex; align-items: flex-end; cursor: pointer; min-width: 0;">
+                  <div style="width: 100%; height: {{ b.h }}%; border-radius: 3px 3px 1px 1px; background: {{ b.fill }}; box-shadow: {{ b.glow }}; transition: height .9s cubic-bezier(.2,.8,.2,1), background .2s, box-shadow .2s; transition-delay: {{ b.delay }}; min-height: 1px;"></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div style="position: relative; display: flex; justify-content: space-between; padding-left: 46px; margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5d6f8a;">
+          <sc-for list="{{ xLabels }}" as="x" hint-placeholder-count="9">
+            <span>{{ x }}</span>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-top: 22px;">
+        <sc-for list="{{ stats }}" as="s" hint-placeholder-count="11">
+          <div onMouseEnter="{{ s.enter }}" onMouseLeave="{{ leaveCard }}" style="position: relative; overflow: hidden; background: linear-gradient(180deg, rgba(28,40,66,0.55), rgba(16,24,42,0.55)); border: 1px solid {{ s.border }}; border-radius: 16px; padding: 18px 18px 20px; animation: cardIn .55s cubic-bezier(.2,.7,.2,1) both; animation-delay: {{ s.delay }}; transform: {{ s.lift }}; box-shadow: {{ s.shadow }}; transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s, border-color .28s;">
+            <div style="position: absolute; top: 0; left: 0; height: 2px; width: {{ s.barW }}; background: linear-gradient(90deg, oklch(0.78 0.13 205), oklch(0.82 0.12 260)); transition: width .5s ease; box-shadow: 0 0 10px oklch(0.78 0.13 205 / .6);"></div>
+            <div style="position: absolute; top: 0; bottom: 0; left: 0; width: 40%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent); transform: translateX(-120%); opacity: {{ s.sheen }};"></div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.16em; color: #7386a2; text-transform: uppercase; margin-bottom: 12px;">{{ s.label }}</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; color: #f2f6fc;">{{ s.display }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:880}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { progress: 0, grown: false, hoverBar: -1, hoverCard: -1, closeHover: false };
+    // seeded deterministic bar generation (log-normal-ish with long tail)
+    let seed = 1337;
+    const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
+    const N = 52, peak = 340, mode = 8, sigma = 5.5;
+    this.rawBars = [];
+    for (let i = 0; i < N; i++) {
+      let v = peak * Math.exp(-Math.pow(i - mode, 2) / (2 * sigma * sigma));
+      if (i > 16) v = Math.max(v, peak * 1.05 * Math.exp(-(i - 6) * 0.16));
+      if (i > 26) v = v * 0.5 + peak * 0.012 * rnd();
+      v *= 0.82 + rnd() * 0.34;
+      this.rawBars.push(Math.max(0.6, v));
+    }
+    this.binMin = 18400; this.binStep = (324000 - 18400) / N;
+    this.stats = [
+      { label: 'MIN', value: 18400 }, { label: 'MAX', value: 331000 },
+      { label: 'MEAN', value: 50400 }, { label: 'MEDIAN', value: 46400 },
+      { label: 'STD', value: 27500 }, { label: 'Q1', value: 35500 },
+      { label: 'Q3', value: 58700 }, { label: 'SKEWNESS', value: 4.81, raw: true },
+      { label: 'KURTOSIS', value: 33.43, raw: true }, { label: 'NULLS', value: 0, raw: true, dec: 0 },
+      { label: 'TOTAL', value: 7200 },
+    ];
+  }
+  componentDidMount() {
+    requestAnimationFrame(() => this.setState({ grown: true }));
+    const dur = 1150, t0 = performance.now();
+    const tick = (now) => {
+      const p = Math.min(1, (now - t0) / dur);
+      const e = 1 - Math.pow(1 - p, 3);
+      this.setState({ progress: e });
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    setTimeout(() => requestAnimationFrame(tick), 200);
+  }
+  fmt(n, s) {
+    if (s.raw) return n.toFixed(s.dec == null ? 2 : s.dec);
+    if (Math.abs(n) >= 100000) return (n / 100000).toFixed(2) + 'L';
+    return (n / 1000).toFixed(1) + 'K';
+  }
+  fmtK(n) {
+    if (Math.abs(n) >= 100000) return (n / 100000).toFixed(2) + 'L';
+    return (n / 1000).toFixed(1) + 'K';
+  }
+  renderVals() {
+    const { progress, grown, hoverBar, hoverCard, closeHover } = this.state;
+    const maxH = 360;
+    const bars = this.rawBars.map((v, i) => {
+      const active = hoverBar === i;
+      const pct = (v / maxH) * 100;
+      const base = active
+        ? 'linear-gradient(180deg, oklch(0.92 0.06 205), oklch(0.8 0.14 205))'
+        : 'linear-gradient(180deg, rgba(226,236,248,0.95), rgba(150,178,214,0.55))';
+      return {
+        h: grown ? pct : 0,
+        fill: base,
+        glow: active ? '0 0 16px oklch(0.8 0.14 205 / 0.8)' : 'none',
+        delay: (i * 14) + 'ms',
+        enter: () => this.setState({ hoverBar: i }),
+      };
+    });
+    let readout = 'Hover a bin to inspect', readoutColor = '#5d6f8a';
+    if (hoverBar >= 0) {
+      const lo = this.binMin + hoverBar * this.binStep;
+      readout = 'n = ' + Math.round(this.rawBars[hoverBar]) + '  ·  ' + this.fmtK(lo) + '–' + this.fmtK(lo + this.binStep);
+      readoutColor = 'oklch(0.85 0.11 205)';
+    }
+    const stats = this.stats.map((s, i) => {
+      const active = hoverCard === i;
+      return {
+        label: s.label,
+        display: this.fmt(s.value * progress, s),
+        delay: (0.15 + i * 0.05) + 's',
+        border: active ? 'rgba(110,200,235,0.45)' : 'rgba(120,160,220,0.12)',
+        lift: active ? 'translateY(-5px)' : 'translateY(0)',
+        shadow: active ? '0 20px 40px -16px rgba(40,120,180,0.55)' : '0 0 0 rgba(0,0,0,0)',
+        barW: (progress * 100) + '%',
+        sheen: active ? 0 : 0,
+        enter: () => this.setState({ hoverCard: i }),
+      };
+    });
+    return {
+      bars, stats, readout, readoutColor,
+      yTicks: ['312', '208', '104', '0'],
+      gridLines: [87, 58, 29, 0],
+      xLabels: ['18.4K', '56.6K', '94.8K', '1.33L', '1.71L', '2.1L', '2.48L', '2.86L', '3.24L'],
+      leaveBar: () => this.setState({ hoverBar: -1 }),
+      leaveCard: () => this.setState({ hoverCard: -1 }),
+      hoverClose: () => this.setState({ closeHover: true }),
+      leaveClose: () => this.setState({ closeHover: false }),
+      closeBg: closeHover ? 'rgba(235,90,110,0.16)' : 'rgba(120,160,220,0.06)',
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -6,6 +6,7 @@ import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { ErrorState } from "@/components/ui/error-state";
 import { StudioPage } from "@/components/analytics/StudioPage";
 import { formatNumber } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 export default function OutlierExplorer() {
   const { data, isLoading, isError } = useQuery({
@@ -20,7 +21,12 @@ export default function OutlierExplorer() {
       ) : !data || !data.outliers || data.outliers.length === 0 ? (
         <div className="text-muted-foreground text-sm">No Outlier data found.</div>
       ) : (
-        <div className="flex flex-col gap-6">
+        <motion.div 
+          initial={{ opacity: 0, filter: 'blur(4px)' }}
+          animate={{ opacity: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="flex flex-col gap-6"
+        >
           <div className="rounded-xl border border-white/[0.05] overflow-hidden bg-surface/30">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-[13px]">
@@ -36,7 +42,13 @@ export default function OutlierExplorer() {
                     const hasOutliers = totalOutliers > 0;
                     
                     return (
-                      <tr key={i} className="hover:bg-white/[0.02] transition-colors group">
+                      <motion.tr 
+                        key={i} 
+                        initial={{ opacity: 0, y: 15, x: -10 }}
+                        animate={{ opacity: 1, y: 0, x: 0 }}
+                        transition={{ duration: 0.4, delay: i * 0.04 + 0.1, ease: [0.22, 1, 0.36, 1] }}
+                        className="hover:bg-white/[0.02] transition-colors group"
+                      >
                         <td className="py-3 px-4 font-medium text-foreground/90 whitespace-nowrap border-l-2 border-transparent group-hover:border-primary/50 transition-all">
                           <div className="flex items-center gap-2">
                             {hasOutliers && (
@@ -72,14 +84,14 @@ export default function OutlierExplorer() {
                             </div>
                           </div>
                         </td>
-                      </tr>
+                      </motion.tr>
                     );
                   })}
                 </tbody>
               </table>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
     </StudioPage>
   );
