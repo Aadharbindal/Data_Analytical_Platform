@@ -19,6 +19,10 @@ origins = [
     "http://127.0.0.1:3001"
 ]
 
+frontend_url = os.getenv("FRONTEND_URL")
+if frontend_url:
+    origins.append(frontend_url)
+
 
 
 app.include_router(datasets.router, prefix="/api/v1/datasets", tags=["datasets"])
