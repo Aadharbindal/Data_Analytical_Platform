@@ -6,11 +6,13 @@
 export const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
+  const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
   const res = await fetch(`${BASE_URL}${path}`, {
     credentials: 'include',
     ...options,
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { "Authorization": `Bearer ${token}` } : {}),
       ...(options?.headers ?? {}),
     },
   });
@@ -40,10 +42,14 @@ const api = {
 
   // Multipart file upload
   upload: async <T>(path: string, formData: FormData): Promise<T> => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
     const res = await fetch(`${BASE_URL}${path}`, {
       method: "POST",
       credentials: 'include',
       body: formData,
+      headers: {
+        ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+      },
     });
     if (!res.ok) {
       const errorText = await res.text();

@@ -56,6 +56,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error("Failed to logout cleanly", e);
     }
     setUser(null);
+    localStorage.removeItem("access_token");
     window.location.href = "/login";
   };
 

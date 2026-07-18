@@ -22,13 +22,15 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      await api.post("/api/v1/auth/login", {
+      const data = await api.post<{ access_token: string }>("/api/v1/auth/login", {
         email,
         password
       });
-      
+      if (data?.access_token) {
+        localStorage.setItem("access_token", data.access_token);
+      }
       const user = await api.get("/api/v1/auth/me");
-      login("cookie-auth", user as any);
+      login("bearer", user as any);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "An error occurred during login. Please try again.");
     } finally {

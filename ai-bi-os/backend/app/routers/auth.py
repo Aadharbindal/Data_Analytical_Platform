@@ -79,7 +79,7 @@ def signup(user: UserSignup, response: Response):
         secure=secure_cookies
     )
     
-    return {"message": "User created successfully"}
+    return {"message": "User created successfully", "access_token": access_token, "token_type": "bearer"}
 
 @router.post("/login")
 @limiter.limit("5/minute")
@@ -122,7 +122,7 @@ def login(request: Request, user: UserLogin, response: Response):
         secure=secure_cookies
     )
     
-    return {"message": "Login successful"}
+    return {"message": "Login successful", "access_token": access_token, "token_type": "bearer"}
 
 @router.post("/refresh")
 def refresh(request: Request, response: Response):
