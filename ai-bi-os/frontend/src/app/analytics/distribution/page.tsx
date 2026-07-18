@@ -242,7 +242,7 @@ export default function DistributionExplorer() {
                   <line x1="64" x2="1576" y1="450" y2="450" stroke="rgba(255,255,255,.14)"></line>
 
                   {/* Bars */}
-                  {bars.map((b) => (
+                  {bars.map((b: any) => (
                     <g key={`b-${b.idx}`}>
                       <rect x={b.hitX} y="20" width={b.colW} height="430" fill="transparent" onMouseEnter={() => setHover(b.idx)}></rect>
                       <rect 
