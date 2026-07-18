@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { analyticsApi } from "@/lib/api";
 import { Clock, ChevronDown } from "lucide-react";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { ErrorState } from "@/components/ui/error-state";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { motion } from "framer-motion";
 import { StudioPage } from "@/components/analytics/StudioPage";
 import { formatNumber } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
@@ -51,6 +52,40 @@ export default function TimeSeriesPage() {
     </DropdownMenu>
   );
 
+  const [timeRange, setTimeRange] = useState<"1Y" | "3Y" | "ALL">("ALL");
+
+  const filteredData = React.useMemo(() => {
+    if (!data?.timeseries) return [];
+    if (timeRange === "ALL") return data.timeseries;
+    const cutoff = new Date();
+    cutoff.setFullYear(cutoff.getFullYear() - (timeRange === "1Y" ? 1 : 3));
+    return data.timeseries.filter((d: any) => new Date(d.date) >= cutoff);
+  }, [data, timeRange]);
+
+  const stats = React.useMemo(() => {
+    if (!filteredData || filteredData.length === 0) return null;
+    const vals = filteredData.map((d: any) => d.value);
+    const peak = Math.max(...vals);
+    const average = vals.reduce((a: number, b: number) => a + b, 0) / vals.length;
+    const latest = vals[vals.length - 1];
+    const previous = vals[vals.length - 2] || latest;
+    const trend = previous ? ((latest - previous) / previous) * 100 : 0;
+    
+    return { peak, average, latest, trend, window: filteredData.length };
+  }, [filteredData]);
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-[#0b1220] border border-white/[0.05] p-3.5 px-4 rounded-[14px] shadow-2xl flex flex-col gap-1.5 items-start">
+          <span className="text-[12px] text-muted-foreground/80 font-mono tracking-wide">{label}</span>
+          <span className="text-[18px] font-bold text-white font-mono tracking-tight">{metric.toLowerCase().includes("amount") ? "₹" : ""}{formatNumber(payload[0].value)}</span>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <StudioPage title="Time Series Intelligence" isLoading={isLoading && !data} toolbar={toolbar}>
       {isError ? (
@@ -60,59 +95,92 @@ export default function TimeSeriesPage() {
           No Time Series data found for the selected metric. Make sure your dataset has a date column.
         </div>
       ) : (
-        <div className="flex flex-col gap-6 h-full">
-          <div className="glass-card rounded-xl p-6 flex flex-col gap-4 border border-white/[0.05] bg-surface/30 h-[400px]">
-            <div className="flex items-center gap-2 pb-2">
-              <span className="text-[14px] font-semibold text-foreground">{metric} over Time</span>
-            </div>
+        <motion.div 
+          initial={{ opacity: 0, filter: 'blur(4px)' }}
+          animate={{ opacity: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col gap-6 h-full"
+        >
+          <div className="bg-[#0b1220] border border-white/[0.05] rounded-[24px] p-8 flex flex-col gap-2 shadow-2xl relative overflow-hidden">
             
-            <div className="flex-1 w-full mt-2">
+            {/* Top Section */}
+            <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-6 relative z-10">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-[6px] h-[6px] rounded-full bg-[#3b82f6] shadow-[0_0_8px_rgba(59,130,246,0.8)]"></div>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Overview</span>
+                </div>
+                <h2 className="text-3xl font-bold text-white mb-1.5 tracking-tight capitalize">{metric} over time</h2>
+                <p className="text-[13px] text-muted-foreground/70">
+                  Monthly transaction volume &bull; {filteredData[0]?.date} &ndash; {filteredData[filteredData.length - 1]?.date}
+                </p>
+              </div>
+              
+              {stats && (
+                <div className="flex flex-col items-end gap-4">
+                  <div className="flex bg-[#131b2c] rounded-[8px] p-1 border border-white/[0.05]">
+                    {(['1Y', '3Y', 'ALL'] as const).map(t => (
+                      <button 
+                        key={t}
+                        onClick={() => setTimeRange(t)}
+                        className={`px-4 py-1.5 text-[11px] font-bold rounded-[6px] transition-all tracking-wider ${timeRange === t ? 'bg-[#1e293b] text-white shadow-sm' : 'text-muted-foreground hover:text-white'}`}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Stats Row */}
+            {stats && (
+              <div className="flex gap-8 items-center mt-2 mb-6 relative z-10">
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Peak</span>
+                  <span className="text-xl font-medium text-white">{metric.toLowerCase().includes("amount") ? "₹" : ""}{formatNumber(stats.peak)}</span>
+                </div>
+                <div className="w-[1px] h-8 bg-white/[0.08]"></div>
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Average</span>
+                  <span className="text-xl font-medium text-white">{metric.toLowerCase().includes("amount") ? "₹" : ""}{formatNumber(stats.average)}</span>
+                </div>
+                <div className="w-[1px] h-8 bg-white/[0.08]"></div>
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Window</span>
+                  <span className="text-xl font-medium text-white font-mono">{stats.window} <span className="text-[14px] text-muted-foreground">mo</span></span>
+                </div>
+              </div>
+            )}
+            
+            {/* Chart Area */}
+            <div className="h-[320px] w-full mt-2 -ml-2 -mb-2 relative z-10">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data.timeseries} margin={{ top: 10, right: 10, left: 20, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" vertical={false} />
-                  <XAxis 
-                    dataKey="date" 
-                    tick={{ fontSize: 10, fill: "#80848E", fontWeight: 500 }} 
-                    axisLine={false} 
-                    tickLine={false} 
-                    dy={15} 
-                  />
-                  <YAxis 
-                    tick={{ fontSize: 11, fill: "#80848E", fontWeight: 500 }} 
-                    tickFormatter={(value) => formatNumber(value)}
-                    axisLine={false} 
-                    tickLine={false} 
-                    width={80}
-                  />
+                <AreaChart data={filteredData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                  <XAxis dataKey="date" hide />
+                  <defs>
+                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
                   <Tooltip 
-                    cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1, strokeDasharray: '4 4' }}
-                    contentStyle={{ 
-                      backgroundColor: 'rgba(19, 23, 34, 0.85)', 
-                      backdropFilter: 'blur(12px)',
-                      border: '1px solid rgba(255,255,255,0.08)', 
-                      borderRadius: '12px',
-                      boxShadow: '0 8px 32px -8px rgba(0,0,0,0.5)',
-                      color: '#fff',
-                      fontSize: '12px',
-                      fontWeight: 500,
-                      padding: '8px 12px'
-                    }}
-                    itemStyle={{ color: '#fff', fontWeight: 600, fontSize: '13px' }}
-                    formatter={(value: number) => [formatNumber(value), metric]}
+                    content={<CustomTooltip />} 
+                    cursor={{ stroke: 'rgba(255,255,255,0.15)', strokeWidth: 1, strokeDasharray: '4 4' }} 
                   />
-                  <Line 
+                  <Area 
                     type="monotone" 
                     dataKey="value" 
-                    stroke="#0070F3" 
+                    stroke="#3b82f6" 
                     strokeWidth={2.5} 
-                    dot={{ r: 0 }} 
-                    activeDot={{ r: 5, fill: '#0B0D12', stroke: '#0070F3', strokeWidth: 2 }} 
+                    fill="url(#colorValue)" 
+                    activeDot={{ r: 4, fill: '#0b1220', stroke: '#3b82f6', strokeWidth: 2 }} 
                   />
-                </LineChart>
+                </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
     </StudioPage>
   );

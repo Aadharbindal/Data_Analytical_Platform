@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<template id="__bundler_thumbnail" data-bg-color="#080b12">
+<svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+<rect width="1200" height="800" fill="#080b12"/>
+<g fill="#3d6dff">
+<rect x="170" y="470" width="34" height="170" rx="6"/>
+<rect x="216" y="380" width="34" height="260" rx="6"/>
+<rect x="262" y="300" width="34" height="340" rx="6"/>
+<rect x="308" y="260" width="34" height="380" rx="6"/>
+<rect x="354" y="320" width="34" height="320" rx="6"/>
+<rect x="400" y="400" width="34" height="240" rx="6"/>
+<rect x="446" y="480" width="34" height="160" rx="6"/>
+<rect x="492" y="540" width="34" height="100" rx="6"/>
+<rect x="538" y="580" width="34" height="60" rx="6"/>
+<rect x="584" y="610" width="34" height="30" rx="6"/>
+</g>
+<rect x="170" y="640" width="860" height="3" fill="rgba(255,255,255,.15)"/>
+</svg>
+</template>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:#05070c;-webkit-font-smoothing:antialiased}
+  a{color:#6aa4ff}a:hover{color:#8fbcff}
+  @keyframes barrise{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+</style>
+</helmet>
+<div style="min-height:100vh;box-sizing:border-box;padding:40px;background:radial-gradient(1200px 600px at 50% -10%,#0d1524 0%,#05070c 60%);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',system-ui,sans-serif">
+  <div style="width:100%;max-width:1560px;box-sizing:border-box;background:linear-gradient(180deg,#0c111c 0%,#080b12 100%);border:1px solid rgba(255,255,255,.07);border-radius:22px;box-shadow:0 40px 90px -30px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.04);padding:30px 34px 26px">
+
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:center;gap:11px">
+          <span style="width:10px;height:10px;border-radius:3px;background:linear-gradient(180deg,#6aa4ff,#2f6bff);box-shadow:0 0 14px rgba(47,107,255,.7)"></span>
+          <h1 style="margin:0;font-size:21px;font-weight:600;letter-spacing:.2px;color:#eef2fa">Amount</h1>
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#69758c;padding-left:21px">
+          {{ totalLabel }} records · range {{ rangeLabel }}
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button onClick="{{ toggleFocus }}" style="{{ focusBtnStyle }}" style-hover="filter:brightness(1.15)">Focus range</button>
+        <button onClick="{{ toggleLog }}" style="{{ logBtnStyle }}" style-hover="filter:brightness(1.15)">Log scale</button>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#6aa4ff;border:1px solid rgba(106,164,255,.4);background:rgba(47,107,255,.08);padding:7px 13px;border-radius:8px">Numerical</span>
+      </div>
+    </div>
+
+    <div style="position:relative;margin-top:14px">
+      <svg viewBox="0 0 1600 560" style="width:100%;display:block;overflow:visible" onMouseLeave="{{ clearHover }}">
+        <defs>
+          <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#8fbcff"></stop>
+            <stop offset="45%" stop-color="#4d84ff"></stop>
+            <stop offset="100%" stop-color="#2455d6"></stop>
+          </linearGradient>
+          <linearGradient id="barGradHot" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#d6e6ff"></stop>
+            <stop offset="55%" stop-color="#7aa8ff"></stop>
+            <stop offset="100%" stop-color="#3d6dff"></stop>
+          </linearGradient>
+        </defs>
+
+        <sc-for list="{{ yTicks }}" as="t" hint-placeholder-count="4">
+          <line x1="64" x2="1576" y1="{{ t.y }}" y2="{{ t.y }}" stroke="rgba(255,255,255,.055)" stroke-dasharray="2 7"></line>
+          <text x="52" y="{{ t.ty }}" text-anchor="end" style="fill:#59667e;font-family:'IBM Plex Mono',monospace;font-size:15px">{{ t.label }}</text>
+        </sc-for>
+
+        <line x1="64" x2="1576" y1="450" y2="450" stroke="rgba(255,255,255,.14)"></line>
+
+        <sc-for list="{{ bars }}" as="b" hint-placeholder-count="40">
+          <g>
+            <rect x="{{ b.hitX }}" y="20" width="{{ b.colW }}" height="430" fill="transparent" onMouseEnter="{{ b.onEnter }}"></rect>
+            <rect x="{{ b.barX }}" y="{{ b.barY }}" width="{{ b.barW }}" height="{{ b.barH }}" rx="2.5" fill="{{ b.fill }}" opacity="{{ b.opacity }}" style="pointer-events:none;transform-box:fill-box;transform-origin:bottom;animation:barrise .55s cubic-bezier(.22,1,.36,1) both"></rect>
+          </g>
+        </sc-for>
+
+        <sc-for list="{{ xTicks }}" as="t" hint-placeholder-count="9">
+          <line x1="{{ t.x }}" x2="{{ t.x }}" y1="450" y2="456" stroke="rgba(255,255,255,.2)"></line>
+          <text x="{{ t.x }}" y="478" text-anchor="middle" style="fill:#59667e;font-family:'IBM Plex Mono',monospace;font-size:14px">{{ t.label }}</text>
+        </sc-for>
+        <text x="820" y="516" text-anchor="middle" style="fill:#454f63;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.5px">AMOUNT ($)</text>
+
+        <sc-if value="{{ tip }}" hint-placeholder-val="{{ false }}">
+          <g style="pointer-events:none">
+            <line x1="{{ tip.cx }}" x2="{{ tip.cx }}" y1="{{ tip.barY }}" y2="450" stroke="rgba(150,190,255,.5)" stroke-dasharray="3 4"></line>
+            <rect x="{{ tip.bx }}" y="{{ tip.by }}" width="240" height="90" rx="10" fill="#0b1220" stroke="rgba(120,160,255,.35)"></rect>
+            <rect x="{{ tip.bx }}" y="{{ tip.by }}" width="4" height="90" rx="2" fill="#4d84ff"></rect>
+            <text x="{{ tip.tx }}" y="{{ tip.l1 }}" style="fill:#eef2fa;font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600">{{ tip.range }}</text>
+            <text x="{{ tip.tx }}" y="{{ tip.l2 }}" style="fill:#9fb2d4;font-family:'IBM Plex Mono',monospace;font-size:14px">{{ tip.count }}</text>
+            <text x="{{ tip.tx }}" y="{{ tip.l3 }}" style="fill:#6aa4ff;font-family:'IBM Plex Mono',monospace;font-size:14px">{{ tip.pct }}</text>
+          </g>
+        </sc-if>
+      </svg>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;margin-top:6px;padding-left:2px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5a6580">
+      <span style="width:22px;height:8px;border-radius:2px;background:linear-gradient(90deg,#8fbcff,#2455d6);display:inline-block"></span>
+      Count per bin · hover for details{{ scaleNote }}
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { logScale: false, focus: false, hover: -1 };
+
+  getData() {
+    if (this._data) return this._data;
+    const nBins = 60, start = 25524, width = 9358;
+    const mu = Math.log(95000), sigma = 0.42;
+    const bins = [];
+    for (let i = 0; i < nBins; i++) {
+      const lo = start + i * width, hi = lo + width, c = (lo + hi) / 2;
+      const pdf = Math.exp(-Math.pow(Math.log(c) - mu, 2) / (2 * sigma * sigma)) / c;
+      bins.push({ idx: i, lo, hi, pdf });
+    }
+    const maxpdf = Math.max(...bins.map(b => b.pdf));
+    bins.forEach((b, i) => {
+      const n = Math.abs(Math.sin((i + 1) * 12.9898) * 43758.5453) % 1;
+      let cnt = b.pdf / maxpdf * 412 * (0.9 + 0.2 * n);
+      if (cnt < 1 && i > 24) cnt = n < 0.45 ? 0 : Math.round(n * 6);
+      b.count = Math.max(0, Math.round(cnt));
+    });
+    // last meaningfully-populated bin (for focus mode)
+    const mc = Math.max(...bins.map(b => b.count));
+    let cut = bins.length - 1;
+    for (let i = bins.length - 1; i >= 0; i--) { if (bins[i].count > mc * 0.02) { cut = i; break; } }
+    this._cutoff = Math.min(bins.length - 1, cut + 2);
+    this._total = bins.reduce((a, b) => a + b.count, 0);
+    this._maxCount = mc;
+    this._data = bins;
+    return bins;
+  }
+
+  fmtShort(n) { return n >= 1000 ? Math.round(n / 1000) + "k" : "" + Math.round(n); }
+  fmtMoney(n) { return "$" + Math.round(n).toLocaleString("en-US"); }
+
+  renderVals() {
+    const data = this.getData();
+    const { logScale, focus, hover } = this.state;
+    const PL = 64, PR = 24, top = 20, base = 450, W = 1600;
+    const plotW = W - PL - PR, plotH = base - top;
+    const visible = focus ? data.slice(0, this._cutoff + 1) : data;
+    const nv = visible.length;
+    const step = plotW / nv;
+    const barW = Math.max(2, step * 0.62);
+    const maxCount = this._maxCount;
+
+    // y scale + ticks
+    let yFor, yTicks = [];
+    if (logScale) {
+      const maxLog = Math.max(1, Math.ceil(Math.log10(maxCount)));
+      yFor = v => v <= 0 ? base : base - (Math.log10(v) / maxLog) * plotH;
+      for (let e = 0; e <= maxLog; e++) {
+        const v = Math.pow(10, e), y = yFor(v);
+        yTicks.push({ y, ty: y + 5, label: v >= 1000 ? (v / 1000) + "k" : "" + v });
+      }
+    } else {
+      const niceMax = Math.ceil(maxCount / 150) * 150;
+      yFor = v => base - (v / niceMax) * plotH;
+      for (let v = 0; v <= niceMax; v += niceMax / 4) {
+        const y = yFor(v);
+        yTicks.push({ y, ty: y + 5, label: "" + Math.round(v) });
+      }
+    }
+
+    const bars = visible.map((b, vi) => {
+      const hitX = PL + vi * step;
+      const barX = hitX + (step - barW) / 2;
+      const barY = b.count > 0 ? yFor(b.count) : base;
+      const barH = Math.max(0, base - barY);
+      const hot = hover === b.idx;
+      return {
+        idx: b.idx, hitX, colW: step, barX, barW, barY, barH,
+        fill: hot ? "url(#barGradHot)" : "url(#barGrad)",
+        opacity: hover === -1 ? 0.92 : (hot ? 1 : 0.42),
+        onEnter: () => this.setState({ hover: b.idx }),
+      };
+    });
+
+    // x ticks (sparse)
+    const every = Math.max(1, Math.round(nv / 11));
+    const xTicks = [];
+    visible.forEach((b, vi) => {
+      if (vi % every === 0) xTicks.push({ x: PL + vi * step + step / 2, label: this.fmtShort(b.lo) });
+    });
+
+    // tooltip
+    let tip = null;
+    if (hover >= 0) {
+      const vb = bars.find(x => x.idx === hover);
+      const d = data[hover];
+      if (vb && d) {
+        const cx = vb.barX + vb.barW / 2;
+        let bx = cx - 120; bx = Math.max(PL, Math.min(bx, W - PR - 240));
+        let by = vb.barY - 100; if (by < top) by = vb.barY + 14;
+        by = Math.min(by, base - 96);
+        const tx = bx + 16;
+        tip = {
+          cx, barY: vb.barY, bx, by, tx,
+          l1: by + 30, l2: by + 54, l3: by + 76,
+          range: this.fmtMoney(d.lo) + " – " + this.fmtMoney(d.hi),
+          count: d.count.toLocaleString("en-US") + (d.count === 1 ? " record" : " records"),
+          pct: (d.count / this._total * 100).toFixed(1) + "% of total",
+        };
+      }
+    }
+
+    const activeBtn = "font-family:'IBM Plex Mono',monospace;font-size:12px;cursor:pointer;padding:7px 13px;border-radius:8px;border:1px solid #4d84ff;background:linear-gradient(180deg,#3d74ff,#2455d6);color:#fff;transition:filter .15s";
+    const idleBtn = "font-family:'IBM Plex Mono',monospace;font-size:12px;cursor:pointer;padding:7px 13px;border-radius:8px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.03);color:#8a97b0;transition:filter .15s";
+
+    return {
+      bars, yTicks, xTicks, tip,
+      totalLabel: this._total.toLocaleString("en-US"),
+      rangeLabel: this.fmtShort(data[0].lo) + "–" + this.fmtShort(data[data.length - 1].hi),
+      toggleLog: () => this.setState(s => ({ logScale: !s.logScale })),
+      toggleFocus: () => this.setState(s => ({ focus: !s.focus })),
+      clearHover: () => this.setState({ hover: -1 }),
+      logBtnStyle: logScale ? activeBtn : idleBtn,
+      focusBtnStyle: focus ? activeBtn : idleBtn,
+      scaleNote: (logScale ? " · log scale" : "") + (focus ? " · focused" : ""),
+    };
+  }
+}
+</script>
+</body>
+</html>
