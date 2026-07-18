@@ -58,21 +58,24 @@ def signup(user: UserSignup, response: Response):
     access_token = create_access_token(user_id)
     refresh_token = create_refresh_token(user_id)
     
+    secure_cookies = os.getenv("SECURE_COOKIES", "false").lower() == "true"
+    samesite_mode = "none" if secure_cookies else "lax"
+    
     response.set_cookie(
         key="access_token", 
         value=access_token, 
         httponly=True, 
         max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-        samesite="lax",
-        secure=False # Set True for production HTTPS
+        samesite=samesite_mode,
+        secure=secure_cookies
     )
     response.set_cookie(
         key="refresh_token", 
         value=refresh_token, 
         httponly=True, 
         max_age=REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
-        samesite="lax",
-        secure=False
+        samesite=samesite_mode,
+        secure=secure_cookies
     )
     
     return {"message": "User created successfully"}
@@ -98,21 +101,24 @@ def login(request: Request, user: UserLogin, response: Response):
     access_token = create_access_token(user_id)
     refresh_token = create_refresh_token(user_id)
     
+    secure_cookies = os.getenv("SECURE_COOKIES", "false").lower() == "true"
+    samesite_mode = "none" if secure_cookies else "lax"
+
     response.set_cookie(
         key="access_token", 
         value=access_token, 
         httponly=True, 
         max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-        samesite="lax",
-        secure=False
+        samesite=samesite_mode,
+        secure=secure_cookies
     )
     response.set_cookie(
         key="refresh_token", 
         value=refresh_token, 
         httponly=True, 
         max_age=REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
-        samesite="lax",
-        secure=False
+        samesite=samesite_mode,
+        secure=secure_cookies
     )
     
     return {"message": "Login successful"}
@@ -142,13 +148,16 @@ def refresh(request: Request, response: Response):
             raise HTTPException(status_code=401, detail="User inactive or not found")
             
         access_token = create_access_token(user_id)
+        secure_cookies = os.getenv("SECURE_COOKIES", "false").lower() == "true"
+        samesite_mode = "none" if secure_cookies else "lax"
+
         response.set_cookie(
             key="access_token", 
             value=access_token, 
             httponly=True, 
             max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-            samesite="lax",
-            secure=False
+            samesite=samesite_mode,
+            secure=secure_cookies
         )
         return {"message": "Token refreshed"}
         
