@@ -23,19 +23,21 @@ export default function SignupPage() {
     setIsLoading(true);
 
     try {
-      await api.post("/api/v1/auth/signup", {
+      const signupData = await api.post<{ access_token: string }>("/api/v1/auth/signup", {
         email,
         password,
         full_name: fullName,
       });
+      if (signupData?.access_token) {
+        localStorage.setItem("access_token", signupData.access_token);
+      } else {
+        // Fallback: login to get token
+        const loginData = await api.post<{ access_token: string }>("/api/v1/auth/login", { email, password });
+        if (loginData?.access_token) localStorage.setItem("access_token", loginData.access_token);
+      }
 
-      await api.post("/api/v1/auth/login", {
-        email,
-        password
-      });
-      
       const user = await api.get("/api/v1/auth/me");
-      login("cookie-auth", user as any);
+      login("bearer", user as any);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "An error occurred during signup. Please try again.");
     } finally {
