@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import api from "@/lib/api";
-import { usePathname, useRouter } from "next/navigation";
 
 interface User {
   id: string;
@@ -22,27 +21,25 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
-  const pathname = usePathname();
 
   useEffect(() => {
-    // Check if user is logged in
+    // Check if user is logged in on mount (once only)
     const checkAuth = async () => {
       try {
         const response = await api.get("/api/v1/auth/me");
         setUser(response as any);
       } catch (error) {
+        // /me failed — user is not authenticated. 
+        // Do NOT redirect here; AppLayoutWrapper handles the guard
+        // after loading becomes false.
         setUser(null);
-        if (pathname !== "/login" && pathname !== "/signup") {
-            router.push("/login");
-        }
       } finally {
         setLoading(false);
       }
     };
 
     checkAuth();
-  }, [pathname, router]);
+  }, []); // run once on mount only
 
   const login = (token: string, userData: User) => {
     setUser(userData);
