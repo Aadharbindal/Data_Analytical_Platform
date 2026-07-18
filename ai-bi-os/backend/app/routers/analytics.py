@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import re
+import threading
 from fastapi import APIRouter, Query, HTTPException, Depends
 from fastapi.responses import PlainTextResponse, HTMLResponse
 from typing import Optional
@@ -10,17 +11,81 @@ from app.services.stats_service import compute_kpis, compute_executive_kpis, for
 
 router = APIRouter()
 
+# ─── Result cache ──────────────────────────────────────────────────────────────
+# Stores computed analytics results to avoid re-computation on repeat requests.
+# Key: (user_id, dataset_id, endpoint_name)  →  computed result dict
+_result_cache: dict = {}
+_result_lock = threading.Lock()
+
+def _rcache_get(key: tuple):
+    with _result_lock:
+        return _result_cache.get(key)
+
+def _rcache_set(key: tuple, value) -> None:
+    with _result_lock:
+        _result_cache[key] = value
+
+def invalidate_analytics_cache(user_id: str) -> None:
+    """Clear all cached analytics results for a user. Called on dataset change."""
+    with _result_lock:
+        keys = [k for k in _result_cache if isinstance(k, tuple) and k and k[0] == user_id]
+        for k in keys:
+            del _result_cache[k]
+
+
+@router.get("/prefetch")
+async def prefetch_analytics(current_user: dict = Depends(get_current_user)):
+    """
+    Returns KPIs + active dataset info in a single call.
+    Frontend calls this once on mount to warm all caches simultaneously.
+    """
+    dataset_info = get_active_dataset(current_user["id"])
+    if not dataset_info:
+        return {"active_dataset": None, "kpis": {"kpis": [], "chart_data": []}}
+
+    cache_key = (current_user["id"], dataset_info["id"], "kpis")
+    kpis = _rcache_get(cache_key)
+    if kpis is None:
+        df = get_dataframe(dataset_info["id"], current_user["id"])
+        if df is not None:
+            kpis = compute_kpis(df, dataset_info.get("semantic_dict"))
+            _rcache_set(cache_key, kpis)
+        else:
+            kpis = {"kpis": [], "chart_data": []}
+
+    return {
+        "active_dataset": {
+            "id": dataset_info["id"],
+            "name": dataset_info["name"],
+            "row_count": dataset_info["latest_version"].get("row_count") if dataset_info.get("latest_version") else None,
+            "columns": dataset_info["columns"],
+            "quality_score": dataset_info.get("quality_score", 0),
+            "domain": dataset_info.get("domain", "generic"),
+        },
+        "kpis": kpis,
+    }
+
+
 @router.get("/kpis")
 async def get_kpis_endpoint(current_user: dict = Depends(get_current_user)):
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return {"kpis": [], "chart_data": []}
-    
+
+    cache_key = (current_user["id"], dataset_info["id"], "kpis")
+    cached = _rcache_get(cache_key)
+    if cached is not None:
+        return cached
+
     df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         return {"kpis": [], "chart_data": []}
-        
-    return compute_kpis(df, dataset_info.get("semantic_dict"))
+
+    result = compute_kpis(df, dataset_info.get("semantic_dict"))
+    _rcache_set(cache_key, result)
+    return result
+
+
 
 @router.get("/eda")
 async def get_eda(current_user: dict = Depends(get_current_user)):

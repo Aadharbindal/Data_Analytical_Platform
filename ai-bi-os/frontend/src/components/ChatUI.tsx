@@ -21,42 +21,42 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
+// ─── Page-level entrance variants ───────────────────────────────────────────────
 const containerVariants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.15, delayChildren: 0.05 },
+    transition: { staggerChildren: 0.12, delayChildren: 0.04 },
   },
 };
 
+// Badge slides in from the right with a rubber-band bounce
 const badgeVariants = {
-  hidden: { opacity: 0, x: 20, scale: 0.9 },
+  hidden:  { opacity: 0, x: 32, scale: 0.82 },
   show: {
-    opacity: 1,
-    x: 0,
-    scale: 1,
-    transition: { type: "spring", stiffness: 280, damping: 20 },
+    opacity: 1, x: 0, scale: 1,
+    transition: { type: "spring", stiffness: 380, damping: 18, delay: 0.08 },
   },
 };
 
+// Each chat message: blur → clear + slide up
 const messageVariants = {
-  hidden: { opacity: 0, y: 25, scale: 0.95 },
+  hidden: { opacity: 0, y: 28, scale: 0.97, filter: "blur(6px)" },
   show: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: { type: "spring", stiffness: 220, damping: 22 },
+    opacity: 1, y: 0, scale: 1, filter: "blur(0px)",
+    transition: { type: "spring", stiffness: 240, damping: 26 },
   },
 };
 
+// Input bar rises dramatically from below with a spring
 const inputVariants = {
-  hidden: { opacity: 0, y: 50 },
+  hidden: { opacity: 0, y: 64, scale: 0.96 },
   show: {
-    opacity: 1,
-    y: 0,
-    transition: { type: "spring", stiffness: 200, damping: 25, delay: 0.25 },
+    opacity: 1, y: 0, scale: 1,
+    transition: { type: "spring", stiffness: 220, damping: 28, delay: 0.28 },
   },
 };
+
 
 function TypewriterText({
   text,
@@ -362,6 +362,17 @@ export const ChatUI: React.FC = () => {
   ]);
   const [input, setInput] = useState("");
 
+  // ── Reliable page entrance: trigger CSS transitions after mount ──────────────
+  const [pageEntered, setPageEntered] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setPageEntered(true), 60);
+    return () => clearTimeout(t);
+  }, []);
+
+  const entered = {
+    transition: "opacity 0.55s cubic-bezier(0.22,1,0.36,1), transform 0.55s cubic-bezier(0.22,1,0.36,1), filter 0.55s cubic-bezier(0.22,1,0.36,1)",
+  };
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
@@ -451,32 +462,38 @@ export const ChatUI: React.FC = () => {
   };
 
   return (
-    <motion.div
-      initial="hidden"
-      animate="show"
-      variants={containerVariants}
-      className="flex flex-col flex-1 w-full relative overflow-hidden"
-    >
-      {/* Connection Status Indicator */}
-      <motion.div
-        variants={badgeVariants}
+    <div className="flex flex-col flex-1 w-full relative overflow-hidden">
+
+      {/* Connection Status Badge — slides in from right */}
+      <div
+        style={{
+          ...entered,
+          transitionDelay: pageEntered ? "0ms" : "0ms",
+          opacity: pageEntered ? 1 : 0,
+          transform: pageEntered ? "translateX(0) scale(1)" : "translateX(28px) scale(0.88)",
+        }}
         className="absolute top-6 right-8 flex items-center gap-2 z-20 bg-surface/40 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/5"
       >
         <div className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
         </div>
-        <span className="text-xs font-medium text-muted-foreground">
-          Connected
-        </span>
-      </motion.div>
-
+        <span className="text-xs font-medium text-muted-foreground">Connected</span>
+      </div>
+      {/* Messages scroll area — fades up after badge */}
       <div
+        style={{
+          ...entered,
+          transitionDelay: pageEntered ? "80ms" : "0ms",
+          opacity: pageEntered ? 1 : 0,
+          transform: pageEntered ? "translateY(0) scale(1)" : "translateY(22px) scale(0.98)",
+          filter: pageEntered ? "blur(0px)" : "blur(5px)",
+        }}
         id="chat-scroll-container"
         className="flex-1 overflow-y-auto w-full pb-40 scroll-smooth"
       >
         <div className="max-w-3xl mr-auto ml-4 md:ml-12 lg:ml-24 w-full px-4 md:px-0 space-y-6 pt-8">
-          <AnimatePresence initial={false}>
+          <AnimatePresence>
             {messages.map((msg, idx) =>
               msg.role === "user" ? (
                 <motion.div
@@ -555,8 +572,14 @@ export const ChatUI: React.FC = () => {
         </div>
       </div>
 
-      <motion.div
-        variants={inputVariants}
+      {/* Input bar — rises from below, longest delay */}
+      <div
+        style={{
+          ...entered,
+          transitionDelay: pageEntered ? "200ms" : "0ms",
+          opacity: pageEntered ? 1 : 0,
+          transform: pageEntered ? "translateY(0) scale(1)" : "translateY(48px) scale(0.97)",
+        }}
         className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-background via-background/90 to-transparent pt-16 pointer-events-none flex flex-col items-start"
       >
         <div className="w-full max-w-3xl pointer-events-auto flex flex-col items-center px-4 md:px-0 ml-4 md:ml-12 lg:ml-24 mr-auto">
@@ -587,7 +610,7 @@ export const ChatUI: React.FC = () => {
             AI can make mistakes. Consider verifying critical business metrics.
           </p>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };
