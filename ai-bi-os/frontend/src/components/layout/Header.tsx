@@ -5,14 +5,12 @@ import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { datasetsApi } from "@/lib/api";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Search, Bell, Sun, Moon } from "lucide-react";
+import { Search, Bell } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useTheme } from "next-themes";
 
 export function Header() {
   const qc = useQueryClient();
-  const { theme, setTheme } = useTheme();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -102,16 +100,6 @@ export function Header() {
         <div className="flex items-center gap-x-1.5 border-l border-border/40 pl-5">
           <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-surface transition-all">
             <Bell className="h-4 w-4" />
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-surface transition-all"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          >
-            <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            <span className="sr-only">Toggle theme</span>
           </Button>
         </div>
       </div>
