@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = (token: string, userData: User) => {
     setUser(userData);
-    router.push("/");
+    window.location.href = "/";
   };
 
   const logout = async () => {
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error("Failed to logout cleanly", e);
     }
     setUser(null);
-    router.push("/login");
+    window.location.href = "/login";
   };
 
   return (
