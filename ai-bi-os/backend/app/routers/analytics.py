@@ -235,22 +235,9 @@ async def get_correlation(current_user: dict = Depends(get_current_user)):
         return {"correlation": []}
     
     df = get_dataframe(dataset_info["id"], current_user["id"])
-    if df is None:
-        return {"correlation": []}
-
-    num_df = df.select_dtypes(include=[np.number])
-    if num_df.empty:
-        return {"correlation": []}
-
-    corr_matrix = num_df.corr().fillna(0)
-    result = []
-    for col1 in corr_matrix.columns:
-        for col2 in corr_matrix.columns:
-            result.append({
-                "x": col1,
-                "y": col2,
-                "value": float(corr_matrix.loc[col1, col2])
-            })
+    
+    from app.services.analytics.correlation_engine import compute_correlation
+    result = compute_correlation(df)
     return {"correlation": result}
 
 @router.get("/distribution")
