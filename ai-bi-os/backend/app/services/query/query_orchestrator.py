@@ -1,6 +1,7 @@
 from typing import Dict, Any, List
 from fastapi import HTTPException
 import os
+import re
 
 from app.services.query.duckdb_engine import DuckDBEngine
 from app.services.query.query_validator import QueryValidator
@@ -11,6 +12,16 @@ from app.services.query.query_cache_manager import QueryCacheManager
 class QueryOrchestrator:
     """Coordinates validation, caching, profiling, and execution of SQL."""
     
+    @staticmethod
+    def _get_safe_file_path(dataset_version_id: str) -> str:
+        if not re.match(r"^[a-zA-Z0-9_-]+$", dataset_version_id):
+            raise HTTPException(status_code=400, detail="Invalid dataset version ID")
+        base_dir = os.path.abspath("data")
+        file_path = os.path.abspath(os.path.join(base_dir, f"{dataset_version_id}.csv"))
+        if not file_path.startswith(base_dir):
+            raise HTTPException(status_code=400, detail="Path traversal detected")
+        return file_path
+
     @staticmethod
     def execute_query(db: Any, sql: str, dataset_version_id: str, workspace_id: str, skip_cache: bool = False) -> Dict[str, Any]:
         # 1. Validate Query Security
@@ -34,7 +45,8 @@ class QueryOrchestrator:
         # if not version:
         #     raise HTTPException(status_code=404, detail="Dataset version not found")
             
-        file_path = "data/" + dataset_version_id + ".csv" # Mocked
+        file_path = QueryOrchestrator._get_safe_file_path(dataset_version_id)
+
         # if not os.path.exists(file_path):
         #     raise HTTPException(status_code=404, detail="Underlying data file not found")
             
@@ -92,7 +104,7 @@ class QueryOrchestrator:
         QueryValidator.validate(sql)
         # Mocking version
         # version = db.query(DatasetVersion).filter(DatasetVersion.id == dataset_version_id).first()
-        file_path = "data/" + dataset_version_id + ".csv"
+        file_path = QueryOrchestrator._get_safe_file_path(dataset_version_id)
         # if not version or not os.path.exists(version.file_path):
         #     raise HTTPException(status_code=404, detail="Dataset not found")
             

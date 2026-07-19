@@ -59,16 +59,14 @@ Decoupled two-service architecture:
 7. **Observability** — `prometheus-fastapi-instrumentator` auto-exposes metrics; Prometheus + Grafana wired in docker-compose.
 
 ### Backend module structure
-The backend follows a consistent layered pattern **per feature domain** (e.g. `forecast`, `correlation`, `privacy`, `rag`, `business_metrics`, `ai_gateway`, `decision_intelligence`, ...). For a given domain, expect up to four parallel files/dirs:
-- `app/api/<domain>_router.py` — FastAPI route definitions.
+The backend follows a consistent layered pattern **per feature domain**. For a given domain, expect up to three parallel files/dirs:
+- `app/routers/<domain>.py` — FastAPI route definitions.
 - `app/schemas/<domain>.py` — Pydantic request/response models.
-- `app/models/<domain>.py` — SQLAlchemy ORM models.
-- `app/repositories/<domain>_repository.py` — DB access layer.
-- `app/services/<domain>/` — business logic, often further split into per-concern engines (e.g. `services/analytics/{correlation_engine,trend_engine,variance_engine,segmentation_engine,metric_engine,insight_builder}.py`).
+- `app/services/<domain>/` — business logic, often further split into per-concern engines (e.g. `services/analytics/{correlation_engine,trend_engine,variance_engine,segmentation_engine,metric_engine,insight_builder}.py`). Note: older monolithic files like `analytics.py` are actively being migrated into `services/`.
 
-When adding or modifying a feature, expect to touch several of these files in parallel rather than one monolithic file — grep across `api/`, `schemas/`, `models/`, `repositories/`, and `services/<domain>/` for the domain name to find everything.
+When adding or modifying a feature, expect to touch several of these files in parallel rather than one monolithic file — grep across `routers/`, `schemas/`, and `services/<domain>/` for the domain name to find everything.
 
-**Router wiring is two-tiered**: most domain routers are included in `app/api/routers.py` (which is then included as the single generic `router` in `main.py`), but several analytics-adjacent routers (`dataset_router`, `analytics_router`, `forecast_router`, `kpi_router`, etc.) are imported and `include_router`'d directly in `app/main.py`. Check both files when tracing how an endpoint is mounted, or when adding a new router.
+**Router wiring**: Domain routers are imported and `include_router`'d directly in `app/main.py`. Check this file when tracing how an endpoint is mounted, or when adding a new router.
 
 ### AI orchestration
 - `app/ai/agents.py` defines `AgentOrchestrator.run_query()` — the main ReAct loop: sends messages + tool schema to the model via `ModelRegistry.route_request()`, executes any tool calls against an `MCPToolAbstraction` (DuckDB query tools + RAG tools, see `app/ai/mcp_tools.py`), feeds results back, and loops (max 3 iterations) until a final text/JSON response.
