@@ -43,16 +43,10 @@ class DBAPICursorProxy:
         return self
         
     def fetchone(self):
-        row = self.cursor.fetchone()
-        if row is None:
-            return None
-        return dict(row) if hasattr(row, 'keys') else row
+        return self.cursor.fetchone()
         
     def fetchall(self):
-        rows = self.cursor.fetchall()
-        if not rows:
-            return []
-        return [dict(row) if hasattr(row, 'keys') else row for row in rows]
+        return self.cursor.fetchall()
         
     def close(self):
         self.cursor.close()
