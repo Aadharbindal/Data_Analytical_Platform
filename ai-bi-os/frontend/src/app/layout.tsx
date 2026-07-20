@@ -19,6 +19,13 @@ export const metadata: Metadata = {
   description: "Enterprise AI Business Intelligence Operating System",
 };
 
+// Resource hints — browser pre-resolves backend DNS before first API call
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
+
 export default function RootLayout({
   children,
 }: Readonly<{

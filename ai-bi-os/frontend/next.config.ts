@@ -7,11 +7,15 @@ const nextConfig: NextConfig = {
   // Bundle size & response optimizations
   compress: true,
   poweredByHeader: false,
-  // Modular imports — only bundle what is imported (reduces Recharts & Lucide bundle ~60%)
-  modularizeImports: {
-    "lucide-react": {
-      transform: "lucide-react/dist/esm/icons/{{kebabCase member}}",
-    },
+  experimental: {
+    // Tree-shake heavy packages — pulls only used exports into the bundle
+    // Replaces the old modularizeImports approach with Next.js built-in optimization
+    optimizePackageImports: [
+      "recharts",
+      "framer-motion",
+      "@radix-ui/react-icons",
+      "lucide-react",
+    ],
   },
 };
 
