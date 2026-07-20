@@ -11,12 +11,8 @@ import { Play, Clock, AlertCircle, BarChart2, Table2, Activity, AlertTriangle, T
 import { Button } from "@/components/ui/button";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { ErrorState } from "@/components/ui/error-state";
-// Recharts lazy-loaded — avoids including ~400KB chart bundle in initial JS
-import dynamic from "next/dynamic";
-const { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } =
-  (await import("recharts").then((m) => m)) as typeof import("recharts");
-// Use a simple wrapper pattern with dynamic
-const _ChartsBundle = dynamic(() => import("@/components/charts/LazyCharts"), { ssr: false });
+// Recharts — tree-shaken via optimizePackageImports in next.config.ts
+import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const EXAMPLE_QUERIES = [
   "SELECT * FROM dataset LIMIT 100",
