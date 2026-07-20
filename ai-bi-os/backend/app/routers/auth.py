@@ -1,7 +1,7 @@
 import os
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel, EmailStr
-import sqlite3
+from app.core.database import get_db_connection
 import uuid
 from datetime import datetime
 
@@ -36,7 +36,7 @@ def signup(user: UserSignup, response: Response):
     if len(user.password) < 8 or not re.search(r"[A-Za-z]", user.password) or not re.search(r"[0-9]", user.password):
         raise HTTPException(status_code=400, detail="Password must be at least 8 characters and include a letter and a number.")
         
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     email_lower = user.email.lower()
@@ -84,7 +84,7 @@ def signup(user: UserSignup, response: Response):
 @router.post("/login")
 @limiter.limit("5/minute")
 def login(request: Request, user: UserLogin, response: Response):
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     email_lower = user.email.lower()
@@ -139,7 +139,7 @@ def refresh(request: Request, response: Response):
         if not user_id:
             raise HTTPException(status_code=401, detail="Invalid token")
             
-        conn = sqlite3.connect(str(DB_PATH))
+        conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT is_active FROM users WHERE id=?", (user_id,))
         row = cursor.fetchone()

@@ -10,7 +10,7 @@ from app.core.security import get_current_user
 from app.services.query.duckdb_engine import DuckDBEngine
 from app.services.data_processing import get_dataset_path
 from app.services.insights_engine import DeepInsightsEngine
-import sqlite3
+from app.core.database import get_db_connection
 from litellm import completion
 from app.core.config import DB_PATH, LLM_MODEL
 
@@ -243,8 +243,8 @@ async def list_insights(dataset_version_id: str = None, current_user: dict = Dep
         return []
         
     # Check DB first
-    conn = sqlite3.connect(str(DB_PATH))
-    conn.row_factory = sqlite3.Row
+    conn = get_db_connection()
+    conn.row_factory = None
     cursor = conn.cursor()
     cursor.execute('''
         SELECT * FROM insights 
@@ -359,7 +359,7 @@ async def list_insights(dataset_version_id: str = None, current_user: dict = Dep
             pass
 
     if anomalies:
-        conn = sqlite3.connect(str(DB_PATH))
+        conn = get_db_connection()
         cursor = conn.cursor()
         for a in anomalies:
             cursor.execute('''

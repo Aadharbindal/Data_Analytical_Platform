@@ -2,7 +2,7 @@ import os
 import json
 import re
 import uuid
-import sqlite3
+from app.core.database import get_db_connection
 import logging
 import traceback
 from datetime import datetime
@@ -128,7 +128,7 @@ Return ONLY a valid JSON object with a single key "insights" containing an array
                 return []
 
             final_insights = []
-            conn = sqlite3.connect(str(DB_PATH))
+            conn = get_db_connection()
             cursor = conn.cursor()
             
             try:

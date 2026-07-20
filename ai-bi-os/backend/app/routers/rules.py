@@ -4,7 +4,7 @@ import os
 import json
 import uuid
 from datetime import datetime
-import sqlite3
+from app.core.database import get_db_connection
 import re
 from fastapi import APIRouter, Depends, Body
 from app.services.data_processing import get_active_dataset, get_dataframe
@@ -20,8 +20,8 @@ async def get_rules(current_user: dict = Depends(get_current_user)):
     if not dataset_info:
         return []
         
-    conn = sqlite3.connect(str(DB_PATH))
-    conn.row_factory = sqlite3.Row
+    conn = get_db_connection()
+    conn.row_factory = None
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM rules WHERE user_id = ? AND dataset_id = ? ORDER BY created_at DESC', (current_user["id"], dataset_info["id"]))
     rules = [dict(r) for r in cursor.fetchall()]
@@ -96,10 +96,10 @@ async def create_rule(data: dict = Body(...), current_user: dict = Depends(get_c
     rule_id = f"rule_{uuid.uuid4().hex[:8]}"
     created_at = datetime.utcnow().isoformat()
     
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        INSERT INTO rules (id, user_id, dataset_id, name, metric_column, condition, threshold, window, is_active, created_at)
+        INSERT INTO rules (id, user_id, dataset_id, name, metric_column, condition, threshold, "window", is_active, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
         rule_id, current_user["id"], dataset_info["id"],
@@ -116,7 +116,7 @@ async def create_rule(data: dict = Body(...), current_user: dict = Depends(get_c
 
 @router.patch("/{rule_id}")
 async def update_rule(rule_id: str, data: dict = Body(...), current_user: dict = Depends(get_current_user)):
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     # Get current rule
@@ -146,7 +146,7 @@ async def update_rule(rule_id: str, data: dict = Body(...), current_user: dict =
         update_fields.append("threshold = ?")
         params.append(float(data["threshold"]))
     if "window" in data:
-        update_fields.append("window = ?")
+        update_fields.append('"window" = ?')
         params.append(data["window"])
         
     if update_fields:
@@ -160,7 +160,7 @@ async def update_rule(rule_id: str, data: dict = Body(...), current_user: dict =
 
 @router.delete("/{rule_id}")
 async def delete_rule(rule_id: str, current_user: dict = Depends(get_current_user)):
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('DELETE FROM rules WHERE id = ? AND user_id = ?', (rule_id, current_user["id"]))
     conn.commit()

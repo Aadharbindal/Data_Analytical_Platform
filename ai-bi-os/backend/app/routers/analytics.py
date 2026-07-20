@@ -1477,7 +1477,7 @@ async def get_breakdown(metric: str, period: Optional[str] = None, current_user:
             
     return breakdowns
 
-import sqlite3
+from app.core.database import get_db_connection
 from app.core.config import DB_PATH
 
 @router.get("/confidence")
@@ -1486,8 +1486,8 @@ async def get_confidence(current_user: dict = Depends(get_current_user)):
     if not dataset_info:
         return {"insights": {"verified": 0, "unverified": 0}, "recommendations": {"verified": 0, "unverified": 0}, "audit_trail": []}
         
-    conn = sqlite3.connect(str(DB_PATH))
-    conn.row_factory = sqlite3.Row
+    conn = get_db_connection()
+    conn.row_factory = None
     cursor = conn.cursor()
     
     # Insights stats
