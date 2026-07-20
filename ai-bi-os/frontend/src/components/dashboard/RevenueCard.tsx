@@ -2,20 +2,9 @@
 
 import React, { useState, useMemo } from "react";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  ReferenceArea
-} from "recharts";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useQuery } from "@tanstack/react-query";
-import api from "@/lib/api";
-import { BarChart, Bar, CartesianGrid as BCartesianGrid, XAxis as BXAxis, YAxis as BYAxis, Tooltip as BTooltip, ResponsiveContainer as BResponsiveContainer, Cell } from "recharts";
+import dynamic from "next/dynamic";
+const LazyCharts = dynamic(() => import("@/components/charts/LazyCharts"), { ssr: false });
+
 
 import { SemanticDict } from "@/lib/types";
 import { formatIndianCurrency, formatIndianNumber } from "@/lib/utils";

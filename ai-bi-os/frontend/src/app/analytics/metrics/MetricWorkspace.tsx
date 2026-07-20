@@ -5,7 +5,9 @@ import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
 import { ArrowLeft, Activity, Info, BarChart2, PieChart, ActivitySquare, Calculator, Network, Target, CheckCircle2, AlertTriangle, XCircle, Code2, Layers, Zap, ArrowUpCircle, TrendingUp } from "lucide-react";
 import { formatNumber } from "@/lib/utils";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, ReferenceArea, ReferenceDot, AreaChart, Area } from "recharts";
+import dynamic from "next/dynamic";
+const LazyCharts = dynamic(() => import("@/components/charts/LazyCharts"), { ssr: false });
+
 
 interface MetricWorkspaceProps {
   metricName: string;

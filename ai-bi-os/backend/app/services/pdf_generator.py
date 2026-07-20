@@ -125,7 +125,7 @@ def get_regression_models(dataset_id):
         for r in rows:
             models.append({
                 "target": r[0],
-                "features": json.loads(r[1]),
+                "features": r[1] if isinstance(r[1], (dict, list)) else json.loads(r[1]),
                 "r2_test": r[2],
                 "timestamp": r[3]
             })

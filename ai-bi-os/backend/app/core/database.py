@@ -34,6 +34,16 @@ class DBAPICursorProxy:
         if self.is_postgres:
             query = query.replace('INTEGER PRIMARY KEY AUTOINCREMENT', 'SERIAL PRIMARY KEY')
             query = query.replace('JSON', 'JSONB')
+            
+            if query.strip().upper().startswith("INSERT OR REPLACE INTO ACTIVE_DATASET"):
+                import re
+                query = re.sub(
+                    r"INSERT OR REPLACE INTO active_dataset \(([^)]+)\) VALUES \(([^)]+)\)",
+                    r"INSERT INTO active_dataset (\1) VALUES (\2) ON CONFLICT (user_id) DO UPDATE SET dataset_id = EXCLUDED.dataset_id",
+                    query,
+                    flags=re.IGNORECASE
+                )
+            
             query = query.replace('?', '%s')
             
         if params is not None:

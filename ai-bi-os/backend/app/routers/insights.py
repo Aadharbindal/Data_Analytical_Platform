@@ -236,7 +236,7 @@ def format_impact_value(val: float, is_currency: bool, label: str) -> str:
         else:
             return f"{prefix}{val:,.2f} {label}"
 
-@router.get("/")
+@router.get("")
 async def list_insights(dataset_version_id: str = None, current_user: dict = Depends(get_current_user)):
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:

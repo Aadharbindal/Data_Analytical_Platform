@@ -6,8 +6,10 @@ import { analyticsApi } from "@/lib/api";
 import { Clock, ChevronDown } from "lucide-react";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { ErrorState } from "@/components/ui/error-state";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import dynamic from "next/dynamic";
+const LazyCharts = dynamic(() => import("@/components/charts/LazyCharts"), { ssr: false });
 import { motion } from "framer-motion";
+
 import { StudioPage } from "@/components/analytics/StudioPage";
 import { formatNumber } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
