@@ -11,17 +11,12 @@ import { Play, Clock, AlertCircle, BarChart2, Table2, Activity, AlertTriangle, T
 import { Button } from "@/components/ui/button";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { ErrorState } from "@/components/ui/error-state";
-import {
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+// Recharts lazy-loaded — avoids including ~400KB chart bundle in initial JS
+import dynamic from "next/dynamic";
+const { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } =
+  (await import("recharts").then((m) => m)) as typeof import("recharts");
+// Use a simple wrapper pattern with dynamic
+const _ChartsBundle = dynamic(() => import("@/components/charts/LazyCharts"), { ssr: false });
 
 const EXAMPLE_QUERIES = [
   "SELECT * FROM dataset LIMIT 100",
@@ -81,22 +76,22 @@ const containerVariants = {
   show: { 
     opacity: 1, 
     transition: { 
-      staggerChildren: 0.15,
-      delayChildren: 0.1 
+      staggerChildren: 0.05,
+      delayChildren: 0.03 
     } 
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 15 },
   show: { 
     opacity: 1, 
     y: 0, 
     transition: { 
       type: "spring", 
-      stiffness: 200, 
-      damping: 25,
-      mass: 0.8
+      stiffness: 300, 
+      damping: 30,
+      mass: 0.6
     } 
   },
 };

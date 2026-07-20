@@ -7,7 +7,7 @@ from app.core.security import get_current_user
 
 router = APIRouter()
 
-@router.get("/")
+@router.get("")
 async def list_catalog(workspace_id: Optional[str] = None, current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -19,7 +19,7 @@ async def list_catalog(workspace_id: Optional[str] = None, current_user: dict = 
         {
             "id": r[0], "name": r[1], "domain": r[2], 
             "description": r[3], "owner": r[4], 
-            "tags": json.loads(r[5]) if r[5] else []
+            "tags": (r[5] if isinstance(r[5], (dict, list)) else json.loads(r[5])) if r[5] else []
         }
         for r in rows
     ]
@@ -37,7 +37,7 @@ async def search_catalog(q: str, current_user: dict = Depends(get_current_user))
         {
             "id": r[0], "name": r[1], "domain": r[2], 
             "description": r[3], "owner": r[4], 
-            "tags": json.loads(r[5]) if r[5] else []
+            "tags": (r[5] if isinstance(r[5], (dict, list)) else json.loads(r[5])) if r[5] else []
         }
         for r in rows
     ]

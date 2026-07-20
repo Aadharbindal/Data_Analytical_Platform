@@ -36,6 +36,8 @@ def get_current_user(request: Request, auth_header: HTTPAuthorizationCredentials
     token = request.cookies.get("access_token")
     if not token and auth_header:
         token = auth_header.credentials
+    if not token:
+        token = request.query_params.get("token")
         
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")

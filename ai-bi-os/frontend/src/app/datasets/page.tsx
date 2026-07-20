@@ -73,7 +73,12 @@ function UploadZone({ onSuccess, onRedirect }: { onSuccess: () => void, onRedire
       const res = await datasetsApi.upload(formData);
       setUploadProgress({ filename: file.name, status: "processing", jobId: res.job_id, currentStep: "Initializing", progress: 0 });
 
-      const eventSource = new EventSource(`${BASE_URL}/api/v1/datasets/upload/status/${res.job_id}/stream`, { withCredentials: true });
+      const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+      let streamUrl = `${BASE_URL}/api/v1/datasets/upload/status/${res.job_id}/stream`;
+      if (token) {
+        streamUrl += `?token=${token}`;
+      }
+      const eventSource = new EventSource(streamUrl, { withCredentials: true });
       
       eventSource.onmessage = (event) => {
         const data = JSON.parse(event.data);

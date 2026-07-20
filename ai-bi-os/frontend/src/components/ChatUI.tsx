@@ -1,19 +1,9 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import api, { BASE_URL } from "@/lib/api";
-import {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import dynamic from "next/dynamic";
+const LazyCharts = dynamic(() => import("@/components/charts/LazyCharts"), { ssr: false });
+
 import { Bot, User, Send, Database, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";

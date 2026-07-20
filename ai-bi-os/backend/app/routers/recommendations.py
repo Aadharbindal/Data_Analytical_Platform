@@ -30,8 +30,8 @@ def get_cached_recommendations(user_id: str, dataset_id: str):
         return [dict(r) for r in rows]
     return []
 
-@router.get("/")
-async def get_recommendations(current_user: dict = Depends(get_current_user)):
+@router.get("")
+async def list_recommendations(dataset_version_id: str = None, current_user: dict = Depends(get_current_user)):
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return []

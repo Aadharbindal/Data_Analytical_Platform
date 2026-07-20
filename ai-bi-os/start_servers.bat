@@ -19,7 +19,7 @@ if exist "frontend\node_modules\.cache" rd /s /q "frontend\node_modules\.cache"
 echo.
 echo [1/2] Starting Python FastAPI Backend...
 cd backend
-start cmd /k ".\venv\Scripts\activate && python -m uvicorn app.main:app --reload --reload-dir app --port 8000"
+start cmd /k ".\venv\Scripts\activate && python -m uvicorn app.main:app --host 0.0.0.0 --reload --reload-dir app --port 8000"
 cd ..
 
 echo [2/2] Starting Next.js Frontend...

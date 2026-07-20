@@ -31,9 +31,20 @@ class DuplicateDatasetError(Exception):
         super().__init__("Duplicate dataset")
 from app.core.config import DATA_DIR, DB_PATH
 
-def get_dataset_path(filename: str) -> str:
-    """Returns the absolute path to the dataset file based on its basename."""
-    return str(Path(DATA_DIR) / os.path.basename(filename))
+from app.services.storage import s3_manager
+
+def get_dataset_path(filename: str, skip_s3_download: bool = False) -> str:
+    """Returns the absolute path to the dataset file based on its basename.
+    If the file is not found locally, it attempts to download it from S3."""
+    local_path = str(Path(DATA_DIR) / os.path.basename(filename))
+    
+    if not os.path.exists(local_path) and not skip_s3_download:
+        # Try to download from S3 if it doesn't exist locally (ephemeral storage fallback)
+        if s3_manager.enabled:
+            print(f"File {filename} not found locally, attempting S3 download...")
+            s3_manager.download_file(filename, local_path)
+            
+    return local_path
 
 def run_filepath_migration():
     """Migrates any stored absolute Windows/Linux paths in SQLite to just their basenames."""
@@ -440,10 +451,14 @@ def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool =
     
     dataset_id = str(uuid.uuid4())
     filename_db = f"{dataset_id}_{filename}"
-    disk_path = get_dataset_path(filename_db)
+    disk_path = get_dataset_path(filename_db, skip_s3_download=True)  # File doesn't exist yet, skip S3 check
     
     with open(disk_path, "wb") as f:
         f.write(file_content)
+        
+    # Upload to S3 if enabled
+    if s3_manager.enabled:
+        s3_manager.upload_file(file_content, filename_db)
         
     row_count = len(df)
     col_count = len(df.columns)
@@ -562,16 +577,16 @@ def get_active_dataset(user_id: str):
         "name": dataset_row[1],
         "status": dataset_row[2],
         "created_at": dataset_row[3],
-        "latest_version": json.loads(dataset_row[4]),
+        "latest_version": dataset_row[4] if isinstance(dataset_row[4], (dict, list)) else json.loads(dataset_row[4]),
         "filepath": dataset_row[5],
-        "columns": json.loads(dataset_row[6]),
+        "columns": dataset_row[6] if isinstance(dataset_row[6], (dict, list)) else json.loads(dataset_row[6]),
         "skipped_rows": dataset_row[7],
         "sheet_name": dataset_row[8],
         "version": dataset_row[9],
         "quality_score": dataset_row[10],
-        "quality_breakdown": json.loads(dataset_row[11]) if dataset_row[11] else {},
+        "quality_breakdown": (dataset_row[11] if isinstance(dataset_row[11], (dict, list)) else json.loads(dataset_row[11])) if dataset_row[11] else {},
         "domain": dataset_row[12] if len(dataset_row) > 12 and dataset_row[12] is not None else "generic",
-        "semantic_dict": json.loads(dataset_row[13]) if len(dataset_row) > 13 and dataset_row[13] is not None else None
+        "semantic_dict": (dataset_row[13] if isinstance(dataset_row[13], (dict, list)) else json.loads(dataset_row[13])) if len(dataset_row) > 13 and dataset_row[13] is not None else None
     }
     
     # Lazy classification if domain or semantic_dict is missing

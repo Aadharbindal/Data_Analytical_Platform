@@ -8,7 +8,7 @@ from app.routers import datasets, analytics, catalog, chat, regression
 
 from app.core.config import CORS_ORIGIN
 
-app = FastAPI(title="DataMind OS Backend")
+app = FastAPI(title="DataMind OS Backend", redirect_slashes=False)
 
 # Allow requests from frontend
 origins = [

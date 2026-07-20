@@ -87,7 +87,7 @@ async def get_rules(current_user: dict = Depends(get_current_user)):
                 
     return rules
 
-@router.post("/")
+@router.post("")
 async def create_rule(data: dict = Body(...), current_user: dict = Depends(get_current_user)):
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:

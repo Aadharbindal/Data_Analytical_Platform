@@ -193,10 +193,10 @@ async def get_regression_models(current_user: dict = Depends(get_current_user)):
         models.append({
             "id": r[0],
             "target": r[1],
-            "features": json.loads(r[2]),
+            "features": r[2] if isinstance(r[2], (dict, list)) else json.loads(r[2]),
             "r2_train": r[3],
             "r2_test": r[4],
-            "coefficients": json.loads(r[5]),
+            "coefficients": r[5] if isinstance(r[5], (dict, list)) else json.loads(r[5]),
             "intercept": r[6],
             "n_rows_used": r[7],
             "timestamp": r[8]

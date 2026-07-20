@@ -1,4 +1,3 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Form
 from pydantic import BaseModel
 from typing import List, Optional
@@ -7,6 +6,7 @@ from app.core.database import get_db_connection
 import json
 import os
 from app.services.data_processing import save_dataset, DB_PATH, get_dataset_path, get_active_dataset, get_dataframe, DuplicateDatasetError, invalidate_user_cache
+from app.services.storage import s3_manager
 from app.core.security import get_current_user
 from app.services.stats_service import compute_kpis
 
@@ -92,7 +92,7 @@ async def get_active_dataset_route(current_user: dict = Depends(get_current_user
         "semantic_dict": dataset_info.get("semantic_dict")
     }
 
-@router.get("/")
+@router.get("")
 async def list_datasets(workspace_id: Optional[str] = None, current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -104,9 +104,9 @@ async def list_datasets(workspace_id: Optional[str] = None, current_user: dict =
         {
             "id": r[0], "name": r[1], "status": r[2], 
             "created_at": r[3], 
-            "latest_version": json.loads(r[4]) if r[4] else {}, 
+            "latest_version": (r[4] if isinstance(r[4], (dict, list)) else json.loads(r[4])) if r[4] else {}, 
             "filepath": r[5], 
-            "columns": json.loads(r[6]) if r[6] else [],
+            "columns": (r[6] if isinstance(r[6], (dict, list)) else json.loads(r[6])) if r[6] else [],
             "skipped_rows": r[7],
             "sheet_name": r[8],
             "version": r[9],
@@ -196,9 +196,9 @@ async def get_dataset(dataset_id: str, current_user: dict = Depends(get_current_
     return {
         "id": r[0], "name": r[1], "status": r[2], 
         "created_at": r[3], 
-        "latest_version": json.loads(r[4]) if r[4] else {}, 
+        "latest_version": (r[4] if isinstance(r[4], (dict, list)) else json.loads(r[4])) if r[4] else {}, 
         "filepath": r[5], 
-        "columns": json.loads(r[6]) if r[6] else [],
+        "columns": (r[6] if isinstance(r[6], (dict, list)) else json.loads(r[6])) if r[6] else [],
         "skipped_rows": r[7],
         "sheet_name": r[8],
         "version": r[9],
@@ -267,20 +267,27 @@ async def delete_dataset(dataset_id: str, current_user: dict = Depends(get_curre
                 os.remove(disk_path)
             except Exception:
                 pass
+                
+        # Delete from S3 if enabled
+        if s3_manager.enabled:
+            s3_manager.delete_file(filename_db)
                     
-    cursor.execute("DELETE FROM datasets WHERE id=? AND user_id=?", (dataset_id, current_user["id"]))
+    # Clean up dependent records first to avoid foreign key violations
+    cursor.execute("DELETE FROM active_dataset WHERE dataset_id=?", (dataset_id,))
+    cursor.execute("DELETE FROM regression_models WHERE dataset_id=?", (dataset_id,))
+    cursor.execute("DELETE FROM insights WHERE dataset_id=?", (dataset_id,))
+    cursor.execute("DELETE FROM recommendations WHERE dataset_id=?", (dataset_id,))
+    cursor.execute("DELETE FROM rules WHERE dataset_id=?", (dataset_id,))
     cursor.execute("DELETE FROM catalog WHERE id=? AND user_id=?", (dataset_id, current_user["id"]))
     
-    # If active dataset was this one, fallback to most recent remaining
-    cursor.execute("SELECT dataset_id FROM active_dataset WHERE user_id=?", (current_user["id"],))
-    active_row = cursor.fetchone()
-    if active_row and active_row[0] == dataset_id:
-        cursor.execute("SELECT id FROM datasets WHERE user_id=? ORDER BY created_at DESC LIMIT 1", (current_user["id"],))
-        next_row = cursor.fetchone()
-        if next_row:
-            cursor.execute("INSERT OR REPLACE INTO active_dataset (user_id, dataset_id) VALUES (?, ?)", (current_user["id"], next_row[0]))
-        else:
-            cursor.execute("DELETE FROM active_dataset WHERE user_id=?", (current_user["id"],))
+    # Now we can safely delete the dataset
+    cursor.execute("DELETE FROM datasets WHERE id=? AND user_id=?", (dataset_id, current_user["id"]))
+    
+    # If we deleted the active dataset, try to fallback to most recent remaining
+    cursor.execute("SELECT id FROM datasets WHERE user_id=? ORDER BY created_at DESC LIMIT 1", (current_user["id"],))
+    next_row = cursor.fetchone()
+    if next_row:
+        cursor.execute("INSERT OR REPLACE INTO active_dataset (user_id, dataset_id) VALUES (?, ?)", (current_user["id"], next_row[0]))
             
     conn.commit()
     conn.close()
