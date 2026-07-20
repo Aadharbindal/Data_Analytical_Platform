@@ -24,6 +24,10 @@ frontend_url = os.getenv("FRONTEND_URL")
 if frontend_url:
     origins.append(frontend_url)
 
+# Comma-separated list of additional allowed origins (e.g. Vercel prod + preview URLs)
+extra_origins = os.getenv("ALLOWED_ORIGINS", "")
+origins.extend([o.strip() for o in extra_origins.split(",") if o.strip()])
+
 
 
 app.include_router(datasets.router, prefix="/api/v1/datasets", tags=["datasets"])
@@ -43,6 +47,7 @@ app.add_middleware(SlowAPIMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=list(set(origins)),
+    allow_origin_regex=r"https://.*\.(onrender\.com|vercel\.app)",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
