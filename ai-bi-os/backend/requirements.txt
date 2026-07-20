@@ -19,3 +19,4 @@ slowapi
 email-validator
 pytest
 httpx<0.28
+psycopg2-binary
