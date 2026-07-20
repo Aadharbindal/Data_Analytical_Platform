@@ -14,14 +14,14 @@ from litellm import completion
 
 router = APIRouter()
 
-@router.get("/")
+@router.get("")
 async def get_rules(current_user: dict = Depends(get_current_user)):
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return []
         
     conn = get_db_connection()
-    conn.row_factory = None
+    conn.row_factory = 'sqlite3.Row'  # Ensure dict-like rows for SQLite
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM rules WHERE user_id = ? AND dataset_id = ? ORDER BY created_at DESC', (current_user["id"], dataset_info["id"]))
     rules = [dict(r) for r in cursor.fetchall()]
@@ -36,17 +36,18 @@ async def get_rules(current_user: dict = Depends(get_current_user)):
         for rule in rules:
             rule["status"] = "OK"
             rule["current_value"] = None
-            if not rule["is_active"]:
+            if not rule.get("is_active"):
                 rule["status"] = "INACTIVE"
                 continue
                 
-            metric = rule["metric_column"]
-            if metric not in df.columns or not pd.api.types.is_numeric_dtype(df[metric]):
+            metric = rule.get("metric_column")
+            if not metric or metric not in df.columns or not pd.api.types.is_numeric_dtype(df[metric]):
                 rule["status"] = "ERROR (Invalid Metric)"
                 continue
                 
             df_temp = df.copy()
-            if date_col and rule["window"].lower() == "mom":
+            window = rule.get("window") or "latest"
+            if date_col and window.lower() == "mom":
                 df_temp[date_col] = pd.to_datetime(df_temp[date_col], errors='coerce')
                 df_temp = df_temp.dropna(subset=[date_col])
                 if not df_temp.empty:
@@ -61,30 +62,38 @@ async def get_rules(current_user: dict = Depends(get_current_user)):
                             pct_change = ((recent - prior) / prior) * 100
                             rule["current_value"] = pct_change
                             
-                            cond = rule["condition"]
+                            cond = rule.get("condition") or ">"
                             cond_map = {"gt": ">", "lt": "<", "pct_change_gt": ">", "pct_change_lt": "<", "eq": "=="}
                             cond = cond_map.get(cond.lower(), cond)
                             
-                            thresh = rule["threshold"]
+                            thresh = float(rule.get("threshold") or 0)
                             
                             if cond == ">" and pct_change > thresh: rule["status"] = "TRIGGERED"
                             elif cond == "<" and pct_change < thresh: rule["status"] = "TRIGGERED"
                             elif cond == ">=" and pct_change >= thresh: rule["status"] = "TRIGGERED"
                             elif cond == "<=" and pct_change <= thresh: rule["status"] = "TRIGGERED"
+                            elif cond == "==" and pct_change == thresh: rule["status"] = "TRIGGERED"
             else:
                 # Latest value
                 val = float(df_temp[metric].sum())
                 rule["current_value"] = val
-                cond = rule["condition"]
+                cond = rule.get("condition") or ">"
                 cond_map = {"gt": ">", "lt": "<", "pct_change_gt": ">", "pct_change_lt": "<", "eq": "=="}
                 cond = cond_map.get(cond.lower(), cond)
                 
-                thresh = rule["threshold"]
+                thresh = float(rule.get("threshold") or 0)
                 if cond == ">" and val > thresh: rule["status"] = "TRIGGERED"
                 elif cond == "<" and val < thresh: rule["status"] = "TRIGGERED"
                 elif cond == ">=" and val >= thresh: rule["status"] = "TRIGGERED"
                 elif cond == "<=" and val <= thresh: rule["status"] = "TRIGGERED"
+                elif cond == "==" and val == thresh: rule["status"] = "TRIGGERED"
                 
+            # Sanitize current_value for JSON serialization (avoid NaN/Infinity)
+            if rule["current_value"] is not None:
+                import math
+                if math.isnan(rule["current_value"]) or math.isinf(rule["current_value"]):
+                    rule["current_value"] = None
+
     return rules
 
 @router.post("")

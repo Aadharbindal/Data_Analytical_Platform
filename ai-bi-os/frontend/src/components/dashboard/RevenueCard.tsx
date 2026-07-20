@@ -8,6 +8,13 @@ const LazyCharts = dynamic(() => import("@/components/charts/LazyCharts"), { ssr
 
 import { SemanticDict } from "@/lib/types";
 import { formatIndianCurrency, formatIndianNumber } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/lib/api";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { 
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceArea,
+  BarChart, Bar, Cell, ResponsiveContainer as BResponsiveContainer, CartesianGrid as BCartesianGrid, XAxis as BXAxis, YAxis as BYAxis, Tooltip as BTooltip 
+} from "recharts";
 
 interface RevenueCardProps {
   data: any[];
