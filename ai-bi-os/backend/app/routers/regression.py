@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import sqlite3
+from app.core.database import get_db_connection
 import json
 from datetime import datetime
 from fastapi import APIRouter, HTTPException, Body, Depends
@@ -142,7 +142,7 @@ async def train_regression_model(req: TrainRequest, current_user: dict = Depends
         predictions_sample.append({"actual": float(act), "predicted": float(pred)})
         
     # Save to db
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
         INSERT INTO regression_models (dataset_id, target, features, r2_train, r2_test, coefficients, intercept, n_rows_used, timestamp, user_id)
@@ -177,7 +177,7 @@ async def get_regression_models(current_user: dict = Depends(get_current_user)):
     if not dataset_info:
         return []
         
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
         SELECT id, target, features, r2_train, r2_test, coefficients, intercept, n_rows_used, timestamp

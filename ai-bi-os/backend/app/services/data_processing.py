@@ -5,7 +5,7 @@ import uuid
 import json
 import hashlib
 from datetime import datetime
-import sqlite3
+from app.core.database import get_db_connection
 
 from pathlib import Path
 
@@ -37,10 +37,13 @@ def get_dataset_path(filename: str) -> str:
 
 def run_filepath_migration():
     """Migrates any stored absolute Windows/Linux paths in SQLite to just their basenames."""
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='datasets'")
+        if conn.is_postgres:
+            cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_name='datasets'")
+        else:
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='datasets'")
         if cursor.fetchone():
             cursor.execute("SELECT id, filepath FROM datasets")
             rows = cursor.fetchall()
@@ -57,7 +60,7 @@ def run_filepath_migration():
         conn.close()
 
 def init_db():
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     cursor.execute('''
@@ -96,11 +99,19 @@ def init_db():
     # We must migrate active_dataset from global singleton to per-user.
     # Safe to drop since it's just ephemeral session state.
     try:
-        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='active_dataset'")
+        if conn.is_postgres:
+            cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_name='active_dataset'")
+        else:
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='active_dataset'")
+            
         if cursor.fetchone():
-            # check if it has user_id
-            cursor.execute("PRAGMA table_info(active_dataset)")
-            columns = [c[1] for c in cursor.fetchall()]
+            if conn.is_postgres:
+                cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name='active_dataset'")
+                columns = [c[0] for c in cursor.fetchall()]
+            else:
+                cursor.execute("PRAGMA table_info(active_dataset)")
+                columns = [c[1] for c in cursor.fetchall()]
+                
             if 'user_id' not in columns:
                 cursor.execute("DROP TABLE active_dataset")
     except Exception:
@@ -174,11 +185,12 @@ def init_db():
             metric_column TEXT,
             condition TEXT,
             threshold REAL,
-            window TEXT,
+            "window" TEXT,
             is_active INTEGER,
             created_at TEXT
         )
     ''')
+    conn.commit()
     
     # Dynamically alter table to add columns for older DB schemas
     for col, ctype, default in [
@@ -194,8 +206,9 @@ def init_db():
     ]:
         try:
             cursor.execute(f"ALTER TABLE datasets ADD COLUMN {col} {ctype} DEFAULT {default}")
-        except sqlite3.OperationalError:
-            pass
+            conn.commit()
+        except Exception:
+            conn.rollback()
             
     for col, ctype, default in [
         ("score", "REAL", "0.0"),
@@ -203,24 +216,27 @@ def init_db():
     ]:
         try:
             cursor.execute(f"ALTER TABLE insights ADD COLUMN {col} {ctype} DEFAULT {default}")
-        except sqlite3.OperationalError:
-            pass
+            conn.commit()
+        except Exception:
+            conn.rollback()
             
     for col, ctype, default in [
         ("user_id", "TEXT", "NULL")
     ]:
         try:
             cursor.execute(f"ALTER TABLE catalog ADD COLUMN {col} {ctype} DEFAULT {default}")
-        except sqlite3.OperationalError:
-            pass
+            conn.commit()
+        except Exception:
+            conn.rollback()
             
     for col, ctype, default in [
         ("user_id", "TEXT", "NULL")
     ]:
         try:
             cursor.execute(f"ALTER TABLE regression_models ADD COLUMN {col} {ctype} DEFAULT {default}")
-        except sqlite3.OperationalError:
-            pass
+            conn.commit()
+        except Exception:
+            conn.rollback()
             
     # Migration: assign existing datasets without a user to the first created user, if any exists
     try:
@@ -231,6 +247,7 @@ def init_db():
             cursor.execute("UPDATE catalog SET user_id = ? WHERE user_id IS NULL", (first_user[0],))
             cursor.execute("UPDATE regression_models SET user_id = ? WHERE user_id IS NULL", (first_user[0],))
     except Exception as e:
+        conn.rollback()
         print(f"Error assigning legacy datasets: {e}")
         
     conn.commit()
@@ -240,7 +257,7 @@ def init_db():
     run_filepath_migration()
     
     # Run content hash migration
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = get_db_connection()
     cursor = conn.cursor()
     try:
         cursor.execute("SELECT id, filepath FROM datasets WHERE content_hash IS NULL")
@@ -396,7 +413,7 @@ def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool =
     content_hash = hashlib.sha256(file_content).hexdigest()
 
     if not force:
-        conn = sqlite3.connect(str(DB_PATH))
+        conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT id, name, version, created_at FROM datasets WHERE content_hash = ? AND user_id = ? LIMIT 1", (content_hash, user_id))
         existing = cursor.fetchone()
@@ -411,7 +428,7 @@ def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool =
             })
 
     # Determine version
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT MAX(version) FROM datasets WHERE name = ? AND user_id = ?", (filename, user_id))
     max_ver = cursor.fetchone()[0]
@@ -480,7 +497,7 @@ def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool =
         "tags": ["auto-inferred", "raw-data"]
     }
     
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
         INSERT INTO datasets (id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score, quality_breakdown, user_id, content_hash, domain, semantic_dict)
@@ -519,7 +536,7 @@ def get_active_dataset(user_id: str):
         if user_id in _active_cache:
             return _active_cache[user_id]
 
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
         SELECT dataset_id FROM active_dataset WHERE user_id = ?
@@ -567,7 +584,7 @@ def get_active_dataset(user_id: str):
             dataset_info["semantic_dict"] = semantic_dict
             
             # Save back to database
-            conn_w = sqlite3.connect(str(DB_PATH))
+            conn_w = get_db_connection()
             cursor_w = conn_w.cursor()
             cursor_w.execute('''
                 UPDATE datasets 
@@ -595,7 +612,7 @@ def get_active_dataset(user_id: str):
             dataset_info["quality_breakdown"] = quality.get("breakdown", {})
             
             # Save back to database
-            conn = sqlite3.connect(str(DB_PATH))
+            conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute('''
                 UPDATE datasets 
@@ -618,7 +635,7 @@ def get_dataframe(dataset_id: str, user_id: str):
         if cache_key in _df_cache:
             return _df_cache[cache_key]
 
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('SELECT filepath, sheet_name FROM datasets WHERE id = ? AND user_id = ?', (dataset_id, user_id))
     row = cursor.fetchone()

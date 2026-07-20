@@ -4,7 +4,7 @@ from passlib.context import CryptContext
 from fastapi import Request, HTTPException, Security
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.core.config import SECRET_KEY
-import sqlite3
+from app.core.database import get_db_connection
 from app.core.config import DB_PATH
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -51,7 +51,7 @@ def get_current_user(request: Request, auth_header: HTTPAuthorizationCredentials
         raise HTTPException(status_code=401, detail="Invalid token")
         
     # Fetch user from DB
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT id, email, full_name, is_active FROM users WHERE id=?", (user_id,))
     row = cursor.fetchone()

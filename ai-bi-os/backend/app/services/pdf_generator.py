@@ -1,6 +1,6 @@
 import io
 import json
-import sqlite3
+from app.core.database import get_db_connection
 import pandas as pd
 import numpy as np
 from datetime import datetime
@@ -110,7 +110,7 @@ class PremiumCanvas(canvas.Canvas):
 
 def get_regression_models(dataset_id):
     try:
-        conn = sqlite3.connect(str(DB_PATH))
+        conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute('''
             SELECT target, features, r2_test, timestamp

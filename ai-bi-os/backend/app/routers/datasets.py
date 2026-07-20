@@ -3,7 +3,7 @@ from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Form
 from pydantic import BaseModel
 from typing import List, Optional
 import uuid
-import sqlite3
+from app.core.database import get_db_connection
 import json
 import os
 from app.services.data_processing import save_dataset, DB_PATH, get_dataset_path, get_active_dataset, get_dataframe, DuplicateDatasetError, invalidate_user_cache
@@ -46,7 +46,7 @@ import asyncio
 
 @router.get("/upload/status/{job_id}")
 async def get_upload_status(job_id: str, current_user: dict = Depends(get_current_user)):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT id FROM datasets WHERE id=? AND user_id=?", (job_id, current_user["id"]))
     row = cursor.fetchone()
@@ -61,7 +61,7 @@ async def get_upload_status_stream(job_id: str, current_user: dict = Depends(get
         yield f"data: {json.dumps({'status': 'processing', 'progress': 50, 'current_step': 'Parsing data'})}\n\n"
         await asyncio.sleep(0.5)
         
-        conn = sqlite3.connect(DB_PATH)
+        conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT id FROM datasets WHERE id=? AND user_id=?", (job_id, current_user["id"]))
         row = cursor.fetchone()
@@ -94,7 +94,7 @@ async def get_active_dataset_route(current_user: dict = Depends(get_current_user
 
 @router.get("/")
 async def list_datasets(workspace_id: Optional[str] = None, current_user: dict = Depends(get_current_user)):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score FROM datasets WHERE user_id=? ORDER BY created_at DESC', (current_user["id"],))
     rows = cursor.fetchall()
@@ -185,7 +185,7 @@ async def compare_datasets(id_a: str, id_b: str, current_user: dict = Depends(ge
 
 @router.get("/{dataset_id}")
 async def get_dataset(dataset_id: str, current_user: dict = Depends(get_current_user)):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score FROM datasets WHERE id=? AND user_id=?', (dataset_id, current_user["id"]))
     r = cursor.fetchone()
@@ -207,7 +207,7 @@ async def get_dataset(dataset_id: str, current_user: dict = Depends(get_current_
 
 @router.get("/{dataset_id}/download")
 async def download_dataset(dataset_id: str, current_user: dict = Depends(get_current_user)):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT filepath, name FROM datasets WHERE id=? AND user_id=?", (dataset_id, current_user["id"]))
     row = cursor.fetchone()
@@ -226,7 +226,7 @@ async def download_dataset(dataset_id: str, current_user: dict = Depends(get_cur
 
 @router.post("/{dataset_id}/activate")
 async def activate_dataset(dataset_id: str, current_user: dict = Depends(get_current_user)):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT id FROM datasets WHERE id=? AND user_id=?", (dataset_id, current_user["id"]))
     if not cursor.fetchone():
@@ -249,7 +249,7 @@ async def activate_dataset(dataset_id: str, current_user: dict = Depends(get_cur
 
 @router.delete("/{dataset_id}")
 async def delete_dataset(dataset_id: str, current_user: dict = Depends(get_current_user)):
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     # Get filepath to delete file

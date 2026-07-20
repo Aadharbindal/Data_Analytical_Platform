@@ -4,7 +4,7 @@ import os
 import json
 import uuid
 from datetime import datetime
-import sqlite3
+from app.core.database import get_db_connection
 import re
 from fastapi import APIRouter, Depends
 from app.services.data_processing import get_active_dataset, get_dataframe
@@ -16,8 +16,8 @@ from litellm import completion
 router = APIRouter()
 
 def get_cached_recommendations(user_id: str, dataset_id: str):
-    conn = sqlite3.connect(str(DB_PATH))
-    conn.row_factory = sqlite3.Row
+    conn = get_db_connection()
+    conn.row_factory = None
     cursor = conn.cursor()
     cursor.execute('''
         SELECT * FROM recommendations
@@ -241,7 +241,7 @@ Return ONLY a valid JSON array of objects with keys:
             return {"success": False, "message": f"Failed to generate recommendations: {str(e)}"}
 
     # 4. Accuracy Check & Save
-    conn = sqlite3.connect(str(DB_PATH))
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     final_recs = []
