@@ -109,38 +109,108 @@ async def train_regression_model(req: TrainRequest, current_user: dict = Depends
     if cat_cols:
         X = pd.get_dummies(X, columns=cat_cols, drop_first=True)
         
-    from sklearn.model_selection import train_test_split
-    from sklearn.linear_model import LinearRegression
+    from sklearn.model_selection import train_test_split, KFold, cross_val_score
+    from sklearn.linear_model import LinearRegression, Ridge, Lasso
     from sklearn.metrics import r2_score
-    
+    from scipy.stats import shapiro
+
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    
+
     model = LinearRegression()
     model.fit(X_train, y_train)
-    
+
     y_pred_train = model.predict(X_train)
     y_pred_test = model.predict(X_test)
-    
+
     r2_train = float(r2_score(y_train, y_pred_train))
     r2_test = float(r2_score(y_test, y_pred_test))
-    
+
     coefficients = []
     for feature_name, coef in zip(X.columns, model.coef_):
         coefficients.append({"feature": feature_name, "value": float(coef)})
-        
+
     intercept = float(model.intercept_)
     n_rows_used = len(df_sub)
-    
+
     # Sample predictions for scatter
     predictions_sample = []
     sample_size = min(100, len(y_test))
-    
+
     y_test_sample = y_test.head(sample_size)
     y_pred_test_sample = y_pred_test[:sample_size]
-    
+
     for act, pred in zip(y_test_sample, y_pred_test_sample):
         predictions_sample.append({"actual": float(act), "predicted": float(pred)})
-        
+
+    # ── K-fold cross-validation (a single 80/20 split is a noisy accuracy
+    # estimate on small datasets; averaging over folds is more robust) ──
+    cross_validation = None
+    try:
+        n_folds = min(5, len(df_sub) // 4)
+        if n_folds >= 2:
+            kf = KFold(n_splits=n_folds, shuffle=True, random_state=42)
+            cv_scores = cross_val_score(LinearRegression(), X, y, cv=kf, scoring='r2')
+            cross_validation = {
+                "folds": n_folds,
+                "r2_mean": float(np.mean(cv_scores)),
+                "r2_std": float(np.std(cv_scores)),
+                "r2_per_fold": [float(s) for s in cv_scores]
+            }
+    except Exception:
+        cross_validation = None
+
+    # ── Multicollinearity (VIF) — high VIF means a feature is largely
+    # explained by the other features, which makes its coefficient unstable
+    # and hard to interpret even if overall model R² looks fine ──
+    multicollinearity = []
+    try:
+        from statsmodels.stats.outliers_influence import variance_inflation_factor
+        X_vif = X.astype(float).copy()
+        X_vif.insert(0, "_intercept", 1.0)
+        for i, col in enumerate(X.columns):
+            try:
+                vif_val = float(variance_inflation_factor(X_vif.values, i + 1))
+            except Exception:
+                vif_val = None
+            multicollinearity.append({
+                "feature": col,
+                "vif": vif_val,
+                "concern": vif_val is not None and vif_val > 10 and np.isfinite(vif_val)
+            })
+    except Exception:
+        multicollinearity = []
+
+    # ── Residual normality (Shapiro-Wilk) — OLS coefficient significance/
+    # confidence intervals assume roughly normal residuals; this flags when
+    # that assumption doesn't hold instead of asserting it silently ──
+    residual_normality = None
+    try:
+        residuals = (y_test - y_pred_test) if len(y_test) >= 3 else (y_train - y_pred_train)
+        if len(residuals) >= 3:
+            stat, p_val = shapiro(residuals)
+            residual_normality = {
+                "statistic": float(stat),
+                "p_value": float(p_val),
+                "is_normal": bool(p_val > 0.05),
+                "sample": "test" if len(y_test) >= 3 else "train"
+            }
+    except Exception:
+        residual_normality = None
+
+    # ── Regularization comparison — Ridge/Lasso vs. plain OLS. The primary
+    # returned model/coefficients stay OLS (unchanged, backward compatible);
+    # this just shows whether regularization would help, which matters most
+    # when multicollinearity above is flagged ──
+    regularized_comparison = {}
+    for name, reg_model in (("ridge", Ridge(alpha=1.0)), ("lasso", Lasso(alpha=1.0, max_iter=5000))):
+        try:
+            reg_model.fit(X_train, y_train)
+            regularized_comparison[name] = {
+                "r2_test": float(r2_score(y_test, reg_model.predict(X_test)))
+            }
+        except Exception:
+            regularized_comparison[name] = None
+
     # Save to db
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -168,7 +238,11 @@ async def train_regression_model(req: TrainRequest, current_user: dict = Depends
         "coefficients": coefficients,
         "intercept": intercept,
         "predictions_sample": predictions_sample,
-        "n_rows_used": n_rows_used
+        "n_rows_used": n_rows_used,
+        "cross_validation": cross_validation,
+        "multicollinearity": multicollinearity,
+        "residual_normality": residual_normality,
+        "regularized_comparison": regularized_comparison
     }
 
 @router.get("/models")

@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import re
+from typing import Optional
+from scipy import stats as scipy_stats
 
 def find_column(df: pd.DataFrame, pattern: str, numeric_only: bool = False) -> str:
     cols_to_check = df.select_dtypes(include=[np.number]).columns if numeric_only else df.columns
@@ -8,6 +10,57 @@ def find_column(df: pd.DataFrame, pattern: str, numeric_only: bool = False) -> s
         if re.search(pattern, col, re.IGNORECASE):
             return col
     return None
+
+
+def robust_outlier_stats(series: pd.Series, z_threshold: float = 3.0, mad_threshold: float = 3.5) -> dict:
+    """
+    Flags outliers using a method appropriate to the data's shape instead of
+    always applying the classic mean/std Z-score. That classic Z-score
+    assumes a roughly symmetric distribution — on skewed data it both
+    inflates std (masking real outliers) and gets thrown off by the very
+    tail it's trying to flag. For |skewness| > 1 this switches to the
+    median/MAD-based modified Z-score (Iglewicz & Hoaglin), which is robust
+    to skew and to the outliers themselves. The IQR/Tukey-fence count is
+    shape-agnostic and always reported alongside for cross-reference.
+    """
+    clean = series.dropna()
+    n = len(clean)
+    if n < 2:
+        return {"count": 0, "method": "insufficient_data", "skewness": 0.0, "iqr_count": 0}
+
+    try:
+        skewness = float(scipy_stats.skew(clean))
+        if not np.isfinite(skewness):
+            skewness = 0.0
+    except Exception:
+        skewness = 0.0
+
+    std = float(clean.std())
+    if std == 0 or not np.isfinite(std):
+        count, method = 0, "zero_variance"
+    elif abs(skewness) > 1.0:
+        median = clean.median()
+        mad = float(np.median(np.abs(clean - median)))
+        if mad == 0:
+            # Degenerate MAD (e.g. >50% of values identical) — fall back to classic Z-score
+            z = np.abs((clean - clean.mean()) / std)
+            count = int((z > z_threshold).sum())
+            method = "z_score"
+        else:
+            modified_z = 0.6745 * (clean - median) / mad
+            count = int((np.abs(modified_z) > mad_threshold).sum())
+            method = "modified_z_score_mad"
+    else:
+        z = np.abs((clean - clean.mean()) / std)
+        count = int((z > z_threshold).sum())
+        method = "z_score"
+
+    q1 = clean.quantile(0.25)
+    q3 = clean.quantile(0.75)
+    iqr = q3 - q1
+    iqr_count = int(((clean < (q1 - 1.5 * iqr)) | (clean > (q3 + 1.5 * iqr))).sum())
+
+    return {"count": count, "method": method, "skewness": round(skewness, 2), "iqr_count": iqr_count}
 
 def compute_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict:
     if df is None:
@@ -536,84 +589,151 @@ def quality_report(df: pd.DataFrame) -> dict:
         }
     }
 
-def forecast_series(df: pd.DataFrame, metric_col: str, periods: int = 3) -> dict:
+def _fit_forecast_model(y: np.ndarray, periods: int):
+    """
+    Fits the best model the series' length supports and returns
+    (forecast_array, in_sample_residuals, method_label, k_params).
+
+    Tries progressively simpler models and NEVER raises: seasonal
+    Holt-Winters needs 2 full yearly cycles, plain Holt trend needs a
+    handful of points, and a short series falls back to OLS linear trend
+    (the only method the original implementation had).
+    """
+    n = len(y)
+
+    if n >= 24:
+        try:
+            from statsmodels.tsa.holtwinters import ExponentialSmoothing
+            fit = ExponentialSmoothing(
+                y, trend='add', seasonal='add', seasonal_periods=12,
+                initialization_method='estimated'
+            ).fit()
+            fc = np.asarray(fit.forecast(periods), dtype=float)
+            resid = np.asarray(fit.resid, dtype=float)
+            if np.all(np.isfinite(fc)) and np.all(np.isfinite(resid)) and len(resid) > 0:
+                return fc, resid, "Holt-Winters (trend + yearly seasonality)", 14
+        except Exception:
+            pass
+
+    if n >= 8:
+        try:
+            from statsmodels.tsa.holtwinters import ExponentialSmoothing
+            fit = ExponentialSmoothing(
+                y, trend='add', seasonal=None,
+                initialization_method='estimated'
+            ).fit()
+            fc = np.asarray(fit.forecast(periods), dtype=float)
+            resid = np.asarray(fit.resid, dtype=float)
+            if np.all(np.isfinite(fc)) and np.all(np.isfinite(resid)) and len(resid) > 0:
+                return fc, resid, "Holt linear trend (double exponential smoothing)", 2
+        except Exception:
+            pass
+
+    # Fallback for short series (4-7 points) or if the fancier fits above failed
+    x = np.arange(n)
+    p = np.polyfit(x, y, 1)
+    m, b = float(p[0]), float(p[1])
+    resid = y - (m * x + b)
+    fc = np.array([m * (n - 1 + i) + b for i in range(1, periods + 1)])
+    return fc, resid, "Linear trend projection (OLS)", 2
+
+
+def _backtest_forecast_accuracy(y: np.ndarray) -> Optional[dict]:
+    """
+    Holds out the last few points, refits on the rest, and scores the
+    holdout predictions with MAPE/RMSE. Returns None when there isn't
+    enough history left after the split for the comparison to mean anything.
+    """
+    n = len(y)
+    holdout = min(3, max(1, n // 5))
+    if n - holdout < 4:
+        return None
+
+    train, test = y[:-holdout], y[-holdout:]
+    try:
+        fc, _, method_label, _ = _fit_forecast_model(train, holdout)
+    except Exception:
+        return None
+
+    if not np.all(np.isfinite(fc)):
+        return None
+
+    abs_err = np.abs(test - fc)
+    rmse = float(np.sqrt(np.mean(abs_err ** 2)))
+
+    nonzero = test != 0
+    mape = float(np.mean(abs_err[nonzero] / np.abs(test[nonzero])) * 100) if nonzero.any() else None
+
+    return {
+        "mape": round(mape, 2) if mape is not None else None,
+        "rmse": round(rmse, 2),
+        "holdout_periods": int(holdout),
+        "method": method_label
+    }
+
+
+def forecast_series(df: pd.DataFrame, metric_col: str, periods: int = 3, agg: str = "sum") -> dict:
     if df.empty:
         return {"available": False, "reason": "Empty dataset"}
-        
+
     actual_col = next((c for c in df.columns if c.lower() == metric_col.lower()), None)
     if not actual_col or not pd.api.types.is_numeric_dtype(df[actual_col]):
         return {"available": False, "reason": "Invalid metric column"}
-        
+
     metric_col = actual_col
-        
+
     date_col = find_column(df, r'date|month|year|time')
     if not date_col:
          return {"available": False, "reason": "No date column found"}
-         
+
     df_temp = df.copy()
     df_temp[date_col] = pd.to_datetime(df_temp[date_col], errors='coerce')
     df_temp = df_temp.dropna(subset=[date_col])
-    
-    monthly = df_temp.groupby(df_temp[date_col].dt.to_period('M'))[metric_col].sum().reset_index()
+
+    agg_fn = "mean" if str(agg).lower() == "mean" else "sum"
+    monthly = df_temp.groupby(df_temp[date_col].dt.to_period('M'))[metric_col].agg(agg_fn).reset_index()
     monthly = monthly.sort_values(date_col)
-    
+
     if len(monthly) < 4:
         return {"available": False, "reason": "Not enough history (need at least 4 periods)"}
-        
-    import numpy as np
-    y = monthly[metric_col].values
-    x = np.arange(len(y))
-    
-    p, cov = np.polyfit(x, y, 1, cov=True)
-    m = p[0]
-    b = p[1]
-    
-    y_pred = m * x + b
-    residuals = y - y_pred
-    sse = np.sum(residuals**2)
-    df_err = len(x) - 2
-    mse = sse / df_err if df_err > 0 else 0
-    std_err = np.sqrt(mse)
-    
-    t_val = 1.96
-    forecast_values = []
+
+    y = monthly[metric_col].values.astype(float)
+    n = len(y)
     last_date = monthly[date_col].iloc[-1]
-    
-    x_mean = np.mean(x)
-    ssx = np.sum((x - x_mean)**2)
-    
+
+    accuracy = _backtest_forecast_accuracy(y)
+    fc_values, resid, method_label, k_params = _fit_forecast_model(y, periods)
+
+    sse = float(np.sum(resid ** 2))
+    df_err = max(1, n - k_params)
+    std_err = np.sqrt(sse / df_err) if sse > 0 else 0.0
+    t_val = float(scipy_stats.t.ppf(0.975, df_err))
+
+    forecast_values = []
     for i in range(1, periods + 1):
-        fx = len(x) - 1 + i
-        fy = m * fx + b
-        
-        # Avoid division by zero in ssx
-        moe = 0
-        if ssx > 0:
-            moe = t_val * std_err * np.sqrt(1 + 1/len(x) + (fx - x_mean)**2 / ssx)
-        else:
-            moe = t_val * std_err
-            
+        fy = float(fc_values[i - 1])
+        # Widen the interval the further out the forecast reaches
+        moe = t_val * std_err * np.sqrt(1 + i / n) if std_err > 0 else 0.0
         next_month = last_date + i
-        lower = max(0, fy - moe)
-        upper = fy + moe
-        
+
         forecast_values.append({
             "date": next_month.strftime('%b %Y'),
-            "forecast": float(fy),
-            "lower": float(lower),
-            "upper": float(upper)
+            "forecast": fy,
+            "lower": float(max(0, fy - moe)) if fy >= 0 else float(fy - moe),
+            "upper": float(fy + moe)
         })
-        
+
     historical_values = []
     for _, row in monthly.iterrows():
         historical_values.append({
             "date": row[date_col].strftime('%b %Y'),
             "value": float(row[metric_col])
         })
-        
+
     return {
         "available": True,
-        "method": "Linear trend projection",
+        "method": method_label,
         "historical": historical_values,
-        "forecast": forecast_values
+        "forecast": forecast_values,
+        "accuracy": accuracy
     }
