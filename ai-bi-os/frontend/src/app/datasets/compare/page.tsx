@@ -1,16 +1,30 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 import api, { datasetsApi } from "@/lib/api";
 import { StudioPage } from "@/components/analytics/StudioPage";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { formatNumber } from "@/lib/utils";
 import { ArrowRightLeft } from "lucide-react";
 
+// useSearchParams() must be wrapped in Suspense for production builds
+// (works fine without it in dev, which is why this was easy to miss).
 export default function CompareDatasets() {
-  const [idA, setIdA] = useState<string>("");
-  const [idB, setIdB] = useState<string>("");
+  return (
+    <Suspense fallback={<StudioPage title="Dataset Comparison"><div className="text-center text-muted-foreground py-8">Loading...</div></StudioPage>}>
+      <CompareDatasetsInner />
+    </Suspense>
+  );
+}
+
+function CompareDatasetsInner() {
+  const searchParams = useSearchParams();
+  // Pre-fills from ?a=<id>&b=<id> when reached via "Compare Selected" on the
+  // Datasets page; falls back to manual dropdown selection otherwise.
+  const [idA, setIdA] = useState<string>(searchParams.get("a") || "");
+  const [idB, setIdB] = useState<string>(searchParams.get("b") || "");
 
   const { data: datasets, isLoading: datasetsLoading } = useQuery({
     queryKey: ["datasets"],
@@ -19,7 +33,7 @@ export default function CompareDatasets() {
 
   const { data: diff, isLoading: diffLoading } = useQuery({
     queryKey: ["dataset_compare", idA, idB],
-    queryFn: () => api.get(`/datasets/compare?id_a=${idA}&id_b=${idB}`).then((res: any) => res.data),
+    queryFn: () => api.get<any>(`/api/v1/datasets/compare?id_a=${idA}&id_b=${idB}`),
     enabled: !!idA && !!idB,
   });
 
