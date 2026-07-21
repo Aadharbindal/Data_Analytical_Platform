@@ -1,48 +1,3 @@
-class BaseAgent:
-    """Base class for specialized AI agents."""
-    def __init__(self, name: str):
-        self.name = name
-
-    def execute(self, task: str, context: dict) -> str:
-        raise NotImplementedError
-
-class AnalyticsPlanner(BaseAgent):
-    """Drafts a multi-step execution plan for complex queries."""
-    def __init__(self):
-        super().__init__("Planner")
-
-    def execute(self, task: str, context: dict) -> list:
-        # Returns a list of steps to execute
-        return [
-            {"agent": "sql", "task": "Query revenue by region"},
-            {"agent": "analytics", "task": "Calculate correlation between marketing spend and revenue"},
-            {"agent": "insight", "task": "Summarize the findings"}
-        ]
-
-class SQLAgent(BaseAgent):
-    """Text-to-DuckDB Agent for data retrieval."""
-    def __init__(self):
-        super().__init__("SQLAgent")
-
-    def execute(self, task: str, context: dict) -> str:
-        return f"SELECT * FROM data WHERE context='{task}'"
-
-class AnalyticsAgent(BaseAgent):
-    """Python-based EDA agent."""
-    def __init__(self):
-        super().__init__("AnalyticsAgent")
-
-    def execute(self, task: str, context: dict) -> str:
-        return "Calculated Pearson correlation: 0.85"
-
-class InsightAgent(BaseAgent):
-    """Generates natural language narratives."""
-    def __init__(self):
-        super().__init__("InsightAgent")
-
-    def execute(self, task: str, context: dict) -> str:
-        return "Based on the data, revenue is strongly correlated with marketing spend."
-
 import os
 from app.ai.registry import ModelRegistry
 
@@ -52,17 +7,11 @@ from app.ai.telemetry import TelemetryLogger
 from app.ai.cost_tracker import CostTracker
 
 class AgentOrchestrator:
-    """Orchestrates the agents based on the Planner's output."""
+    """Core conversational agent orchestrator."""
     def __init__(self):
-        self.planner = AnalyticsPlanner()
         self.registry = ModelRegistry()
         self.telemetry = TelemetryLogger()
         self.cost_tracker = CostTracker()
-        self.agents = {
-            "sql": SQLAgent(),
-            "analytics": AnalyticsAgent(),
-            "insight": InsightAgent()
-        }
         
         self.system_prompt = (
             "You are the core AI Business Analyst for the DataMind Copilot Platform. "
@@ -74,7 +23,7 @@ class AgentOrchestrator:
             "If no chart is requested, return standard text."
         )
 
-    def run_query(self, user_query: str, db_engine=None) -> dict:
+    def run_query(self, user_query: str, user_id: str = None, db_engine=None) -> dict:
         """Main entry point for a conversational query with ReAct Tool Calling Loop."""
         span_id = self.telemetry.start_span("AgentOrchestrator.run_query")
         
@@ -82,7 +31,7 @@ class AgentOrchestrator:
         query_completion_tokens = 0
 
         mcp = MCPToolAbstraction()
-        register_rag_tools(mcp)
+        register_rag_tools(mcp, user_id)
         
         system_prompt = self.system_prompt
         
@@ -181,7 +130,7 @@ class AgentOrchestrator:
             "executed_sql": executed_sql,
             "cost_estimate": est_cost
         }
-    def stream_query(self, user_messages: list, db_engine=None):
+    def stream_query(self, user_messages: list, user_id: str = None, db_engine=None):
         """Yields Server-Sent Events (SSE) formatting for a streaming conversational query."""
         span_id = self.telemetry.start_span("AgentOrchestrator.stream_query")
         
@@ -189,7 +138,7 @@ class AgentOrchestrator:
         query_completion_tokens = 0
 
         mcp = MCPToolAbstraction()
-        register_rag_tools(mcp)
+        register_rag_tools(mcp, user_id)
         
         system_prompt = self.system_prompt
         

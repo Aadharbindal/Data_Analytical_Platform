@@ -1491,7 +1491,7 @@ async def get_confidence(current_user: dict = Depends(get_current_user)):
     cursor = conn.cursor()
     
     # Insights stats
-    cursor.execute('SELECT verified, count(*) as count FROM insights WHERE user_id = ? AND dataset_id = ? GROUP BY verified', (current_user["id"], dataset_info["id"]))
+    cursor.execute('SELECT verified, count(*) as count FROM insights WHERE user_id = %s AND dataset_id = %s GROUP BY verified', (current_user["id"], dataset_info["id"]))
     ins_stats = cursor.fetchall()
     ins_verified = 0
     ins_unverified = 0
@@ -1500,7 +1500,7 @@ async def get_confidence(current_user: dict = Depends(get_current_user)):
         else: ins_unverified = row["count"]
         
     # Recommendations stats
-    cursor.execute('SELECT verified, count(*) as count FROM recommendations WHERE user_id = ? AND dataset_id = ? GROUP BY verified', (current_user["id"], dataset_info["id"]))
+    cursor.execute('SELECT verified, count(*) as count FROM recommendations WHERE user_id = %s AND dataset_id = %s GROUP BY verified', (current_user["id"], dataset_info["id"]))
     rec_stats = cursor.fetchall()
     rec_verified = 0
     rec_unverified = 0
@@ -1509,7 +1509,7 @@ async def get_confidence(current_user: dict = Depends(get_current_user)):
         else: rec_unverified = row["count"]
         
     # Audit trail (recent insights)
-    cursor.execute('SELECT id, title, description, audit_sql, confidence, verified FROM insights WHERE user_id = ? AND dataset_id = ? ORDER BY created_at DESC LIMIT 100', (current_user["id"], dataset_info["id"]))
+    cursor.execute('SELECT id, title, description, audit_sql, confidence, verified FROM insights WHERE user_id = %s AND dataset_id = %s ORDER BY created_at DESC LIMIT 100', (current_user["id"], dataset_info["id"]))
     audit_trail = [dict(r) for r in cursor.fetchall()]
     
     conn.close()

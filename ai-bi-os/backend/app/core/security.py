@@ -55,7 +55,7 @@ def get_current_user(request: Request, auth_header: HTTPAuthorizationCredentials
     # Fetch user from DB
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, email, full_name, is_active FROM users WHERE id=?", (user_id,))
+    cursor.execute("SELECT id, email, full_name, is_active FROM users WHERE id=%s", (user_id,))
     row = cursor.fetchone()
     conn.close()
     

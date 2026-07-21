@@ -51,10 +51,7 @@ def run_filepath_migration():
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        if conn.is_postgres:
-            cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_name='datasets'")
-        else:
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='datasets'")
+        cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_name='datasets'")
         if cursor.fetchone():
             cursor.execute("SELECT id, filepath FROM datasets")
             rows = cursor.fetchall()
@@ -63,7 +60,7 @@ def run_filepath_migration():
                 if filepath:
                     basename = os.path.basename(filepath)
                     if basename != filepath:
-                        cursor.execute("UPDATE datasets SET filepath = ? WHERE id = ?", (basename, dataset_id))
+                        cursor.execute("UPDATE datasets SET filepath = %s WHERE id = %s", (basename, dataset_id))
             conn.commit()
     except Exception as e:
         print(f"Error running migration: {e}")
@@ -91,9 +88,9 @@ def init_db():
             name TEXT,
             status TEXT,
             created_at TEXT,
-            latest_version JSON,
+            latest_version JSONB,
             filepath TEXT,
-            columns JSON
+            columns JSONB
         )
     ''')
     cursor.execute('''
@@ -103,25 +100,18 @@ def init_db():
             domain TEXT,
             description TEXT,
             owner TEXT,
-            tags JSON
+            tags JSONB
         )
     ''')
     
     # We must migrate active_dataset from global singleton to per-user.
     # Safe to drop since it's just ephemeral session state.
     try:
-        if conn.is_postgres:
-            cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_name='active_dataset'")
-        else:
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='active_dataset'")
+        cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_name='active_dataset'")
             
         if cursor.fetchone():
-            if conn.is_postgres:
-                cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name='active_dataset'")
-                columns = [c[0] for c in cursor.fetchall()]
-            else:
-                cursor.execute("PRAGMA table_info(active_dataset)")
-                columns = [c[1] for c in cursor.fetchall()]
+            cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name='active_dataset'")
+            columns = [c[0] for c in cursor.fetchall()]
                 
             if 'user_id' not in columns:
                 cursor.execute("DROP TABLE active_dataset")
@@ -137,15 +127,30 @@ def init_db():
         )
     ''')
     
+    try:
+        cursor.execute("CREATE EXTENSION IF NOT EXISTS vector")
+    except Exception:
+        # Ignore if insufficient privileges, assuming already installed by superuser
+        pass
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS knowledge_base (
+            id SERIAL PRIMARY KEY,
+            user_id TEXT,
+            content TEXT,
+            embedding VECTOR(384)
+        )
+    ''')
+    
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS regression_models (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             dataset_id TEXT,
             target TEXT,
-            features JSON,
+            features JSONB,
             r2_train REAL,
             r2_test REAL,
-            coefficients JSON,
+            coefficients JSONB,
             intercept REAL,
             n_rows_used INTEGER,
             timestamp TEXT,
@@ -254,9 +259,9 @@ def init_db():
         cursor.execute("SELECT id FROM users ORDER BY created_at ASC LIMIT 1")
         first_user = cursor.fetchone()
         if first_user:
-            cursor.execute("UPDATE datasets SET user_id = ? WHERE user_id IS NULL", (first_user[0],))
-            cursor.execute("UPDATE catalog SET user_id = ? WHERE user_id IS NULL", (first_user[0],))
-            cursor.execute("UPDATE regression_models SET user_id = ? WHERE user_id IS NULL", (first_user[0],))
+            cursor.execute("UPDATE datasets SET user_id = %s WHERE user_id IS NULL", (first_user[0],))
+            cursor.execute("UPDATE catalog SET user_id = %s WHERE user_id IS NULL", (first_user[0],))
+            cursor.execute("UPDATE regression_models SET user_id = %s WHERE user_id IS NULL", (first_user[0],))
     except Exception as e:
         conn.rollback()
         print(f"Error assigning legacy datasets: {e}")
@@ -282,7 +287,7 @@ def init_db():
                     with open(disk_path, "rb") as f:
                         file_content = f.read()
                         content_hash = hashlib.sha256(file_content).hexdigest()
-                        cursor.execute("UPDATE datasets SET content_hash = ? WHERE id = ?", (content_hash, dataset_id))
+                        cursor.execute("UPDATE datasets SET content_hash = %s WHERE id = %s", (content_hash, dataset_id))
         conn.commit()
     except Exception as e:
         print(f"Error running hash migration: {e}")
@@ -426,7 +431,7 @@ def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool =
     if not force:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT id, name, version, created_at FROM datasets WHERE content_hash = ? AND user_id = ? LIMIT 1", (content_hash, user_id))
+        cursor.execute("SELECT id, name, version, created_at FROM datasets WHERE content_hash = %s AND user_id = %s LIMIT 1", (content_hash, user_id))
         existing = cursor.fetchone()
         conn.close()
         
@@ -441,7 +446,7 @@ def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool =
     # Determine version
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT MAX(version) FROM datasets WHERE name = ? AND user_id = ?", (filename, user_id))
+    cursor.execute("SELECT MAX(version) FROM datasets WHERE name = %s AND user_id = %s", (filename, user_id))
     max_ver = cursor.fetchone()[0]
     version = (max_ver + 1) if max_ver is not None else 1
     conn.close()
@@ -516,7 +521,7 @@ def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool =
     cursor = conn.cursor()
     cursor.execute('''
         INSERT INTO datasets (id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score, quality_breakdown, user_id, content_hash, domain, semantic_dict)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     ''', (
         dataset_id, filename, dataset_info["status"], dataset_info["created_at"],
         json.dumps(dataset_info["latest_version"]), filename_db, json.dumps(columns),
@@ -527,14 +532,14 @@ def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool =
     
     cursor.execute('''
         INSERT INTO catalog (id, name, domain, description, owner, tags, user_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
     ''', (
         dataset_id, catalog_entry["name"], catalog_entry["domain"],
         catalog_entry["description"], catalog_entry["owner"], json.dumps(catalog_entry["tags"]), user_id
     ))
     
     cursor.execute('''
-        INSERT OR REPLACE INTO active_dataset (user_id, dataset_id) VALUES (?, ?)
+        INSERT INTO active_dataset (user_id, dataset_id) VALUES (%s, %s) ON CONFLICT (user_id) DO UPDATE SET dataset_id = EXCLUDED.dataset_id
     ''', (user_id, dataset_id))
     
     conn.commit()
@@ -554,7 +559,7 @@ def get_active_dataset(user_id: str):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT dataset_id FROM active_dataset WHERE user_id = ?
+        SELECT dataset_id FROM active_dataset WHERE user_id = %s
     ''', (user_id,))
     row = cursor.fetchone()
     if not row:
@@ -564,7 +569,7 @@ def get_active_dataset(user_id: str):
     dataset_id = row[0]
     cursor.execute('''
         SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score, quality_breakdown, domain, semantic_dict
-        FROM datasets WHERE id = ? AND user_id = ?
+        FROM datasets WHERE id = %s AND user_id = %s
     ''', (dataset_id, user_id))
     dataset_row = cursor.fetchone()
     conn.close()
@@ -603,21 +608,21 @@ def get_active_dataset(user_id: str):
             cursor_w = conn_w.cursor()
             cursor_w.execute('''
                 UPDATE datasets 
-                SET domain = ?, semantic_dict = ?
-                WHERE id = ?
+                SET domain = %s, semantic_dict = %s
+                WHERE id = %s
             ''', (domain, json.dumps(semantic_dict), dataset_info["id"]))
             
             # Update catalog domain if generic or General
             cursor_w.execute('''
                 UPDATE catalog
-                SET domain = ?
-                WHERE id = ? AND (domain = 'General' OR domain = 'sales' OR domain = 'Sales')
+                SET domain = %s
+                WHERE id = %s AND (domain = 'General' OR domain = 'sales' OR domain = 'Sales')
             ''', (domain, dataset_info["id"]))
             
             conn_w.commit()
             conn_w.close()
     
-    # Lazy computation for datasets where quality_score is 0.0 (from SQLite ALTER TABLE DEFAULT 0)
+    # Lazy computation for datasets where quality_score is 0.0 (from schema DEFAULT 0)
     if dataset_info["quality_score"] == 0.0:
         df = get_dataframe(dataset_info["id"], user_id)
         if df is not None and len(df) > 0:
@@ -631,8 +636,8 @@ def get_active_dataset(user_id: str):
             cursor = conn.cursor()
             cursor.execute('''
                 UPDATE datasets 
-                SET quality_score = ?, quality_breakdown = ?
-                WHERE id = ?
+                SET quality_score = %s, quality_breakdown = %s
+                WHERE id = %s
             ''', (dataset_info["quality_score"], json.dumps(dataset_info["quality_breakdown"]), dataset_info["id"]))
             conn.commit()
             conn.close()
@@ -652,7 +657,7 @@ def get_dataframe(dataset_id: str, user_id: str):
 
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT filepath, sheet_name FROM datasets WHERE id = ? AND user_id = ?', (dataset_id, user_id))
+    cursor.execute('SELECT filepath, sheet_name FROM datasets WHERE id = %s AND user_id = %s', (dataset_id, user_id))
     row = cursor.fetchone()
     conn.close()
 

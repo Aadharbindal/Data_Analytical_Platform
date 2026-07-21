@@ -11,7 +11,7 @@ router = APIRouter()
 async def list_catalog(workspace_id: Optional[str] = None, current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT id, name, domain, description, owner, tags FROM catalog WHERE user_id = ?', (current_user["id"],))
+    cursor.execute('SELECT id, name, domain, description, owner, tags FROM catalog WHERE user_id = %s', (current_user["id"],))
     rows = cursor.fetchall()
     conn.close()
     
@@ -29,7 +29,7 @@ async def search_catalog(q: str, current_user: dict = Depends(get_current_user))
     query = f"%{q.lower()}%"
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT id, name, domain, description, owner, tags FROM catalog WHERE user_id = ? AND (LOWER(name) LIKE ? OR LOWER(description) LIKE ?)', (current_user["id"], query, query))
+    cursor.execute('SELECT id, name, domain, description, owner, tags FROM catalog WHERE user_id = %s AND (LOWER(name) LIKE %s OR LOWER(description) LIKE %s)', (current_user["id"], query, query))
     rows = cursor.fetchall()
     conn.close()
     

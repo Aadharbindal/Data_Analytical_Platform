@@ -146,7 +146,7 @@ async def train_regression_model(req: TrainRequest, current_user: dict = Depends
     cursor = conn.cursor()
     cursor.execute('''
         INSERT INTO regression_models (dataset_id, target, features, r2_train, r2_test, coefficients, intercept, n_rows_used, timestamp, user_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     ''', (
         dataset_info["id"],
         req.target,
@@ -182,7 +182,7 @@ async def get_regression_models(current_user: dict = Depends(get_current_user)):
     cursor.execute('''
         SELECT id, target, features, r2_train, r2_test, coefficients, intercept, n_rows_used, timestamp
         FROM regression_models
-        WHERE dataset_id = ? AND user_id = ?
+        WHERE dataset_id = %s AND user_id = %s
         ORDER BY timestamp DESC
     ''', (dataset_info["id"], current_user["id"]))
     rows = cursor.fetchall()

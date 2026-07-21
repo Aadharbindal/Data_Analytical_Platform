@@ -40,7 +40,7 @@ def signup(user: UserSignup, response: Response):
     cursor = conn.cursor()
     
     email_lower = user.email.lower()
-    cursor.execute("SELECT id FROM users WHERE email=?", (email_lower,))
+    cursor.execute("SELECT id FROM users WHERE email=%s", (email_lower,))
     if cursor.fetchone():
         conn.close()
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -50,7 +50,7 @@ def signup(user: UserSignup, response: Response):
     now = datetime.utcnow().isoformat()
     
     cursor.execute(
-        "INSERT INTO users (id, email, password_hash, full_name, created_at, is_active) VALUES (?, ?, ?, ?, ?, ?)",
+        "INSERT INTO users (id, email, password_hash, full_name, created_at, is_active) VALUES (%s, %s, %s, %s, %s, %s)",
         (user_id, email_lower, hashed_pw, user.full_name, now, 1)
     )
     conn.commit()
@@ -88,7 +88,7 @@ def login(request: Request, user: UserLogin, response: Response):
     cursor = conn.cursor()
     
     email_lower = user.email.lower()
-    cursor.execute("SELECT id, password_hash, is_active FROM users WHERE email=?", (email_lower,))
+    cursor.execute("SELECT id, password_hash, is_active FROM users WHERE email=%s", (email_lower,))
     row = cursor.fetchone()
     conn.close()
     
@@ -141,7 +141,7 @@ def refresh(request: Request, response: Response):
             
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT is_active FROM users WHERE id=?", (user_id,))
+        cursor.execute("SELECT is_active FROM users WHERE id=%s", (user_id,))
         row = cursor.fetchone()
         conn.close()
         

@@ -46,9 +46,12 @@ async def chat(request: ChatRequest, current_user: dict = Depends(get_current_us
         # But DuckDBEngine doesn't expose it. Let's just try register_dataset which is exposed.
         engine.register_dataset("active_dataset", filepath, format=fmt)
         
-        # Invoke AgentOrchestrator
+        # Invoke AgentOrchestrator        # We need the real user ID for RAG filtering
+        user_id = current_user["id"]
+        
+        # We should instantiate the agent for each request right now or pass down context
         orchestrator = AgentOrchestrator()
-        result = orchestrator.run_query(request.message, db_engine=engine)
+        result = orchestrator.run_query(request.message, user_id=user_id, db_engine=engine)
         
         return {
             "response": result.get("final_insight"),

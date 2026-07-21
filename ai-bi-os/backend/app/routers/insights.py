@@ -248,7 +248,7 @@ async def list_insights(dataset_version_id: str = None, current_user: dict = Dep
     cursor = conn.cursor()
     cursor.execute('''
         SELECT * FROM insights 
-        WHERE user_id = ? AND dataset_id = ? 
+        WHERE user_id = %s AND dataset_id = %s 
         ORDER BY verified DESC, created_at DESC
     ''', (current_user["id"], dataset_info["id"]))
     rows = cursor.fetchall()
@@ -350,7 +350,8 @@ async def list_insights(dataset_version_id: str = None, current_user: dict = Dep
                                 "description": formatted_desc,
                                 "category": category,
                                 "confidence": round(min(0.99, abs(z_score) / 3), 2),
-                                "impact": formatted_impact,
+                                "impact": formatted_impact,        # display string
+                                "_impact_raw": impact,             # raw float for DB
                                 "recommendation": formatted_rec,
                                 "verified": 1,
                                 "created_at": datetime.utcnow().isoformat() + "Z"
@@ -364,7 +365,7 @@ async def list_insights(dataset_version_id: str = None, current_user: dict = Dep
         for a in anomalies:
             cursor.execute('''
                 INSERT INTO insights (id, user_id, dataset_id, title, description, category, insight_level, confidence, impact, recommendation, verified, audit_sql, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ''', (
                 a["id"],
                 current_user["id"],
@@ -374,7 +375,7 @@ async def list_insights(dataset_version_id: str = None, current_user: dict = Dep
                 a["category"],
                 "Operational",
                 a["confidence"],
-                a["impact"],
+                a["_impact_raw"],   # store raw float, not formatted string
                 a["recommendation"],
                 a["verified"],
                 "Computed via Pandas Z-Score Z=(X-μ)/σ",
@@ -383,4 +384,5 @@ async def list_insights(dataset_version_id: str = None, current_user: dict = Dep
         conn.commit()
         conn.close()
 
+    # Return display-friendly list (with formatted impact string)
     return anomalies

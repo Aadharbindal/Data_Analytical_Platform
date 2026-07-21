@@ -63,13 +63,15 @@ def register_duckdb_tools(mcp: MCPToolAbstraction, db_engine):
         func=run_sql
     )
 
-def register_rag_tools(mcp: MCPToolAbstraction):
+def register_rag_tools(mcp: MCPToolAbstraction, user_id: str = None):
     """Registers knowledge base search tools."""
     rag = RAGEngine()
     
     def search_kb(query: str) -> str:
         try:
-            results = rag.retrieve_context(query)
+            if not user_id:
+                return "Search Error: user_id is missing."
+            results = rag.retrieve_context(query, user_id)
             return "\n".join([f"- {r}" for r in results])
         except Exception as e:
             return f"Search Error: {str(e)}"
