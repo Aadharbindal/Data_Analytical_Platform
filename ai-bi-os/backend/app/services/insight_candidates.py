@@ -107,6 +107,40 @@ def generate_candidates(df: pd.DataFrame, sem_dict: dict) -> list[dict]:
                 "sample_size": int(total_bad)
             })
 
+        # C2. CONCENTRATION x FAILURE overlap (cross-signal candidate) —
+        # is the entity that dominates volume ALSO disproportionately prone
+        # to failure? That's a single, more actionable finding than the two
+        # facts reported in isolation ("your top seller is also your
+        # biggest quality risk" vs. two unrelated stats).
+        if metric and dims and len(df) > 0:
+            dataset_bad_rate = float(bad.mean())
+            for dim in dims:
+                try:
+                    by = df.groupby(dim, observed=True)[metric].sum().sort_values(ascending=False)
+                    total = by.sum()
+                    if total <= 0 or len(by) < 2:
+                        continue
+                    top_entity = str(by.index[0])
+                    entity_mask = df[dim].astype(str) == top_entity
+                    entity_n = int(entity_mask.sum())
+                    if entity_n < 5:
+                        continue
+                    entity_bad_rate = float(bad[entity_mask].mean())
+                    # Only surface this when the top entity is meaningfully
+                    # worse than the dataset overall — otherwise it's noise.
+                    if entity_bad_rate > 0.05 and entity_bad_rate > dataset_bad_rate * 1.5:
+                        candidates.append({
+                            "type": "concentration_risk_overlap",
+                            "dimension": dim,
+                            "entity": top_entity,
+                            "share_pct": round((by.iloc[0] / total) * 100, 2),
+                            "entity_failure_pct": round(entity_bad_rate * 100, 1),
+                            "dataset_failure_pct": round(dataset_bad_rate * 100, 1),
+                            "sample_size": entity_n
+                        })
+                except Exception as e:
+                    logging.error(f"Concentration-risk overlap check failed for {dim}: {e}")
+
     # D. MISSING DATA
     for col in df.columns:
         missing = df[col].isnull().sum()
