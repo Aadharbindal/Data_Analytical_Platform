@@ -151,6 +151,34 @@ def init_db():
     except Exception as e:
         print(f"Warning: could not add knowledge_base chunk columns: {e}")
 
+    # DB-backed home for app.ai.governance.PromptManager — previously an
+    # in-memory dict that reset on every restart.
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS prompt_versions (
+            id TEXT PRIMARY KEY,
+            name TEXT,
+            version TEXT,
+            template TEXT,
+            created_at TEXT,
+            UNIQUE(name, version)
+        )
+    ''')
+
+    # DB-backed home for app.ai.governance.AIEvaluationFramework — previously
+    # an in-memory list that reset on every restart, making the RLHF/human
+    # feedback path (submit_human_feedback) have nothing to persist to.
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS ai_evaluation_logs (
+            trace_id TEXT PRIMARY KEY,
+            user_id TEXT,
+            prompt TEXT,
+            response TEXT,
+            expected TEXT,
+            human_score INTEGER,
+            comments TEXT,
+            created_at TEXT
+        )
+    ''')
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS regression_models (

@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from app.services.data_processing import get_active_dataset, get_dataset_path
 from app.services.query.duckdb_engine import DuckDBEngine
 from app.ai.agents import AgentOrchestrator
+from app.ai.governance import AIEvaluationFramework
 from app.core.security import get_current_user
 import os
 
@@ -10,6 +11,11 @@ router = APIRouter()
 
 class ChatRequest(BaseModel):
     message: str
+
+class ChatFeedbackRequest(BaseModel):
+    trace_id: str
+    score: int
+    comments: str = None
 
 @router.post("")
 async def chat(request: ChatRequest, current_user: dict = Depends(get_current_user)):
@@ -55,7 +61,22 @@ async def chat(request: ChatRequest, current_user: dict = Depends(get_current_us
         
         return {
             "response": result.get("final_insight"),
-            "sql": result.get("executed_sql", [])
+            "sql": result.get("executed_sql", []),
+            "trace_id": result.get("trace_id")
         }
     except Exception as e:
         return {"response": f"Error executing query: {str(e)}", "sql": []}
+
+@router.post("/feedback")
+async def submit_chat_feedback(request: ChatFeedbackRequest, current_user: dict = Depends(get_current_user)):
+    """Records human feedback (thumbs up/down, a 1-5 score, etc.) against a
+    previously logged AI response, identified by the trace_id returned from
+    POST /api/v1/chat."""
+    if not (1 <= request.score <= 5):
+        raise HTTPException(status_code=400, detail="score must be between 1 and 5")
+
+    updated = AIEvaluationFramework().submit_human_feedback(request.trace_id, request.score, request.comments)
+    if not updated:
+        raise HTTPException(status_code=404, detail="No logged AI response found for that trace_id")
+
+    return {"status": "ok"}
