@@ -23,6 +23,7 @@ import {
   Power,
   X,
   File,
+  ArrowRightLeft,
 } from "lucide-react";
 import { DatasetDetailDrawer } from "@/components/datasets/DatasetDetailDrawer";
 
@@ -247,6 +248,17 @@ export default function DatasetsPage() {
   const router = useRouter();
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [compareSelection, setCompareSelection] = useState<string[]>([]);
+
+  const toggleCompareSelection = (id: string) => {
+    setCompareSelection((prev) => {
+      if (prev.includes(id)) return prev.filter((x) => x !== id);
+      // Cap at 2 - selecting a 3rd replaces the oldest pick instead of
+      // silently doing nothing or erroring.
+      const next = [...prev, id];
+      return next.length > 2 ? next.slice(1) : next;
+    });
+  };
 
   const { data: datasets, isLoading, isError, refetch } = useQuery({
     queryKey: ["datasets"],
@@ -282,16 +294,41 @@ export default function DatasetsPage() {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="flex flex-col gap-6"
     >
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
-        className="flex items-center justify-end"
+        className="flex items-center justify-between gap-3"
       >
-        <Badge variant="outline" className="flex items-center gap-2 rounded-full border-[#1a2235] bg-[#0c1017] px-3 py-1 text-muted-foreground">
-          <div className="h-1.5 w-1.5 rounded-full bg-[#3b82f6] shadow-[0_0_8px_rgba(59,130,246,0.9)]"></div>
-          <span>{datasets?.length ?? 0} datasets</span>
-        </Badge>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          {compareSelection.length > 0 && (
+            <span>
+              {compareSelection.length === 2
+                ? "2 datasets selected"
+                : "Select 1 more dataset to compare"}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-3">
+          {compareSelection.length === 2 && (
+            <Button
+              size="sm"
+              className="rounded-full gap-1.5"
+              onClick={() =>
+                router.push(
+                  `/datasets/compare?a=${compareSelection[0]}&b=${compareSelection[1]}`
+                )
+              }
+            >
+              <ArrowRightLeft className="h-3.5 w-3.5" />
+              Compare Selected
+            </Button>
+          )}
+          <Badge variant="outline" className="flex items-center gap-2 rounded-full border-[#1a2235] bg-[#0c1017] px-3 py-1 text-muted-foreground">
+            <div className="h-1.5 w-1.5 rounded-full bg-[#3b82f6] shadow-[0_0_8px_rgba(59,130,246,0.9)]"></div>
+            <span>{datasets?.length ?? 0} datasets</span>
+          </Badge>
+        </div>
       </motion.div>
 
       {/* Upload Zone */}
@@ -330,6 +367,7 @@ export default function DatasetsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm table-fixed">
               <colgroup>
+                <col className="w-[44px]" />
                 <col />
                 <col className="w-[70px] md:w-[90px]" />
                 <col className="w-[100px] md:w-[130px]" />
@@ -340,6 +378,7 @@ export default function DatasetsPage() {
               </colgroup>
             <thead className="bg-background/80 border-b border-border/50">
               <tr>
+                <th className="px-3 md:px-4 py-4" title="Select two datasets to compare" />
                 {["Name", "Version", "Status", "Rows", "Size", "Created", ""].map((h) => (
                   <th
                     key={h}
@@ -358,6 +397,15 @@ export default function DatasetsPage() {
                     key={ds.id}
                     className="border-b border-border/40 hover:bg-white/[0.02] transition-colors group"
                   >
+                    <td className="px-3 md:px-4 py-5">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 rounded border-border/60 accent-primary cursor-pointer"
+                        checked={compareSelection.includes(ds.id)}
+                        onChange={() => toggleCompareSelection(ds.id)}
+                        title="Select to compare"
+                      />
+                    </td>
                     <td className="px-3 md:px-6 py-5 font-medium text-foreground truncate" title={ds.name}>
                       <div className="flex items-center gap-3">
                         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] bg-[#0c1017] border border-[#1a2235] shadow-sm">
