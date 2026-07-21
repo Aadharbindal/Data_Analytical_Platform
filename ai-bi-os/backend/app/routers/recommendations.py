@@ -89,9 +89,14 @@ async def generate_recommendations(force: bool = False, current_user: dict = Dep
             top_category = grouped.sort_values(main_num, ascending=False).iloc[0]
             top_category_share = top_category[main_num] / total_sum
             top_cat_name = str(top_category[main_cat])
-            
+
     failure_rate = 0
     status_col = None
+    # Set when the top-by-volume category is ALSO disproportionately
+    # failure-prone within its own rows — lets the concentration rule below
+    # merge both signals into one richer, more actionable recommendation
+    # instead of reporting them as two unrelated facts.
+    top_category_failure_rate = None
     if sem_dict:
         status_fields = sem_dict.get("status_fields", [])
         unhealthy_regex = sem_dict.get("unhealthy_regex", "(?i)(fail|error|decline|reject|timeout)")
@@ -105,6 +110,15 @@ async def generate_recommendations(force: bool = False, current_user: dict = Dep
             if total_rows > 0:
                 failures = df[status_col].astype(str).str.contains(unhealthy_regex).sum()
                 failure_rate = failures / total_rows
+
+                if top_cat_name and main_cat:
+                    entity_mask = df[main_cat].astype(str) == top_cat_name
+                    entity_n = int(entity_mask.sum())
+                    if entity_n >= 5:
+                        entity_failures = df.loc[entity_mask, status_col].astype(str).str.contains(unhealthy_regex).sum()
+                        entity_rate = entity_failures / entity_n
+                        if entity_rate > 0.05 and entity_rate > failure_rate * 1.5:
+                            top_category_failure_rate = entity_rate
 
     mom_growth = 0
     date_col = bus_term.get("primary_date")
@@ -134,12 +148,23 @@ async def generate_recommendations(force: bool = False, current_user: dict = Dep
             stddev_ratio = std_val / mean_val
 
     # Apply rules
+    concentration_overlap = top_category_failure_rate is not None
     RECOMMENDATION_RULES = [
         {
             "condition": lambda: top_category_share > 0.20,
-            "title": f"Diversify dependency on top {main_cat or 'category'}",
-            "rationale": f"The top category ({top_cat_name}) accounts for {top_category_share*100:.1f}% of total {main_num or 'volume'}. Diversification will balance distribution risk.",
-            "priority": "High" if top_category_share > 0.4 else "Medium",
+            "title": (
+                f"Prioritize quality control in top {main_cat or 'category'} ({top_cat_name})"
+                if concentration_overlap else
+                f"Diversify dependency on top {main_cat or 'category'}"
+            ),
+            "rationale": (
+                f"The top category ({top_cat_name}) accounts for {top_category_share*100:.1f}% of total {main_num or 'volume'} "
+                f"AND has a {(top_category_failure_rate or 0)*100:.1f}% failure rate within its own records "
+                f"(vs {failure_rate*100:.1f}% dataset-wide) — it is both your largest segment and a disproportionate quality risk."
+                if concentration_overlap else
+                f"The top category ({top_cat_name}) accounts for {top_category_share*100:.1f}% of total {main_num or 'volume'}. Diversification will balance distribution risk."
+            ),
+            "priority": "High" if (top_category_share > 0.4 or concentration_overlap) else "Medium",
             "category": "risk"
         },
         {
@@ -175,14 +200,18 @@ async def generate_recommendations(force: bool = False, current_user: dict = Dep
                 "category": rule["category"]
             })
 
-    # Always ensure at least 3 high-quality actionable recommendations using dataset fallbacks
+    # Always ensure at least 3 high-quality actionable recommendations using dataset fallbacks.
+    # Deduped by CATEGORY (not title) — CLAUDE.md's diversity rule requires every
+    # recommendation to come from a distinct analytical dimension, and a fallback
+    # sharing a category with an already-matched rule would violate that even
+    # though its title differs.
     if len(matched_rules) < 3:
         fallbacks = [
             {
-                "title": f"Scale operations in primary metric ({main_num or 'volume'})",
+                "title": f"Scale operations in top-performing {main_cat or 'segments'}",
                 "rationale": f"Evaluated {len(df):,} active records. Focus on expanding operational throughput in top-performing segments.",
                 "priority": "High",
-                "category": "growth"
+                "category": "category_breakdown"
             },
             {
                 "title": "Establish automated data quality & completeness monitoring",
@@ -197,11 +226,13 @@ async def generate_recommendations(force: bool = False, current_user: dict = Dep
                 "category": "operations"
             }
         ]
+        used_categories = {r["category"] for r in matched_rules}
         for fb in fallbacks:
             if len(matched_rules) >= 4:
                 break
-            if not any(r["title"] == fb["title"] for r in matched_rules):
+            if fb["category"] not in used_categories:
                 matched_rules.append(fb)
+                used_categories.add(fb["category"])
 
     # 3. LLM Translation with Deterministic Fallback (each item zero-trust verified individually)
     recs = []
