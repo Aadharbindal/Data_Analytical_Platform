@@ -141,7 +141,17 @@ def init_db():
             embedding VECTOR(384)
         )
     ''')
-    
+
+    # Added so chunks from the same source document (see RAGEngine.embed_and_store's
+    # chunking) stay identifiable as belonging together, even though each chunk is
+    # retrieved independently. IF NOT EXISTS keeps this idempotent/safe on existing DBs.
+    try:
+        cursor.execute("ALTER TABLE knowledge_base ADD COLUMN IF NOT EXISTS doc_id TEXT")
+        cursor.execute("ALTER TABLE knowledge_base ADD COLUMN IF NOT EXISTS chunk_index INTEGER")
+    except Exception as e:
+        print(f"Warning: could not add knowledge_base chunk columns: {e}")
+
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS regression_models (
             id SERIAL PRIMARY KEY,
