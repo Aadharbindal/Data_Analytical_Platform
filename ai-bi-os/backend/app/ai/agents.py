@@ -1,6 +1,9 @@
 import os
+import uuid
+import logging
 from app.ai.registry import ModelRegistry
 from app.core.config import LLM_MODEL_COMPLEX
+from app.ai.governance import AIGuardrails, PromptManager, AIEvaluationFramework
 
 import json
 from app.ai.mcp_tools import MCPToolAbstraction, register_duckdb_tools, register_rag_tools
@@ -9,25 +12,45 @@ from app.ai.cost_tracker import CostTracker
 
 class AgentOrchestrator:
     """Core conversational agent orchestrator."""
+
+    DEFAULT_SYSTEM_PROMPT = (
+        "You are the core AI Business Analyst for the DataMind Copilot Platform. "
+        "You have access to a DuckDB analytical engine via tools, and a semantic knowledge base. "
+        "If a user asks a quantitative data question, ALWAYS use the query_duckdb tool to find the exact mathematical answer. "
+        "If the SQL query fails, fix the SQL and try again. "
+        "CRITICAL: If the user explicitly asks for a chart, graph, or visualization, you MUST return your FINAL response as a valid JSON object with exactly two keys: "
+        "'text_response' (string with your analysis) and 'chart_config' (object with 'type' string e.g. 'bar', 'line', 'area' and 'data' array of objects). "
+        "If no chart is requested, return standard text."
+    )
+
     def __init__(self):
         self.registry = ModelRegistry()
         self.telemetry = TelemetryLogger()
         self.cost_tracker = CostTracker()
-        
-        self.system_prompt = (
-            "You are the core AI Business Analyst for the DataMind Copilot Platform. "
-            "You have access to a DuckDB analytical engine via tools, and a semantic knowledge base. "
-            "If a user asks a quantitative data question, ALWAYS use the query_duckdb tool to find the exact mathematical answer. "
-            "If the SQL query fails, fix the SQL and try again. "
-            "CRITICAL: If the user explicitly asks for a chart, graph, or visualization, you MUST return your FINAL response as a valid JSON object with exactly two keys: "
-            "'text_response' (string with your analysis) and 'chart_config' (object with 'type' string e.g. 'bar', 'line', 'area' and 'data' array of objects). "
-            "If no chart is requested, return standard text."
+        self.guardrails = AIGuardrails()
+        self.evaluator = AIEvaluationFramework()
+
+        # DB-backed prompt versioning (see PromptManager): seeds the DB with
+        # the hardcoded default below on first run, then serves whatever is
+        # stored from then on - editable without a code deploy.
+        self.system_prompt = PromptManager().get_prompt(
+            "agent_system_prompt", default=self.DEFAULT_SYSTEM_PROMPT
         )
 
     def run_query(self, user_query: str, user_id: str = None, db_engine=None) -> dict:
         """Main entry point for a conversational query with ReAct Tool Calling Loop."""
         span_id = self.telemetry.start_span("AgentOrchestrator.run_query")
-        
+
+        if not self.guardrails.validate_input(user_query):
+            self.telemetry.end_span(span_id, {"status": "blocked_input"})
+            return {
+                "query": user_query,
+                "final_insight": "This request could not be processed - it appears to contain a prompt-injection attempt. Please rephrase your question about the data.",
+                "executed_sql": [],
+                "cost_estimate": 0.0,
+                "trace_id": None
+            }
+
         query_prompt_tokens = 0
         query_completion_tokens = 0
 
@@ -77,15 +100,25 @@ class AgentOrchestrator:
                 import re
                 if len(executed_sql) == 0 and re.search(r'\d', final_text):
                     final_text = "**Note: this answer was not computed from your data**\n\n" + final_text
-                
+
+                if final_text.strip().startswith("{"):
+                    constraints = {"requires_json": True, "required_keys": ["text_response", "chart_config"]}
+                    if not self.guardrails.validate_output(final_text, constraints):
+                        logging.warning(f"AIGuardrails: chart response failed output validation for query: {user_query[:80]!r}")
+
                 self.cost_tracker.record_usage(query_prompt_tokens, query_completion_tokens)
                 est_cost = self.cost_tracker.calculate_cost(query_prompt_tokens, query_completion_tokens)
                 self.telemetry.end_span(span_id, {"status": "success", "tools_used": len(executed_sql), "cost": est_cost})
+
+                trace_id = str(uuid.uuid4())
+                self.evaluator.log_response(trace_id, user_query, final_text, user_id=user_id)
+
                 return {
                     "query": user_query,
                     "final_insight": final_text,
                     "executed_sql": executed_sql,
-                    "cost_estimate": est_cost
+                    "cost_estimate": est_cost,
+                    "trace_id": trace_id
                 }
                 
             messages.append({"role": "assistant", "content": msg.content, "tool_calls": msg.tool_calls})
@@ -129,11 +162,16 @@ class AgentOrchestrator:
             final_text = "**Note: this answer was not computed from your data**\n\n" + final_text
         
         self.telemetry.end_span(span_id, {"status": "timeout_fallback", "cost": est_cost})
+
+        trace_id = str(uuid.uuid4())
+        self.evaluator.log_response(trace_id, user_query, final_text, user_id=user_id)
+
         return {
             "query": user_query,
             "final_insight": final_text,
             "executed_sql": executed_sql,
-            "cost_estimate": est_cost
+            "cost_estimate": est_cost,
+            "trace_id": trace_id
         }
     def stream_query(self, user_messages: list, user_id: str = None, db_engine=None):
         """Yields Server-Sent Events (SSE) formatting for a streaming conversational query."""
