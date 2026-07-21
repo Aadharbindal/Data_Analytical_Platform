@@ -22,17 +22,6 @@ celery_app = Celery(
     backend=f"redis://{redis_host}:6379/0"
 )
 
-import asyncio
-from app.core.event_bus import PluggableEventBus
-
-@celery_app.task(name="monitor_ai_gateway_health")
-def monitor_ai_gateway_health():
-    """Background task to ping AI providers for health."""
-    from app.services.ai_gateway.health_monitor import health_monitor
-    # Run the single health check synchronously in this Celery task
-    asyncio.run(health_monitor.check_health())
-    return {"status": "ok"}
-
 event_bus = PluggableEventBus()
 
 @celery_app.task(name="process_ai_query")

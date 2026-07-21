@@ -212,6 +212,10 @@ Return ONLY a valid JSON object with a single key "insights" containing an array
                 except (TypeError, ValueError):
                     impact_numeric = float(cand.get("score", 0.0))
 
+                # Confidence tracks the strength of the underlying deterministic signal
+                # (SCORES lambdas above are scaled 0-10), not a flat constant.
+                confidence = round(min(0.99, max(0.05, cand.get("score", 0) / 10.0)), 2)
+
                 final_ins = {
                     "id": f"ins_{uuid.uuid4().hex[:8]}",
                     "user_id": user_id,
@@ -220,10 +224,10 @@ Return ONLY a valid JSON object with a single key "insights" containing an array
                     "description": finding,
                     "category": cat,
                     "insight_level": "Operational",
-                    "confidence": 0.99,
+                    "confidence": confidence,
                     "impact": impact,
                     "recommendation": rec,
-                    "verified": 1,
+                    "verified": 1 if is_valid_llm else 0,
                     "audit_sql": f"Deterministic Pandas Pipeline: {c_type}",
                     "score": cand.get("score", 0),
                     "dimension_type": dim,
