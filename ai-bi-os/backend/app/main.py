@@ -35,7 +35,7 @@ app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["analytic
 app.include_router(regression.router, prefix="/api/v1/analytics/regression", tags=["regression"])
 app.include_router(catalog.router, prefix="/api/v1/catalog", tags=["catalog"])
 # Also include insights router for executive summary etc.
-from app.routers import insights, auth, recommendations, rules, rag, ai_gateway, agents, decision_rules
+from app.routers import insights, auth, recommendations, rules, ai_gateway
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
@@ -58,10 +58,7 @@ app.include_router(insights.router, prefix="/api/v1/insights", tags=["insights"]
 app.include_router(recommendations.router, prefix="/api/v1/recommendations", tags=["recommendations"])
 app.include_router(rules.router, prefix="/api/v1/rules", tags=["rules"])
 app.include_router(chat.router, prefix="/api/v1/chat", tags=["chat"])
-app.include_router(rag.router, prefix="/api/v1/rag", tags=["rag"])
 app.include_router(ai_gateway.router, prefix="/api/v1/ai-gateway", tags=["ai-gateway"])
-app.include_router(agents.router, prefix="/api/v1/agents", tags=["agents"])
-app.include_router(decision_rules.router, prefix="/api/v1/decision-rules", tags=["decision-rules"])
 
 @app.get("/health")
 def health_check():

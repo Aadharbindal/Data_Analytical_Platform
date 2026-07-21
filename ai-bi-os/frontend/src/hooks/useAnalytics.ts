@@ -8,14 +8,14 @@ const advancedAnalyticsApi = {
   getEDAProfile: (_id: string) => analyticsApi.eda(),
   getCorrelations: (_id: string) => analyticsApi.correlation(),
   getStatistics: (_id: string) => analyticsApi.statistics(),
-  getRegression: (_id: string) => analyticsApi.kpis(),
+  getRegression: (_id: string) => analyticsApi.regressionModels(),
   getValidation: (_id: string) => analyticsApi.eda(),
   getDistributions: (_id: string) => analyticsApi.distribution(),
   getOutliers: (_id: string) => analyticsApi.outliers(),
   getTimeSeries: (_id: string) => analyticsApi.timeseries(),
   getTrends: (_id: string) => analyticsApi.trend(),
   getForecasts: (_id: string) => analyticsApi.forecast(),
-  getGovernance: (_id: string) => analyticsApi.kpis(),
+  getGovernance: (_id: string) => analyticsApi.regressionQualitySummary(),
 };
 
 // Helper hook to fetch everything for a dataset
