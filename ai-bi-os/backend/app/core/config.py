@@ -35,7 +35,14 @@ if not SECRET_KEY:
     print("WARNING: No SECRET_KEY found in environment. Generated a temporary random key for development.")
 
 # AI Model Configuration
+# Small/fast model: used for narrow, templated tasks (insight narratives,
+# recommendation wording, executive summaries) where the model fills in
+# placeholders or lightly rephrases deterministic facts rather than reasoning.
 LLM_MODEL = os.getenv("LLM_MODEL", "groq/llama-3.1-8b-instant")
+# Larger/more capable model: used for multi-step agentic reasoning (tool
+# selection, SQL generation, synthesizing a final answer across several tool
+# calls) where quality matters more than the extra latency/cost.
+LLM_MODEL_COMPLEX = os.getenv("LLM_MODEL_COMPLEX", "groq/llama-3.3-70b-versatile")
 
 # AWS S3 / Cloud Storage Configuration
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")

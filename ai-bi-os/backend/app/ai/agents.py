@@ -1,5 +1,6 @@
 import os
 from app.ai.registry import ModelRegistry
+from app.core.config import LLM_MODEL_COMPLEX
 
 import json
 from app.ai.mcp_tools import MCPToolAbstraction, register_duckdb_tools, register_rag_tools
@@ -53,16 +54,20 @@ class AgentOrchestrator:
         executed_sql = []
         max_loops = 6 # Up to 3 attempts
         for loop_idx in range(max_loops):
+            # Complex-tier model: this loop does multi-step tool selection and
+            # SQL generation, which benefits from a more capable model far more
+            # than the templated narrative-writing tasks elsewhere in the app do.
             msg = self.registry.route_request(
                 messages=messages,
-                tools=mcp.get_tool_schema()
+                tools=mcp.get_tool_schema(),
+                target_model=LLM_MODEL_COMPLEX
             )
-            
+
             usage = getattr(msg, "usage", None)
             if usage:
                 query_prompt_tokens += getattr(usage, "prompt_tokens", 0)
                 query_completion_tokens += getattr(usage, "completion_tokens", 0)
-            
+
             if not msg.tool_calls:
                 final_text = msg.content or ""
                 final_text = __import__('re').sub(r'<function.*?>.*?</function>', '', final_text, flags=__import__('re').DOTALL).strip()
@@ -107,15 +112,15 @@ class AgentOrchestrator:
                     "content": tool_result
                 })
                 
-        final_msg = self.registry.route_request(messages=messages, tools=None)
+        final_msg = self.registry.route_request(messages=messages, tools=None, target_model=LLM_MODEL_COMPLEX)
         usage = getattr(final_msg, "usage", None)
         if usage:
             query_prompt_tokens += getattr(usage, "prompt_tokens", 0)
             query_completion_tokens += getattr(usage, "completion_tokens", 0)
-            
+
         self.cost_tracker.record_usage(query_prompt_tokens, query_completion_tokens)
         est_cost = self.cost_tracker.calculate_cost(query_prompt_tokens, query_completion_tokens)
-        
+
         final_text = final_msg.content or "Exceeded max loops trying to query data."
         final_text = __import__('re').sub(r'<function.*?>.*?</function>', '', final_text, flags=__import__('re').DOTALL).strip()
         

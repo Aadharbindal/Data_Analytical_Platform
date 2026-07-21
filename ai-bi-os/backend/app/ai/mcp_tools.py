@@ -66,16 +66,16 @@ def register_duckdb_tools(mcp: MCPToolAbstraction, db_engine):
 def register_rag_tools(mcp: MCPToolAbstraction, user_id: str = None):
     """Registers knowledge base search tools."""
     rag = RAGEngine()
-    
-    def search_kb(query: str) -> str:
+
+    def search_kb(query: str, top_k: int = 3) -> str:
         try:
             if not user_id:
                 return "Search Error: user_id is missing."
-            results = rag.retrieve_context(query, user_id)
+            results = rag.retrieve_context(query, user_id, top_k=top_k)
             return "\n".join([f"- {r}" for r in results])
         except Exception as e:
             return f"Search Error: {str(e)}"
-            
+
     mcp.register_tool(
         name="search_knowledge_base",
         description="Search the semantic knowledge base for business definitions, policies, or qualitative context.",
@@ -85,9 +85,14 @@ def register_rag_tools(mcp: MCPToolAbstraction, user_id: str = None):
                 "search_query": {
                     "type": "string",
                     "description": "The concept or question to search for."
+                },
+                "top_k": {
+                    "type": "integer",
+                    "description": "How many knowledge base entries to return, ranked by relevance. Defaults to 3; raise it for broader questions, lower it for a single precise fact.",
+                    "default": 3
                 }
             },
             "required": ["search_query"]
         },
-        func=search_kb
+        func=lambda search_query, top_k=3: search_kb(search_query, top_k)
     )

@@ -227,7 +227,8 @@ Return ONLY a valid JSON array of objects, one per input rule in the SAME ORDER,
                 model=LLM_MODEL,
                 messages=[{"role": "user", "content": prompt}],
                 api_key=api_key,
-                max_tokens=2000
+                max_tokens=2000,
+                temperature=0.2
             )
             content = res.choices[0].message.content
             clean_content = content.strip()
