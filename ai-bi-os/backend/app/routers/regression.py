@@ -276,3 +276,65 @@ async def get_regression_models(current_user: dict = Depends(get_current_user)):
             "timestamp": r[8]
         })
     return models
+
+@router.get("/quality-summary")
+async def get_regression_quality_summary(current_user: dict = Depends(get_current_user)):
+    """
+    Real quality/trust scoring for the active dataset's most recently
+    trained regression model, computed from the r2_train/r2_test values
+    actually stored in regression_models — not a placeholder.
+    """
+    dataset_info = get_active_dataset(current_user["id"])
+    if not dataset_info:
+        return {"available": False, "reason": "No active dataset"}
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT target, features, r2_train, r2_test, n_rows_used, timestamp
+        FROM regression_models
+        WHERE dataset_id = %s AND user_id = %s
+        ORDER BY timestamp DESC
+        LIMIT 1
+    ''', (dataset_info["id"], current_user["id"]))
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        return {"available": False, "reason": "No regression model trained yet for this dataset"}
+
+    target, features, r2_train, r2_test, n_rows_used, timestamp = row
+    r2_train = r2_train or 0.0
+    r2_test = r2_test or 0.0
+    overfitting_gap = round(r2_train - r2_test, 3)
+
+    # Quality: how much held-out variance the model actually explains.
+    # r2_test can be negative for a poor fit, so clamp to 0 rather than
+    # reporting a nonsensical negative "quality percentage".
+    quality_score = round(max(0.0, min(100.0, r2_test * 100)), 1)
+
+    # Trust: quality, penalized further for a large train/test gap
+    # (a model that memorized training data isn't trustworthy even if
+    # its raw test R^2 looks OK).
+    trust_score = round(max(0.0, quality_score - max(0.0, overfitting_gap) * 100), 1)
+
+    if quality_score >= 60 and overfitting_gap < 0.15:
+        deployment_status = "Approved"
+    elif quality_score >= 30:
+        deployment_status = "Needs Review"
+    else:
+        deployment_status = "Not Recommended"
+
+    return {
+        "available": True,
+        "target": target,
+        "features": features if isinstance(features, (dict, list)) else json.loads(features),
+        "r2_train": round(r2_train, 3),
+        "r2_test": round(r2_test, 3),
+        "overfitting_gap": overfitting_gap,
+        "quality_score": quality_score,
+        "trust_score": trust_score,
+        "deployment_status": deployment_status,
+        "n_rows_used": n_rows_used,
+        "version": timestamp
+    }

@@ -162,12 +162,13 @@ export default function AnalyticsDashboard() {
               <h2 className="text-lg font-medium text-foreground">Auto-Trained Regression Models</h2>
             </div>
             <div className="flex flex-col gap-3">
-              {regression.data.map((model, i) => (
-                <div key={i} className="bg-surface p-4 rounded-xl border border-border/40 hover:border-primary/30 transition-colors">
-                  <h3 className="font-semibold text-foreground">{model.model_name}</h3>
+              {regression.data.slice(0, 5).map((model: any, i: number) => (
+                <div key={model.id ?? i} className="bg-surface p-4 rounded-xl border border-border/40 hover:border-primary/30 transition-colors">
+                  <h3 className="font-semibold text-foreground">{model.target} ~ {Array.isArray(model.features) ? model.features.join(", ") : model.features}</h3>
                   <div className="flex gap-4 mt-2 text-sm text-muted-foreground">
-                    <div><span className="font-medium text-foreground">R² Score:</span> {model.r2_score?.toFixed(3)}</div>
-                    <div><span className="font-medium text-foreground">RMSE:</span> {model.rmse?.toFixed(3)}</div>
+                    <div><span className="font-medium text-foreground">R² (test):</span> {typeof model.r2_test === "number" ? model.r2_test.toFixed(3) : "N/A"}</div>
+                    <div><span className="font-medium text-foreground">R² (train):</span> {typeof model.r2_train === "number" ? model.r2_train.toFixed(3) : "N/A"}</div>
+                    <div><span className="font-medium text-foreground">Rows:</span> {model.n_rows_used}</div>
                   </div>
                 </div>
               ))}
