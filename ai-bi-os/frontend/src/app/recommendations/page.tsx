@@ -186,11 +186,11 @@ export default function RecommendationsPage() {
 
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["recommendations"],
-    queryFn: () => recommendationsApi.generate(),
+    queryFn: () => recommendationsApi.generate(false),
   });
 
   const deepAnalyze = useMutation({
-    mutationFn: () => recommendationsApi.generate(),
+    mutationFn: () => recommendationsApi.generate(true),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["recommendations"] });
     },

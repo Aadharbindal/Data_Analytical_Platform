@@ -21,9 +21,8 @@ async def get_rules(current_user: dict = Depends(get_current_user)):
         return []
         
     conn = get_db_connection()
-    conn.row_factory = 'sqlite3.Row'  # Ensure dict-like rows for SQLite
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM rules WHERE user_id = ? AND dataset_id = ? ORDER BY created_at DESC', (current_user["id"], dataset_info["id"]))
+    cursor.execute('SELECT * FROM rules WHERE user_id = %s AND dataset_id = %s ORDER BY created_at DESC', (current_user["id"], dataset_info["id"]))
     rules = [dict(r) for r in cursor.fetchall()]
     conn.close()
     
@@ -109,7 +108,7 @@ async def create_rule(data: dict = Body(...), current_user: dict = Depends(get_c
     cursor = conn.cursor()
     cursor.execute('''
         INSERT INTO rules (id, user_id, dataset_id, name, metric_column, condition, threshold, "window", is_active, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     ''', (
         rule_id, current_user["id"], dataset_info["id"],
         data.get("name", "New Rule"),
@@ -129,7 +128,7 @@ async def update_rule(rule_id: str, data: dict = Body(...), current_user: dict =
     cursor = conn.cursor()
     
     # Get current rule
-    cursor.execute('SELECT * FROM rules WHERE id = ? AND user_id = ?', (rule_id, current_user["id"]))
+    cursor.execute('SELECT * FROM rules WHERE id = %s AND user_id = %s', (rule_id, current_user["id"]))
     rule = cursor.fetchone()
     if not rule:
         conn.close()
@@ -140,26 +139,26 @@ async def update_rule(rule_id: str, data: dict = Body(...), current_user: dict =
     params = []
     
     if "is_active" in data:
-        update_fields.append("is_active = ?")
+        update_fields.append("is_active = %s")
         params.append(1 if data["is_active"] else 0)
     if "name" in data:
-        update_fields.append("name = ?")
+        update_fields.append("name = %s")
         params.append(data["name"])
     if "metric_column" in data:
-        update_fields.append("metric_column = ?")
+        update_fields.append("metric_column = %s")
         params.append(data["metric_column"])
     if "condition" in data:
-        update_fields.append("condition = ?")
+        update_fields.append("condition = %s")
         params.append(data["condition"])
     if "threshold" in data:
-        update_fields.append("threshold = ?")
+        update_fields.append("threshold = %s")
         params.append(float(data["threshold"]))
     if "window" in data:
-        update_fields.append('"window" = ?')
+        update_fields.append('"window" = %s')
         params.append(data["window"])
         
     if update_fields:
-        query = f"UPDATE rules SET {', '.join(update_fields)} WHERE id = ? AND user_id = ?"
+        query = f"UPDATE rules SET {', '.join(update_fields)} WHERE id = %s AND user_id = %s"
         params.extend([rule_id, current_user["id"]])
         cursor.execute(query, tuple(params))
         conn.commit()
@@ -171,7 +170,7 @@ async def update_rule(rule_id: str, data: dict = Body(...), current_user: dict =
 async def delete_rule(rule_id: str, current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('DELETE FROM rules WHERE id = ? AND user_id = ?', (rule_id, current_user["id"]))
+    cursor.execute('DELETE FROM rules WHERE id = %s AND user_id = %s', (rule_id, current_user["id"]))
     conn.commit()
     conn.close()
     return {"success": True}

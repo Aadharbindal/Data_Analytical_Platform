@@ -9,6 +9,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import dynamic from "next/dynamic";
 const LazyCharts = dynamic(() => import("@/components/charts/LazyCharts"), { ssr: false });
 import { motion } from "framer-motion";
+import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 import { StudioPage } from "@/components/analytics/StudioPage";
 import { formatNumber } from "@/lib/utils";

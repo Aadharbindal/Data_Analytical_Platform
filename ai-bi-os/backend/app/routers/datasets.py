@@ -48,7 +48,7 @@ import asyncio
 async def get_upload_status(job_id: str, current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id FROM datasets WHERE id=? AND user_id=?", (job_id, current_user["id"]))
+    cursor.execute("SELECT id FROM datasets WHERE id=%s AND user_id=%s", (job_id, current_user["id"]))
     row = cursor.fetchone()
     conn.close()
     if row:
@@ -63,7 +63,7 @@ async def get_upload_status_stream(job_id: str, current_user: dict = Depends(get
         
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT id FROM datasets WHERE id=? AND user_id=?", (job_id, current_user["id"]))
+        cursor.execute("SELECT id FROM datasets WHERE id=%s AND user_id=%s", (job_id, current_user["id"]))
         row = cursor.fetchone()
         conn.close()
         
@@ -96,7 +96,7 @@ async def get_active_dataset_route(current_user: dict = Depends(get_current_user
 async def list_datasets(workspace_id: Optional[str] = None, current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score FROM datasets WHERE user_id=? ORDER BY created_at DESC', (current_user["id"],))
+    cursor.execute('SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score FROM datasets WHERE user_id=%s ORDER BY created_at DESC', (current_user["id"],))
     rows = cursor.fetchall()
     conn.close()
     
@@ -187,7 +187,7 @@ async def compare_datasets(id_a: str, id_b: str, current_user: dict = Depends(ge
 async def get_dataset(dataset_id: str, current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score FROM datasets WHERE id=? AND user_id=?', (dataset_id, current_user["id"]))
+    cursor.execute('SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score FROM datasets WHERE id=%s AND user_id=%s', (dataset_id, current_user["id"]))
     r = cursor.fetchone()
     conn.close()
     if not r:
@@ -209,7 +209,7 @@ async def get_dataset(dataset_id: str, current_user: dict = Depends(get_current_
 async def download_dataset(dataset_id: str, current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT filepath, name FROM datasets WHERE id=? AND user_id=?", (dataset_id, current_user["id"]))
+    cursor.execute("SELECT filepath, name FROM datasets WHERE id=%s AND user_id=%s", (dataset_id, current_user["id"]))
     row = cursor.fetchone()
     conn.close()
     
@@ -228,12 +228,12 @@ async def download_dataset(dataset_id: str, current_user: dict = Depends(get_cur
 async def activate_dataset(dataset_id: str, current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id FROM datasets WHERE id=? AND user_id=?", (dataset_id, current_user["id"]))
+    cursor.execute("SELECT id FROM datasets WHERE id=%s AND user_id=%s", (dataset_id, current_user["id"]))
     if not cursor.fetchone():
         conn.close()
         raise HTTPException(status_code=404, detail="Dataset not found")
 
-    cursor.execute("INSERT OR REPLACE INTO active_dataset (user_id, dataset_id) VALUES (?, ?)", (current_user["id"], dataset_id))
+    cursor.execute("INSERT INTO active_dataset (user_id, dataset_id) VALUES (%s, %s) ON CONFLICT (user_id) DO UPDATE SET dataset_id = EXCLUDED.dataset_id", (current_user["id"], dataset_id))
     conn.commit()
     conn.close()
 
@@ -253,7 +253,7 @@ async def delete_dataset(dataset_id: str, current_user: dict = Depends(get_curre
     cursor = conn.cursor()
     
     # Get filepath to delete file
-    cursor.execute("SELECT filepath FROM datasets WHERE id=? AND user_id=?", (dataset_id, current_user["id"]))
+    cursor.execute("SELECT filepath FROM datasets WHERE id=%s AND user_id=%s", (dataset_id, current_user["id"]))
     row = cursor.fetchone()
     if not row:
         conn.close()
@@ -273,21 +273,21 @@ async def delete_dataset(dataset_id: str, current_user: dict = Depends(get_curre
             s3_manager.delete_file(filename_db)
                     
     # Clean up dependent records first to avoid foreign key violations
-    cursor.execute("DELETE FROM active_dataset WHERE dataset_id=?", (dataset_id,))
-    cursor.execute("DELETE FROM regression_models WHERE dataset_id=?", (dataset_id,))
-    cursor.execute("DELETE FROM insights WHERE dataset_id=?", (dataset_id,))
-    cursor.execute("DELETE FROM recommendations WHERE dataset_id=?", (dataset_id,))
-    cursor.execute("DELETE FROM rules WHERE dataset_id=?", (dataset_id,))
-    cursor.execute("DELETE FROM catalog WHERE id=? AND user_id=?", (dataset_id, current_user["id"]))
+    cursor.execute("DELETE FROM active_dataset WHERE dataset_id=%s", (dataset_id,))
+    cursor.execute("DELETE FROM regression_models WHERE dataset_id=%s", (dataset_id,))
+    cursor.execute("DELETE FROM insights WHERE dataset_id=%s", (dataset_id,))
+    cursor.execute("DELETE FROM recommendations WHERE dataset_id=%s", (dataset_id,))
+    cursor.execute("DELETE FROM rules WHERE dataset_id=%s", (dataset_id,))
+    cursor.execute("DELETE FROM catalog WHERE id=%s AND user_id=%s", (dataset_id, current_user["id"]))
     
     # Now we can safely delete the dataset
-    cursor.execute("DELETE FROM datasets WHERE id=? AND user_id=?", (dataset_id, current_user["id"]))
+    cursor.execute("DELETE FROM datasets WHERE id=%s AND user_id=%s", (dataset_id, current_user["id"]))
     
     # If we deleted the active dataset, try to fallback to most recent remaining
-    cursor.execute("SELECT id FROM datasets WHERE user_id=? ORDER BY created_at DESC LIMIT 1", (current_user["id"],))
+    cursor.execute("SELECT id FROM datasets WHERE user_id=%s ORDER BY created_at DESC LIMIT 1", (current_user["id"],))
     next_row = cursor.fetchone()
     if next_row:
-        cursor.execute("INSERT OR REPLACE INTO active_dataset (user_id, dataset_id) VALUES (?, ?)", (current_user["id"], next_row[0]))
+        cursor.execute("INSERT INTO active_dataset (user_id, dataset_id) VALUES (%s, %s) ON CONFLICT (user_id) DO UPDATE SET dataset_id = EXCLUDED.dataset_id", (current_user["id"], next_row[0]))
             
     conn.commit()
     conn.close()

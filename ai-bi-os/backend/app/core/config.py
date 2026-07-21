@@ -13,12 +13,10 @@ else:
 
 os.makedirs(DATA_DIR, exist_ok=True)
 
-# Configurable DB_PATH
-DB_PATH_ENV = os.getenv("SQLITE_PATH")
-if DB_PATH_ENV:
-    DB_PATH = Path(DB_PATH_ENV).resolve()
-else:
-    DB_PATH = DATA_DIR / "datamind.db"
+# Deprecated SQLite Path (kept for import compatibility)
+DB_PATH = None
+
+
 
 # CORS Origin
 CORS_ORIGIN = os.getenv("CORS_ORIGIN", "http://localhost:3000")

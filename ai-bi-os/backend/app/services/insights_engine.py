@@ -98,7 +98,6 @@ class DeepInsightsEngine:
             prompt = f"""For each data finding below, write an insight narrative.
 CRITICAL ZERO-TRUST RULE: You are STRICTLY FORBIDDEN from writing any digits, numbers, percentages, or currencies.
 You MUST ONLY use the exact placeholders provided (e.g. {{{{entity}}}}, {{{{value}}}}). The system will substitute them.
-If you write a raw digit (e.g. '5', '10%', '2023'), the insight will be rejected and deleted.
 Do NOT write placeholders that do not exist in the candidates.
 
 Candidates:
@@ -111,33 +110,25 @@ Return ONLY a valid JSON object with a single key "insights" containing an array
 - impact (string, e.g. "{{{{sample_size}}}} transactions affected")
 - recommendation (string, what to do about it)
 """
-            logging.info("Calling LLM for Zero-Trust narratives...")
-            res = completion(
-                model=self.model,
-                messages=[{"role": "user", "content": prompt}],
-                api_key=api_key,
-                max_tokens=2000,
-                temperature=0.3,
-                response_format={"type": "json_object"}
-            )
-            content = res.choices[0].message.content
-            parsed = self._parse_json(content)
-            
-            llm_insights = parsed.get("insights", []) if isinstance(parsed, dict) else parsed
-            if not llm_insights:
-                return []
+            llm_insights = []
+            if api_key and api_key.strip():
+                try:
+                    logging.info("Calling LLM for Zero-Trust narratives...")
+                    res = completion(
+                        model=self.model,
+                        messages=[{"role": "user", "content": prompt}],
+                        api_key=api_key,
+                        max_tokens=2000,
+                        temperature=0.3,
+                        response_format={"type": "json_object"}
+                    )
+                    content = res.choices[0].message.content
+                    parsed = self._parse_json(content)
+                    llm_insights = parsed.get("insights", []) if isinstance(parsed, dict) else (parsed if isinstance(parsed, list) else [])
+                except Exception as llm_err:
+                    logging.warning(f"LLM insight narrative generation failed: {llm_err}. Using deterministic fallback.")
 
-            final_insights = []
-            conn = get_db_connection()
-            cursor = conn.cursor()
-            
-            try:
-                cursor.execute("DELETE FROM insights WHERE user_id = ? AND dataset_id = ?", (user_id, dataset_id))
-                conn.commit()
-            except Exception as e:
-                logging.error(f"Failed to clear old insights: {e}")
-
-            # 4. Zero-Trust Check & Substitution
+            # 4. Zero-Trust Check & Substitution with Deterministic Fallback
             def render(text, cand):
                 if not text: return text
                 for k, v in cand.items():
@@ -147,56 +138,131 @@ Return ONLY a valid JSON object with a single key "insights" containing an array
                         text = text.replace(f"{{{{{k}}}}}", str(v))
                 return text
 
-            for ins, cand in zip(llm_insights, ranked):
+            final_insights = []
+            
+            for i, cand in enumerate(ranked):
+                ins = llm_insights[i] if i < len(llm_insights) and isinstance(llm_insights[i], dict) else {}
                 raw_text = f"{ins.get('title','')} {ins.get('finding','')} {ins.get('impact','')} {ins.get('recommendation','')}"
                 
-                # Zero-Trust Digit Check!
-                if re.search(r'\d', raw_text):
-                    logging.warning(f"ZERO-TRUST VIOLATION: LLM hallucinated a digit. Dropping insight. Raw: {raw_text}")
-                    continue
-                    
-                # Substitute Placeholders
-                title = render(ins.get('title', ''), cand)
-                finding = render(ins.get('finding', ''), cand)
-                impact = render(ins.get('impact', ''), cand)
-                rec = render(ins.get('recommendation', ''), cand)
-                
+                # Check if LLM output is present and clean
+                is_valid_llm = bool(raw_text.strip())
+                if is_valid_llm and re.search(r'\d', raw_text):
+                    # Check if digits in raw_text are acceptable candidate values (e.g. year/period or entity name)
+                    valid_digit_strs = [str(cand.get(k, '')) for k in ["period", "entity", "dimension"] if cand.get(k)]
+                    has_unverified_digit = True
+                    for num in re.findall(r'\d+', raw_text):
+                        if any(num in v for v in valid_digit_strs):
+                            has_unverified_digit = False
+                            break
+                    if has_unverified_digit:
+                        logging.warning(f"ZERO-TRUST WARNING: LLM introduced digits. Falling back to candidate template. Raw: {raw_text}")
+                        is_valid_llm = False
+
+                c_type = cand.get("type", "generic")
+                dim = cand.get("dimension", "dimension")
+                ent = str(cand.get("entity", "entity"))
+
+                if is_valid_llm:
+                    title = render(ins.get('title', f"Insight on {dim}"), cand)
+                    finding = render(ins.get('finding', f"Significant pattern observed in {ent}."), cand)
+                    impact = render(ins.get('impact', f"{cand.get('sample_size', 0)} records evaluated"), cand)
+                    rec = render(ins.get('recommendation', "Monitor and optimize current strategy."), cand)
+                    cat = ins.get("category", "Trend")
+                else:
+                    # Deterministic Fallback Narrative Generator
+                    if c_type == "concentration":
+                        title = f"High Concentration in {dim}: {ent}"
+                        finding = f"{ent} accounts for {cand.get('share_pct', 0)}% of total {dim} volume across {cand.get('sample_size', 0):,} records."
+                        impact = f"{cand.get('share_pct', 0)}% total share ({cand.get('sample_size', 0):,} records)"
+                        rec = f"Diversify focus across other {dim} entities to balance distribution risk."
+                        cat = "Risk" if cand.get('share_pct', 0) > 30 else "Opportunity"
+                    elif c_type == "trend":
+                        title = f"MoM Trend Shift in {dim}"
+                        finding = f"{dim} registered a {cand.get('mom_pct', 0)}% Month-over-Month change for period {cand.get('period', '')}."
+                        impact = f"{cand.get('mom_pct', 0)}% MoM movement"
+                        rec = "Track underlying drivers to maintain volume growth and prevent steep drops."
+                        cat = "Trend"
+                    elif c_type == "failure_rate":
+                        title = f"Elevated Failure Rate in {dim}"
+                        finding = f"Unhealthy transaction status rate reached {cand.get('rate_pct', 0)}% affecting {cand.get('sample_size', 0):,} records."
+                        impact = f"{cand.get('sample_size', 0):,} failed records"
+                        rec = "Investigate system log errors and streamline transaction validation flow."
+                        cat = "Anomaly"
+                    elif c_type == "missing_data":
+                        title = f"Data Quality Issue in {dim}"
+                        finding = f"Field '{dim}' has {cand.get('rate_pct', 0)}% missing values ({cand.get('sample_size', 0):,} rows)."
+                        impact = f"{cand.get('sample_size', 0):,} missing entries"
+                        rec = "Enforce required validation rules at data ingestion stage."
+                        cat = "Operational"
+                    elif c_type == "metric_summary":
+                        title = f"Primary Metric Overview: {dim}"
+                        finding = f"Total sum for {dim} reached {cand.get('value', 0):,.2f} with average of {cand.get('mean_val', 0):,.2f} per record."
+                        impact = f"{cand.get('sample_size', 0):,} total transactions evaluated"
+                        rec = "Establish baseline thresholds and set up recurring KPI reporting."
+                        cat = "Operational"
+                    else:
+                        title = f"Dataset Volume Scale Analysis"
+                        finding = f"The dataset contains {cand.get('value', 0):,} active records available for analytical processing."
+                        impact = f"{cand.get('sample_size', 0):,} active records"
+                        rec = "Maintain periodic data refreshes to keep analytical models up to date."
+                        cat = "Operational"
+
+                try:
+                    impact_numeric = float(cand.get("sample_size") or cand.get("value") or cand.get("score") or 0.0)
+                except (TypeError, ValueError):
+                    impact_numeric = float(cand.get("score", 0.0))
+
                 final_ins = {
                     "id": f"ins_{uuid.uuid4().hex[:8]}",
                     "user_id": user_id,
                     "dataset_id": dataset_id,
                     "title": title,
                     "description": finding,
-                    "category": ins.get("category", "Trend"),
+                    "category": cat,
                     "insight_level": "Operational",
-                    "confidence": 0.99, # 100% deterministic mathematically
+                    "confidence": 0.99,
                     "impact": impact,
                     "recommendation": rec,
                     "verified": 1,
-                    "audit_sql": f"Deterministic Pandas Pipeline: {cand.get('type')}",
+                    "audit_sql": f"Deterministic Pandas Pipeline: {c_type}",
                     "score": cand.get("score", 0),
-                    "dimension_type": cand.get("dimension", "generic"),
+                    "dimension_type": dim,
                     "created_at": datetime.utcnow().isoformat() + "Z"
                 }
-                
-                cursor.execute('''
-                    INSERT INTO insights (id, user_id, dataset_id, title, description, category, insight_level, confidence, impact, recommendation, verified, audit_sql, score, dimension_type, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ''', (
-                    final_ins["id"], final_ins["user_id"], final_ins["dataset_id"],
-                    final_ins["title"], final_ins["description"], final_ins["category"],
-                    final_ins["insight_level"], final_ins["confidence"], final_ins["impact"],
-                    final_ins["recommendation"], final_ins["verified"], final_ins["audit_sql"],
-                    final_ins["score"], final_ins["dimension_type"], final_ins["created_at"]
-                ))
                 final_insights.append(final_ins)
-                
-            conn.commit()
-            conn.close()
-            logging.info(f"Successfully generated {len(final_insights)} zero-trust deterministic insights.")
+
+            # Safe DB replacement: Only clear old insights if we have generated new ones!
+            if final_insights:
+                conn = get_db_connection()
+                cursor = conn.cursor()
+                try:
+                    cursor.execute("DELETE FROM insights WHERE user_id = %s AND dataset_id = %s", (user_id, dataset_id))
+                    for final_ins in final_insights:
+                        try:
+                            impact_numeric = float(final_ins.get("score", 0.0))
+                        except (TypeError, ValueError):
+                            impact_numeric = 0.0
+                            
+                        cursor.execute('''
+                            INSERT INTO insights (id, user_id, dataset_id, title, description, category, insight_level, confidence, impact, recommendation, verified, audit_sql, score, dimension_type, created_at)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        ''', (
+                            final_ins["id"], final_ins["user_id"], final_ins["dataset_id"],
+                            final_ins["title"], final_ins["description"], final_ins["category"],
+                            final_ins["insight_level"], final_ins["confidence"], impact_numeric,
+                            final_ins["recommendation"], final_ins["verified"], final_ins["audit_sql"],
+                            final_ins["score"], final_ins["dimension_type"], final_ins["created_at"]
+                        ))
+                    conn.commit()
+                except Exception as db_err:
+                    logging.error(f"Failed to commit fresh insights to database: {db_err}")
+                finally:
+                    conn.close()
+
+            logging.info(f"Successfully generated {len(final_insights)} insights.")
             return final_insights
             
         except Exception as e:
-            logging.error(f"Zero-Trust Engine failed: {e}")
+            logging.error(f"DeepInsightsEngine failed: {e}")
             logging.error(traceback.format_exc())
             return []

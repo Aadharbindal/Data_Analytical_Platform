@@ -4,9 +4,11 @@ import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
 const LazyCharts = dynamic(() => import("@/components/charts/LazyCharts"), { ssr: false });
+import { ResponsiveContainer, AreaChart, Area, Tooltip } from "recharts";
 import { Info, TrendingUp, TrendingDown, Minus, Activity, ShieldCheck, FileSearch, HelpCircle, Code, Link, Database, Network, ChevronDown } from "lucide-react";
 import { ExecutiveKPIReport } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
+
 
 interface ExecutiveKPICardProps {
   kpi: ExecutiveKPIReport;

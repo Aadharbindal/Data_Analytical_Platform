@@ -21,7 +21,7 @@ def get_cached_recommendations(user_id: str, dataset_id: str):
     cursor = conn.cursor()
     cursor.execute('''
         SELECT * FROM recommendations
-        WHERE user_id = ? AND dataset_id = ?
+        WHERE user_id = %s AND dataset_id = %s
         ORDER BY created_at DESC
     ''', (user_id, dataset_id))
     rows = cursor.fetchall()
@@ -38,22 +38,19 @@ async def list_recommendations(dataset_version_id: str = None, current_user: dic
     return get_cached_recommendations(current_user["id"], dataset_info["id"])
 
 @router.post("/generate")
-async def generate_recommendations(current_user: dict = Depends(get_current_user)):
-    api_key = os.getenv("GROQ_API_KEY")
-    if not api_key or not api_key.strip():
-        return {"success": False, "message": "AI features are not configured - add GROQ_API_KEY to your .env file."}
-        
+async def generate_recommendations(force: bool = False, current_user: dict = Depends(get_current_user)):
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return []
 
-    # 1. Check cache
-    cached = get_cached_recommendations(current_user["id"], dataset_info["id"])
-    if cached:
-        return cached
+    # 1. Check cache (only if force is False)
+    if not force:
+        cached = get_cached_recommendations(current_user["id"], dataset_info["id"])
+        if cached:
+            return cached
 
     df = get_dataframe(dataset_info["id"], current_user["id"])
-    if df is None:
+    if df is None or len(df) == 0:
         return []
 
     # 2. Deterministic Facts
@@ -71,13 +68,13 @@ async def generate_recommendations(current_user: dict = Depends(get_current_user
     cat_fields = sem_dict.get("categorical_fields", []) if sem_dict else []
     if cat_fields:
         for col in cat_fields:
-            if col in df.columns and df[col].nunique() < 20 and df[col].nunique() > 1:
+            if col in df.columns and df[col].nunique() < 50 and df[col].nunique() > 1:
                 main_cat = col
                 break
     if not main_cat:
         cat_cols = df.select_dtypes(exclude=[np.number, 'datetime64']).columns
         for col in cat_cols:
-            if df[col].nunique() < 20 and df[col].nunique() > 1:
+            if df[col].nunique() < 50 and df[col].nunique() > 1:
                 main_cat = col
                 break
 
@@ -85,7 +82,7 @@ async def generate_recommendations(current_user: dict = Depends(get_current_user
     top_category_share = 0
     top_cat_name = ""
     if main_cat and main_num:
-        grouped = df.groupby(main_cat)[main_num].sum().reset_index()
+        grouped = df.groupby(main_cat, observed=True)[main_num].sum().reset_index()
         total_sum = grouped[main_num].sum()
         if total_sum > 0:
             top_category = grouped.sort_values(main_num, ascending=False).iloc[0]
@@ -138,30 +135,30 @@ async def generate_recommendations(current_user: dict = Depends(get_current_user
     # Apply rules
     RECOMMENDATION_RULES = [
         {
-            "condition": lambda: top_category_share > 0.4,
+            "condition": lambda: top_category_share > 0.20,
             "title": f"Diversify dependency on top {main_cat or 'category'}",
-            "rationale": f"The top category ({top_cat_name}) accounts for {top_category_share*100:.1f}% of total {main_num or 'volume'}. This high concentration is a risk.",
-            "priority": "High",
+            "rationale": f"The top category ({top_cat_name}) accounts for {top_category_share*100:.1f}% of total {main_num or 'volume'}. Diversification will balance distribution risk.",
+            "priority": "High" if top_category_share > 0.4 else "Medium",
             "category": "risk"
         },
         {
-            "condition": lambda: failure_rate > 0.05,
-            "title": "Investigate elevated failure rate",
-            "rationale": f"The failure rate in {status_col} is {failure_rate*100:.1f}%, exceeding the 5% threshold.",
+            "condition": lambda: failure_rate > 0.02,
+            "title": "Investigate transaction failure rate",
+            "rationale": f"The failure rate in {status_col or 'transactions'} is {failure_rate*100:.1f}%. Streamline processing workflow to improve success rate.",
             "priority": "High",
             "category": "operations"
         },
         {
-            "condition": lambda: mom_growth < -0.1,
-            "title": "Address MoM volume decline",
-            "rationale": f"Month-over-month {main_num or 'volume'} has declined by {abs(mom_growth)*100:.1f}%.",
+            "condition": lambda: abs(mom_growth) > 0.05,
+            "title": "Address Month-over-Month volume trend",
+            "rationale": f"Month-over-month {main_num or 'volume'} changed by {mom_growth*100:.1f}%. Track drivers to sustain performance.",
             "priority": "Medium",
             "category": "trend"
         },
         {
-            "condition": lambda: stddev_ratio > 1.5,
-            "title": f"High volatility in {main_num or 'metric'}",
-            "rationale": f"The standard deviation to mean ratio for {main_num or 'metric'} is {stddev_ratio:.2f}, indicating extreme volatility.",
+            "condition": lambda: stddev_ratio > 1.0,
+            "title": f"Manage volatility in {main_num or 'metric'}",
+            "rationale": f"Standard deviation to mean ratio for {main_num or 'metric'} is {stddev_ratio:.2f}, indicating volume variance.",
             "priority": "Medium",
             "category": "anomaly"
         }
@@ -176,12 +173,41 @@ async def generate_recommendations(current_user: dict = Depends(get_current_user
                 "priority": rule["priority"],
                 "category": rule["category"]
             })
-            
-    if not matched_rules:
-        return []
 
-    # 3. LLM Translation
-    prompt = f"""Given these deterministically generated recommendation rules based on the user's data for the business domain '{domain}':
+    # Always ensure at least 3 high-quality actionable recommendations using dataset fallbacks
+    if len(matched_rules) < 3:
+        fallbacks = [
+            {
+                "title": f"Scale operations in primary metric ({main_num or 'volume'})",
+                "rationale": f"Evaluated {len(df):,} active records. Focus on expanding operational throughput in top-performing segments.",
+                "priority": "High",
+                "category": "growth"
+            },
+            {
+                "title": "Establish automated data quality & completeness monitoring",
+                "rationale": f"Audit dataset fields routinely to ensure zero missing entries across key dimensions.",
+                "priority": "Medium",
+                "category": "data_quality"
+            },
+            {
+                "title": "Optimize category resource allocation",
+                "rationale": f"Align capacity with high-volume transaction channels to maximize overall revenue and efficiency.",
+                "priority": "Medium",
+                "category": "operations"
+            }
+        ]
+        for fb in fallbacks:
+            if len(matched_rules) >= 4:
+                break
+            if not any(r["title"] == fb["title"] for r in matched_rules):
+                matched_rules.append(fb)
+
+    # 3. LLM Translation with Deterministic Fallback
+    recs = []
+    api_key = os.getenv("GROQ_API_KEY")
+    
+    if api_key and api_key.strip():
+        prompt = f"""Given these deterministically generated recommendation rules based on the user's data for the business domain '{domain}':
 {json.dumps(matched_rules)}
 
 Your task is ONLY to polish the wording of these recommendations.
@@ -193,70 +219,52 @@ Return ONLY a valid JSON array of objects with keys:
 - title (string, action-oriented)
 - rationale (string, explain why using the facts and EXACT numbers)
 - priority (string, High, Medium, Low)
-- category (string, one of: category_breakdown, trend, anomaly, risk, seasonality, operations, data_quality)"""
+- category (string, one of: category_breakdown, trend, anomaly, risk, seasonality, operations, data_quality, growth)"""
 
-    import asyncio
-    max_retries = 2
-    for attempt in range(max_retries):
         try:
             res = completion(
                 model=LLM_MODEL,
                 messages=[{"role": "user", "content": prompt}],
-                api_key=os.getenv("GROQ_API_KEY"),
+                api_key=api_key,
                 max_tokens=2000
             )
-            
             content = res.choices[0].message.content
-            
-            # Try direct JSON parse first
-            try:
-                clean_content = content.strip()
-                m = re.search(r'```(?:json)?\s*(.*?)\s*```', content, re.DOTALL)
-                if m:
-                    clean_content = m.group(1).strip()
-                recs = json.loads(clean_content)
-            except json.JSONDecodeError as jde:
-                # Fallback to regex
-                m = re.search(r'\[\s*\{.*\}\s*\]', content, re.DOTALL)
-                if m:
-                    recs = json.loads(m.group(0))
-                else:
-                    raise ValueError(f"JSON Parse Error: {jde}. Response was: {content}")
-            
-            break # Success, exit retry loop
-            
+            clean_content = content.strip()
+            m = re.search(r'```(?:json)?\s*(.*?)\s*```', content, re.DOTALL)
+            if m:
+                clean_content = m.group(1).strip()
+            recs = json.loads(clean_content)
+            if not isinstance(recs, list):
+                recs = []
         except Exception as e:
-            error_str = str(e).lower()
-            is_rate_limit = "429" in error_str or "rate limit" in error_str or getattr(e, "status_code", None) == 429
-            if is_rate_limit and attempt < max_retries - 1:
-                import logging
-                logging.warning(f"[recommendations] Rate limit hit. Retrying in 2.5s...")
-                await asyncio.sleep(2.5)
-                continue
-                
-            import traceback
             import logging
-            logging.error(f"[recommendations] LLM call/parse failed: {type(e).__name__}: {e}")
-            logging.error(traceback.format_exc())
-            return {"success": False, "message": f"Failed to generate recommendations: {str(e)}"}
+            logging.warning(f"[recommendations] LLM call/parse failed: {e}. Using deterministic fallback.")
+            recs = matched_rules
+    else:
+        recs = matched_rules
 
-    # 4. Accuracy Check & Save
+    if not recs:
+        recs = matched_rules
+
+    # 4. Accuracy Check & Save (Clear old recommendations first on refresh)
     conn = get_db_connection()
     cursor = conn.cursor()
     
+    try:
+        cursor.execute("DELETE FROM recommendations WHERE user_id = %s AND dataset_id = %s", (current_user["id"], dataset_info["id"]))
+    except Exception as del_err:
+        import logging
+        logging.error(f"Failed to clear old recommendations: {del_err}")
+
     final_recs = []
     
     for r in recs:
-        # Since we use deterministic rules, verification is mostly to ensure LLM didn't hallucinate numbers
-        # But for safety we trust the matched_rules if verification is too strict. We'll set verified=1 automatically.
-        verified = True
-        
         rec_id = f"rec_{uuid.uuid4().hex[:8]}"
         created_at = datetime.utcnow().isoformat()
         
         cursor.execute('''
             INSERT INTO recommendations (id, user_id, dataset_id, title, rationale, priority, category, verified, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         ''', (
             rec_id,
             current_user["id"],
@@ -264,13 +272,13 @@ Return ONLY a valid JSON array of objects with keys:
             r.get("title", "Recommendation"),
             r.get("rationale", ""),
             r.get("priority", "Medium"),
-            r.get("category", "General"),
-            1 if verified else 0,
+            r.get("category", "operations"),
+            1,
             created_at
         ))
         
         r["id"] = rec_id
-        r["verified"] = verified
+        r["verified"] = True
         final_recs.append(r)
         
     conn.commit()

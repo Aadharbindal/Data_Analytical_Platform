@@ -115,7 +115,7 @@ def get_regression_models(dataset_id):
         cursor.execute('''
             SELECT target, features, r2_test, timestamp
             FROM regression_models
-            WHERE dataset_id = ?
+            WHERE dataset_id = %s
             ORDER BY timestamp DESC
         ''', (dataset_id,))
         rows = cursor.fetchall()

@@ -230,6 +230,6 @@ export const recommendationsApi = {
     api.get<import("./types").Recommendation[]>(
       `/api/v1/recommendations${datasetVersionId ? `?dataset_version_id=${datasetVersionId}` : ""}`
     ),
-  generate: () =>
-    api.post<any>("/api/v1/recommendations/generate", {}),
+  generate: (force: boolean = false) =>
+    api.post<any>(`/api/v1/recommendations/generate${force ? "?force=true" : ""}`, {}),
 };

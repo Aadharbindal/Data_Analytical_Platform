@@ -770,20 +770,25 @@ def process_rag_indexing_task(job_id: str, dataset_version_id: str):
         repo = DatasetRepository(db)
         version = db.query(DatasetVersion).filter(DatasetVersion.id == dataset_version_id).first()
         
+        if not version:
+            repo.update_upload_job_status(job_id, status="completed", current_step="Completed", progress=100.0)
+            return {"status": "skipped", "reason": "DatasetVersion not found"}
+        
+        # Resolve user_id from the parent dataset
+        user_id = version.dataset.user_id if version.dataset else None
+        
         schema_registry = SchemaRegistryService(db)
         schema = schema_registry.get_schema_for_dataset(version.dataset_id)
         
-        # We can extract text from schema to embed
-        schema_text = f"Dataset {version.dataset.name if version and version.dataset else 'Unknown'} contains columns: "
+        # Build a human-readable schema description to embed
+        schema_text = f"Dataset {version.dataset.name if version.dataset else 'Unknown'} contains columns: "
         if schema:
             schema_text += ", ".join([f"{col.original_header} ({col.inferred_semantic_type})" for col in schema.columns])
-            
-        engine = RAGEngine()
-        engine.embed_and_store(
-            document_id=dataset_version_id,
-            text=schema_text
-        )
         
+        if user_id:
+            engine = RAGEngine()
+            engine.embed_and_store(text=schema_text, user_id=user_id)
+            
         repo.update_upload_job_status(job_id, status="completed", current_step="Completed", progress=100.0)
         
         return {"status": "success"}
@@ -792,3 +797,4 @@ def process_rag_indexing_task(job_id: str, dataset_version_id: str):
         raise e
     finally:
         db.close()
+
