@@ -32,7 +32,16 @@ import secrets
 SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
     SECRET_KEY = secrets.token_urlsafe(32)
-    print("WARNING: No SECRET_KEY found in environment. Generated a temporary random key for development.")
+    print(
+        "WARNING: No SECRET_KEY set in the environment. Generated a random one for "
+        "this process only. Every JWT it signs becomes invalid the moment this "
+        "process restarts, and if you run more than one worker process/instance "
+        "(gunicorn -w N, multiple containers, etc.) each one will mint a "
+        "DIFFERENT key - tokens issued by one worker will fail to validate on "
+        "another, causing intermittent 'random' logouts. Set SECRET_KEY to a "
+        "fixed value (e.g. `python -c \"import secrets; print(secrets.token_urlsafe(32))\"`) "
+        "before running with more than a single dev instance."
+    )
 
 # AI Model Configuration
 # Small/fast model: used for narrow, templated tasks (insight narratives,
