@@ -5,8 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/lib/api";
 import { StudioPage } from "@/components/analytics/StudioPage";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import dynamic from "next/dynamic";
-const LazyCharts = dynamic(() => import("@/components/charts/LazyCharts"), { ssr: false });
+import { ResponsiveContainer, BarChart, Bar, ScatterChart, Scatter, Cell, ReferenceLine, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip } from "recharts";
 import { Calculator, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 

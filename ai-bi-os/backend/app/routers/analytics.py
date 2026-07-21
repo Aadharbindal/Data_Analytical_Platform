@@ -7,7 +7,7 @@ from fastapi.responses import PlainTextResponse, HTMLResponse
 from typing import Optional
 from app.services.data_processing import get_active_dataset, get_dataframe
 from app.core.security import get_current_user
-from app.services.stats_service import compute_kpis, compute_executive_kpis, forecast_series
+from app.services.stats_service import compute_kpis, compute_executive_kpis, forecast_series, robust_outlier_stats
 
 router = APIRouter()
 
@@ -280,28 +280,22 @@ async def get_outliers(current_user: dict = Depends(get_current_user)):
     if df is None:
         return {"outliers": []}
 
-    import scipy.stats as st
-
     outliers_res = []
     for col in df.select_dtypes(include=[np.number]).columns:
         clean_col = df[col].dropna()
         if len(clean_col) == 0:
             continue
-        
-        # Z-score
-        z_scores = np.abs(st.zscore(clean_col))
-        z_outliers = int((z_scores > 3).sum())
-        
-        # IQR
-        q1 = clean_col.quantile(0.25)
-        q3 = clean_col.quantile(0.75)
-        iqr = q3 - q1
-        iqr_outliers = int(((clean_col < (q1 - 1.5 * iqr)) | (clean_col > (q3 + 1.5 * iqr))).sum())
-        
+
+        # Shape-aware: switches to a skew-robust method (median/MAD) instead of
+        # blindly applying the mean/std Z-score, which is unreliable on skewed data.
+        o_stats = robust_outlier_stats(clean_col)
+
         outliers_res.append({
             "column": col,
-            "z_score_outliers": z_outliers,
-            "iqr_outliers": iqr_outliers
+            "z_score_outliers": o_stats["count"],
+            "iqr_outliers": o_stats["iqr_count"],
+            "method": o_stats["method"],
+            "skewness": o_stats["skewness"]
         })
     return {"outliers": outliers_res}
 
@@ -823,12 +817,11 @@ async def get_metrics_explorer(current_user: dict = Depends(get_current_user)):
             except:
                 confidence_score += 12
         
-        # Factor 3: Outlier Ratio Impact (0-20 pts)
+        # Factor 3: Outlier Ratio Impact (0-20 pts) — shape-aware (skew-robust) detection
         outlier_count = 0
         if n > 10:
             try:
-                z_scores = np.abs(stats.zscore(clean_col))
-                outlier_count = int(len(np.where(z_scores > 3)[0]))
+                outlier_count = robust_outlier_stats(clean_col)["count"]
                 outlier_ratio = outlier_count / n
                 if outlier_ratio == 0:
                     confidence_score += 20
@@ -1158,12 +1151,11 @@ async def get_metric_intelligence(metric: str, current_user: dict = Depends(get_
         except Exception:
             confidence_score += 12
 
-    # Factor 3: Outlier ratio (0-20 pts)
+    # Factor 3: Outlier ratio (0-20 pts) — shape-aware (skew-robust) detection
     outlier_count_intel = 0
     if n > 10:
         try:
-            z_s = np.abs(stats_module.zscore(clean_col))
-            outlier_count_intel = int(len(np.where(z_s > 3)[0]))
+            outlier_count_intel = robust_outlier_stats(clean_col)["count"]
             outlier_ratio = outlier_count_intel / n
             if   outlier_ratio == 0:    confidence_score += 20
             elif outlier_ratio < 0.01:  confidence_score += 16
@@ -1212,8 +1204,7 @@ async def get_metric_intelligence(metric: str, current_user: dict = Depends(get_
     outliers_pct = 0.0
     if len(clean_col) > 10:
         try:
-            z_scores = np.abs(stats_module.zscore(clean_col))
-            outliers_count = int(len(np.where(z_scores > 3)[0]))
+            outliers_count = robust_outlier_stats(clean_col)["count"]
             outliers_pct = (outliers_count / valid_rows) * 100
         except:
             pass
@@ -1315,12 +1306,13 @@ async def get_metric_intelligence(metric: str, current_user: dict = Depends(get_
                 
     trend_data = []
     forecast_data = []
+    forecast_accuracy = None
     r2 = 0.0
     slope = 0.0
     peak = None
     recovery = None
     decline = None
-    
+
     if date_col:
         df_temp = df.copy()
         df_temp[date_col] = pd.to_datetime(df_temp[date_col], errors='coerce')
@@ -1328,26 +1320,27 @@ async def get_metric_intelligence(metric: str, current_user: dict = Depends(get_
         if len(df_temp) > 0:
             monthly = df_temp.groupby(df_temp[date_col].dt.to_period('M'))[metric].agg('sum' if aggregation == 'SUM' else 'mean').reset_index()
             monthly = monthly.sort_values(date_col)
-            
+
             y = monthly[metric].values
             x = np.arange(len(y))
             if len(y) > 2:
                 try:
                     slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
                     r2 = r_value ** 2
-                    
-                    last_period = monthly[date_col].iloc[-1]
-                    for i in range(1, 4):
-                        next_x = len(y) - 1 + i
-                        next_y = slope * next_x + intercept
-                        next_p = last_period + i
-                        forecast_data.append({
-                            "period": next_p.strftime('%b %Y'),
-                            "forecast": float(next_y)
-                        })
-                except:
+                except Exception:
                     pass
-            
+
+            # Forecast projection reuses the same seasonality-aware, backtested
+            # engine as /analytics/forecast instead of a second ad-hoc linregress
+            # fit, so both endpoints agree on methodology and CI handling.
+            fc_result = forecast_series(df_temp, metric, periods=3, agg='mean' if aggregation != 'SUM' else 'sum')
+            if fc_result.get("available"):
+                forecast_data = [
+                    {"period": f["date"], "forecast": f["forecast"]}
+                    for f in fc_result.get("forecast", [])
+                ]
+                forecast_accuracy = fc_result.get("accuracy")
+
             for i, row in monthly.iterrows():
                 val = float(row[metric])
                 name = row[date_col].strftime('%b %Y')
@@ -1418,6 +1411,7 @@ async def get_metric_intelligence(metric: str, current_user: dict = Depends(get_
         "distribution": distribution,
         "correlation": correlations,
         "forecast": forecast_data,
+        "forecastAccuracy": forecast_accuracy,
         "quality": quality,
         "calculation": calculation,
         "relationships": relationships,
