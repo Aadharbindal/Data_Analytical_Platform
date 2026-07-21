@@ -1,4 +1,5 @@
 import logging
+import os
 from threading import Lock
 
 logger = logging.getLogger("AI-BI-OS-CostTracker")
@@ -19,11 +20,15 @@ class CostTracker:
         return cls._instance
 
     def _init_state(self):
-        # We assume standard GPT-4o pricing for MVP: 
-        # $5.00 / 1M prompt tokens, $15.00 / 1M completion tokens
+        # Pricing matches the model actually configured in app.core.config.LLM_MODEL
+        # (default "groq/llama-3.1-8b-instant"): Groq's published rate is
+        # $0.05 / 1M prompt tokens, $0.08 / 1M completion tokens. If LLM_MODEL is
+        # changed to a different provider/model, override via these env vars.
+        prompt_per_1m = float(os.getenv("LLM_PROMPT_PRICE_PER_1M_USD", "0.05"))
+        completion_per_1m = float(os.getenv("LLM_COMPLETION_PRICE_PER_1M_USD", "0.08"))
         self.pricing = {
-            "prompt_per_1k": 0.005,
-            "completion_per_1k": 0.015
+            "prompt_per_1k": prompt_per_1m / 1000,
+            "completion_per_1k": completion_per_1m / 1000
         }
         self.total_prompt_tokens = 0
         self.total_completion_tokens = 0

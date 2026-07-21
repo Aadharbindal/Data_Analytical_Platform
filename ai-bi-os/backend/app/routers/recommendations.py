@@ -3,6 +3,7 @@ import numpy as np
 import os
 import json
 import uuid
+import logging
 from datetime import datetime
 from app.core.database import get_db_connection
 import re
@@ -202,10 +203,10 @@ async def generate_recommendations(force: bool = False, current_user: dict = Dep
             if not any(r["title"] == fb["title"] for r in matched_rules):
                 matched_rules.append(fb)
 
-    # 3. LLM Translation with Deterministic Fallback
+    # 3. LLM Translation with Deterministic Fallback (each item zero-trust verified individually)
     recs = []
     api_key = os.getenv("GROQ_API_KEY")
-    
+
     if api_key and api_key.strip():
         prompt = f"""Given these deterministically generated recommendation rules based on the user's data for the business domain '{domain}':
 {json.dumps(matched_rules)}
@@ -215,7 +216,7 @@ CRITICAL: Do NOT invent new recommendations. Only polish the ones provided.
 CRITICAL: Do NOT change the recommendation category or priority.
 CRITICAL: Do NOT invent or change any numbers.
 CRITICAL: Terminology MUST strictly match the detected business domain vocabulary.
-Return ONLY a valid JSON array of objects with keys:
+Return ONLY a valid JSON array of objects, one per input rule in the SAME ORDER, with keys:
 - title (string, action-oriented)
 - rationale (string, explain why using the facts and EXACT numbers)
 - priority (string, High, Medium, Low)
@@ -233,18 +234,29 @@ Return ONLY a valid JSON array of objects with keys:
             m = re.search(r'```(?:json)?\s*(.*?)\s*```', content, re.DOTALL)
             if m:
                 clean_content = m.group(1).strip()
-            recs = json.loads(clean_content)
-            if not isinstance(recs, list):
-                recs = []
+            llm_recs = json.loads(clean_content)
+            if not isinstance(llm_recs, list) or len(llm_recs) != len(matched_rules):
+                raise ValueError(f"LLM returned {len(llm_recs) if isinstance(llm_recs, list) else type(llm_recs)} items, expected {len(matched_rules)}")
+
+            for original, r in zip(matched_rules, llm_recs):
+                rationale = r.get("rationale", "") if isinstance(r, dict) else ""
+                passed = bool(rationale.strip()) and verify_numbers_against_facts(rationale, original["rationale"])
+                if passed:
+                    r["verified"] = True
+                    recs.append(r)
+                else:
+                    logging.warning(f"[recommendations] Zero-trust numeric check failed for '{original['title']}'. Falling back to deterministic template.")
+                    fallback = dict(original)
+                    fallback["verified"] = False
+                    recs.append(fallback)
         except Exception as e:
-            import logging
             logging.warning(f"[recommendations] LLM call/parse failed: {e}. Using deterministic fallback.")
-            recs = matched_rules
+            recs = [dict(r, verified=False) for r in matched_rules]
     else:
-        recs = matched_rules
+        recs = [dict(r, verified=False) for r in matched_rules]
 
     if not recs:
-        recs = matched_rules
+        recs = [dict(r, verified=False) for r in matched_rules]
 
     # 4. Accuracy Check & Save (Clear old recommendations first on refresh)
     conn = get_db_connection()
@@ -253,15 +265,15 @@ Return ONLY a valid JSON array of objects with keys:
     try:
         cursor.execute("DELETE FROM recommendations WHERE user_id = %s AND dataset_id = %s", (current_user["id"], dataset_info["id"]))
     except Exception as del_err:
-        import logging
         logging.error(f"Failed to clear old recommendations: {del_err}")
 
     final_recs = []
-    
+
     for r in recs:
         rec_id = f"rec_{uuid.uuid4().hex[:8]}"
         created_at = datetime.utcnow().isoformat()
-        
+        is_verified = bool(r.get("verified", False))
+
         cursor.execute('''
             INSERT INTO recommendations (id, user_id, dataset_id, title, rationale, priority, category, verified, created_at)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
@@ -273,12 +285,12 @@ Return ONLY a valid JSON array of objects with keys:
             r.get("rationale", ""),
             r.get("priority", "Medium"),
             r.get("category", "operations"),
-            1,
+            1 if is_verified else 0,
             created_at
         ))
-        
+
         r["id"] = rec_id
-        r["verified"] = True
+        r["verified"] = is_verified
         final_recs.append(r)
         
     conn.commit()
