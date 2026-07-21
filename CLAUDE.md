@@ -53,7 +53,7 @@ Decoupled two-service architecture:
 1. **Frontend** — Next.js 16 (App Router) + React 19 + Recharts, port 3000, in `ai-bi-os/frontend/`.
 2. **Backend** — FastAPI + Python, port 8000, in `ai-bi-os/backend/`.
 3. **Analytical data engine** — DuckDB, used as an in-memory SQL engine over uploaded datasets (not the system-of-record DB).
-4. **System-of-record DB** — SQLite (`ai_bi_os.db`) via SQLAlchemy ORM, for app metadata/entities (see `app/core/database.py`). Tables are created at startup via `Base.metadata.create_all`.
+4. **System-of-record DB** — PostgreSQL, connected via `DATABASE_URL` (SQLAlchemy engine + `psycopg2`, see `app/core/database.py`). Tables are created at startup via `Base.metadata.create_all`.
 5. **AI Core** — LiteLLM-based multi-agent orchestrator running a ReAct tool-calling loop (`app/ai/agents.py`, `app/ai/registry.py`).
 6. **Async jobs** — Celery + Redis for long-running AI queries (`app/worker.py`, `/api/v1/chat/async`).
 7. **Observability** — `prometheus-fastapi-instrumentator` auto-exposes metrics; Prometheus + Grafana wired in docker-compose.
@@ -73,6 +73,7 @@ When adding or modifying a feature, expect to touch several of these files in pa
 - `app/ai/registry.py` (`ModelRegistry`) is the thin LiteLLM wrapper actually used by `AgentOrchestrator`. There is a **separate, more elaborate** AI Gateway subsystem at `app/services/ai_gateway/` (model routing, cost engine, circuit breaker, fallback manager, health monitor, retry manager, stream manager, token manager) exposed via `ai_gateway_router.py` — this is a distinct, more "enterprise" routing layer, not currently the one wired into `AgentOrchestrator`. Don't assume the two are the same code path.
 - When the AI response is meant to render a chart, the system prompt instructs the model to return a JSON object with `text_response` and `chart_config` keys instead of plain text — the frontend chat UI expects this shape when a chart was requested.
 - The DuckDB engine (`app/services/duckdb_engine.py`) currently loads uploaded CSVs into a single fixed table named `current_dataset` (see `POST /api/v1/upload` in `app/api/routers.py`) — there's no multi-dataset table namespace yet at that entry point.
+- The RAG engine (`app/ai/rag_engine.py`) is a real pgvector-backed implementation: text is embedded via `sentence-transformers` (`all-MiniLM-L6-v2`, 384-dim vectors) and stored in a `knowledge_base` table; retrieval uses pgvector's cosine distance operator (`<=>`) for top-k semantic search.
 
 ### Frontend structure
 Next.js App Router under `frontend/src/app/`, organized by top-level feature: `analytics/` (with nested routes per analysis type: `correlation`, `forecast`, `regression`, `timeseries`, `trend`, `outliers`, `distribution`, `eda`, `kpi`, `governance`, `metrics`, `confidence`), plus `admin/` (mirrors many backend "intelligence engine" domains: `ai-evaluation`, `ai-validation`, `business-rules`, `decisions`, `multi-agent`, `vector-store`, etc.), `chat/`, `datasets/`, `data-catalog/`, `insights/`, `knowledge-console/`, `privacy/`, `python-console/`, `recommendations/`, `rules/`.
@@ -83,8 +84,7 @@ Next.js App Router under `frontend/src/app/`, organized by top-level feature: `a
 - **Note**: `frontend/AGENTS.md` and `frontend/CLAUDE.md` both point to Next.js–specific agent rules embedded in `node_modules/next/dist/docs/` — this project pins a Next.js version with breaking API/convention changes from typical training data. Read the relevant doc there before writing Next.js code (routing, data fetching, config) in `frontend/`.
 
 ### Known rough edges (don't "fix" silently — these reflect early-stage/demo code)
-- `app/auth.py` hardcodes `SECRET_KEY = "enterprise_super_secret_key"` and uses an in-memory rate-limit store — not production auth.
-- `app/core/database.py` is explicitly labeled a "Temporary SQLite DB for Module 1".
+- `app/core/config.py` reads `SECRET_KEY` from env (falls back to a random per-boot key via `secrets.token_urlsafe(32)` in dev, with a warning). Rate-limiting (`app/routers/auth.py`, via slowapi) uses an in-memory store — fine for a single instance, but won't hold across multiple workers/instances in production.
 - CORS in `main.py` allows `["http://localhost:3000", "*"]` together (the wildcard makes the explicit origin redundant).
 
 ## Recommendation diversity rule
