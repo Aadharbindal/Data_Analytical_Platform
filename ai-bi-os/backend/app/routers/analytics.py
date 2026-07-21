@@ -7,7 +7,7 @@ from fastapi.responses import PlainTextResponse, HTMLResponse
 from typing import Optional
 from app.services.data_processing import get_active_dataset, get_dataframe
 from app.core.security import get_current_user
-from app.services.stats_service import compute_kpis, compute_executive_kpis, forecast_series, robust_outlier_stats
+from app.services.stats_service import compute_kpis, compute_executive_kpis, forecast_series, robust_outlier_stats, compute_metric_importance, compute_metric_confidence
 
 router = APIRouter()
 
@@ -421,10 +421,28 @@ async def get_kpi_center(current_user: dict = Depends(get_current_user)):
     from app.services.stats_service import quality_report
     q_report = quality_report(df)
     
-    sem_conf = 85
-    if dataset_info.get("semantic_dict"):
-         sem_conf = 95
-         
+    # Scales with how much real signal semantic classification actually found
+    # (a detected business domain, a primary metric matched to a real column,
+    # recognized categorical fields) instead of a flat 85/95 binary on
+    # whether the dict merely exists.
+    semantic_dict = dataset_info.get("semantic_dict")
+    if not semantic_dict:
+        sem_conf = 60.0
+    else:
+        sem_conf = 70.0
+        domain = semantic_dict.get("domain", "generic")
+        bus_term = semantic_dict.get("business_terminology", {}) or {}
+        sem_fields = semantic_dict.get("semantic_dictionary", {}) or {}
+        primary_metric = bus_term.get("primary_metric")
+
+        if domain and domain != "generic":
+            sem_conf += 10
+        if primary_metric and primary_metric in df.columns:
+            sem_conf += 12
+        if sem_fields.get("categorical_fields"):
+            sem_conf += 8
+        sem_conf = min(99.0, sem_conf)
+
     overall = (q_report.get("quality_score", 0) + sem_conf) / 2
     
     pipeline_health = {
@@ -718,38 +736,32 @@ async def get_metrics_explorer(current_user: dict = Depends(get_current_user)):
         
         # ════════════════════════════════════════════════════════
         # IMPORTANCE — Multi-factor statistical scoring (0-100)
+        # See compute_metric_importance() in stats_service.py for the shared
+        # formula (previously duplicated inline here and in
+        # /metrics/{metric}/intelligence with hardcoded step thresholds).
         # ════════════════════════════════════════════════════════
-        importance_score = 0.0
-        
-        # Factor 1: Variance Contribution (0-25 pts)
-        # How much of total dataset variance does this column explain?
+        var_share = None
         if total_variance > 0 and col in col_variances:
             var_share = col_variances[col] / total_variance
-            importance_score += min(25, var_share * 100)
-        
-        # Factor 2: Cross-Correlation Strength (0-25 pts)
-        # Columns correlated with many others are more "central"
+
+        avg_corr = max_corr = None
         if corr_matrix is not None and col in corr_matrix.columns:
             other_corrs = corr_matrix[col].drop(col, errors='ignore')
             if len(other_corrs) > 0:
                 avg_corr = float(other_corrs.mean())
                 max_corr = float(other_corrs.max())
-                # High avg correlation = hub metric
-                importance_score += avg_corr * 15 + (max_corr * 10 if max_corr > 0.5 else 0)
-        
-        # Factor 3: Information Entropy (0-25 pts)
-        # Higher entropy = more informative column
+
+        norm_entropy = None
         try:
             value_counts = clean_col.value_counts(normalize=True)
             entropy = float(stats.entropy(value_counts))
             max_entropy = np.log(min(n, clean_col.nunique())) if clean_col.nunique() > 1 else 1
             norm_entropy = entropy / max_entropy if max_entropy > 0 else 0
-            importance_score += norm_entropy * 25
         except:
-            importance_score += 12  # neutral fallback
+            pass
 
-        # Factor 4: Temporal Signal Strength (0-25 pts)
-        # If time-series exists, how strong is the temporal pattern?
+        temporal_r2 = None
+        temporal_significant = False
         if date_col and n > 10:
             try:
                 df_temp = df[[date_col, col]].copy()
@@ -761,97 +773,44 @@ async def get_metrics_explorer(current_user: dict = Depends(get_current_user)):
                         y = monthly.values.astype(float)
                         x = np.arange(len(y))
                         slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
-                        r2 = r_value ** 2
-                        # Strong temporal pattern = high importance
-                        importance_score += r2 * 20
-                        # Significant trend adds bonus
-                        if p_value < 0.05:
-                            importance_score += 5
+                        temporal_r2 = r_value ** 2
+                        temporal_significant = p_value < 0.05
             except:
                 pass
-        
-        importance = min(100, max(10, round(importance_score)))
-        
+
+        importance = compute_metric_importance(var_share, avg_corr, max_corr, norm_entropy, temporal_r2, temporal_significant)
+
         if importance > 80:
             tags.append("High Importance")
             tags.append("Primary KPI")
 
         # ════════════════════════════════════════════════════════
         # CONFIDENCE — Statistical reliability score (0-100)
+        # See compute_metric_confidence() in stats_service.py for the shared
+        # formula.
         # ════════════════════════════════════════════════════════
-        confidence_score = 0.0
-        
-        # Factor 1: Sample Adequacy (0-30 pts)
-        # Based on statistical power — how many observations do we have?
-        if n >= 1000:
-            sample_score = 30
-        elif n >= 500:
-            sample_score = 25
-        elif n >= 100:
-            sample_score = 20
-        elif n >= 30:
-            sample_score = 15  # Minimum for CLT
-        elif n >= 10:
-            sample_score = 8
-        else:
-            sample_score = 3
-        confidence_score += sample_score
-        
-        # Factor 2: Distribution Stability (0-25 pts)
-        # Split data in half, compare distributions — stable = high confidence
+        ks_p = None
         if n >= 20:
             try:
                 half = n // 2
-                first_half = clean_col.iloc[:half]
-                second_half = clean_col.iloc[half:]
-                ks_stat, ks_p = stats.ks_2samp(first_half, second_half)
-                # p > 0.05 means distributions are similar (stable)
-                if ks_p > 0.1:
-                    confidence_score += 25  # Very stable
-                elif ks_p > 0.05:
-                    confidence_score += 20
-                elif ks_p > 0.01:
-                    confidence_score += 12
-                else:
-                    confidence_score += 5  # Distributions differ significantly
+                _, ks_p = stats.ks_2samp(clean_col.iloc[:half], clean_col.iloc[half:])
             except:
-                confidence_score += 12
-        
-        # Factor 3: Outlier Ratio Impact (0-20 pts) — shape-aware (skew-robust) detection
+                ks_p = None
+
+        outlier_ratio = None
         outlier_count = 0
         if n > 10:
             try:
                 outlier_count = robust_outlier_stats(clean_col)["count"]
                 outlier_ratio = outlier_count / n
-                if outlier_ratio == 0:
-                    confidence_score += 20
-                elif outlier_ratio < 0.01:
-                    confidence_score += 16
-                elif outlier_ratio < 0.05:
-                    confidence_score += 10
-                else:
-                    confidence_score += 3
                 if outlier_count > 0:
                     tags.append("Has Outliers")
             except:
-                confidence_score += 10
-        
-        # Factor 4: Coverage completeness (0-15 pts)
-        confidence_score += (coverage / 100) * 15
-        
-        # Factor 5: Coefficient of Variation stability (0-10 pts)
-        if val_mean != 0 and n > 1:
-            cv = abs(val_std / val_mean)
-            if cv < 0.5:
-                confidence_score += 10  # Low relative variation
-            elif cv < 1.0:
-                confidence_score += 7
-            elif cv < 2.0:
-                confidence_score += 4
-            else:
-                confidence_score += 1
-        
-        confidence = min(100, max(5, round(confidence_score)))
+                outlier_ratio = None
+
+        cv = abs(val_std / val_mean) if (val_mean != 0 and n > 1) else None
+
+        confidence = compute_metric_confidence(n, coverage, ks_p, outlier_ratio, cv)
         if confidence > 80:
             tags.append("High Confidence")
 
@@ -1067,11 +1026,13 @@ async def get_metric_intelligence(metric: str, current_user: dict = Depends(get_
 
     current_val = float(clean_col.sum()) if aggregation == "SUM" else float(clean_col.mean())
 
-    # ── IMPORTANCE — 4-factor statistical scoring (0-100) ──
-    importance_score = 0.0
-
-    # Factor 1: Variance Contribution vs. all numeric columns (0-25 pts)
+    # ── IMPORTANCE / CONFIDENCE — see compute_metric_importance() and
+    # compute_metric_confidence() in stats_service.py for the shared formula
+    # (previously duplicated inline here and in /metrics, each with its own
+    # hardcoded step-function thresholds). ──
     numeric_cols_all = df.select_dtypes(include=[np.number]).columns
+
+    var_share = None
     try:
         total_var = sum(
             float(df[c].dropna().var())
@@ -1080,11 +1041,11 @@ async def get_metric_intelligence(metric: str, current_user: dict = Depends(get_
         )
         my_var = float(clean_col.var())
         if total_var > 0 and np.isfinite(my_var):
-            importance_score += min(25, (my_var / total_var) * 100)
+            var_share = my_var / total_var
     except Exception:
         pass
 
-    # Factor 2: Cross-correlation centrality (0-25 pts)
+    avg_corr = max_corr = None
     if len(numeric_cols_all) >= 2:
         try:
             corr_mat = df[numeric_cols_all].corr(method='spearman').abs()
@@ -1093,21 +1054,20 @@ async def get_metric_intelligence(metric: str, current_user: dict = Depends(get_
                 if len(others) > 0:
                     avg_corr = float(others.mean())
                     max_corr = float(others.max())
-                    importance_score += avg_corr * 15 + (max_corr * 10 if max_corr > 0.5 else 0)
         except Exception:
             pass
 
-    # Factor 3: Information entropy (0-25 pts)
+    norm_ent = None
     try:
         vc = clean_col.value_counts(normalize=True)
         entropy_val = float(stats_module.entropy(vc))
         max_ent = np.log(min(n, clean_col.nunique())) if clean_col.nunique() > 1 else 1
         norm_ent = entropy_val / max_ent if max_ent > 0 else 0
-        importance_score += norm_ent * 25
     except Exception:
-        importance_score += 12
+        pass
 
-    # Factor 4: Temporal signal strength (0-25 pts)
+    r2_temp = None
+    temporal_significant = False
     if date_col and n > 10:
         try:
             df_t = df[[date_col, metric]].copy()
@@ -1120,62 +1080,32 @@ async def get_metric_intelligence(metric: str, current_user: dict = Depends(get_
                     x_t = np.arange(len(y_t))
                     sl, inter, rv, pv, se = stats_module.linregress(x_t, y_t)
                     r2_temp = rv ** 2
-                    importance_score += r2_temp * 20
-                    if pv < 0.05:
-                        importance_score += 5
+                    temporal_significant = pv < 0.05
         except Exception:
             pass
 
-    importance = min(100, max(10, round(importance_score)))
+    importance = compute_metric_importance(var_share, avg_corr, max_corr, norm_ent, r2_temp, temporal_significant)
 
-    # ── CONFIDENCE — 5-factor statistical reliability (0-100) ──
-    confidence_score = 0.0
-
-    # Factor 1: Sample adequacy (0-30 pts)
-    if   n >= 1000: confidence_score += 30
-    elif n >=  500: confidence_score += 25
-    elif n >=  100: confidence_score += 20
-    elif n >=   30: confidence_score += 15
-    elif n >=   10: confidence_score += 8
-    else:           confidence_score += 3
-
-    # Factor 2: Distribution stability – KS test on two halves (0-25 pts)
+    ks_p = None
     if n >= 20:
         try:
             half = n // 2
-            ks_stat, ks_p = stats_module.ks_2samp(clean_col.iloc[:half], clean_col.iloc[half:])
-            if   ks_p > 0.1:  confidence_score += 25
-            elif ks_p > 0.05: confidence_score += 20
-            elif ks_p > 0.01: confidence_score += 12
-            else:              confidence_score += 5
+            _, ks_p = stats_module.ks_2samp(clean_col.iloc[:half], clean_col.iloc[half:])
         except Exception:
-            confidence_score += 12
+            ks_p = None
 
-    # Factor 3: Outlier ratio (0-20 pts) — shape-aware (skew-robust) detection
     outlier_count_intel = 0
+    outlier_ratio = None
     if n > 10:
         try:
             outlier_count_intel = robust_outlier_stats(clean_col)["count"]
             outlier_ratio = outlier_count_intel / n
-            if   outlier_ratio == 0:    confidence_score += 20
-            elif outlier_ratio < 0.01:  confidence_score += 16
-            elif outlier_ratio < 0.05:  confidence_score += 10
-            else:                       confidence_score += 3
         except Exception:
-            confidence_score += 10
+            pass
 
-    # Factor 4: Coverage completeness (0-15 pts)
-    confidence_score += (coverage / 100) * 15
+    cv_val = abs(val_std / val_mean) if (val_mean != 0 and n > 1) else None
 
-    # Factor 5: Coefficient of Variation stability (0-10 pts)
-    if val_mean != 0 and n > 1:
-        cv_val = abs(val_std / val_mean)
-        if   cv_val < 0.5: confidence_score += 10
-        elif cv_val < 1.0: confidence_score += 7
-        elif cv_val < 2.0: confidence_score += 4
-        else:              confidence_score += 1
-
-    confidence = min(100, max(5, round(confidence_score)))
+    confidence = compute_metric_confidence(n, coverage, ks_p, outlier_ratio, cv_val)
 
     # ── BUILD TAGS ──
     intel_tags = []

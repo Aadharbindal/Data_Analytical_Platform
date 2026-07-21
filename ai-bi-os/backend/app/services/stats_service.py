@@ -470,7 +470,11 @@ def compute_executive_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict
             "rows_used": int(len(original_df) if not date_col else len(recent_df)),
             "aggregation": op,
             "query_id": f"q_{category.lower()}_{np.random.randint(1000, 9999)}",
-            "confidence": 95 if not original_df[col].isna().any() else 85,
+            # Scales continuously with actual completeness instead of a binary
+            # "any missing at all" cliff (100% coverage -> 95, same anchor as
+            # before; a column that's 1% missing no longer scores identically
+            # to one that's 60% missing).
+            "confidence": round(50 + 0.45 * ((1 - original_df[col].isna().mean()) * 100), 1),
             "last_refresh": pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S'),
             "source_column": col,
             "formula": f"{op.upper()}({col})",
@@ -588,6 +592,95 @@ def quality_report(df: pd.DataFrame) -> dict:
             "validity": float(validity)
         }
     }
+
+
+# ─── Metric importance/confidence scoring ──────────────────────────────────
+# These factor weights (e.g. sample size worth up to 30pts, distribution
+# stability up to 25pts) are a design choice, not something derivable from
+# data - there's no labeled ground truth for "how important is this metric"
+# to calibrate against, so the weights themselves are left as-is rather than
+# swapping one arbitrary allocation for another. What WAS a real bug: each
+# factor was scored with hardcoded step-function thresholds (e.g. n>=100 vs
+# n=99 scoring very differently despite being practically identical). The
+# functions below replace those cliffs with continuous interpolation between
+# the same anchor points, so near-identical inputs get near-identical scores.
+
+def _smooth_score(x: float, anchors_x: list, anchors_y: list, log_scale: bool = False) -> float:
+    """Piecewise-linear interpolation between (x, y) anchor points, clamped
+    to the first/last y value outside the anchor range."""
+    if x <= anchors_x[0]:
+        return anchors_y[0]
+    if x >= anchors_x[-1]:
+        return anchors_y[-1]
+    xs = [np.log(v) for v in anchors_x] if log_scale else anchors_x
+    xv = np.log(x) if log_scale else x
+    return float(np.interp(xv, xs, anchors_y))
+
+
+def sample_adequacy_score(n: int) -> float:
+    """0-30 pts, continuous in log(n). Anchored at the same reference points
+    a fixed n>=X bucket table used to use (n=1000->30 ... n<10->~1)."""
+    if n <= 0:
+        return 0.0
+    return _smooth_score(n, [1, 10, 30, 100, 500, 1000], [1, 8, 15, 20, 25, 30], log_scale=True)
+
+
+def distribution_stability_score(ks_p: float) -> float:
+    """0-25 pts, continuous in the KS-test p-value (higher p = more stable/
+    similar first-half-vs-second-half distribution = higher confidence)."""
+    return _smooth_score(ks_p, [0.0, 0.01, 0.05, 0.1], [5, 12, 20, 25])
+
+
+def outlier_ratio_score(outlier_ratio: float) -> float:
+    """0-20 pts, continuous in the fraction of rows flagged as outliers."""
+    return _smooth_score(outlier_ratio, [0.0, 0.01, 0.05, 0.2], [20, 16, 10, 3])
+
+
+def cv_stability_score(cv: float) -> float:
+    """0-10 pts, continuous in the coefficient of variation (std/mean)."""
+    return _smooth_score(cv, [0.0, 0.5, 1.0, 2.0], [10, 7, 4, 1])
+
+
+def compute_metric_confidence(n: int, coverage_pct: float, ks_p: float = None,
+                               outlier_ratio: float = None, cv: float = None) -> int:
+    """
+    Combines the four factors above into the same 0-100 confidence score
+    used by /analytics/metrics and /analytics/metrics/{metric}/intelligence
+    (previously duplicated inline in both, with hardcoded step-function
+    thresholds in each copy).
+    """
+    score = sample_adequacy_score(n)
+    score += distribution_stability_score(ks_p) if ks_p is not None else 12.0
+    score += outlier_ratio_score(outlier_ratio) if outlier_ratio is not None else 10.0
+    score += (coverage_pct / 100) * 15
+    if cv is not None:
+        score += cv_stability_score(cv)
+    return int(min(100, max(5, round(score))))
+
+
+def compute_metric_importance(variance_share: float = None, avg_corr: float = None,
+                               max_corr: float = None, norm_entropy: float = None,
+                               temporal_r2: float = None, temporal_significant: bool = False) -> int:
+    """
+    Combines variance contribution / cross-correlation / entropy / temporal
+    signal into the same 0-100 importance score used by both /analytics
+    endpoints above (previously duplicated inline in each).
+    """
+    score = 0.0
+    if variance_share is not None:
+        score += min(25, variance_share * 100)
+    if avg_corr is not None:
+        score += avg_corr * 15 + (10 if (max_corr or 0) > 0.5 else 0)
+    if norm_entropy is not None:
+        score += norm_entropy * 25
+    else:
+        score += 12
+    if temporal_r2 is not None:
+        score += temporal_r2 * 20
+        if temporal_significant:
+            score += 5
+    return int(min(100, max(10, round(score))))
+
 
 def _fit_forecast_model(y: np.ndarray, periods: int):
     """
