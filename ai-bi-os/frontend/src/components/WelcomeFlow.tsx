@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { datasetsApi, BASE_URL } from "@/lib/api";
+import { datasetsApi } from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
 import { useLayoutStore } from "@/hooks/useLayoutStore";
+import { GuidedTourModal } from "@/components/GuidedTourModal";
+import { PlayCircle } from "lucide-react";
 
 interface WelcomeFlowProps {
   userName?: string;
@@ -71,72 +73,24 @@ function StatCard({
 }
 
 export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" }) => {
-  const [phase, setPhase] = useState<"deck" | "loading" | "dashboard">("deck");
+  const [phase, setPhase] = useState<"deck" | "loading">("deck");
   const [active, setActive] = useState(0);
   const [loadPct, setLoadPct] = useState(0);
   const [currentStatusMsg, setCurrentStatusMsg] = useState("");
   const [isClient, setIsClient] = useState(false);
   const [pageEntered, setPageEntered] = useState(false);
-  
-  // Dashboard mock animation state
-  const [progress, setProgress] = useState(0);
-  const [barsGrow, setBarsGrow] = useState(false);
-  const [aiRevealed, setAiRevealed] = useState(0);
-  
+
   const queryClient = useQueryClient();
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const setWelcomeActive = useLayoutStore((s) => s.setWelcomeActive);
+  const [tourOpen, setTourOpen] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
     const t = setTimeout(() => setPageEntered(true), 80);
     return () => clearTimeout(t);
   }, []);
-
-  // Dashboard animation orchestration
-  useEffect(() => {
-    if (phase === 'dashboard') {
-      const start = performance.now();
-      const dur = 1400;
-      let frameId: number;
-      const step = (t: number) => { 
-        const p = Math.min(1, (t - start) / dur); 
-        setProgress(p); 
-        if (p < 1) {
-            frameId = requestAnimationFrame(step); 
-        }
-      };
-      frameId = requestAnimationFrame(step);
-      
-      const barsTimer = setTimeout(() => setBarsGrow(true), 80);
-      const aiTimer = setInterval(() => {
-        setAiRevealed(prev => {
-          if (prev >= 3) {
-            clearInterval(aiTimer);
-            return prev;
-          }
-          return prev + 1;
-        });
-      }, 520);
-      
-      const transitionTimer = setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: ["active-dataset"] });
-          queryClient.invalidateQueries({ queryKey: ["datasets"] });
-          queryClient.invalidateQueries({ queryKey: ["analytics-kpis"] });
-          queryClient.invalidateQueries({ queryKey: ["insights"] });
-          queryClient.invalidateQueries({ queryKey: ["executiveSummary"] });
-          setWelcomeActive(false);
-      }, 4000);
-
-      return () => {
-        cancelAnimationFrame(frameId);
-        clearTimeout(barsTimer);
-        clearInterval(aiTimer);
-        clearTimeout(transitionTimer);
-      };
-    }
-  }, [phase, queryClient]);
 
   const onScroll = () => {
     if (!scrollRef.current) return;
@@ -160,39 +114,39 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
     setLoadPct(0);
     setCurrentStatusMsg("Uploading file...");
 
+    // The backend processes the file fully (parsing, profiling, semantic
+    // classification) before this request resolves — it isn't a background
+    // job, so there's nothing to poll for. This bar just gives visual
+    // feedback while that request is in flight, then jumps to 100% on success.
+    const progressTimer = setInterval(() => {
+      setLoadPct((p) => (p < 90 ? Math.round(p + Math.random() * 10) : p));
+      setCurrentStatusMsg((prev) => (prev === "Uploading file..." ? "Reading columns and profiling data..." : prev));
+    }, 500);
+
     try {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("dataset_name", file.name.replace(/\.[^/.]+$/, ""));
       formData.append("force", "true");
 
-      const res = await datasetsApi.upload(formData);
-      const eventSource = new EventSource(`${BASE_URL}/api/v1/datasets/upload/status/${res.job_id}/stream`, { withCredentials: true });
-      
-      eventSource.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        if (data.status === "failed") {
-          setCurrentStatusMsg(data.error_message || "Upload Failed");
-          eventSource.close();
-        } else if (data.status === "completed") {
-          setLoadPct(100);
-          setCurrentStatusMsg("Completed! Preparing dashboard...");
-          eventSource.close();
-          setPhase("dashboard");
-        } else {
-          setLoadPct(data.progress || 0);
-          setCurrentStatusMsg(data.current_step || "Processing...");
-        }
-      };
+      await datasetsApi.upload(formData);
 
-      eventSource.onerror = (error) => {
-        console.error("SSE Error:", error);
-        setCurrentStatusMsg("Connection lost");
-        eventSource.close();
-      };
+      clearInterval(progressTimer);
+      setLoadPct(100);
+      setCurrentStatusMsg("Completed! Preparing dashboard...");
+
+      // No decorative mock step — as soon as these queries refetch, the
+      // parent Dashboard swaps WelcomeFlow out for the real dashboard.
+      await Promise.all(
+        ["active-dataset", "activeDataset", "datasets", "analytics-kpis", "insights", "executiveSummary"].map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key] })
+        )
+      );
+      setWelcomeActive(false);
     } catch (err) {
+      clearInterval(progressTimer);
       console.error(err);
-      setCurrentStatusMsg("Upload failed");
+      setCurrentStatusMsg("Upload failed. Please try again.");
     }
   };
 
@@ -215,29 +169,8 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
     {m:'Jun',v:302},{m:'Jul',v:331},{m:'Aug',v:295},{m:'Sep',v:358},
     {m:'Oct',v:406},{m:'Nov',v:378},{m:'Dec',v:452},{m:'Jan',v:474,proj:true}
   ];
-  
-  const ai = [
-    "Processed volume rose 12.4% to ₹4,82,750, driven mainly by the Sales category.",
-    "1,284 active users this cycle — the highest in the last six months.",
-    "3 payments are pending review, ₹6,420 outstanding. Verify before month-end close."
-  ];
 
-  const railLabels = ['Welcome','Real-time','Secure','AI','Upload'];
-  
   const inDeck = phase === 'deck';
-  
-  const fmtR = (n: number) => '₹' + Math.round(n).toLocaleString('en-IN');
-  const ease = 1 - Math.pow(1 - progress, 3);
-  
-  const cardBase = (i: number): React.CSSProperties => ({
-    background:'rgba(13,17,28,.92)', border:'1px solid rgba(59,130,246,.18)', borderRadius:'20px', padding:'24px', backdropFilter:'blur(16px)',
-    transition:'opacity .6s ease, transform .6s ease', transitionDelay:(i*90)+'ms', opacity:phase==='dashboard'?1:0, transform:phase==='dashboard'?'none':'translateY(20px)'
-  });
-  
-  const bigCard = (d: number): React.CSSProperties => ({
-    background:'rgba(13,17,28,.92)', border:'1px solid rgba(59,130,246,.18)', borderRadius:'20px', padding:'26px 28px', display:'flex', flexDirection:'column', backdropFilter:'blur(16px)',
-    transition:'opacity .6s ease, transform .6s ease', transitionDelay:d+'ms', opacity:phase==='dashboard'?1:0, transform:phase==='dashboard'?'none':'translateY(20px)'
-  });
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-[#080a11] text-white font-sans antialiased">
@@ -366,11 +299,16 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
                 </div>
               </div>
               <div className="flex items-center gap-[14px] my-5"><div className="flex-1 h-[1px] bg-white/10"></div><span className="text-[12px] text-gray-500">or</span><div className="flex-1 h-[1px] bg-white/10"></div></div>
-              <button onClick={triggerUpload} className="relative overflow-hidden inline-flex items-center gap-[10px] py-[14px] px-[26px] border-none rounded-[14px] bg-gradient-to-r from-blue-600 to-blue-500 text-white text-[15px] font-bold cursor-pointer shadow-[0_10px_30px_rgba(37,99,235,0.4)] transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_36px_rgba(37,99,235,0.55)]">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2 6 6 .5-4.6 4 1.5 6L12 15l-4.4 3.5 1.5-6L4.5 8.5 10.5 8z"/></svg>
-                <span className="relative z-10">Explore with sample data</span>
-                <div className="absolute inset-0 bg-[linear-gradient(100deg,transparent_30%,rgba(255,255,255,0.35)_50%,transparent_70%)] bg-[length:200%_100%] animate-ws-shimmer"></div>
-              </button>
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <button
+                  onClick={() => setTourOpen(true)}
+                  className="relative overflow-hidden inline-flex items-center gap-[10px] py-[14px] px-[26px] border-none rounded-[14px] bg-gradient-to-r from-blue-600 to-blue-500 text-white text-[15px] font-bold cursor-pointer shadow-[0_10px_30px_rgba(37,99,235,0.4)] transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_36px_rgba(37,99,235,0.55)]"
+                >
+                  <PlayCircle className="relative z-10 h-[18px] w-[18px]" />
+                  <span className="relative z-10">Take a guided tour</span>
+                  <div className="absolute inset-0 bg-[linear-gradient(100deg,transparent_30%,rgba(255,255,255,0.35)_50%,transparent_70%)] bg-[length:200%_100%] animate-ws-shimmer"></div>
+                </button>
+              </div>
             </div>
           </div>
         </section>
@@ -387,58 +325,9 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
         </div>
       </section>
 
-      {/* ================= DASHBOARD MOCK ================= */}
-      <section className={`fixed inset-0 z-50 flex items-stretch bg-[#05070d] overflow-y-auto transition-opacity duration-[600ms] ${phase === 'dashboard' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
-        <div className="min-h-full w-full bg-[radial-gradient(1000px_560px_at_50%_-10%,rgba(37,99,235,.12),transparent_60%)]">
-          <header className="flex items-center gap-6 p-[16px_32px] border-b border-white/5">
-            <div className="flex items-center gap-2.5">
-              <div className="relative w-[28px] h-[28px]">
-                <div className="absolute inset-0 rounded-full border border-[rgba(77,139,255,.32)] shadow-[inset_0_0_10px_rgba(77,139,255,.28)]" style={{background:'radial-gradient(circle at 62% 38%,#101a30,#080c16)'}}></div>
-                <div className="absolute inset-0 animate-ws-orbit"><div className="absolute top-1/2 right-[-1px] -translate-y-1/2 w-[5px] h-[5px] rounded-full bg-[#9ac2ff] shadow-[0_0_7px_2px_rgba(122,170,255,.9)]"></div></div>
-              </div>
-              <span className="text-[17px] font-extrabold tracking-[-.02em] whitespace-nowrap">DataMind</span>
-            </div>
-            <div className="flex-1 flex items-center gap-2.5 max-w-[560px] mx-auto bg-white/5 border border-white/10 rounded-xl p-[11px_16px]">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
-              <span className="text-[13.5px] text-gray-500">Ask AI or search metrics…</span>
-            </div>
-            <div className="flex items-center gap-4 text-[#8b93a3]">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M18 8A6 6 0 1 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
-              <div className="w-[30px] h-[30px] rounded-full bg-gradient-to-br from-[#4d8bff] to-blue-600"></div>
-            </div>
-          </header>
-          <div className="p-[28px_32px_40px] max-w-[1400px] mx-auto">
-            <div className="grid grid-cols-4 gap-4 mb-[22px]">
-              <div style={cardBase(0)}><div className="flex items-center gap-3 text-[#9aa4b5] mb-[18px]"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0070F3" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span className="text-[14px] font-medium">KPIs Monitored</span></div><div className="text-[38px] font-semibold">{Math.round(12*ease)}</div></div>
-              <div style={cardBase(1)}><div className="flex items-center gap-3 text-[#9aa4b5] mb-[18px]"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFB020" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span className="text-[14px] font-medium">Recent Outliers</span></div><div className="text-[38px] font-semibold text-[#FFB020]">{Math.round(3*ease)}</div></div>
-              <div style={cardBase(2)}><div className="flex items-center gap-3 text-[#9aa4b5] mb-[18px]"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#37D67A" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg><span className="text-[14px] font-medium">Active Trends</span></div><div className="text-[38px] font-semibold">{Math.round(8*ease)}</div></div>
-              <div style={cardBase(3)}><div className="flex items-center gap-3 text-[#9aa4b5] mb-[18px]"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg><span className="text-[14px] font-medium">Forecast Horizons</span></div><div className="text-[38px] font-semibold">{Math.round(3*ease)}</div></div>
-            </div>
-            <div className="grid grid-cols-[1.9fr_1fr] gap-4">
-              <div style={bigCard(380)}>
-                <div className="flex items-start justify-between mb-1.5"><div><h3 className="text-[20px] font-bold m-0 mb-1.5">Monthly Transaction Performance</h3><p className="text-[13.5px] text-[#9aa4b5] m-0">Total processed volume, with next-month projection</p></div><div className="flex items-center gap-[7px] border border-white/10 rounded-[9px] p-[8px_13px] text-[13px] text-[#c5cbd6]">Last 12 Months <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8b93a3" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg></div></div>
-                <div className="flex items-center gap-[14px] my-4"><span className="text-[32px] font-extrabold">{fmtR(482750*ease)}</span><span className="inline-flex items-center gap-1 bg-[#37D67A]/15 text-[#37D67A] text-[13px] font-bold p-[5px_10px] rounded-full">↑ 12.4%</span><span className="text-[13px] text-[#9aa4b5]">vs. previous period</span></div>
-                <div className="h-[220px] flex items-end gap-2.5 pt-2">
-                  {bars.map((b, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center justify-end h-full gap-2"><div className="w-full flex-1 flex items-end"><div style={{width:'100%', borderRadius:'6px 6px 0 0', height:(barsGrow?(b.v/500*100):0)+'%', transition:'height .85s cubic-bezier(.16,1,.3,1)', transitionDelay:(i*55)+'ms', background:b.proj?'repeating-linear-gradient(135deg,rgba(77,139,255,.55) 0 6px,rgba(77,139,255,.2) 6px 12px)':'linear-gradient(180deg,#4d8bff,#2563eb)'}}></div></div><span className="text-[10.5px] text-[#5c6473]">{b.m}</span></div>
-                  ))}
-                </div>
-              </div>
-              <div style={bigCard(460)}>
-                <div className="flex items-center justify-between mb-[18px]"><div className="flex items-center gap-2"><svg width="17" height="17" viewBox="0 0 24 24" fill="#4d8bff"><path d="M12 2l1.6 4.4L18 8l-4.4 1.6L12 14l-1.6-4.4L6 8l4.4-1.6z"/></svg><span className="text-[13px] font-bold tracking-[.6px] text-[#4d8bff]">AI EXECUTIVE SUMMARY</span></div><span className="inline-flex items-center gap-1 text-[11px] text-[#FFB020]"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFB020" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>UNVERIFIED</span></div>
-                <div className="flex flex-col gap-[14px] flex-1">
-                  {ai.map((text, i) => (
-                    <div key={i} style={{transition:'opacity .5s ease, transform .5s ease', opacity:i<aiRevealed?1:0, transform:i<aiRevealed?'none':'translateY(8px)'}}><div className="flex gap-2.5 text-[13.5px] leading-[1.55] text-[#c5cbd6]"><span className="text-[#4d8bff] shrink-0">•</span>{text}</div></div>
-                  ))}
-                </div>
-                <button className="self-end mt-5 inline-flex items-center gap-2 p-[11px_18px] border border-white/10 rounded-xl bg-white/5 text-white text-[13.5px] font-semibold cursor-pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4d8bff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Download Report</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      
       <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".csv,.xlsx,.xls" className="hidden" />
+
+      <GuidedTourModal open={tourOpen} onClose={() => setTourOpen(false)} />
     </div>
   );
 };
