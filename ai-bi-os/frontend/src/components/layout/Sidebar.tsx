@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { avatarUrl } from "@/lib/api";
 import { useLayoutStore } from "@/hooks/useLayoutStore";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard,
   Database,
@@ -76,7 +78,10 @@ export function Sidebar() {
   const { isWelcomeActive } = useLayoutStore();
   const [isManualCollapsed, setIsManualCollapsed] = useState(false);
   const [isManualExpanded, setIsManualExpanded] = useState(false);
-  
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const isAnalyticsRoute = pathname?.startsWith("/analytics") ?? false;
   const isWelcomePage = pathname === "/" && isWelcomeActive;
   
@@ -91,7 +96,8 @@ export function Sidebar() {
   };
 
   return (
-    <motion.div 
+    <>
+    <motion.div
       initial="hidden"
       animate="show"
       variants={sidebarVariants}
@@ -213,7 +219,7 @@ export function Sidebar() {
                 <span className="text-[13px] font-semibold text-foreground/90 group-hover:text-foreground transition-colors truncate">{user?.full_name || "Guest"}</span>
               </div>
             </Link>
-            <button onClick={logout} className={cn(
+            <button onClick={() => setShowLogoutConfirm(true)} className={cn(
                 "p-1 hover:text-destructive transition-colors duration-200 text-muted-foreground/70",
                 isCollapsed ? "mt-2" : "group-hover:text-foreground/90"
               )} title="Logout">
@@ -223,6 +229,98 @@ export function Sidebar() {
         </motion.div>
       </div>
     </motion.div>
+
+    {/* Portalled to document.body: the sidebar root above animates with
+        CSS transforms, which makes any position:fixed descendant position
+        itself relative to that transformed ancestor instead of the
+        viewport — this modal would otherwise render squeezed into the
+        sidebar's own (much narrower) width instead of centered on screen. */}
+    {mounted && createPortal(
+      <AnimatePresence>
+        {showLogoutConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm"
+            onClick={() => setShowLogoutConfirm(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0, y: 15 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: 15 }}
+              transition={{ type: "spring", damping: 25, stiffness: 350 }}
+              className="relative w-full max-w-[420px] overflow-hidden rounded-[24px] border border-[#1f2937] bg-[#111520] p-7 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex flex-col">
+                <div className="relative mb-5 h-11 w-11">
+                  <motion.div
+                    animate={{ scale: [1, 2.2], opacity: [0.5, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
+                    className="absolute inset-0 rounded-full bg-primary/20"
+                  />
+                  <motion.div
+                    animate={{ scale: [1, 1.6], opacity: [0.8, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeOut", delay: 0.4 }}
+                    className="absolute inset-0 rounded-full bg-primary/30"
+                  />
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.1, type: "spring", damping: 12, stiffness: 300 }}
+                    className="relative flex h-11 w-11 items-center justify-center rounded-full bg-primary/15"
+                  >
+                    <LogOut className="h-5 w-5 text-primary" strokeWidth={2.5} />
+                  </motion.div>
+                </div>
+
+                <motion.h2
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.15 }}
+                  className="text-xl font-semibold text-white tracking-tight"
+                >
+                  Log out
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="mt-3 text-sm text-[#94a3b8] leading-relaxed"
+                >
+                  Are you sure you want to log out? You&apos;ll need to sign in again to access your workspace.
+                </motion.p>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.25 }}
+                  className="mt-8 flex justify-end gap-3"
+                >
+                  <Button
+                    variant="ghost"
+                    className="rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-white px-6 hover:text-white transition-all hover:scale-105 active:scale-95"
+                    onClick={() => setShowLogoutConfirm(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="default"
+                    className="rounded-full bg-primary hover:bg-primary/80 text-primary-foreground px-6 border-0 shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95"
+                    onClick={logout}
+                  >
+                    Log out
+                  </Button>
+                </motion.div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>,
+      document.body
+    )}
+    </>
   );
 }
 
