@@ -87,7 +87,11 @@ def get_current_user(request: Request, auth_header: HTTPAuthorizationCredentials
             conn.close()
             raise HTTPException(status_code=401, detail="Session revoked")
 
-    cursor.execute("SELECT id, email, full_name, is_active, created_at, totp_enabled, avatar_key FROM users WHERE id=%s", (user_id,))
+    cursor.execute(
+        "SELECT id, email, full_name, is_active, created_at, totp_enabled, avatar_key, email_verified, phone "
+        "FROM users WHERE id=%s",
+        (user_id,),
+    )
     row = cursor.fetchone()
     conn.close()
 
@@ -104,5 +108,7 @@ def get_current_user(request: Request, auth_header: HTTPAuthorizationCredentials
         "created_at": row[4],
         "totp_enabled": bool(row[5]),
         "has_avatar": bool(row[6]),
+        "email_verified": bool(row[7]),
+        "phone": row[8],
         "session_id": session_id
     }

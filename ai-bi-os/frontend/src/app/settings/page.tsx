@@ -222,23 +222,42 @@ function ProfileCard({
   user,
   onSaved,
 }: {
-  user: { id: string; email: string; full_name: string; created_at?: string; has_avatar?: boolean };
+  user: {
+    id: string;
+    email: string;
+    full_name: string;
+    created_at?: string;
+    has_avatar?: boolean;
+    email_verified?: boolean;
+    phone?: string | null;
+  };
   onSaved: () => void;
 }) {
   const [fullName, setFullName] = useState(user.full_name);
+  const [phone, setPhone] = useState(user.phone ?? "");
   const [saved, setSaved] = useState(false);
   const [avatarError, setAvatarError] = useState<string | null>(null);
   const [cacheBust, setCacheBust] = useState(() => Date.now());
+  const [resendSent, setResendSent] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => setFullName(user.full_name), [user.full_name]);
+  useEffect(() => setPhone(user.phone ?? ""), [user.phone]);
 
   const mutation = useMutation({
-    mutationFn: (name: string) => authApi.updateProfile(name),
+    mutationFn: ({ name, phone: p }: { name: string; phone: string }) => authApi.updateProfile(name, p || null),
     onSuccess: () => {
       onSaved();
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
+    },
+  });
+
+  const resendMutation = useMutation({
+    mutationFn: () => authApi.resendVerification(),
+    onSuccess: () => {
+      setResendSent(true);
+      setTimeout(() => setResendSent(false), 4000);
     },
   });
 
@@ -278,7 +297,9 @@ function ProfileCard({
 
   const avatarBusy = uploadAvatarMutation.isPending || removeAvatarMutation.isPending;
   const memberSince = formatMemberSince(user.created_at);
-  const dirty = fullName.trim() !== user.full_name && fullName.trim().length > 0;
+  const dirty =
+    (fullName.trim() !== user.full_name && fullName.trim().length > 0) ||
+    phone.trim() !== (user.phone ?? "");
 
   return (
     <Card className="glass-card">
@@ -351,6 +372,39 @@ function ProfileCard({
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Email</label>
             <Input value={user.email} disabled className="opacity-60" />
+            <div className="mt-1.5">
+              {user.email_verified ? (
+                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-500">
+                  <Check className="h-3 w-3" /> Verified
+                </span>
+              ) : resendSent ? (
+                <span className="text-[11px] text-emerald-500">Verification email sent — check your inbox.</span>
+              ) : (
+                <span className="inline-flex items-center gap-2 text-[11px]">
+                  <span className="text-amber-500 font-medium">Not verified</span>
+                  <button
+                    type="button"
+                    disabled={resendMutation.isPending}
+                    onClick={() => resendMutation.mutate()}
+                    className="text-primary hover:underline disabled:opacity-50"
+                  >
+                    {resendMutation.isPending ? "Sending..." : "Resend email"}
+                  </button>
+                </span>
+              )}
+              {resendMutation.isError && (
+                <p className="text-[11px] text-destructive mt-0.5">{(resendMutation.error as Error).message}</p>
+              )}
+            </div>
+          </div>
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Phone</label>
+            <Input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="+91 98765 43210"
+            />
           </div>
         </div>
 
@@ -362,7 +416,7 @@ function ProfileCard({
           <Button
             size="sm"
             disabled={!dirty || mutation.isPending}
-            onClick={() => mutation.mutate(fullName.trim())}
+            onClick={() => mutation.mutate({ name: fullName.trim(), phone: phone.trim() })}
           >
             {mutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Save changes"}
           </Button>

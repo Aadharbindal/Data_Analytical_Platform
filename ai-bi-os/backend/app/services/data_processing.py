@@ -213,6 +213,16 @@ def init_db():
     except Exception as e:
         print(f"Warning: could not add avatar_key column: {e}")
 
+    # Real email verification (Resend) + an optional phone number field.
+    # email_verified defaults to 1 for accounts created before this column
+    # existed, so nobody who already signed in gets locked out retroactively.
+    try:
+        cursor.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS email_verified INTEGER DEFAULT 1")
+        cursor.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_token TEXT")
+        cursor.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone TEXT")
+    except Exception as e:
+        print(f"Warning: could not add email verification / phone columns: {e}")
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS recovery_codes (
             id TEXT PRIMARY KEY,
