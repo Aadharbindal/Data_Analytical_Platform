@@ -41,6 +41,13 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+class ProfileUpdate(BaseModel):
+    full_name: str
+
+class PasswordChange(BaseModel):
+    current_password: str
+    new_password: str
+
 @router.post("/signup")
 def signup(user: UserSignup, response: Response):
     import re
@@ -185,3 +192,68 @@ def logout(response: Response):
 @router.get("/me")
 def me(current_user: dict = Depends(get_current_user)):
     return current_user
+
+@router.patch("/me")
+def update_profile(update: ProfileUpdate, current_user: dict = Depends(get_current_user)):
+    full_name = update.full_name.strip()
+    if not full_name:
+        raise HTTPException(status_code=400, detail="Name cannot be empty")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE users SET full_name=%s WHERE id=%s", (full_name, current_user["id"]))
+    conn.commit()
+    conn.close()
+
+    return {**current_user, "full_name": full_name}
+
+@router.post("/change-password")
+def change_password(body: PasswordChange, current_user: dict = Depends(get_current_user)):
+    import re
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT password_hash FROM users WHERE id=%s", (current_user["id"],))
+    row = cursor.fetchone()
+
+    # 403, not 401: this is a rejected business action by an already-authenticated
+    # user (wrong current password), not an invalid/expired session — a 401 here
+    # would make the frontend's global "session expired" handler log them out.
+    if not row or not verify_password(body.current_password, row[0]):
+        conn.close()
+        raise HTTPException(status_code=403, detail="Current password is incorrect")
+
+    if (
+        len(body.new_password) < 8
+        or not re.search(r"[A-Za-z]", body.new_password)
+        or not re.search(r"[0-9]", body.new_password)
+    ):
+        conn.close()
+        raise HTTPException(status_code=400, detail="New password must be at least 8 characters and include a letter and a number.")
+
+    cursor.execute(
+        "UPDATE users SET password_hash=%s WHERE id=%s",
+        (hash_password(body.new_password), current_user["id"]),
+    )
+    conn.commit()
+    conn.close()
+
+    return {"message": "Password updated successfully"}
+
+@router.delete("/me")
+def delete_account(response: Response, current_user: dict = Depends(get_current_user)):
+    user_id = current_user["id"]
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    # Only rows actually scoped to this user get erased here — datasets,
+    # regression models and the catalog are shared/global (no user_id column),
+    # so account deletion doesn't touch data other users may depend on.
+    for table in ("active_dataset", "knowledge_base", "insights", "ai_evaluation_logs", "recommendations", "rules"):
+        cursor.execute(f"DELETE FROM {table} WHERE user_id=%s", (user_id,))
+    cursor.execute("DELETE FROM users WHERE id=%s", (user_id,))
+    conn.commit()
+    conn.close()
+
+    response.delete_cookie("access_token")
+    response.delete_cookie("refresh_token")
+    return {"message": "Account deleted"}

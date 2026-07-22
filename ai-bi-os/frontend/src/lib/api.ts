@@ -61,7 +61,9 @@ async function request<T>(path: string, options?: RequestInit, isRetry = false):
     // Refresh failed too (or this was already a retry) — the session is genuinely over.
     // Bounce to login instead of letting every caller render the raw 401 as if it were
     // its own feature failing (chat, KPI cards, etc. all hit this the same way).
-    if (res.status === 401 && typeof window !== "undefined") {
+    // Auth-action endpoints are excluded: a 401 there (e.g. wrong login password)
+    // is the endpoint's normal response, not a sign the current session died.
+    if (res.status === 401 && typeof window !== "undefined" && !AUTH_ENDPOINTS.some((p) => path.startsWith(p))) {
       localStorage.removeItem("access_token");
       if (window.location.pathname !== "/login" && window.location.pathname !== "/signup") {
         window.location.href = "/login";
@@ -112,6 +114,23 @@ export default api;
 // ============================================================
 // Typed endpoint helpers
 // ============================================================
+
+// Auth / account (Settings page)
+interface UserProfile {
+  id: string;
+  email: string;
+  full_name: string;
+  created_at?: string;
+}
+
+export const authApi = {
+  me: () => api.get<UserProfile>("/api/v1/auth/me"),
+  updateProfile: (full_name: string) =>
+    api.patch<UserProfile>("/api/v1/auth/me", { full_name }),
+  changePassword: (current_password: string, new_password: string) =>
+    api.post<{ message: string }>("/api/v1/auth/change-password", { current_password, new_password }),
+  deleteAccount: () => api.delete<{ message: string }>("/api/v1/auth/me"),
+};
 
 // Datasets (Module 1, 2)
 export const datasetsApi = {
