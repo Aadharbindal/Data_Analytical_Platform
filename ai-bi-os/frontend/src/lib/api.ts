@@ -290,6 +290,10 @@ export const analyticsApi = {
   forecast: (metric?: string) => api.get<any>(`/api/v1/analytics/forecast${metric ? `?metric=${metric}` : ''}`),
   regressionModels: () => api.get<any[]>("/api/v1/analytics/regression/models"),
   regressionQualitySummary: () => api.get<any>("/api/v1/analytics/regression/quality-summary"),
+  classificationModels: () => api.get<any[]>("/api/v1/analytics/classification/models"),
+  classificationQualitySummary: () => api.get<any>("/api/v1/analytics/classification/quality-summary"),
+  clusteringModels: () => api.get<any[]>("/api/v1/analytics/clustering/models"),
+  clusteringQualitySummary: () => api.get<any>("/api/v1/analytics/clustering/quality-summary"),
   trends: (datasetVersionId: string) =>
     api.get<import("./types").TrendData[]>(
       `/api/v1/analytics/trends?dataset_version_id=${datasetVersionId}`

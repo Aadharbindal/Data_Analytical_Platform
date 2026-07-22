@@ -4,7 +4,7 @@ load_dotenv()
 
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import datasets, analytics, catalog, chat, regression
+from app.routers import datasets, analytics, catalog, chat, regression, classification, clustering
 
 from app.core.config import CORS_ORIGIN
 
@@ -33,6 +33,8 @@ origins.extend([o.strip() for o in extra_origins.split(",") if o.strip()])
 app.include_router(datasets.router, prefix="/api/v1/datasets", tags=["datasets"])
 app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["analytics"])
 app.include_router(regression.router, prefix="/api/v1/analytics/regression", tags=["regression"])
+app.include_router(classification.router, prefix="/api/v1/analytics/classification", tags=["classification"])
+app.include_router(clustering.router, prefix="/api/v1/analytics/clustering", tags=["clustering"])
 app.include_router(catalog.router, prefix="/api/v1/catalog", tags=["catalog"])
 # Also include insights router for executive summary etc.
 from app.routers import insights, auth, recommendations, rules, ai_gateway
