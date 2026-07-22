@@ -17,6 +17,7 @@ export function AppLayoutWrapper({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
   const isAnalytics = (pathname?.startsWith("/analytics") || pathname?.startsWith("/chat")) ?? false;
   const isAuthPage = pathname === "/login" || pathname === "/signup";
+  const isPublicSharePage = pathname?.startsWith("/shared/") ?? false;
 
   // ── Background prefetch: warm backend + React Query caches on mount ──────────
   React.useEffect(() => {
@@ -56,7 +57,7 @@ export function AppLayoutWrapper({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (isAuthPage) {
+  if (isAuthPage || isPublicSharePage) {
     return <>{children}</>;
   }
 

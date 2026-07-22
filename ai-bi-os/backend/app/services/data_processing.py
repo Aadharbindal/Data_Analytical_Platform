@@ -241,6 +241,19 @@ def init_db():
     ''')
 
     cursor.execute('''
+        CREATE TABLE IF NOT EXISTS shared_links (
+            id SERIAL PRIMARY KEY,
+            token TEXT UNIQUE NOT NULL,
+            dataset_id TEXT,
+            user_id TEXT,
+            created_at TEXT,
+            view_count INTEGER DEFAULT 0,
+            last_viewed_at TEXT,
+            FOREIGN KEY(dataset_id) REFERENCES datasets(id)
+        )
+    ''')
+
+    cursor.execute('''
         CREATE TABLE IF NOT EXISTS classification_models (
             id SERIAL PRIMARY KEY,
             dataset_id TEXT,

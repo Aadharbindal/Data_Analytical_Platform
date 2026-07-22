@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { DashboardGrid } from "./DashboardGrid";
 import { analyticsApi, insightsApi, datasetsApi, BASE_URL } from "@/lib/api";
 import { WelcomeFlow } from "./WelcomeFlow";
+import { ShareDialog } from "./dashboard/ShareDialog";
 import { useAuth } from "@/context/AuthContext";
 import { useLayoutStore } from "@/hooks/useLayoutStore";
 import { useEffect } from "react";
@@ -88,8 +89,9 @@ export const Dashboard: React.FC = () => {
         }}
       />
 
-      <div className="fixed bottom-8 right-8 z-50">
-        <button 
+      <div className="fixed bottom-8 right-8 z-50 flex items-center gap-3">
+        <ShareDialog />
+        <button
           onClick={async () => {
             try {
               const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";

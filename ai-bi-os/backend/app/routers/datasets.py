@@ -277,6 +277,7 @@ async def delete_dataset(dataset_id: str, current_user: dict = Depends(get_curre
     cursor.execute("DELETE FROM regression_models WHERE dataset_id=%s", (dataset_id,))
     cursor.execute("DELETE FROM classification_models WHERE dataset_id=%s", (dataset_id,))
     cursor.execute("DELETE FROM clustering_models WHERE dataset_id=%s", (dataset_id,))
+    cursor.execute("DELETE FROM shared_links WHERE dataset_id=%s", (dataset_id,))
     cursor.execute("DELETE FROM insights WHERE dataset_id=%s", (dataset_id,))
     cursor.execute("DELETE FROM recommendations WHERE dataset_id=%s", (dataset_id,))
     cursor.execute("DELETE FROM rules WHERE dataset_id=%s", (dataset_id,))
