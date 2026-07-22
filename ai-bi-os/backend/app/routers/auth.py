@@ -2,12 +2,10 @@ import os
 import secrets
 import base64
 import io
-from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, UploadFile, File
 from pydantic import BaseModel, EmailStr
 from app.core.database import get_db_connection
 from app.services.storage import s3_manager
-from app.services.email_service import send_verification_email
 import uuid
 from datetime import datetime
 import pyotp
@@ -53,7 +51,6 @@ class UserLogin(BaseModel):
 
 class ProfileUpdate(BaseModel):
     full_name: str
-    phone: Optional[str] = None
 
 class PasswordChange(BaseModel):
     current_password: str
@@ -113,29 +110,20 @@ def signup(request: Request, user: UserSignup, response: Response):
     user_id = str(uuid.uuid4())
     hashed_pw = hash_password(user.password)
     now = datetime.utcnow().isoformat()
-    verification_token = secrets.token_urlsafe(32)
 
     cursor.execute(
-        "INSERT INTO users (id, email, password_hash, full_name, created_at, is_active, email_verified, verification_token) "
-        "VALUES (%s, %s, %s, %s, %s, %s, 0, %s)",
-        (user_id, email_lower, hashed_pw, user.full_name, now, 1, verification_token)
+        "INSERT INTO users (id, email, password_hash, full_name, created_at, is_active) VALUES (%s, %s, %s, %s, %s, %s)",
+        (user_id, email_lower, hashed_pw, user.full_name, now, 1)
     )
     session_id = _create_session(cursor, user_id, request)
     conn.commit()
     conn.close()
 
-    email_sent = send_verification_email(email_lower, user.full_name, verification_token)
-
     access_token = create_access_token(user_id, session_id)
     refresh_token = create_refresh_token(user_id, session_id)
     _set_auth_cookies(response, access_token, refresh_token)
 
-    return {
-        "message": "User created successfully",
-        "access_token": access_token,
-        "token_type": "bearer",
-        "verification_email_sent": email_sent,
-    }
+    return {"message": "User created successfully", "access_token": access_token, "token_type": "bearer"}
 
 @router.post("/login")
 @limiter.limit("5/minute")
@@ -247,67 +235,17 @@ def me(current_user: dict = Depends(get_current_user)):
 
 @router.patch("/me")
 def update_profile(update: ProfileUpdate, current_user: dict = Depends(get_current_user)):
-    import re
-
     full_name = update.full_name.strip()
     if not full_name:
         raise HTTPException(status_code=400, detail="Name cannot be empty")
 
-    phone = (update.phone or "").strip() or None
-    if phone:
-        digits = re.sub(r"\D", "", phone)
-        if len(digits) < 7 or len(digits) > 15:
-            raise HTTPException(status_code=400, detail="Enter a valid phone number")
-
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("UPDATE users SET full_name=%s, phone=%s WHERE id=%s", (full_name, phone, current_user["id"]))
+    cursor.execute("UPDATE users SET full_name=%s WHERE id=%s", (full_name, current_user["id"]))
     conn.commit()
     conn.close()
 
-    return {**current_user, "full_name": full_name, "phone": phone}
-
-class VerifyEmail(BaseModel):
-    token: str
-
-@router.post("/verify-email")
-def verify_email(body: VerifyEmail):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT id FROM users WHERE verification_token=%s", (body.token,))
-    row = cursor.fetchone()
-
-    if not row:
-        conn.close()
-        raise HTTPException(status_code=400, detail="Invalid or already-used verification link")
-
-    cursor.execute(
-        "UPDATE users SET email_verified=1, verification_token=NULL WHERE id=%s",
-        (row[0],),
-    )
-    conn.commit()
-    conn.close()
-
-    return {"message": "Email verified successfully"}
-
-@router.post("/resend-verification")
-@limiter.limit("3/minute")
-def resend_verification(request: Request, current_user: dict = Depends(get_current_user)):
-    if current_user.get("email_verified"):
-        raise HTTPException(status_code=400, detail="Email is already verified")
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    token = secrets.token_urlsafe(32)
-    cursor.execute("UPDATE users SET verification_token=%s WHERE id=%s", (token, current_user["id"]))
-    conn.commit()
-    conn.close()
-
-    sent = send_verification_email(current_user["email"], current_user["full_name"], token)
-    if not sent:
-        raise HTTPException(status_code=503, detail="Email delivery is not configured on this server")
-
-    return {"message": "Verification email sent"}
+    return {**current_user, "full_name": full_name}
 
 @router.post("/avatar")
 async def upload_avatar(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
