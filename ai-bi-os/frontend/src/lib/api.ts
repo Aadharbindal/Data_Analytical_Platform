@@ -5,7 +5,31 @@
 
 export const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
-async function request<T>(path: string, options?: RequestInit): Promise<T> {
+// The access token is short-lived (30 min, app/core/security.py). The backend already
+// issues a long-lived httpOnly refresh_token cookie on login and exposes POST /auth/refresh
+// to mint a fresh access_token cookie from it — the frontend just never called it, so every
+// request just failed outright once the token aged out mid-session. This does one shared
+// refresh attempt (not one per in-flight request) and retries the original call on success.
+let refreshInFlight: Promise<boolean> | null = null;
+
+function refreshSession(): Promise<boolean> {
+  if (!refreshInFlight) {
+    refreshInFlight = fetch(`${BASE_URL}/api/v1/auth/refresh`, {
+      method: "POST",
+      credentials: "include",
+    })
+      .then((res) => res.ok)
+      .catch(() => false)
+      .finally(() => {
+        refreshInFlight = null;
+      });
+  }
+  return refreshInFlight;
+}
+
+const AUTH_ENDPOINTS = ["/api/v1/auth/login", "/api/v1/auth/signup", "/api/v1/auth/refresh"];
+
+async function request<T>(path: string, options?: RequestInit, isRetry = false): Promise<T> {
   const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
   const res = await fetch(`${BASE_URL}${path}`, {
     credentials: 'include',
@@ -17,6 +41,13 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     },
   });
   if (!res.ok) {
+    if (res.status === 401 && !isRetry && !AUTH_ENDPOINTS.some((p) => path.startsWith(p))) {
+      const refreshed = await refreshSession();
+      if (refreshed) {
+        return request<T>(path, options, true);
+      }
+    }
+
     const errorText = await res.text();
     let errorMessage = errorText;
     try {
@@ -26,6 +57,15 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
       }
     } catch (e) {
       // Not JSON, use raw text
+    }
+    // Refresh failed too (or this was already a retry) — the session is genuinely over.
+    // Bounce to login instead of letting every caller render the raw 401 as if it were
+    // its own feature failing (chat, KPI cards, etc. all hit this the same way).
+    if (res.status === 401 && typeof window !== "undefined") {
+      localStorage.removeItem("access_token");
+      if (window.location.pathname !== "/login" && window.location.pathname !== "/signup") {
+        window.location.href = "/login";
+      }
     }
     throw new Error(errorMessage || `Request failed with status ${res.status}`);
   }
