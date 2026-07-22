@@ -55,18 +55,19 @@ def get_current_user(request: Request, auth_header: HTTPAuthorizationCredentials
     # Fetch user from DB
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, email, full_name, is_active FROM users WHERE id=%s", (user_id,))
+    cursor.execute("SELECT id, email, full_name, is_active, created_at FROM users WHERE id=%s", (user_id,))
     row = cursor.fetchone()
     conn.close()
-    
+
     if not row:
         raise HTTPException(status_code=401, detail="User not found")
-        
+
     if not row[3]: # is_active
         raise HTTPException(status_code=401, detail="Inactive user")
-        
+
     return {
         "id": row[0],
         "email": row[1],
-        "full_name": row[2]
+        "full_name": row[2],
+        "created_at": row[4]
     }
