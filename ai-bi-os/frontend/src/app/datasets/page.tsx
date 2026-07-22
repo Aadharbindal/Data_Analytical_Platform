@@ -24,6 +24,7 @@ import {
   X,
   File,
   ArrowRightLeft,
+  Check,
 } from "lucide-react";
 import { DatasetDetailDrawer } from "@/components/datasets/DatasetDetailDrawer";
 
@@ -298,31 +299,47 @@ export default function DatasetsPage() {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
-        className="flex items-center justify-between gap-3"
+        className="flex items-center justify-between gap-3 flex-wrap"
       >
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          {compareSelection.length > 0 && (
-            <span>
-              {compareSelection.length === 2
-                ? "2 datasets selected"
-                : "Select 1 more dataset to compare"}
-            </span>
-          )}
-        </div>
-        <div className="flex items-center gap-3">
+        {compareSelection.length > 0 && (
+          <motion.div
+            key={compareSelection.length === 2 ? "pair" : "single"}
+            initial={{ opacity: 0, x: -8 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.25 }}
+            className="flex items-center gap-2 text-xs text-muted-foreground"
+          >
+            {compareSelection.length === 2 ? (
+              <span className="flex items-center gap-1.5 truncate max-w-[420px]">
+                <span className="text-foreground font-medium truncate">
+                  {datasets?.find((d) => d.id === compareSelection[0])?.name}
+                </span>
+                <ArrowRightLeft className="h-3 w-3 shrink-0 text-primary" />
+                <span className="text-foreground font-medium truncate">
+                  {datasets?.find((d) => d.id === compareSelection[1])?.name}
+                </span>
+              </span>
+            ) : (
+              <span>{datasets?.find((d) => d.id === compareSelection[0])?.name} selected — pick 1 more to compare</span>
+            )}
+          </motion.div>
+        )}
+        <div className="flex items-center gap-3 ml-auto">
           {compareSelection.length === 2 && (
-            <Button
-              size="sm"
-              className="rounded-full gap-1.5"
-              onClick={() =>
-                router.push(
-                  `/datasets/compare?a=${compareSelection[0]}&b=${compareSelection[1]}`
-                )
-              }
-            >
-              <ArrowRightLeft className="h-3.5 w-3.5" />
-              Compare Selected
-            </Button>
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.25 }}>
+              <Button
+                size="sm"
+                className="rounded-full gap-1.5 shadow-[0_0_16px_rgba(59,130,246,0.35)]"
+                onClick={() =>
+                  router.push(
+                    `/datasets/compare?a=${compareSelection[0]}&b=${compareSelection[1]}`
+                  )
+                }
+              >
+                <ArrowRightLeft className="h-3.5 w-3.5" />
+                Compare Selected
+              </Button>
+            </motion.div>
           )}
           <Badge variant="outline" className="flex items-center gap-2 rounded-full border-[#1a2235] bg-[#0c1017] px-3 py-1 text-muted-foreground">
             <div className="h-1.5 w-1.5 rounded-full bg-[#3b82f6] shadow-[0_0_8px_rgba(59,130,246,0.9)]"></div>
@@ -367,7 +384,6 @@ export default function DatasetsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm table-fixed">
               <colgroup>
-                <col className="w-[44px]" />
                 <col />
                 <col className="w-[70px] md:w-[90px]" />
                 <col className="w-[100px] md:w-[130px]" />
@@ -378,13 +394,17 @@ export default function DatasetsPage() {
               </colgroup>
             <thead className="bg-background/80 border-b border-border/50">
               <tr>
-                <th className="px-3 md:px-4 py-4" title="Select two datasets to compare" />
                 {["Name", "Version", "Status", "Rows", "Size", "Created", ""].map((h) => (
                   <th
                     key={h}
                     className="px-3 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider truncate"
                   >
-                    {h}
+                    {h === "Name" ? (
+                      <span className="flex items-center gap-1.5">
+                        {h}
+                        <span className="normal-case font-normal text-muted-foreground/50 tracking-normal">· select 2 to compare</span>
+                      </span>
+                    ) : h}
                   </th>
                 ))}
               </tr>
@@ -392,22 +412,26 @@ export default function DatasetsPage() {
             <tbody>
               {datasets.map((ds) => {
                 const sc = statusConfig[ds.status] ?? statusConfig.archived;
+                const isSelected = compareSelection.includes(ds.id);
                 return (
                   <tr
                     key={ds.id}
-                    className="border-b border-border/40 hover:bg-white/[0.02] transition-colors group"
+                    className={`border-b border-border/40 transition-colors group ${isSelected ? "bg-primary/[0.04]" : "hover:bg-white/[0.02]"}`}
                   >
-                    <td className="px-3 md:px-4 py-5">
-                      <input
-                        type="checkbox"
-                        className="h-4 w-4 rounded border-border/60 accent-primary cursor-pointer"
-                        checked={compareSelection.includes(ds.id)}
-                        onChange={() => toggleCompareSelection(ds.id)}
-                        title="Select to compare"
-                      />
-                    </td>
                     <td className="px-3 md:px-6 py-5 font-medium text-foreground truncate" title={ds.name}>
                       <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => toggleCompareSelection(ds.id)}
+                          title={isSelected ? "Selected for comparison — click to deselect" : "Select to compare with another dataset"}
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-[6px] border transition-all ${
+                            isSelected
+                              ? "bg-primary border-primary shadow-[0_0_8px_rgba(59,130,246,0.6)]"
+                              : "bg-[#0c1017] border-[#1a2235] hover:border-primary/50"
+                          }`}
+                        >
+                          {isSelected && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
+                        </button>
                         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] bg-[#0c1017] border border-[#1a2235] shadow-sm">
                           <File className="h-4 w-4 text-[#3b82f6]" strokeWidth={2} />
                         </div>
