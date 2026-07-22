@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import api from "@/lib/api";
+import { datasetsApi } from "@/lib/api";
 
 interface StudioPageProps {
   title: string;
@@ -14,7 +14,7 @@ interface StudioPageProps {
 export function StudioPage({ title, toolbar, children, isLoading }: StudioPageProps) {
   const { data: activeDataset } = useQuery({
     queryKey: ["activeDataset"],
-    queryFn: () => api.get<any>("/datasets/active"),
+    queryFn: () => datasetsApi.getActive(),
   });
 
   return (
