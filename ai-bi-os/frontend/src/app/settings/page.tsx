@@ -283,7 +283,7 @@ function ProfileCard({
   return (
     <Card className="glass-card">
       <CardContent className="flex flex-col gap-5">
-        <div className="flex items-center gap-4">
+        <div className="flex items-start gap-4">
           <div className="relative h-16 w-16 shrink-0">
             {user.has_avatar ? (
               // eslint-disable-next-line @next/next/no-img-element
