@@ -122,6 +122,11 @@ interface UserProfile {
   full_name: string;
   created_at?: string;
   totp_enabled?: boolean;
+  has_avatar?: boolean;
+}
+
+export function avatarUrl(userId: string, cacheBust?: number) {
+  return `${BASE_URL}/api/v1/auth/avatar/${userId}${cacheBust ? `?v=${cacheBust}` : ""}`;
 }
 
 export interface SessionInfo {
@@ -148,6 +153,12 @@ export const authApi = {
   changePassword: (current_password: string, new_password: string) =>
     api.post<{ message: string }>("/api/v1/auth/change-password", { current_password, new_password }),
   deleteAccount: () => api.delete<{ message: string }>("/api/v1/auth/me"),
+  uploadAvatar: (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api.upload<UserProfile>("/api/v1/auth/avatar", formData);
+  },
+  removeAvatar: () => api.delete<UserProfile>("/api/v1/auth/avatar"),
   listSessions: () => api.get<SessionInfo[]>("/api/v1/auth/sessions"),
   revokeSession: (id: string) => api.delete<{ message: string }>(`/api/v1/auth/sessions/${id}`),
   revokeOtherSessions: () => api.delete<{ message: string }>("/api/v1/auth/sessions"),

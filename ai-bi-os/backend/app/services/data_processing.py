@@ -206,6 +206,13 @@ def init_db():
     except Exception as e:
         print(f"Warning: could not add 2FA columns: {e}")
 
+    # Profile photo: stores the S3 object key, not the image itself — the
+    # actual bytes are fetched on demand through GET /auth/avatar/{user_id}.
+    try:
+        cursor.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_key TEXT")
+    except Exception as e:
+        print(f"Warning: could not add avatar_key column: {e}")
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS recovery_codes (
             id TEXT PRIMARY KEY,

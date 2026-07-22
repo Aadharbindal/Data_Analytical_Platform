@@ -2,9 +2,10 @@ import os
 import secrets
 import base64
 import io
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, UploadFile, File
 from pydantic import BaseModel, EmailStr
 from app.core.database import get_db_connection
+from app.services.storage import s3_manager
 import uuid
 from datetime import datetime
 import pyotp
@@ -246,6 +247,69 @@ def update_profile(update: ProfileUpdate, current_user: dict = Depends(get_curre
 
     return {**current_user, "full_name": full_name}
 
+@router.post("/avatar")
+async def upload_avatar(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
+    if not s3_manager.enabled:
+        raise HTTPException(status_code=503, detail="File storage is not configured")
+
+    if file.content_type not in ("image/jpeg", "image/png"):
+        raise HTTPException(status_code=400, detail="Only JPG or PNG images are allowed")
+
+    content = await file.read()
+    if len(content) > 2 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="Image must be under 2MB")
+
+    ext = "png" if file.content_type == "image/png" else "jpg"
+    key = f"avatars/{current_user['id']}.{ext}"
+    if not s3_manager.upload_file(content, key):
+        raise HTTPException(status_code=500, detail="Failed to upload photo")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    # Clear the old key first in case the extension changed (jpg -> png etc)
+    # and would otherwise leave an orphaned object behind in S3.
+    cursor.execute("SELECT avatar_key FROM users WHERE id=%s", (current_user["id"],))
+    old_key = cursor.fetchone()
+    if old_key and old_key[0] and old_key[0] != key:
+        s3_manager.delete_file(old_key[0])
+    cursor.execute("UPDATE users SET avatar_key=%s WHERE id=%s", (key, current_user["id"]))
+    conn.commit()
+    conn.close()
+
+    return {**current_user, "has_avatar": True}
+
+@router.delete("/avatar")
+def remove_avatar(current_user: dict = Depends(get_current_user)):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT avatar_key FROM users WHERE id=%s", (current_user["id"],))
+    row = cursor.fetchone()
+    if row and row[0] and s3_manager.enabled:
+        s3_manager.delete_file(row[0])
+    cursor.execute("UPDATE users SET avatar_key=NULL WHERE id=%s", (current_user["id"],))
+    conn.commit()
+    conn.close()
+
+    return {**current_user, "has_avatar": False}
+
+@router.get("/avatar/{user_id}")
+def get_avatar(user_id: str):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT avatar_key FROM users WHERE id=%s", (user_id,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row or not row[0]:
+        raise HTTPException(status_code=404, detail="No avatar set")
+
+    content = s3_manager.get_file_bytes(row[0])
+    if content is None:
+        raise HTTPException(status_code=404, detail="Avatar not found")
+
+    media_type = "image/png" if row[0].endswith(".png") else "image/jpeg"
+    return Response(content=content, media_type=media_type, headers={"Cache-Control": "private, max-age=300"})
+
 @router.post("/change-password")
 def change_password(body: PasswordChange, current_user: dict = Depends(get_current_user)):
     import re
@@ -284,6 +348,12 @@ def delete_account(response: Response, current_user: dict = Depends(get_current_
     user_id = current_user["id"]
     conn = get_db_connection()
     cursor = conn.cursor()
+
+    cursor.execute("SELECT avatar_key FROM users WHERE id=%s", (user_id,))
+    avatar_row = cursor.fetchone()
+    if avatar_row and avatar_row[0] and s3_manager.enabled:
+        s3_manager.delete_file(avatar_row[0])
+
     # Only rows actually scoped to this user get erased here — datasets,
     # regression models and the catalog are shared/global (no user_id column),
     # so account deletion doesn't touch data other users may depend on.

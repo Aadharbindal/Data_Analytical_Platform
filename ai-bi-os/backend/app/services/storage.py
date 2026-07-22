@@ -56,13 +56,27 @@ class S3StorageManager:
         """Deletes a file from S3"""
         if not self.enabled:
             return False
-            
+
         try:
             self.s3_client.delete_object(Bucket=self.bucket_name, Key=filename)
             return True
         except Exception as e:
             print(f"Error deleting from S3: {e}")
             return False
+
+    def get_file_bytes(self, filename: str) -> Optional[bytes]:
+        """Reads a file straight into memory — used for small assets like
+        avatars that get served back through our own endpoint rather than
+        processed as a dataset (no need for a local temp file)."""
+        if not self.enabled:
+            return None
+
+        try:
+            obj = self.s3_client.get_object(Bucket=self.bucket_name, Key=filename)
+            return obj["Body"].read()
+        except Exception as e:
+            print(f"Error reading from S3: {e}")
+            return None
 
 # Global instance
 s3_manager = S3StorageManager()

@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
-import { authApi, type SessionInfo } from "@/lib/api";
+import { authApi, avatarUrl, type SessionInfo } from "@/lib/api";
 import { ACCENT_STORAGE_KEY } from "@/components/ThemeProvider";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -217,11 +217,14 @@ function ProfileCard({
   user,
   onSaved,
 }: {
-  user: { id: string; email: string; full_name: string; created_at?: string };
+  user: { id: string; email: string; full_name: string; created_at?: string; has_avatar?: boolean };
   onSaved: () => void;
 }) {
   const [fullName, setFullName] = useState(user.full_name);
   const [saved, setSaved] = useState(false);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
+  const [cacheBust, setCacheBust] = useState(() => Date.now());
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => setFullName(user.full_name), [user.full_name]);
 
@@ -234,6 +237,41 @@ function ProfileCard({
     },
   });
 
+  const uploadAvatarMutation = useMutation({
+    mutationFn: (file: File) => authApi.uploadAvatar(file),
+    onSuccess: () => {
+      onSaved();
+      setCacheBust(Date.now());
+      setAvatarError(null);
+    },
+    onError: (e) => setAvatarError((e as Error).message),
+  });
+
+  const removeAvatarMutation = useMutation({
+    mutationFn: () => authApi.removeAvatar(),
+    onSuccess: () => {
+      onSaved();
+      setAvatarError(null);
+    },
+    onError: (e) => setAvatarError((e as Error).message),
+  });
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    if (!["image/jpeg", "image/png"].includes(file.type)) {
+      setAvatarError("Only JPG or PNG images are allowed");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      setAvatarError("Image must be under 2MB");
+      return;
+    }
+    uploadAvatarMutation.mutate(file);
+  };
+
+  const avatarBusy = uploadAvatarMutation.isPending || removeAvatarMutation.isPending;
   const memberSince = formatMemberSince(user.created_at);
   const dirty = fullName.trim() !== user.full_name && fullName.trim().length > 0;
 
@@ -244,13 +282,61 @@ function ProfileCard({
       </CardHeader>
       <CardContent className="flex flex-col gap-5">
         <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary text-xl font-semibold border border-primary/20">
-            {initials(user.full_name)}
+          <div className="relative h-16 w-16 shrink-0">
+            {user.has_avatar ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={avatarUrl(user.id, cacheBust)}
+                alt={user.full_name}
+                className="h-16 w-16 rounded-full object-cover border border-primary/20"
+              />
+            ) : (
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/15 text-primary text-xl font-semibold border border-primary/20">
+                {initials(user.full_name)}
+              </div>
+            )}
+            {avatarBusy && (
+              <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50">
+                <Loader2 className="h-5 w-5 animate-spin text-white" />
+              </div>
+            )}
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <div className="text-sm font-medium text-foreground truncate">{user.email}</div>
             {memberSince && (
               <div className="text-xs text-muted-foreground mt-0.5">Member since {memberSince}</div>
+            )}
+            <div className="flex items-center gap-3 mt-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+              <button
+                type="button"
+                disabled={avatarBusy}
+                onClick={() => fileInputRef.current?.click()}
+                className="text-xs font-medium text-primary hover:underline disabled:opacity-50"
+              >
+                {user.has_avatar ? "Change photo" : "Upload photo"}
+              </button>
+              {user.has_avatar && (
+                <button
+                  type="button"
+                  disabled={avatarBusy}
+                  onClick={() => removeAvatarMutation.mutate()}
+                  className="text-xs font-medium text-muted-foreground hover:text-destructive disabled:opacity-50"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+            {avatarError ? (
+              <p className="text-xs text-destructive mt-1">{avatarError}</p>
+            ) : (
+              <p className="text-xs text-muted-foreground/70 mt-1">JPG or PNG, max 2MB.</p>
             )}
           </div>
         </div>
