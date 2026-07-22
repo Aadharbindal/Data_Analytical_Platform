@@ -156,7 +156,8 @@ export default function SettingsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-[210px_minmax(0,1fr)] gap-8 items-start">
-          <nav className="flex md:flex-col gap-1 overflow-x-auto md:overflow-visible md:sticky md:top-6 pb-1 md:pb-0">
+          <Card className="glass-card w-full md:sticky md:top-0 p-2 overflow-hidden">
+          <nav className="flex md:flex-col gap-1 overflow-x-auto md:overflow-visible">
             {visibleSections.map((s) => {
               const Icon = s.icon;
               const active = activeSection === s.id;
@@ -178,6 +179,7 @@ export default function SettingsPage() {
               );
             })}
           </nav>
+          </Card>
 
           <div className="flex flex-col gap-6 min-w-0">
             {visibleSections.map((s) => (
