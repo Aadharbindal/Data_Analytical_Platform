@@ -5,8 +5,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import api, { datasetsApi } from "@/lib/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { formatNumber } from "@/lib/utils";
-import { ArrowRightLeft, GitCompareArrows } from "lucide-react";
+import { ArrowRightLeft, ChevronDown, GitCompareArrows } from "lucide-react";
 
 // useSearchParams() must be wrapped in Suspense for production builds
 // (works fine without it in dev, which is why this was easy to miss).
@@ -91,16 +92,21 @@ function CompareDatasetsInner() {
                   <span className={`w-1.5 h-1.5 rounded-full ${dotColor.a}`} />
                   Dataset A (Baseline)
                 </label>
-                <select
-                  className="w-full bg-surface border border-border rounded-full px-4 py-2.5 text-sm text-foreground outline-none focus:border-primary transition-colors"
-                  value={idA}
-                  onChange={(e) => setIdA(e.target.value)}
-                >
-                  <option value="">Select...</option>
-                  {datasets?.map((d: any) => (
-                    <option key={d.id} value={d.id}>{d.name}</option>
-                  ))}
-                </select>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="w-full flex items-center justify-between gap-2 bg-surface border border-border rounded-full px-4 py-2.5 text-sm text-foreground outline-none hover:bg-white/5 focus:border-primary focus:ring-2 focus:ring-primary/30 transition-colors cursor-pointer">
+                    <span className={`truncate ${idA ? "text-foreground" : "text-muted-foreground"}`}>
+                      {datasets?.find((d: any) => d.id === idA)?.name ?? "Select..."}
+                    </span>
+                    <ChevronDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="max-h-[300px] overflow-y-auto">
+                    {datasets?.map((d: any) => (
+                      <DropdownMenuItem key={d.id} onClick={() => setIdA(d.id)} className="text-sm cursor-pointer">
+                        {d.name}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
 
               <button
@@ -117,16 +123,21 @@ function CompareDatasetsInner() {
                   <span className={`w-1.5 h-1.5 rounded-full ${dotColor.b}`} />
                   Dataset B (Comparison)
                 </label>
-                <select
-                  className="w-full bg-surface border border-border rounded-full px-4 py-2.5 text-sm text-foreground outline-none focus:border-primary transition-colors"
-                  value={idB}
-                  onChange={(e) => setIdB(e.target.value)}
-                >
-                  <option value="">Select...</option>
-                  {datasets?.map((d: any) => (
-                    <option key={d.id} value={d.id}>{d.name}</option>
-                  ))}
-                </select>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="w-full flex items-center justify-between gap-2 bg-surface border border-border rounded-full px-4 py-2.5 text-sm text-foreground outline-none hover:bg-white/5 focus:border-primary focus:ring-2 focus:ring-primary/30 transition-colors cursor-pointer">
+                    <span className={`truncate ${idB ? "text-foreground" : "text-muted-foreground"}`}>
+                      {datasets?.find((d: any) => d.id === idB)?.name ?? "Select..."}
+                    </span>
+                    <ChevronDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="max-h-[300px] overflow-y-auto">
+                    {datasets?.map((d: any) => (
+                      <DropdownMenuItem key={d.id} onClick={() => setIdB(d.id)} className="text-sm cursor-pointer">
+                        {d.name}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </CardContent>
           </Card>
