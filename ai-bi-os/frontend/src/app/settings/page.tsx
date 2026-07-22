@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
 import { authApi, avatarUrl, type SessionInfo } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
 import { ACCENT_STORAGE_KEY } from "@/components/ThemeProvider";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -93,6 +94,7 @@ function SectionHeader({
 
 export default function SettingsPage() {
   const qc = useQueryClient();
+  const { refreshUser } = useAuth();
   const [search, setSearch] = useState("");
   const [activeSection, setActiveSection] = useState<SectionId>("profile");
   const sectionRefs = useRef<Partial<Record<SectionId, HTMLDivElement | null>>>({});
@@ -107,27 +109,41 @@ export default function SettingsPage() {
     (s) => !q || s.keywords.includes(q) || s.label.toLowerCase().includes(q)
   );
 
+  // AppLayoutWrapper scrolls its own #main-layout container (overflow-y-auto),
+  // not the window — window.scrollY/scrollTo are no-ops here since the
+  // window itself never scrolls on this layout.
+  const getScrollContainer = (): HTMLElement | (Window & typeof globalThis) =>
+    (document.getElementById("main-layout") as HTMLElement | null) ?? window;
+
   useEffect(() => {
+    const container = getScrollContainer();
     const onScroll = () => {
-      const y = window.scrollY + 160;
+      const containerTop = container === window ? 0 : (container as HTMLElement).getBoundingClientRect().top;
       let current: SectionId | null = null;
       for (const s of visibleSections) {
         const el = sectionRefs.current[s.id];
-        if (el && el.offsetTop <= y) current = s.id;
+        if (el && el.getBoundingClientRect().top - containerTop <= 160) current = s.id;
       }
       if (current && current !== activeSection) setActiveSection(current);
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
+    container.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => container.removeEventListener("scroll", onScroll);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visibleSections.map((s) => s.id).join(",")]);
 
   const scrollTo = (id: SectionId) => {
     const el = sectionRefs.current[id];
+    const container = getScrollContainer();
     if (el) {
-      const top = el.getBoundingClientRect().top + window.scrollY - 88;
-      window.scrollTo({ top, behavior: "smooth" });
+      if (container === window) {
+        const top = el.getBoundingClientRect().top + window.scrollY - 88;
+        window.scrollTo({ top, behavior: "smooth" });
+      } else {
+        const c = container as HTMLElement;
+        const top = el.getBoundingClientRect().top - c.getBoundingClientRect().top + c.scrollTop - 24;
+        c.scrollTo({ top, behavior: "smooth" });
+      }
     }
     setActiveSection(id);
   };
@@ -192,7 +208,13 @@ export default function SettingsPage() {
                 className="scroll-mt-24 flex flex-col gap-6"
               >
                 {s.id === "profile" && (
-                  <ProfileCard user={user} onSaved={() => qc.invalidateQueries({ queryKey: ["me"] })} />
+                  <ProfileCard
+                    user={user}
+                    onSaved={() => {
+                      qc.invalidateQueries({ queryKey: ["me"] });
+                      refreshUser();
+                    }}
+                  />
                 )}
                 {s.id === "appearance" && <AppearanceCard />}
                 {s.id === "security" && (
@@ -277,9 +299,6 @@ function ProfileCard({
 
   return (
     <Card className="glass-card">
-      <CardHeader>
-        <SectionHeader icon={User} title="Profile" subtitle="Your identity and contact info." />
-      </CardHeader>
       <CardContent className="flex flex-col gap-5">
         <div className="flex items-center gap-4">
           <div className="relative h-16 w-16 shrink-0">

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
+import { avatarUrl } from "@/lib/api";
 import { useLayoutStore } from "@/hooks/useLayoutStore";
 import { motion } from "framer-motion";
 import {
@@ -73,7 +74,7 @@ const itemVariants = {
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const { user, logout, avatarVersion } = useAuth();
   const { isWelcomeActive } = useLayoutStore();
   const [isManualCollapsed, setIsManualCollapsed] = useState(false);
   const [isManualExpanded, setIsManualExpanded] = useState(false);
@@ -191,9 +192,18 @@ export function Sidebar() {
             isCollapsed ? "justify-center py-2 px-0 flex-col" : "justify-between px-3 py-2.5"
           )} title={isCollapsed ? (user?.full_name || "User") : undefined}>
             <div className="flex items-center">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary border border-primary/30 shrink-0 font-semibold text-sm">
-                {user?.full_name ? user.full_name.charAt(0).toUpperCase() : <User className="h-4 w-4" />}
-              </div>
+              {user?.has_avatar ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={avatarUrl(user.id, avatarVersion)}
+                  alt={user.full_name}
+                  className="h-8 w-8 rounded-full object-cover border border-primary/30 shrink-0"
+                />
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary border border-primary/30 shrink-0 font-semibold text-sm">
+                  {user?.full_name ? user.full_name.charAt(0).toUpperCase() : <User className="h-4 w-4" />}
+                </div>
+              )}
               <div className={cn(
                 "flex flex-col overflow-hidden justify-center",
                 isCollapsed ? "max-w-0 opacity-0 ml-0" : "max-w-[150px] opacity-100 ml-3"
