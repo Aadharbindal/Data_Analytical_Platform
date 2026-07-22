@@ -33,7 +33,6 @@ import {
   ShieldCheck,
   Download,
   LogOut,
-  Search,
   Fingerprint,
 } from "lucide-react";
 
@@ -95,7 +94,6 @@ function SectionHeader({
 export default function SettingsPage() {
   const qc = useQueryClient();
   const { refreshUser } = useAuth();
-  const [search, setSearch] = useState("");
   const [activeSection, setActiveSection] = useState<SectionId>("profile");
   const sectionRefs = useRef<Partial<Record<SectionId, HTMLDivElement | null>>>({});
 
@@ -104,10 +102,7 @@ export default function SettingsPage() {
     queryFn: () => authApi.me(),
   });
 
-  const q = search.trim().toLowerCase();
-  const visibleSections = SECTIONS.filter(
-    (s) => !q || s.keywords.includes(q) || s.label.toLowerCase().includes(q)
-  );
+  const visibleSections = SECTIONS;
 
   // AppLayoutWrapper scrolls its own #main-layout container (overflow-y-auto),
   // not the window — window.scrollY/scrollTo are no-ops here since the
@@ -155,23 +150,9 @@ export default function SettingsPage() {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="flex flex-col gap-6"
     >
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-        <Input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search settings..."
-          className="pl-9 h-10 rounded-full"
-        />
-      </div>
-
       {isLoading || !user ? (
         <div className="flex items-center justify-center py-24 text-muted-foreground">
           <Loader2 className="h-5 w-5 animate-spin" />
-        </div>
-      ) : visibleSections.length === 0 ? (
-        <div className="text-center py-16 text-sm text-muted-foreground border border-dashed border-border/40 rounded-2xl">
-          No settings match &quot;{search}&quot;.
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-[210px_minmax(0,1fr)] gap-8 items-start">
