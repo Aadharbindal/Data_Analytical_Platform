@@ -17,7 +17,6 @@ import {
   Network,
   GitBranch,
   Settings,
-  CreditCard,
   Shield,
   Zap,
   User,
@@ -43,7 +42,6 @@ const mainNavItems = [
 
 const bottomNavItems = [
   { name: "Settings", href: "/settings", icon: Settings },
-  { name: "Billing", href: "/billing", icon: CreditCard },
 ];
 
 const sidebarVariants = {
@@ -188,10 +186,14 @@ export function Sidebar() {
         {/* User Profile */}
         <motion.div variants={itemVariants} className="pt-2 mt-2 border-t border-border/40 w-full">
           <div className={cn(
-            "flex items-center rounded-xl hover:bg-white/[0.03] cursor-pointer transition-colors duration-200 group",
+            "flex items-center rounded-xl hover:bg-white/[0.03] transition-colors duration-200 group",
             isCollapsed ? "justify-center py-2 px-0 flex-col" : "justify-between px-3 py-2.5"
-          )} title={isCollapsed ? (user?.full_name || "User") : undefined}>
-            <div className="flex items-center">
+          )}>
+            <Link
+              href="/settings"
+              className="flex items-center min-w-0 cursor-pointer"
+              title={isCollapsed ? (user?.full_name || "User") : undefined}
+            >
               {user?.has_avatar ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -210,7 +212,7 @@ export function Sidebar() {
               )} style={{ transition: 'max-width 420ms cubic-bezier(0.65,0,0.35,1), opacity 300ms ease, margin-left 420ms cubic-bezier(0.65,0,0.35,1)' }}>
                 <span className="text-[13px] font-semibold text-foreground/90 group-hover:text-foreground transition-colors truncate">{user?.full_name || "Guest"}</span>
               </div>
-            </div>
+            </Link>
             <button onClick={logout} className={cn(
                 "p-1 hover:text-destructive transition-colors duration-200 text-muted-foreground/70",
                 isCollapsed ? "mt-2" : "group-hover:text-foreground/90"
