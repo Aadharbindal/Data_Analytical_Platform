@@ -300,6 +300,16 @@ export const analyticsApi = {
     ),
 };
 
+// Shareable read-only dashboard links
+export const shareApi = {
+  create: () => api.post<{ token: string; created_at: string; view_count: number }>("/api/v1/share/create", {}),
+  mine: () =>
+    api.get<{ token: string; dataset_id: string; dataset_name: string; created_at: string; view_count: number; last_viewed_at: string | null }[]>(
+      "/api/v1/share/mine"
+    ),
+  revoke: (token: string) => api.delete(`/api/v1/share/${token}`),
+};
+
 
 // Insights (Module 12)
 export const insightsApi = {
