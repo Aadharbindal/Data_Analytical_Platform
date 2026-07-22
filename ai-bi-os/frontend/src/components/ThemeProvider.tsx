@@ -22,10 +22,28 @@ function BodyThemeSync() {
   return null;
 }
 
+export const ACCENT_STORAGE_KEY = "accent-color";
+
+// Applies whatever accent color was picked on the Settings page. Reads
+// localStorage directly (not React state) since this needs to run on every
+// page, not just Settings, and there's no server-side preference to fetch.
+function AccentSync() {
+  React.useEffect(() => {
+    const saved = localStorage.getItem(ACCENT_STORAGE_KEY);
+    if (saved) {
+      document.documentElement.style.setProperty("--primary", saved);
+      document.documentElement.style.setProperty("--ring", saved);
+    }
+  }, []);
+
+  return null;
+}
+
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   return (
     <NextThemesProvider {...props}>
       <BodyThemeSync />
+      <AccentSync />
       {children}
     </NextThemesProvider>
   );

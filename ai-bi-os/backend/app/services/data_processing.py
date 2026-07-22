@@ -197,6 +197,26 @@ def init_db():
         )
     ''')
 
+    # Real TOTP two-factor auth: totp_secret is only meaningful once totp_enabled=1
+    # (a non-null secret with totp_enabled=0 just means setup was started but never
+    # confirmed with a valid code — login doesn't check totp_enabled until it's 1).
+    try:
+        cursor.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS totp_secret TEXT")
+        cursor.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS totp_enabled INTEGER DEFAULT 0")
+    except Exception as e:
+        print(f"Warning: could not add 2FA columns: {e}")
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS recovery_codes (
+            id TEXT PRIMARY KEY,
+            user_id TEXT,
+            code_hash TEXT,
+            used INTEGER DEFAULT 0,
+            created_at TEXT,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+    ''')
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS regression_models (
             id SERIAL PRIMARY KEY,
