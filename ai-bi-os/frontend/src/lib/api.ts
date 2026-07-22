@@ -123,8 +123,6 @@ interface UserProfile {
   created_at?: string;
   totp_enabled?: boolean;
   has_avatar?: boolean;
-  email_verified?: boolean;
-  phone?: string | null;
 }
 
 export function avatarUrl(userId: string, cacheBust?: number) {
@@ -146,15 +144,12 @@ export interface LoginResult {
   token_type?: string;
   requires_2fa?: boolean;
   pre_auth_token?: string;
-  verification_email_sent?: boolean;
 }
 
 export const authApi = {
   me: () => api.get<UserProfile>("/api/v1/auth/me"),
-  updateProfile: (full_name: string, phone?: string | null) =>
-    api.patch<UserProfile>("/api/v1/auth/me", { full_name, phone }),
-  resendVerification: () => api.post<{ message: string }>("/api/v1/auth/resend-verification", {}),
-  verifyEmail: (token: string) => api.post<{ message: string }>("/api/v1/auth/verify-email", { token }),
+  updateProfile: (full_name: string) =>
+    api.patch<UserProfile>("/api/v1/auth/me", { full_name }),
   changePassword: (current_password: string, new_password: string) =>
     api.post<{ message: string }>("/api/v1/auth/change-password", { current_password, new_password }),
   deleteAccount: () => api.delete<{ message: string }>("/api/v1/auth/me"),
