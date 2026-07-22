@@ -239,6 +239,49 @@ def init_db():
             FOREIGN KEY(dataset_id) REFERENCES datasets(id)
         )
     ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS classification_models (
+            id SERIAL PRIMARY KEY,
+            dataset_id TEXT,
+            target TEXT,
+            features JSONB,
+            algorithm TEXT,
+            accuracy_train REAL,
+            accuracy_test REAL,
+            precision_test REAL,
+            recall_test REAL,
+            f1_test REAL,
+            roc_auc REAL,
+            baseline_accuracy REAL,
+            class_labels JSONB,
+            confusion_matrix JSONB,
+            feature_importance JSONB,
+            n_rows_used INTEGER,
+            timestamp TEXT,
+            user_id TEXT,
+            FOREIGN KEY(dataset_id) REFERENCES datasets(id)
+        )
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS clustering_models (
+            id SERIAL PRIMARY KEY,
+            dataset_id TEXT,
+            features JSONB,
+            n_clusters INTEGER,
+            auto_selected BOOLEAN,
+            silhouette_score REAL,
+            inertia REAL,
+            cluster_sizes JSONB,
+            cluster_centers JSONB,
+            elbow_data JSONB,
+            n_rows_used INTEGER,
+            timestamp TEXT,
+            user_id TEXT,
+            FOREIGN KEY(dataset_id) REFERENCES datasets(id)
+        )
+    ''')
     
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS insights (

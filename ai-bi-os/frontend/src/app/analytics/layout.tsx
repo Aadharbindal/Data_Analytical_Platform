@@ -3,11 +3,11 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  BarChart, Activity, PieChart, Network, 
+import {
+  BarChart, Activity, PieChart, Network,
   Sigma, Calculator, CheckCircle, AlignEndVertical,
   AlertTriangle, Clock, TrendingUp, LineChart,
-  ChevronLeft, ChevronRight
+  ChevronLeft, ChevronRight, GitBranch, Boxes
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -34,6 +34,8 @@ const NAV_GROUPS = [
       { name: "Statistics", href: "/analytics/statistics", icon: Sigma },
       { name: "Correlation", href: "/analytics/correlation", icon: Network },
       { name: "Regression", href: "/analytics/regression", icon: Calculator },
+      { name: "Classification", href: "/analytics/classification", icon: GitBranch },
+      { name: "Clustering", href: "/analytics/clustering", icon: Boxes },
     ]
   },
   {
