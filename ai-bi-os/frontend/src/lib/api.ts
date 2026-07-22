@@ -123,6 +123,15 @@ interface UserProfile {
   created_at?: string;
 }
 
+export interface SessionInfo {
+  id: string;
+  device: string;
+  ip_address: string;
+  created_at: string;
+  last_active_at: string;
+  is_current: boolean;
+}
+
 export const authApi = {
   me: () => api.get<UserProfile>("/api/v1/auth/me"),
   updateProfile: (full_name: string) =>
@@ -130,6 +139,10 @@ export const authApi = {
   changePassword: (current_password: string, new_password: string) =>
     api.post<{ message: string }>("/api/v1/auth/change-password", { current_password, new_password }),
   deleteAccount: () => api.delete<{ message: string }>("/api/v1/auth/me"),
+  listSessions: () => api.get<SessionInfo[]>("/api/v1/auth/sessions"),
+  revokeSession: (id: string) => api.delete<{ message: string }>(`/api/v1/auth/sessions/${id}`),
+  revokeOtherSessions: () => api.delete<{ message: string }>("/api/v1/auth/sessions"),
+  exportData: () => api.get<Record<string, unknown>>("/api/v1/auth/export-data"),
 };
 
 // Datasets (Module 1, 2)

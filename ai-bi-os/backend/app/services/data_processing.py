@@ -180,6 +180,23 @@ def init_db():
         )
     ''')
 
+    # Backs real device/session management on the Settings page (list active
+    # sessions, revoke one, "sign out all other devices") — JWTs alone can't be
+    # revoked before they expire, so each login/signup gets a row here and its
+    # id is embedded in the token pair as `sid`; get_current_user checks it.
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS sessions (
+            id TEXT PRIMARY KEY,
+            user_id TEXT,
+            user_agent TEXT,
+            ip_address TEXT,
+            created_at TEXT,
+            last_active_at TEXT,
+            revoked INTEGER DEFAULT 0,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+    ''')
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS regression_models (
             id SERIAL PRIMARY KEY,
