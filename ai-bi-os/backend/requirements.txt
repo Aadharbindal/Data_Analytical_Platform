@@ -26,3 +26,5 @@ psycopg2-binary
 boto3
 redis
 sentence-transformers==3.1.1
+pyotp
+qrcode[pil]

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import api from "@/lib/api";
+import api, { authApi } from "@/lib/api";
 import Link from "next/link";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 
@@ -13,8 +13,18 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [preAuthToken, setPreAuthToken] = useState<string | null>(null);
+  const [code, setCode] = useState("");
   const { login } = useAuth();
   const router = useRouter();
+
+  const completeLogin = async (accessToken?: string) => {
+    if (accessToken) {
+      localStorage.setItem("access_token", accessToken);
+    }
+    const user = await api.get("/api/v1/auth/me");
+    login("bearer", user as any);
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,17 +32,29 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const data = await api.post<{ access_token: string }>("/api/v1/auth/login", {
-        email,
-        password
-      });
-      if (data?.access_token) {
-        localStorage.setItem("access_token", data.access_token);
+      const data = await authApi.login(email, password);
+      if (data.requires_2fa) {
+        setPreAuthToken(data.pre_auth_token ?? null);
+      } else {
+        await completeLogin(data.access_token);
       }
-      const user = await api.get("/api/v1/auth/me");
-      login("bearer", user as any);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "An error occurred during login. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerify2FA = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!preAuthToken) return;
+    setError("");
+    setIsLoading(true);
+    try {
+      const data = await authApi.verify2FALogin(preAuthToken, code.trim());
+      await completeLogin(data.access_token);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Invalid code. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -77,12 +99,82 @@ export default function LoginPage() {
         }}
       >
         <h2 style={{ margin: 0, fontSize: "32px", fontWeight: 800, color: "#fff", letterSpacing: "-0.01em" }}>
-          Sign in
+          {preAuthToken ? "Two-factor authentication" : "Sign in"}
         </h2>
         <p style={{ margin: "10px 0 0", fontSize: "15px", color: "#8b93a3" }}>
-          Enter your credentials to continue
+          {preAuthToken ? "Enter the 6-digit code from your authenticator app" : "Enter your credentials to continue"}
         </p>
 
+        {preAuthToken ? (
+        <form onSubmit={handleVerify2FA}>
+          <div style={{ marginTop: "22px" }}>
+            <label style={{ display: "block", fontSize: "14px", fontWeight: 600, color: "#c5cbd6", marginBottom: "8px" }}>
+              Authentication code
+            </label>
+            <input
+              type="text"
+              inputMode="numeric"
+              value={code}
+              onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+              placeholder="000000"
+              autoFocus
+              required
+              style={{
+                width: "100%",
+                boxSizing: "border-box",
+                padding: "14px 16px",
+                borderRadius: "14px",
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                color: "#fff",
+                fontSize: "20px",
+                fontFamily: "monospace",
+                letterSpacing: "0.3em",
+                textAlign: "center",
+                outline: "none",
+              }}
+            />
+            <p style={{ marginTop: "10px", fontSize: "12.5px", color: "#6b7280" }}>
+              Lost your device? Use one of your recovery codes instead.
+            </p>
+          </div>
+
+          {error && (
+            <div style={{ marginTop: "16px", fontSize: "14px", color: "#f87171", background: "rgba(248,113,113,0.1)", padding: "10px 14px", borderRadius: "10px", border: "1px solid rgba(248,113,113,0.2)" }}>
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={isLoading || code.length < 6}
+            style={{
+              width: "100%",
+              marginTop: "22px",
+              padding: "14px",
+              border: "none",
+              borderRadius: "14px",
+              background: "linear-gradient(90deg,#2563eb,#3b82f6)",
+              color: "#fff",
+              fontSize: "16px",
+              fontWeight: 700,
+              fontFamily: "inherit",
+              cursor: isLoading || code.length < 6 ? "not-allowed" : "pointer",
+              opacity: isLoading || code.length < 6 ? 0.6 : 1,
+            }}
+          >
+            {isLoading ? "Verifying…" : "Verify"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => { setPreAuthToken(null); setCode(""); setError(""); }}
+            style={{ width: "100%", marginTop: "12px", padding: "10px", background: "none", border: "none", color: "#8b93a3", fontSize: "14px", cursor: "pointer" }}
+          >
+            Back to sign in
+          </button>
+        </form>
+        ) : (
         <form onSubmit={handleLogin}>
           <div style={{ marginTop: "22px" }}>
             <label style={{ display: "block", fontSize: "14px", fontWeight: 600, color: "#c5cbd6", marginBottom: "8px" }}>
@@ -270,6 +362,7 @@ export default function LoginPage() {
             )}
           </button>
         </form>
+        )}
 
         <div style={{ marginTop: "18px", textAlign: "center", fontSize: "14px", color: "#8b93a3" }}>
           Don't have an account?{" "}

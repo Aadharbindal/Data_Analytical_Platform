@@ -27,7 +27,7 @@ function refreshSession(): Promise<boolean> {
   return refreshInFlight;
 }
 
-const AUTH_ENDPOINTS = ["/api/v1/auth/login", "/api/v1/auth/signup", "/api/v1/auth/refresh"];
+const AUTH_ENDPOINTS = ["/api/v1/auth/login", "/api/v1/auth/signup", "/api/v1/auth/refresh", "/api/v1/auth/2fa/login-verify"];
 
 async function request<T>(path: string, options?: RequestInit, isRetry = false): Promise<T> {
   const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
@@ -121,6 +121,7 @@ interface UserProfile {
   email: string;
   full_name: string;
   created_at?: string;
+  totp_enabled?: boolean;
 }
 
 export interface SessionInfo {
@@ -130,6 +131,14 @@ export interface SessionInfo {
   created_at: string;
   last_active_at: string;
   is_current: boolean;
+}
+
+export interface LoginResult {
+  message?: string;
+  access_token?: string;
+  token_type?: string;
+  requires_2fa?: boolean;
+  pre_auth_token?: string;
 }
 
 export const authApi = {
@@ -143,6 +152,15 @@ export const authApi = {
   revokeSession: (id: string) => api.delete<{ message: string }>(`/api/v1/auth/sessions/${id}`),
   revokeOtherSessions: () => api.delete<{ message: string }>("/api/v1/auth/sessions"),
   exportData: () => api.get<Record<string, unknown>>("/api/v1/auth/export-data"),
+  login: (email: string, password: string) =>
+    api.post<LoginResult>("/api/v1/auth/login", { email, password }),
+  verify2FALogin: (pre_auth_token: string, code: string) =>
+    api.post<LoginResult>("/api/v1/auth/2fa/login-verify", { pre_auth_token, code }),
+  setup2FA: () => api.post<{ secret: string; qr_code: string }>("/api/v1/auth/2fa/setup", {}),
+  enable2FA: (code: string) =>
+    api.post<{ message: string; recovery_codes: string[] }>("/api/v1/auth/2fa/enable", { code }),
+  disable2FA: (password: string) =>
+    api.post<{ message: string }>("/api/v1/auth/2fa/disable", { password }),
 };
 
 // Datasets (Module 1, 2)

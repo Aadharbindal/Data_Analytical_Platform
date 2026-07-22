@@ -1,17 +1,24 @@
 import os
+import secrets
+import base64
+import io
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel, EmailStr
 from app.core.database import get_db_connection
 import uuid
 from datetime import datetime
+import pyotp
+import qrcode
 
 from app.core.config import DB_PATH
 from app.core.security import (
-    hash_password, 
-    verify_password, 
-    create_access_token, 
+    hash_password,
+    verify_password,
+    create_access_token,
     create_refresh_token,
     get_current_user,
+    create_pre_auth_token,
+    verify_pre_auth_token,
     ACCESS_TOKEN_EXPIRE_MINUTES,
     REFRESH_TOKEN_EXPIRE_DAYS
 )
@@ -124,18 +131,26 @@ def login(request: Request, user: UserLogin, response: Response):
     cursor = conn.cursor()
 
     email_lower = user.email.lower()
-    cursor.execute("SELECT id, password_hash, is_active FROM users WHERE email=%s", (email_lower,))
+    cursor.execute("SELECT id, password_hash, is_active, totp_enabled FROM users WHERE email=%s", (email_lower,))
     row = cursor.fetchone()
+    conn.close()
 
     if not row or not verify_password(user.password, row[1]):
-        conn.close()
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
     if not row[2]:
-        conn.close()
         raise HTTPException(status_code=401, detail="Account is inactive")
 
     user_id = row[0]
+
+    # Password checked out, but 2FA is on — don't issue real session tokens yet.
+    # The pre-auth token only proves "password already verified"; it can't be
+    # used for anything else and expires in 5 minutes.
+    if row[3]:
+        return {"requires_2fa": True, "pre_auth_token": create_pre_auth_token(user_id)}
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
     session_id = _create_session(cursor, user_id, request)
     conn.commit()
     conn.close()
@@ -144,7 +159,7 @@ def login(request: Request, user: UserLogin, response: Response):
     refresh_token = create_refresh_token(user_id, session_id)
     _set_auth_cookies(response, access_token, refresh_token)
 
-    return {"message": "Login successful", "access_token": access_token, "token_type": "bearer"}
+    return {"message": "Login successful", "access_token": access_token, "token_type": "bearer", "requires_2fa": False}
 
 @router.post("/refresh")
 def refresh(request: Request, response: Response):
@@ -272,7 +287,7 @@ def delete_account(response: Response, current_user: dict = Depends(get_current_
     # Only rows actually scoped to this user get erased here — datasets,
     # regression models and the catalog are shared/global (no user_id column),
     # so account deletion doesn't touch data other users may depend on.
-    for table in ("active_dataset", "knowledge_base", "insights", "ai_evaluation_logs", "recommendations", "rules", "sessions"):
+    for table in ("active_dataset", "knowledge_base", "insights", "ai_evaluation_logs", "recommendations", "rules", "sessions", "recovery_codes"):
         cursor.execute(f"DELETE FROM {table} WHERE user_id=%s", (user_id,))
     cursor.execute("DELETE FROM users WHERE id=%s", (user_id,))
     conn.commit()
@@ -281,6 +296,133 @@ def delete_account(response: Response, current_user: dict = Depends(get_current_
     response.delete_cookie("access_token")
     response.delete_cookie("refresh_token")
     return {"message": "Account deleted"}
+
+class TwoFAVerify(BaseModel):
+    code: str
+
+class TwoFADisable(BaseModel):
+    password: str
+
+class TwoFALoginVerify(BaseModel):
+    pre_auth_token: str
+    code: str
+
+def _generate_recovery_codes(cursor, user_id: str, count: int = 8) -> list[str]:
+    cursor.execute("DELETE FROM recovery_codes WHERE user_id=%s", (user_id,))
+    plain_codes = []
+    now = datetime.utcnow().isoformat()
+    for _ in range(count):
+        code = "-".join(secrets.token_hex(2) for _ in range(2))  # e.g. a1b2-c3d4
+        plain_codes.append(code)
+        cursor.execute(
+            "INSERT INTO recovery_codes (id, user_id, code_hash, used, created_at) VALUES (%s, %s, %s, 0, %s)",
+            (str(uuid.uuid4()), user_id, hash_password(code), now),
+        )
+    return plain_codes
+
+@router.post("/2fa/setup")
+def setup_2fa(current_user: dict = Depends(get_current_user)):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT totp_enabled FROM users WHERE id=%s", (current_user["id"],))
+    row = cursor.fetchone()
+    if row and row[0]:
+        conn.close()
+        raise HTTPException(status_code=400, detail="Two-factor authentication is already enabled")
+
+    secret = pyotp.random_base32()
+    # Stored now but inert until /2fa/enable confirms a real code — login only
+    # checks totp_enabled, so a half-finished setup can't lock anyone out.
+    cursor.execute("UPDATE users SET totp_secret=%s WHERE id=%s", (secret, current_user["id"]))
+    conn.commit()
+    conn.close()
+
+    uri = pyotp.totp.TOTP(secret).provisioning_uri(name=current_user["email"], issuer_name="DataMind")
+    qr_img = qrcode.make(uri)
+    buf = io.BytesIO()
+    qr_img.save(buf, format="PNG")
+    qr_data_uri = "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode()
+
+    return {"secret": secret, "qr_code": qr_data_uri}
+
+@router.post("/2fa/enable")
+def enable_2fa(body: TwoFAVerify, current_user: dict = Depends(get_current_user)):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT totp_secret FROM users WHERE id=%s", (current_user["id"],))
+    row = cursor.fetchone()
+
+    if not row or not row[0]:
+        conn.close()
+        raise HTTPException(status_code=400, detail="Call /2fa/setup first")
+
+    if not pyotp.TOTP(row[0]).verify(body.code, valid_window=1):
+        conn.close()
+        raise HTTPException(status_code=403, detail="Invalid code")
+
+    cursor.execute("UPDATE users SET totp_enabled=1 WHERE id=%s", (current_user["id"],))
+    recovery_codes = _generate_recovery_codes(cursor, current_user["id"])
+    conn.commit()
+    conn.close()
+
+    return {"message": "Two-factor authentication enabled", "recovery_codes": recovery_codes}
+
+@router.post("/2fa/disable")
+def disable_2fa(body: TwoFADisable, current_user: dict = Depends(get_current_user)):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT password_hash FROM users WHERE id=%s", (current_user["id"],))
+    row = cursor.fetchone()
+
+    if not row or not verify_password(body.password, row[0]):
+        conn.close()
+        raise HTTPException(status_code=403, detail="Incorrect password")
+
+    cursor.execute("UPDATE users SET totp_enabled=0, totp_secret=NULL WHERE id=%s", (current_user["id"],))
+    cursor.execute("DELETE FROM recovery_codes WHERE user_id=%s", (current_user["id"],))
+    conn.commit()
+    conn.close()
+
+    return {"message": "Two-factor authentication disabled"}
+
+@router.post("/2fa/login-verify")
+def login_verify_2fa(request: Request, body: TwoFALoginVerify, response: Response):
+    user_id = verify_pre_auth_token(body.pre_auth_token)
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT totp_secret, is_active FROM users WHERE id=%s", (user_id,))
+    row = cursor.fetchone()
+
+    if not row or not row[1]:
+        conn.close()
+        raise HTTPException(status_code=401, detail="Account is inactive")
+
+    code = body.code.strip()
+    valid = bool(row[0]) and pyotp.TOTP(row[0]).verify(code, valid_window=1)
+
+    # Not a valid TOTP code — try it as an unused recovery code instead.
+    if not valid:
+        cursor.execute("SELECT id, code_hash FROM recovery_codes WHERE user_id=%s AND used=0", (user_id,))
+        for rc_id, rc_hash in cursor.fetchall():
+            if verify_password(code, rc_hash):
+                cursor.execute("UPDATE recovery_codes SET used=1 WHERE id=%s", (rc_id,))
+                valid = True
+                break
+
+    if not valid:
+        conn.close()
+        raise HTTPException(status_code=403, detail="Invalid code")
+
+    session_id = _create_session(cursor, user_id, request)
+    conn.commit()
+    conn.close()
+
+    access_token = create_access_token(user_id, session_id)
+    refresh_token = create_refresh_token(user_id, session_id)
+    _set_auth_cookies(response, access_token, refresh_token)
+
+    return {"message": "Login successful", "access_token": access_token, "token_type": "bearer"}
 
 def _parse_device(user_agent: str) -> str:
     ua = user_agent or ""
