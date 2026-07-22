@@ -1,5 +1,6 @@
 import jwt
 from datetime import datetime, timedelta, timezone
+from typing import Optional
 from passlib.context import CryptContext
 from fastapi import Request, HTTPException, Security
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -20,15 +21,19 @@ def hash_password(password: str) -> str:
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
-def create_access_token(subject: str) -> str:
+def create_access_token(subject: str, session_id: Optional[str] = None) -> str:
     expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode = {"exp": expire, "sub": str(subject)}
+    if session_id:
+        to_encode["sid"] = session_id
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-def create_refresh_token(subject: str) -> str:
+def create_refresh_token(subject: str, session_id: Optional[str] = None) -> str:
     expire = datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
     to_encode = {"exp": expire, "sub": str(subject)}
+    if session_id:
+        to_encode["sid"] = session_id
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
@@ -38,23 +43,33 @@ def get_current_user(request: Request, auth_header: HTTPAuthorizationCredentials
         token = auth_header.credentials
     if not token:
         token = request.query_params.get("token")
-        
+
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
-        
+
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id = payload.get("sub")
+        session_id = payload.get("sid")
         if user_id is None:
             raise HTTPException(status_code=401, detail="Invalid token")
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token expired")
     except jwt.PyJWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
-        
-    # Fetch user from DB
+
     conn = get_db_connection()
     cursor = conn.cursor()
+
+    # Tokens issued before session tracking existed have no `sid` — treat them
+    # as legacy/trusted rather than rejecting already-logged-in users mid-flight.
+    if session_id:
+        cursor.execute("SELECT revoked FROM sessions WHERE id=%s AND user_id=%s", (session_id, user_id))
+        srow = cursor.fetchone()
+        if not srow or srow[0]:
+            conn.close()
+            raise HTTPException(status_code=401, detail="Session revoked")
+
     cursor.execute("SELECT id, email, full_name, is_active, created_at FROM users WHERE id=%s", (user_id,))
     row = cursor.fetchone()
     conn.close()
@@ -69,5 +84,6 @@ def get_current_user(request: Request, auth_header: HTTPAuthorizationCredentials
         "id": row[0],
         "email": row[1],
         "full_name": row[2],
-        "created_at": row[4]
+        "created_at": row[4],
+        "session_id": session_id
     }
