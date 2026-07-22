@@ -111,24 +111,32 @@ function CompareDatasetsInner() {
                   <CardTitle className="text-sm font-medium text-muted-foreground">Schema Diff</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex flex-col gap-2">
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-muted-foreground">Only in A</span>
-                      <div className="flex gap-1">
-                        {diff.schema_diff.only_in_a.map((c: string) => <span key={c} className="bg-rose-500/10 text-rose-400 px-1.5 py-0.5 rounded text-xs">{c}</span>)}
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-start justify-between gap-4 text-sm">
+                      <span className="text-muted-foreground flex-shrink-0 w-24 pt-0.5">Only in A</span>
+                      <div className="flex flex-wrap gap-1.5 justify-end">
+                        {diff.schema_diff.only_in_a.map((c: string) => (
+                          <span key={c} className="bg-rose-500/10 text-rose-400 border border-rose-500/10 px-2 py-0.5 rounded text-xs font-mono">
+                            {c}
+                          </span>
+                        ))}
                         {diff.schema_diff.only_in_a.length === 0 && <span className="text-muted-foreground">-</span>}
                       </div>
                     </div>
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-muted-foreground">Only in B</span>
-                      <div className="flex gap-1">
-                        {diff.schema_diff.only_in_b.map((c: string) => <span key={c} className="bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded text-xs">{c}</span>)}
+                    <div className="flex items-start justify-between gap-4 text-sm border-t border-border/20 pt-3">
+                      <span className="text-muted-foreground flex-shrink-0 w-24 pt-0.5">Only in B</span>
+                      <div className="flex flex-wrap gap-1.5 justify-end">
+                        {diff.schema_diff.only_in_b.map((c: string) => (
+                          <span key={c} className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/10 px-2 py-0.5 rounded text-xs font-mono">
+                            {c}
+                          </span>
+                        ))}
                         {diff.schema_diff.only_in_b.length === 0 && <span className="text-muted-foreground">-</span>}
                       </div>
                     </div>
-                    <div className="flex justify-between items-center text-sm">
+                    <div className="flex justify-between items-center text-sm border-t border-border/20 pt-3">
                       <span className="text-muted-foreground">Common Columns</span>
-                      <span className="font-mono">{diff.schema_diff.common.length}</span>
+                      <span className="font-mono bg-white/5 px-2 py-0.5 rounded text-xs">{diff.schema_diff.common.length}</span>
                     </div>
                   </div>
                 </CardContent>
