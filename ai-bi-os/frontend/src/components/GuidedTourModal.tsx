@@ -596,7 +596,7 @@ export function GuidedTourModal({ open, onClose }: { open: boolean; onClose: () 
           aria-label="Close"
           style={{
             position: "absolute",
-            top: 20,
+            top: 48,
             right: 26,
             width: 34,
             height: 34,
