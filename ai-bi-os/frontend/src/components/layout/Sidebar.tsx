@@ -53,7 +53,7 @@ const sidebarVariants = {
     x: 0,
     transition: {
       duration: 0.5,
-      ease: [0.25, 1, 0.5, 1],
+      ease: [0.25, 1, 0.5, 1] as [number, number, number, number],
       staggerChildren: 0.05,
       delayChildren: 0.1,
     }
@@ -67,7 +67,7 @@ const itemVariants = {
     x: 0,
     transition: {
       duration: 0.5,
-      ease: [0.25, 1, 0.5, 1]
+      ease: [0.25, 1, 0.5, 1] as [number, number, number, number]
     }
   }
 };
