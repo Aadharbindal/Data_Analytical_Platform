@@ -13,6 +13,7 @@ import type { Insight, Dataset, ActiveDatasetInfo } from "@/lib/types";
 interface DashboardGridProps {
   chartData: any[];
   kpis: any[];
+  pinnedKpiIds?: string[] | null;
   insights: Insight[];
   datasets: Dataset[];
   activeDataset: ActiveDatasetInfo | null;
@@ -82,15 +83,22 @@ function getStableHash(str: string): number {
 export const DashboardGrid: React.FC<DashboardGridProps> = ({
   chartData,
   kpis,
+  pinnedKpiIds,
   insights,
   datasets,
   activeDataset,
   loading,
 }) => {
-  // Derive up to 4 KPI cards — use API data or defaults
+  // Which KPIs to show, and in what order: user's pinned selection if they've
+  // customized the dashboard, otherwise the first 4 (unchanged default).
+  const selectedKpis =
+    pinnedKpiIds && pinnedKpiIds.length > 0
+      ? pinnedKpiIds.map((id) => kpis.find((k) => k.id === id)).filter(Boolean)
+      : kpis.slice(0, 4);
+
   const metricCards =
-    kpis.length > 0
-      ? kpis.slice(0, 4).map((k) => ({
+    selectedKpis.length > 0
+      ? selectedKpis.map((k) => ({
           title: k.name,
           value: formatValue(k.value, k.type),
           trend: k.trend ? `${k.trend > 0 ? "+" : ""}${k.trend.toFixed(1)}%` : "–",

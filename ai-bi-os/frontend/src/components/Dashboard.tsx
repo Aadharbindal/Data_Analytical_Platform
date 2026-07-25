@@ -3,9 +3,10 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { DashboardGrid } from "./DashboardGrid";
-import { analyticsApi, insightsApi, datasetsApi, BASE_URL } from "@/lib/api";
+import { analyticsApi, insightsApi, datasetsApi, dashboardApi, BASE_URL } from "@/lib/api";
 import { WelcomeFlow } from "./WelcomeFlow";
 import { ShareDialog } from "./dashboard/ShareDialog";
+import { CustomizeDashboardModal } from "./dashboard/CustomizeDashboardModal";
 import { useAuth } from "@/context/AuthContext";
 import { useLayoutStore } from "@/hooks/useLayoutStore";
 import { useEffect } from "react";
@@ -49,6 +50,11 @@ export const Dashboard: React.FC = () => {
     queryFn: () => datasetsApi.getActive(),
   });
 
+  const { data: dashboardLayout } = useQuery({
+    queryKey: ["dashboard-layout"],
+    queryFn: () => dashboardApi.getLayout(),
+  });
+
   const hasDatasets = datasets && datasets.length > 0;
   const showWelcome = !datasetsLoading && !hasDatasets;
 
@@ -78,6 +84,7 @@ export const Dashboard: React.FC = () => {
       <DashboardGrid
         chartData={chartData}
         kpis={kpis}
+        pinnedKpiIds={dashboardLayout?.pinned_kpis ?? null}
         insights={insights ?? []}
         datasets={datasets ?? []}
         activeDataset={activeDataset ?? null}
@@ -90,6 +97,7 @@ export const Dashboard: React.FC = () => {
       />
 
       <div className="fixed bottom-8 right-8 z-50 flex items-center gap-3">
+        <CustomizeDashboardModal kpis={kpis} pinnedIds={dashboardLayout?.pinned_kpis ?? null} />
         <ShareDialog />
         <button
           onClick={async () => {

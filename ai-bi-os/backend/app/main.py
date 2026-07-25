@@ -38,7 +38,7 @@ app.include_router(clustering.router, prefix="/api/v1/analytics/clustering", tag
 app.include_router(share.router, prefix="/api/v1/share", tags=["share"])
 app.include_router(catalog.router, prefix="/api/v1/catalog", tags=["catalog"])
 # Also include insights router for executive summary etc.
-from app.routers import insights, auth, recommendations, rules, ai_gateway
+from app.routers import insights, auth, recommendations, rules, ai_gateway, dashboard
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
@@ -62,6 +62,7 @@ app.include_router(recommendations.router, prefix="/api/v1/recommendations", tag
 app.include_router(rules.router, prefix="/api/v1/rules", tags=["rules"])
 app.include_router(chat.router, prefix="/api/v1/chat", tags=["chat"])
 app.include_router(ai_gateway.router, prefix="/api/v1/ai-gateway", tags=["ai-gateway"])
+app.include_router(dashboard.router, prefix="/api/v1/dashboard", tags=["dashboard"])
 
 @app.get("/health")
 def health_check():

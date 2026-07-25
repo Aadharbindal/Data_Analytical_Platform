@@ -359,6 +359,12 @@ export const rulesApi = {
     api.post<{success: boolean, parsed: any, error?: string}>("/api/v1/rules/parse-text", { text }),
 };
 
+export const dashboardApi = {
+  getLayout: () => api.get<import("./types").DashboardLayout>("/api/v1/dashboard/layout"),
+  saveLayout: (pinnedKpis: string[]) =>
+    api.patch<{ success: boolean; pinned_kpis: string[] }>("/api/v1/dashboard/layout", { pinned_kpis: pinnedKpis }),
+};
+
 // Recommendations (Module 15)
 export const recommendationsApi = {
   list: (datasetVersionId?: string) =>

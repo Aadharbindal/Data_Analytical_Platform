@@ -504,7 +504,20 @@ def init_db():
         conn.commit()
     except Exception:
         conn.rollback()
-    
+
+    # Per-user dashboard customization: which KPI cards are pinned and in what
+    # order. pinned_kpis is NULL/empty until the user customizes — the
+    # dashboard falls back to its default top-4 behavior in that case.
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS dashboard_preferences (
+            user_id TEXT PRIMARY KEY,
+            pinned_kpis JSONB,
+            updated_at TEXT,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+    ''')
+    conn.commit()
+
     # Dynamically alter table to add columns for older DB schemas
     for col, ctype, default in [
         ("skipped_rows", "INTEGER", "0"),

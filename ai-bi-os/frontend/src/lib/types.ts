@@ -283,9 +283,24 @@ export interface QueryResult {
   execution_time_ms: number;
 }
 
+export interface KpiItem {
+  id: string;
+  name: string;
+  column?: string;
+  value: number;
+  previous_value?: number;
+  trend?: number;
+  type?: "currency" | "count" | "percent" | "generic";
+  history?: Array<{ date: string; value: number }>;
+}
+
 export interface AnalyticsKPIs {
-  kpis?: Array<{ name: string; value: number; trend?: number }>;
+  kpis?: KpiItem[];
   chart_data?: Array<{ name: string; value: number | null; previous?: number | null; forecast?: number | null }>;
+}
+
+export interface DashboardLayout {
+  pinned_kpis: string[] | null;
 }
 
 export interface TrendData {

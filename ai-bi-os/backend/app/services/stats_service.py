@@ -278,6 +278,45 @@ def compute_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict:
             "history": []
         })
 
+    # 5. Additional numeric-column KPIs — the 4 above are auto-detected from
+    # semantic classification, but the dashboard-customization feature needs
+    # a real pool of candidates for users to choose/pin beyond those 4.
+    used_cols = {c for c in (primary_metric, entity_col, secondary_metric, status_col) if c}
+    extra_numeric_cols = [
+        c for c in original_df.select_dtypes(include="number").columns
+        if c not in used_cols
+    ]
+    MAX_EXTRA_KPIS = 12
+    for col in extra_numeric_cols[:MAX_EXTRA_KPIS]:
+        is_ratio_like = bool(re.search(r'rate|ratio|percent|score|avg|average|price|margin', col, re.IGNORECASE))
+        col_op = "mean" if is_ratio_like else "sum"
+
+        def agg_extra(subset_df, _col=col, _op=col_op):
+            if subset_df.empty:
+                return 0.0
+            data = subset_df[_col]
+            return float(data.mean()) if _op == "mean" else float(data.sum())
+
+        curr_val = agg_extra(original_df)
+
+        trend = 0.0
+        prev_val = 0.0
+        if prior_df is not None and not prior_df.empty:
+            trend = calc_trend(agg_extra(recent_df), agg_extra(prior_df))
+            prev_val = agg_extra(prior_df)
+
+        kpis.append({
+            "id": f"col_{col}",
+            "name": col.replace("_", " ").replace("-", " ").title(),
+            "column": col,
+            "agg": col_op,
+            "value": round(curr_val, 2),
+            "previous_value": round(prev_val, 2),
+            "trend": trend,
+            "type": "generic",
+            "history": []
+        })
+
     chart_data = []
     if date_col and primary_metric and primary_metric in df.columns:
         try:
@@ -334,7 +373,11 @@ def compute_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict:
                         
                     elif k["id"] == "kpi_pipeline" and status_col and status_col in group_df.columns:
                         val = calc_health(group_df)
-                        
+
+                    elif k["id"].startswith("col_") and k.get("column") in group_df.columns:
+                        col_data = group_df[k["column"]]
+                        val = col_data.mean() if k.get("agg") == "mean" else col_data.sum()
+
                     hist.append({"date": p.strftime('%b %Y'), "value": round(float(val), 2)})
                 
                 k["history"] = hist
