@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { datasetsApi } from "@/lib/api";
+import { datasetsApi, BASE_URL } from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
 import { useLayoutStore } from "@/hooks/useLayoutStore";
@@ -114,37 +114,53 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
     setLoadPct(0);
     setCurrentStatusMsg("Uploading file...");
 
-    // The backend processes the file fully (parsing, profiling, semantic
-    // classification) before this request resolves — it isn't a background
-    // job, so there's nothing to poll for. This bar just gives visual
-    // feedback while that request is in flight, then jumps to 100% on success.
-    const progressTimer = setInterval(() => {
-      setLoadPct((p) => (p < 90 ? Math.round(p + Math.random() * 10) : p));
-      setCurrentStatusMsg((prev) => (prev === "Uploading file..." ? "Reading columns and profiling data..." : prev));
-    }, 500);
-
     try {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("dataset_name", file.name.replace(/\.[^/.]+$/, ""));
       formData.append("force", "true");
 
-      await datasetsApi.upload(formData);
+      const res = await datasetsApi.upload(formData);
+      setCurrentStatusMsg("Reading columns and profiling data...");
 
-      clearInterval(progressTimer);
-      setLoadPct(100);
-      setCurrentStatusMsg("Completed! Preparing dashboard...");
+      // The backend now processes the file on a background thread and
+      // reports real progress via this job — no more faking a progress bar
+      // while blindly waiting for one request to resolve. EventSource can't
+      // set an Authorization header, so the token rides along as a query
+      // param instead (get_current_user has a fallback for exactly this).
+      const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+      let streamUrl = `${BASE_URL}/api/v1/datasets/upload/status/${res.job_id}/stream`;
+      if (token) streamUrl += `?token=${token}`;
+      const eventSource = new EventSource(streamUrl, { withCredentials: true });
 
-      // No decorative mock step — as soon as these queries refetch, the
-      // parent Dashboard swaps WelcomeFlow out for the real dashboard.
-      await Promise.all(
-        ["active-dataset", "activeDataset", "datasets", "analytics-kpis", "insights", "executiveSummary"].map((key) =>
-          queryClient.invalidateQueries({ queryKey: [key] })
-        )
-      );
-      setWelcomeActive(false);
+      eventSource.onmessage = async (event) => {
+        const data = JSON.parse(event.data);
+        if (data.status === "failed") {
+          eventSource.close();
+          setCurrentStatusMsg(data.error_message || "Upload failed. Please try again.");
+        } else if (data.status === "completed") {
+          eventSource.close();
+          setLoadPct(100);
+          setCurrentStatusMsg("Completed! Preparing dashboard...");
+          // No decorative mock step — as soon as these queries refetch, the
+          // parent Dashboard swaps WelcomeFlow out for the real dashboard.
+          await Promise.all(
+            ["active-dataset", "activeDataset", "datasets", "analytics-kpis", "insights", "executiveSummary"].map((key) =>
+              queryClient.invalidateQueries({ queryKey: [key] })
+            )
+          );
+          setWelcomeActive(false);
+        } else {
+          setLoadPct(Math.round(data.progress ?? 0));
+          if (data.current_step) setCurrentStatusMsg(data.current_step);
+        }
+      };
+
+      eventSource.onerror = () => {
+        eventSource.close();
+        setCurrentStatusMsg((prev) => (prev === "Completed! Preparing dashboard..." ? prev : "Connection lost — please try again."));
+      };
     } catch (err) {
-      clearInterval(progressTimer);
       console.error(err);
       setCurrentStatusMsg("Upload failed. Please try again.");
     }

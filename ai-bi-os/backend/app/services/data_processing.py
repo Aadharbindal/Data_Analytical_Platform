@@ -5,6 +5,7 @@ import uuid
 import json
 import hashlib
 from datetime import datetime
+from typing import Optional, Callable
 from app.core.database import get_db_connection
 
 from pathlib import Path
@@ -15,6 +16,27 @@ _df_cache: dict = {}
 # Keyed by user_id → dataset_info dict
 _active_cache: dict = {}
 _cache_lock = threading.Lock()
+
+# Per-(user_id, filename) lock guarding version assignment. Uploads now run on
+# a thread pool (see routers/datasets.py) instead of one at a time on the
+# event loop, so two uploads of the same filename that land close together can
+# genuinely execute concurrently: both would read the same "current max
+# version" before either had inserted its row, and both would then insert
+# claiming to be the next version — silently producing two rows both marked
+# version N. This serializes only same-(user, filename) saves; different
+# filenames still process fully in parallel.
+_version_locks: dict = {}
+_version_locks_meta_lock = threading.Lock()
+
+
+def _get_version_lock(user_id: str, filename: str) -> threading.Lock:
+    key = (user_id, filename)
+    with _version_locks_meta_lock:
+        lock = _version_locks.get(key)
+        if lock is None:
+            lock = threading.Lock()
+            _version_locks[key] = lock
+        return lock
 
 
 def invalidate_user_cache(user_id: str) -> None:
@@ -29,6 +51,117 @@ class DuplicateDatasetError(Exception):
     def __init__(self, existing_info):
         self.existing_info = existing_info
         super().__init__("Duplicate dataset")
+
+
+# ─── Upload job tracking ────────────────────────────────────────────────────
+# DB-backed (not in-memory) so job state survives a request landing on a
+# different point in time than the background thread's writes, and so it's
+# inspectable/debuggable the same way every other piece of persistent state
+# in this app is — matches the sessions/prompt_versions precedent of moving
+# off in-memory dicts that reset on restart.
+
+def create_upload_job(job_id: str, user_id: str, filename: str, content_hash: str = None) -> None:
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    now = datetime.now().isoformat()
+    cursor.execute(
+        '''INSERT INTO upload_jobs (id, user_id, filename, status, progress, current_step, content_hash, created_at, updated_at)
+           VALUES (%s, %s, %s, 'processing', 0, 'Queued', %s, %s, %s)''',
+        (job_id, user_id, filename, content_hash, now, now),
+    )
+    conn.commit()
+    conn.close()
+
+
+def update_upload_job(job_id: str, progress: float, current_step: str) -> None:
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE upload_jobs SET progress=%s, current_step=%s, updated_at=%s WHERE id=%s",
+        (progress, current_step, datetime.now().isoformat(), job_id),
+    )
+    conn.commit()
+    conn.close()
+
+
+def complete_upload_job(job_id: str, dataset_id: str) -> None:
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        '''UPDATE upload_jobs SET status='completed', progress=100, current_step='Completed!',
+           dataset_id=%s, updated_at=%s WHERE id=%s''',
+        (dataset_id, datetime.now().isoformat(), job_id),
+    )
+    conn.commit()
+    conn.close()
+
+
+def fail_upload_job(job_id: str, error_message: str) -> None:
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE upload_jobs SET status='failed', error_message=%s, updated_at=%s WHERE id=%s",
+        (error_message, datetime.now().isoformat(), job_id),
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_upload_job(job_id: str, user_id: str) -> Optional[dict]:
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        '''SELECT status, progress, current_step, dataset_id, error_message
+           FROM upload_jobs WHERE id=%s AND user_id=%s''',
+        (job_id, user_id),
+    )
+    row = cursor.fetchone()
+    conn.close()
+    if not row:
+        return None
+    return {
+        "status": row[0],
+        "progress": row[1],
+        "current_step": row[2],
+        "dataset_id": row[3],
+        "error_message": row[4],
+    }
+
+
+def find_duplicate_dataset(content_hash: str, user_id: str) -> Optional[dict]:
+    """Cheap pre-check (hash + one indexed lookup) so a duplicate upload can be
+    rejected immediately, before ever spinning up a background thread for it.
+
+    Also checks in-flight upload_jobs, not just completed datasets — the
+    background job that will write a matching datasets row hasn't committed
+    yet while it's still processing, so without this an identical file
+    uploaded twice within that window (a likely double-click, given the
+    first click's button doesn't disable until the response comes back)
+    would race past the duplicate check entirely.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT id, name, version, created_at FROM datasets WHERE content_hash = %s AND user_id = %s LIMIT 1",
+        (content_hash, user_id),
+    )
+    row = cursor.fetchone()
+    if row:
+        conn.close()
+        return {"id": row[0], "name": row[1], "version": row[2], "uploaded_at": row[3]}
+
+    cursor.execute(
+        '''SELECT filename, created_at FROM upload_jobs
+           WHERE content_hash = %s AND user_id = %s AND status = 'processing' LIMIT 1''',
+        (content_hash, user_id),
+    )
+    job_row = cursor.fetchone()
+    conn.close()
+    if not job_row:
+        return None
+    return {"id": None, "name": job_row[0], "version": None, "uploaded_at": job_row[1], "in_progress": True}
+
+
 from app.core.config import DATA_DIR, DB_PATH
 
 from app.services.storage import s3_manager
@@ -344,7 +477,33 @@ def init_db():
             created_at TEXT
         )
     ''')
+
+    # Backs real background upload processing: the upload endpoint now returns
+    # immediately and does the actual parse/profile/classify work on a thread,
+    # writing progress here so the frontend's existing SSE poll (previously
+    # cosmetic — the file was already fully processed by the time it started
+    # polling) reports genuine progress instead of a single fake step.
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS upload_jobs (
+            id TEXT PRIMARY KEY,
+            user_id TEXT,
+            filename TEXT,
+            status TEXT DEFAULT 'processing',
+            progress REAL DEFAULT 0,
+            current_step TEXT,
+            dataset_id TEXT,
+            error_message TEXT,
+            content_hash TEXT,
+            created_at TEXT,
+            updated_at TEXT
+        )
+    ''')
     conn.commit()
+    try:
+        cursor.execute("ALTER TABLE upload_jobs ADD COLUMN IF NOT EXISTS content_hash TEXT")
+        conn.commit()
+    except Exception:
+        conn.rollback()
     
     # Dynamically alter table to add columns for older DB schemas
     for col, ctype, default in [
@@ -572,6 +731,7 @@ def _persist_dataframe(
     force: bool,
     description: str = None,
     tags: list = None,
+    on_progress: Optional[Callable[[float, str], None]] = None,
 ) -> dict:
     """Shared tail-end of save_dataset and save_dataframe_as_new_version: writes
     file_content to disk, profiles df, bumps the (user_id, name) version lineage,
@@ -581,36 +741,59 @@ def _persist_dataframe(
     DataFrame as a new version through the exact same path a fresh upload
     takes — same versioning, same cache invalidation, same catalog entry —
     instead of re-deriving that logic.
+
+    `on_progress(pct, step)` is called at real checkpoints when the caller is
+    running this on a background thread and wants to report genuine progress
+    (see routers/datasets.py's upload endpoint) — optional so transform calls,
+    which don't track a job, can leave it unset.
     """
+    def _progress(pct: float, step: str):
+        if on_progress:
+            on_progress(pct, step)
+
     content_hash = hashlib.sha256(file_content).hexdigest()
 
-    if not force:
+    # Held for the rest of this function: reading "what's the next version"
+    # and inserting the row that claims it has to be atomic relative to any
+    # other thread saving under the same (user_id, filename), or two uploads
+    # landing close together can both read the same max-version and both
+    # insert claiming it — see _get_version_lock's docstring.
+    with _get_version_lock(user_id, filename):
+        if not force:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute("SELECT id, name, version, created_at FROM datasets WHERE content_hash = %s AND user_id = %s LIMIT 1", (content_hash, user_id))
+            existing = cursor.fetchone()
+            conn.close()
+
+            if existing:
+                raise DuplicateDatasetError({
+                    "id": existing[0],
+                    "name": existing[1],
+                    "version": existing[2],
+                    "uploaded_at": existing[3]
+                })
+
+        # Determine version
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT id, name, version, created_at FROM datasets WHERE content_hash = %s AND user_id = %s LIMIT 1", (content_hash, user_id))
-        existing = cursor.fetchone()
+        cursor.execute("SELECT MAX(version) FROM datasets WHERE name = %s AND user_id = %s", (filename, user_id))
+        max_ver = cursor.fetchone()[0]
+        version = (max_ver + 1) if max_ver is not None else 1
         conn.close()
 
-        if existing:
-            raise DuplicateDatasetError({
-                "id": existing[0],
-                "name": existing[1],
-                "version": existing[2],
-                "uploaded_at": existing[3]
-            })
+        return _finish_persisting(
+            df, file_content, filename, user_id, metadata, version, content_hash,
+            description, tags, _progress,
+        )
 
-    # Determine version
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT MAX(version) FROM datasets WHERE name = %s AND user_id = %s", (filename, user_id))
-    max_ver = cursor.fetchone()[0]
-    version = (max_ver + 1) if max_ver is not None else 1
-    conn.close()
 
+def _finish_persisting(df, file_content, filename, user_id, metadata, version, content_hash, description, tags, _progress):
     dataset_id = str(uuid.uuid4())
     filename_db = f"{dataset_id}_{filename}"
     disk_path = get_dataset_path(filename_db, skip_s3_download=True)  # File doesn't exist yet, skip S3 check
 
+    _progress(45, "Saving file to storage...")
     with open(disk_path, "wb") as f:
         f.write(file_content)
 
@@ -621,6 +804,7 @@ def _persist_dataframe(
     row_count = len(df)
     col_count = len(df.columns)
 
+    _progress(60, "Profiling columns...")
     # Create profile
     columns = []
     for col in df.columns:
@@ -633,6 +817,7 @@ def _persist_dataframe(
             col_info["max"] = float(df[col].max()) if not pd.isna(df[col].max()) else 0.0
         columns.append(col_info)
 
+    _progress(72, "Computing data quality score...")
     from app.services.stats_service import quality_report
     quality = quality_report(df)
     quality_score = quality.get("quality_score", 0)
@@ -656,6 +841,7 @@ def _persist_dataframe(
         "quality_breakdown": quality_breakdown
     }
 
+    _progress(85, "Classifying dataset domain...")
     from app.services.semantic_classification import classify_dataset_and_build_dictionary
     domain, semantic_dict = classify_dataset_and_build_dictionary(df, filename)
     dataset_info["domain"] = domain
@@ -670,6 +856,7 @@ def _persist_dataframe(
         "tags": tags or ["auto-inferred", "raw-data"]
     }
 
+    _progress(94, "Writing to database...")
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
@@ -704,12 +891,20 @@ def _persist_dataframe(
     return dataset_info
 
 
-def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool = False):
+def save_dataset(
+    file_content: bytes,
+    filename: str,
+    user_id: str,
+    force: bool = False,
+    on_progress: Optional[Callable[[float, str], None]] = None,
+):
+    if on_progress:
+        on_progress(20, "Parsing file...")
     # Try parsing first (robust validation) — content_hash/version checks live
     # in _persist_dataframe, but we still want a parse failure to raise before
     # any of that work happens.
     df, metadata = parse_to_dataframe(file_content, filename)
-    return _persist_dataframe(df, file_content, filename, user_id, metadata, force)
+    return _persist_dataframe(df, file_content, filename, user_id, metadata, force, on_progress=on_progress)
 
 
 def save_dataframe_as_new_version(

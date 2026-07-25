@@ -1,11 +1,19 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Form
+from fastapi.responses import StreamingResponse, FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
 import uuid
+import asyncio
+import hashlib
 from app.core.database import get_db_connection
 import json
 import os
-from app.services.data_processing import save_dataset, save_dataframe_as_new_version, DB_PATH, get_dataset_path, get_active_dataset, get_dataframe, DuplicateDatasetError, invalidate_user_cache
+from app.services.data_processing import (
+    save_dataset, save_dataframe_as_new_version, DB_PATH, get_dataset_path, get_active_dataset,
+    get_dataframe, invalidate_user_cache,
+    create_upload_job, update_upload_job, complete_upload_job, fail_upload_job, get_upload_job,
+    find_duplicate_dataset,
+)
 from app.services.storage import s3_manager
 from app.core.security import get_current_user
 from app.services.stats_service import compute_kpis
@@ -22,58 +30,91 @@ class UploadResponse(BaseModel):
 async def upload_dataset(file: UploadFile = File(...), force: bool = Form(False), current_user: dict = Depends(get_current_user)):
     from app.core.config import MAX_UPLOAD_MB
     content = await file.read()
-    
+
     # File size limit check
     max_size = MAX_UPLOAD_MB * 1024 * 1024
     if len(content) > max_size:
         raise HTTPException(status_code=400, detail=f"File size exceeds maximum limit of {MAX_UPLOAD_MB}MB.")
-        
-    try:
-        dataset_info = save_dataset(content, file.filename, current_user["id"], force)
-    except DuplicateDatasetError as de:
-        raise HTTPException(status_code=409, detail={
-            "duplicate": True, 
-            "existing_dataset": de.existing_info, 
-            "message": f"This file is identical to an already-uploaded dataset ('{de.existing_info['name']}', v{de.existing_info['version']}). Upload anyway to create a duplicate copy, or cancel."
-        })
-    except ValueError as ve:
-        raise HTTPException(status_code=400, detail=str(ve))
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to process file: {str(e)}")
-        
-    return {"job_id": dataset_info["id"], "status": "processing"}
 
-from fastapi.responses import StreamingResponse, FileResponse
-import asyncio
+    # Computed unconditionally (not just when checking) so it's also stored
+    # on the job row below — that's what lets an identical file uploaded
+    # again *while the first is still processing* get caught too, not just
+    # ones that already finished.
+    content_hash = hashlib.sha256(content).hexdigest()
+
+    # Duplicate detection stays synchronous and fast (hash + one indexed
+    # lookup) so it can still respond immediately with the "upload anyway?"
+    # prompt, instead of spinning up a background job just to reject it.
+    if not force:
+        existing = find_duplicate_dataset(content_hash, current_user["id"])
+        if existing:
+            if existing.get("in_progress"):
+                message = f"An identical file ('{existing['name']}') is already being uploaded. Wait for it to finish, or upload anyway to create a duplicate copy."
+            else:
+                message = f"This file is identical to an already-uploaded dataset ('{existing['name']}', v{existing['version']}). Upload anyway to create a duplicate copy, or cancel."
+            raise HTTPException(status_code=409, detail={
+                "duplicate": True,
+                "existing_dataset": existing,
+                "message": message,
+            })
+
+    # Parsing, profiling, quality scoring and semantic classification can take
+    # real time on a large file — previously all of that ran inline here,
+    # blocking this request (and, since FastAPI's event loop is single-
+    # threaded, every OTHER request this worker was serving) until it
+    # finished. Handing it to a worker thread returns this response
+    # immediately and lets the event loop keep serving other requests while
+    # the upload_jobs row this creates gets real progress written to it.
+    job_id = str(uuid.uuid4())
+    create_upload_job(job_id, current_user["id"], file.filename, content_hash)
+
+    def _run_upload():
+        try:
+            dataset_info = save_dataset(
+                content, file.filename, current_user["id"], force=True,
+                on_progress=lambda pct, step: update_upload_job(job_id, pct, step),
+            )
+            complete_upload_job(job_id, dataset_info["id"])
+        except ValueError as ve:
+            fail_upload_job(job_id, str(ve))
+        except Exception as e:
+            fail_upload_job(job_id, f"Failed to process file: {str(e)}")
+
+    loop = asyncio.get_event_loop()
+    loop.run_in_executor(None, _run_upload)
+
+    return {"job_id": job_id, "status": "processing"}
 
 @router.get("/upload/status/{job_id}")
 async def get_upload_status(job_id: str, current_user: dict = Depends(get_current_user)):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT id FROM datasets WHERE id=%s AND user_id=%s", (job_id, current_user["id"]))
-    row = cursor.fetchone()
-    conn.close()
-    if row:
-        return {"status": "completed", "progress": 100}
-    return {"status": "processing", "progress": 50}
+    job = get_upload_job(job_id, current_user["id"])
+    if not job:
+        raise HTTPException(status_code=404, detail="Upload job not found")
+    return job
 
 @router.get("/upload/status/{job_id}/stream")
 async def get_upload_status_stream(job_id: str, current_user: dict = Depends(get_current_user)):
     async def event_generator():
-        yield f"data: {json.dumps({'status': 'processing', 'progress': 50, 'current_step': 'Parsing data'})}\n\n"
-        await asyncio.sleep(0.5)
-        
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("SELECT id FROM datasets WHERE id=%s AND user_id=%s", (job_id, current_user["id"]))
-        row = cursor.fetchone()
-        conn.close()
-        
-        if row:
-            yield f"data: {json.dumps({'status': 'completed', 'progress': 100})}\n\n"
-        else:
-            yield f"data: {json.dumps({'status': 'failed', 'error_message': 'Dataset not found'})}\n\n"
-            
+        last_sent = None
+        # ~4 minutes of polling at 0.4s intervals — comfortably longer than
+        # any realistic parse+profile+classify pass; the frontend's own
+        # EventSource just reconnects if this generator ever ends early.
+        for _ in range(600):
+            job = get_upload_job(job_id, current_user["id"])
+            if not job:
+                yield f"data: {json.dumps({'status': 'failed', 'error_message': 'Upload job not found'})}\n\n"
+                return
+
+            snapshot = (job["status"], job["progress"], job["current_step"])
+            if snapshot != last_sent:
+                yield f"data: {json.dumps(job)}\n\n"
+                last_sent = snapshot
+
+            if job["status"] in ("completed", "failed"):
+                return
+
+            await asyncio.sleep(0.4)
+
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 @router.get("/active")
