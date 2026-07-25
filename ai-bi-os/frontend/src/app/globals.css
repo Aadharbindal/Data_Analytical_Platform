@@ -364,3 +364,13 @@ nextjs-portal,
   from { background-position: 0 0, 0 0; }
   to { background-position: 44px 44px, 44px 44px; }
 }
+
+/* Forecast Center Animations */
+@keyframes fcNowPulse { 0%, 100% { transform: scale(1); opacity: .9; } 50% { transform: scale(2.6); opacity: 0; } }
+@keyframes fcLivePulse { 0%, 100% { transform: scale(1); opacity: .85; } 50% { transform: scale(2.4); opacity: 0; } }
+@keyframes fcAurora { 0% { transform: translate(0,0) scale(1); } 50% { transform: translate(4%,-3%) scale(1.12); } 100% { transform: translate(0,0) scale(1); } }
+@keyframes fcAurora2 { 0% { transform: translate(0,0) scale(1); } 50% { transform: translate(-5%,4%) scale(1.15); } 100% { transform: translate(0,0) scale(1); } }
+.fc-aurora-1 { animation: fcAurora 18s ease-in-out infinite; }
+.fc-aurora-2 { animation: fcAurora2 22s ease-in-out infinite; }
+.fc-now-pulse { animation: fcNowPulse 2.6s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+.fc-live-pulse { animation: fcLivePulse 2.4s ease-out infinite; }
