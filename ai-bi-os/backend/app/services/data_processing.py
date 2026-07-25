@@ -563,7 +563,25 @@ def parse_to_dataframe(file_content: bytes, filename: str):
     
     return df, metadata
 
-def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool = False):
+def _persist_dataframe(
+    df: pd.DataFrame,
+    file_content: bytes,
+    filename: str,
+    user_id: str,
+    metadata: dict,
+    force: bool,
+    description: str = None,
+    tags: list = None,
+) -> dict:
+    """Shared tail-end of save_dataset and save_dataframe_as_new_version: writes
+    file_content to disk, profiles df, bumps the (user_id, name) version lineage,
+    inserts datasets/catalog/active_dataset rows, and invalidates caches.
+
+    Split out so a transform (rename/formula) can persist an already-in-memory
+    DataFrame as a new version through the exact same path a fresh upload
+    takes — same versioning, same cache invalidation, same catalog entry —
+    instead of re-deriving that logic.
+    """
     content_hash = hashlib.sha256(file_content).hexdigest()
 
     if not force:
@@ -572,7 +590,7 @@ def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool =
         cursor.execute("SELECT id, name, version, created_at FROM datasets WHERE content_hash = %s AND user_id = %s LIMIT 1", (content_hash, user_id))
         existing = cursor.fetchone()
         conn.close()
-        
+
         if existing:
             raise DuplicateDatasetError({
                 "id": existing[0],
@@ -589,23 +607,20 @@ def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool =
     version = (max_ver + 1) if max_ver is not None else 1
     conn.close()
 
-    # Try parsing first (robust validation)
-    df, metadata = parse_to_dataframe(file_content, filename)
-    
     dataset_id = str(uuid.uuid4())
     filename_db = f"{dataset_id}_{filename}"
     disk_path = get_dataset_path(filename_db, skip_s3_download=True)  # File doesn't exist yet, skip S3 check
-    
+
     with open(disk_path, "wb") as f:
         f.write(file_content)
-        
+
     # Upload to S3 if enabled
     if s3_manager.enabled:
         s3_manager.upload_file(file_content, filename_db)
-        
+
     row_count = len(df)
     col_count = len(df.columns)
-    
+
     # Create profile
     columns = []
     for col in df.columns:
@@ -617,12 +632,12 @@ def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool =
             col_info["min"] = float(df[col].min()) if not pd.isna(df[col].min()) else 0.0
             col_info["max"] = float(df[col].max()) if not pd.isna(df[col].max()) else 0.0
         columns.append(col_info)
-        
+
     from app.services.stats_service import quality_report
     quality = quality_report(df)
     quality_score = quality.get("quality_score", 0)
     quality_breakdown = json.dumps(quality.get("breakdown", {}))
-        
+
     dataset_info = {
         "id": dataset_id,
         "name": filename,
@@ -640,7 +655,7 @@ def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool =
         "quality_score": quality_score,
         "quality_breakdown": quality_breakdown
     }
-    
+
     from app.services.semantic_classification import classify_dataset_and_build_dictionary
     domain, semantic_dict = classify_dataset_and_build_dictionary(df, filename)
     dataset_info["domain"] = domain
@@ -650,11 +665,11 @@ def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool =
         "id": dataset_id,
         "name": filename,
         "domain": domain,
-        "description": f"Auto-generated catalog entry for {filename}. Contains {row_count} rows and {col_count} columns.",
+        "description": description or f"Auto-generated catalog entry for {filename}. Contains {row_count} rows and {col_count} columns.",
         "owner": "DataMind OS",
-        "tags": ["auto-inferred", "raw-data"]
+        "tags": tags or ["auto-inferred", "raw-data"]
     }
-    
+
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
@@ -667,7 +682,7 @@ def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool =
         dataset_info["quality_score"], dataset_info["quality_breakdown"], user_id, content_hash,
         domain, json.dumps(semantic_dict)
     ))
-    
+
     cursor.execute('''
         INSERT INTO catalog (id, name, domain, description, owner, tags, user_id)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
@@ -675,11 +690,11 @@ def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool =
         dataset_id, catalog_entry["name"], catalog_entry["domain"],
         catalog_entry["description"], catalog_entry["owner"], json.dumps(catalog_entry["tags"]), user_id
     ))
-    
+
     cursor.execute('''
         INSERT INTO active_dataset (user_id, dataset_id) VALUES (%s, %s) ON CONFLICT (user_id) DO UPDATE SET dataset_id = EXCLUDED.dataset_id
     ''', (user_id, dataset_id))
-    
+
     conn.commit()
     conn.close()
 
@@ -687,6 +702,33 @@ def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool =
     invalidate_user_cache(user_id)
 
     return dataset_info
+
+
+def save_dataset(file_content: bytes, filename: str, user_id: str, force: bool = False):
+    # Try parsing first (robust validation) — content_hash/version checks live
+    # in _persist_dataframe, but we still want a parse failure to raise before
+    # any of that work happens.
+    df, metadata = parse_to_dataframe(file_content, filename)
+    return _persist_dataframe(df, file_content, filename, user_id, metadata, force)
+
+
+def save_dataframe_as_new_version(
+    df: pd.DataFrame,
+    name: str,
+    user_id: str,
+    description: str = None,
+    tags: list = None,
+) -> dict:
+    """Persists an already-transformed DataFrame (column rename, formula
+    column, ...) as the next version in `name`'s lineage, through the same
+    path a fresh upload takes — so it gets real version history, rollback,
+    and compare for free instead of a bespoke "edit" concept.
+    """
+    file_content = df.to_csv(index=False).encode("utf-8")
+    return _persist_dataframe(
+        df, file_content, name, user_id, metadata={}, force=True,
+        description=description, tags=tags or ["transformed"],
+    )
 
 def get_active_dataset(user_id: str):
     # ── Cache hit ──────────────────────────────────────────────────────────────

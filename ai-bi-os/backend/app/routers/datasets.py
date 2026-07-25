@@ -5,10 +5,12 @@ import uuid
 from app.core.database import get_db_connection
 import json
 import os
-from app.services.data_processing import save_dataset, DB_PATH, get_dataset_path, get_active_dataset, get_dataframe, DuplicateDatasetError, invalidate_user_cache
+from app.services.data_processing import save_dataset, save_dataframe_as_new_version, DB_PATH, get_dataset_path, get_active_dataset, get_dataframe, DuplicateDatasetError, invalidate_user_cache
 from app.services.storage import s3_manager
 from app.core.security import get_current_user
 from app.services.stats_service import compute_kpis
+from app.services.formula_engine import evaluate_formula, FormulaError
+import pandas as pd
 
 router = APIRouter()
 
@@ -355,5 +357,158 @@ async def delete_dataset(dataset_id: str, current_user: dict = Depends(get_curre
         invalidate_analytics_cache(current_user["id"])
     except Exception:
         pass
+
+
+# ─── Transforms ───────────────────────────────────────────────────────────
+# Rename and formula both operate on the active-lineage DataFrame and persist
+# the result as the NEXT VERSION of the same (user_id, name) — reusing the
+# version history/rollback/compare machinery instead of a bespoke "edit
+# history" concept. Merge combines two independent lineages, so it produces
+# a brand-new dataset rather than a version of either input.
+
+def _get_dataset_name(dataset_id: str, user_id: str) -> Optional[str]:
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM datasets WHERE id=%s AND user_id=%s", (dataset_id, user_id))
+    row = cursor.fetchone()
+    conn.close()
+    return row[0] if row else None
+
+
+class RenameColumnsRequest(BaseModel):
+    renames: dict[str, str]
+
+
+@router.post("/{dataset_id}/transform/rename")
+async def rename_columns(dataset_id: str, body: RenameColumnsRequest, current_user: dict = Depends(get_current_user)):
+    if not body.renames:
+        raise HTTPException(status_code=400, detail="No renames provided")
+
+    name = _get_dataset_name(dataset_id, current_user["id"])
+    if not name:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+
+    df = get_dataframe(dataset_id, current_user["id"])
+    if df is None:
+        raise HTTPException(status_code=400, detail="Dataset could not be loaded")
+
+    missing = [c for c in body.renames if c not in df.columns]
+    if missing:
+        raise HTTPException(status_code=400, detail=f"Unknown column(s): {', '.join(missing)}")
+
+    new_names = list(body.renames.values())
+    if len(set(new_names)) != len(new_names):
+        raise HTTPException(status_code=400, detail="New column names must be unique")
+
+    untouched = [c for c in df.columns if c not in body.renames]
+    collisions = set(new_names) & set(untouched)
+    if collisions:
+        raise HTTPException(status_code=400, detail=f"Column name(s) already in use: {', '.join(collisions)}")
+
+    renamed_df = df.rename(columns=body.renames)
+    rename_summary = ", ".join(f"{k} → {v}" for k, v in body.renames.items())
+    info = save_dataframe_as_new_version(
+        renamed_df, name, current_user["id"],
+        description=f"Renamed columns: {rename_summary}",
+        tags=["transformed", "renamed"],
+    )
+    return {"status": "success", "dataset": info}
+
+
+class FormulaColumnRequest(BaseModel):
+    column_name: str
+    expression: str
+
+
+@router.post("/{dataset_id}/transform/formula")
+async def add_formula_column(dataset_id: str, body: FormulaColumnRequest, current_user: dict = Depends(get_current_user)):
+    column_name = body.column_name.strip()
+    if not column_name:
+        raise HTTPException(status_code=400, detail="Column name is required")
+
+    name = _get_dataset_name(dataset_id, current_user["id"])
+    if not name:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+
+    df = get_dataframe(dataset_id, current_user["id"])
+    if df is None:
+        raise HTTPException(status_code=400, detail="Dataset could not be loaded")
+
+    if column_name in df.columns:
+        raise HTTPException(status_code=400, detail=f"Column '{column_name}' already exists — rename or remove it first")
+
+    try:
+        result = evaluate_formula(df, body.expression)
+    except FormulaError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    new_df = df.copy()
+    new_df[column_name] = result
+    info = save_dataframe_as_new_version(
+        new_df, name, current_user["id"],
+        description=f"Added derived column '{column_name}' = {body.expression}",
+        tags=["transformed", "formula"],
+    )
+    return {"status": "success", "dataset": info}
+
+
+class MergeDatasetsRequest(BaseModel):
+    other_dataset_id: str
+    left_on: str
+    right_on: str
+    how: str = "left"
+    new_name: Optional[str] = None
+
+
+MAX_MERGE_ROWS = 2_000_000
+
+
+@router.post("/{dataset_id}/transform/merge")
+async def merge_datasets_transform(dataset_id: str, body: MergeDatasetsRequest, current_user: dict = Depends(get_current_user)):
+    if body.how not in ("inner", "left", "right", "outer"):
+        raise HTTPException(status_code=400, detail="how must be one of: inner, left, right, outer")
+
+    left_name = _get_dataset_name(dataset_id, current_user["id"])
+    right_name = _get_dataset_name(body.other_dataset_id, current_user["id"])
+    if not left_name or not right_name:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+
+    left_df = get_dataframe(dataset_id, current_user["id"])
+    right_df = get_dataframe(body.other_dataset_id, current_user["id"])
+    if left_df is None or right_df is None:
+        raise HTTPException(status_code=400, detail="One or both datasets could not be loaded")
+
+    if body.left_on not in left_df.columns:
+        raise HTTPException(status_code=400, detail=f"Column '{body.left_on}' not found in this dataset")
+    if body.right_on not in right_df.columns:
+        raise HTTPException(status_code=400, detail=f"Column '{body.right_on}' not found in the other dataset")
+
+    try:
+        merged = pd.merge(
+            left_df, right_df,
+            left_on=body.left_on, right_on=body.right_on,
+            how=body.how, suffixes=("", "_right"),
+        )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Merge failed: {str(e)}")
+
+    if len(merged) > MAX_MERGE_ROWS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Merge would produce {len(merged):,} rows (limit {MAX_MERGE_ROWS:,}) — check the join keys for a many-to-many match.",
+        )
+    if len(merged) == 0:
+        raise HTTPException(status_code=400, detail="Merge produced zero rows — the join keys may not match any records")
+
+    merged_name = body.new_name.strip() if body.new_name and body.new_name.strip() else f"{left_name} + {right_name} (merged).csv"
+    if not merged_name.lower().endswith((".csv", ".xlsx", ".parquet", ".json")):
+        merged_name += ".csv"
+
+    info = save_dataframe_as_new_version(
+        merged, merged_name, current_user["id"],
+        description=f"Merged '{left_name}' and '{right_name}' on {body.left_on} = {body.right_on} ({body.how} join)",
+        tags=["transformed", "merged"],
+    )
+    return {"status": "success", "dataset": info}
 
     return {"status": "success", "message": "Dataset deleted"}

@@ -190,6 +190,14 @@ export const datasetsApi = {
   versions: (id: string) =>
     api.get<import("./types").DatasetVersionHistory>(`/api/v1/datasets/${id}/versions`),
   activate: (id: string) => api.post(`/api/v1/datasets/${id}/activate`, {}),
+  transformRename: (id: string, renames: Record<string, string>) =>
+    api.post<import("./types").TransformResult>(`/api/v1/datasets/${id}/transform/rename`, { renames }),
+  transformFormula: (id: string, column_name: string, expression: string) =>
+    api.post<import("./types").TransformResult>(`/api/v1/datasets/${id}/transform/formula`, { column_name, expression }),
+  transformMerge: (
+    id: string,
+    body: { other_dataset_id: string; left_on: string; right_on: string; how: string; new_name?: string }
+  ) => api.post<import("./types").TransformResult>(`/api/v1/datasets/${id}/transform/merge`, body),
   download: async (id: string) => {
     const res = await fetch(`${BASE_URL}/api/v1/datasets/${id}/download`, { credentials: 'include' });
     if (!res.ok) throw new Error("Failed to download dataset");

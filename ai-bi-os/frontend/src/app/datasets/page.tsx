@@ -28,8 +28,10 @@ import {
   ChevronRight,
   History,
   RotateCcw,
+  Wand2,
 } from "lucide-react";
 import { DatasetDetailDrawer } from "@/components/datasets/DatasetDetailDrawer";
+import { TransformDatasetModal } from "@/components/datasets/TransformDatasetModal";
 
 const statusConfig: Record<string, { color: string; icon: React.ReactNode }> = {
   active: {
@@ -392,6 +394,7 @@ export default function DatasetsPage() {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [compareSelection, setCompareSelection] = useState<string[]>([]);
   const [expandedLineage, setExpandedLineage] = useState<string | null>(null);
+  const [transformTarget, setTransformTarget] = useState<Dataset | null>(null);
 
   const toggleCompareSelection = (id: string) => {
     setCompareSelection((prev) => {
@@ -430,6 +433,17 @@ export default function DatasetsPage() {
       [...group].sort((a, b) => (b.version ?? 1) - (a.version ?? 1))
     );
   }, [datasets]);
+
+  // Memoized so the object identity only changes when transformTarget itself
+  // does — an inline `{...}` literal here would be a fresh reference on every
+  // render, and TransformDatasetModal's reset-on-open effect keys off that
+  // reference, so it would wipe the "saved as vN" success message the moment
+  // any unrelated re-render happened (e.g. right after the mutation's own
+  // query invalidation).
+  const transformDataset = React.useMemo(
+    () => (transformTarget ? { id: transformTarget.id, name: transformTarget.name, columns: transformTarget.columns ?? [] } : null),
+    [transformTarget]
+  );
 
   const activateMutation = useMutation({
     mutationFn: (id: string) => datasetsApi.activate(id),
@@ -678,6 +692,17 @@ export default function DatasetsPage() {
 
                         <Button
                           variant="ghost"
+                          size="sm"
+                          className="text-xs mr-1 md:mr-2 text-muted-foreground hover:text-primary px-2"
+                          onClick={() => setTransformTarget(ds)}
+                          title="Rename columns, add a formula column, or merge with another dataset"
+                        >
+                          <Wand2 className="h-3 w-3 md:mr-1" />
+                          <span className="hidden md:inline">Transform</span>
+                        </Button>
+
+                        <Button
+                          variant="ghost"
                           size="icon"
                           className="h-8 w-8 text-muted-foreground hover:text-error shrink-0"
                           onClick={() => setDeleteConfirmId(ds.id)}
@@ -723,6 +748,13 @@ export default function DatasetsPage() {
       <DatasetDetailDrawer
         dataset={selectedDataset}
         onClose={() => setSelectedDataset(null)}
+      />
+
+      {/* Transform Panel */}
+      <TransformDatasetModal
+        dataset={transformDataset}
+        datasets={lineages.map((l) => l[0])}
+        onClose={() => setTransformTarget(null)}
       />
 
       {/* Delete Confirmation Modal */}

@@ -55,13 +55,14 @@ export interface Dataset {
   };
   domain?: string;
   semantic_dict?: SemanticDict;
+  columns?: DatasetColumn[];
 }
 
 export interface ActiveDatasetInfo {
   id: string;
   name: string;
   row_count?: number;
-  columns?: any[];
+  columns?: DatasetColumn[];
   skipped_rows?: number;
   sheet_name?: string;
   version?: number;
@@ -135,6 +136,28 @@ export interface DatasetVersionHistory {
   versions: DatasetVersionEntry[];
   latest_version: number | null;
   latest_id: string | null;
+}
+
+/** A column entry as profiled by the backend (save_dataset's `columns` list). */
+export interface DatasetColumn {
+  name: string;
+  type: string;
+  null_count: number;
+  mean?: number;
+  min?: number;
+  max?: number;
+}
+
+/** Response shape shared by all three POST /datasets/{id}/transform/* endpoints. */
+export interface TransformResult {
+  status: string;
+  dataset: {
+    id: string;
+    name: string;
+    version: number;
+    columns: DatasetColumn[];
+    latest_version?: { row_count?: number; file_size_bytes?: number };
+  };
 }
 
 export interface UploadJob {
