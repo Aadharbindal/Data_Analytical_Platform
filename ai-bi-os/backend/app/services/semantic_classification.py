@@ -111,7 +111,13 @@ def fallback_classify(df: pd.DataFrame, filename: str) -> tuple[str, dict]:
     
     for col in cols:
         col_lower = col.lower()
-        
+        # `\b` treats underscore as a word character, so it doesn't split
+        # "order_date"/"order_status"/"billing_address" into separate words —
+        # those regexes below would silently fail to match the most common
+        # snake_case naming convention. Normalizing underscores/hyphens to
+        # spaces first makes `\bdate\b` etc. match "order date" correctly.
+        col_normalized = col_lower.replace('_', ' ').replace('-', ' ')
+
         # Check datetime types
         is_dt = False
         try:
@@ -119,14 +125,14 @@ def fallback_classify(df: pd.DataFrame, filename: str) -> tuple[str, dict]:
                 is_dt = True
         except:
             pass
-            
-        if is_dt or re.search(r'\b(date|month|year|time|timestamp|day|hour|created_at|updated_at)\b', col_lower):
+
+        if is_dt or re.search(r'\b(date|month|year|time|timestamp|day|hour)\b', col_normalized) or 'created at' in col_normalized or 'updated at' in col_normalized:
             date_cols.append(col)
         elif re.search(r'\b(id|key|code|uuid|number|num|phone|zip|postal|ref|reference|utr)\b|_id$|id$|^id', col_lower):
             entity_ids.append(col)
-        elif re.search(r'\b(status|stage|state|phase|step|outcome)\b', col_lower):
+        elif re.search(r'\b(status|stage|state|phase|step|outcome)\b', col_normalized):
             status_fields.append(col)
-        elif re.search(r'\b(country|city|state|region|location|address|zip|postal|lat|long|latitude|longitude)\b', col_lower):
+        elif re.search(r'\b(country|city|state|region|location|address|zip|postal|lat|long|latitude|longitude)\b', col_normalized):
             geo_fields.append(col)
         else:
             is_numeric = False

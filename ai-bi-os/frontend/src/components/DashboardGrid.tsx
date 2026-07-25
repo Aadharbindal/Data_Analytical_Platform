@@ -8,6 +8,7 @@ import { InsightPanel } from "./dashboard/InsightPanel";
 import { MetricCard } from "./dashboard/MetricCard";
 import { DataTable } from "./dashboard/DataTable";
 import { MetricCardSkeleton } from "./ui/skeleton-loader";
+import { formatKpiValue as formatValue } from "@/lib/utils";
 import type { Insight, Dataset, ActiveDatasetInfo } from "@/lib/types";
 
 interface DashboardGridProps {
@@ -49,27 +50,6 @@ const itemVariants = {
     } 
   },
 };
-
-function formatValue(value: number, type?: string): string {
-  const isNegative = value < 0;
-  const absValue = Math.abs(value);
-  const sign = isNegative ? "-" : "";
-
-  if (type === "count" || type === "generic") {
-    if (absValue >= 1_000_000) return `${sign}${(absValue / 1_000_000).toFixed(1)}M`;
-    if (absValue >= 1_000) return `${sign}${(absValue / 1_000).toFixed(1)}K`;
-    return `${sign}${absValue}`;
-  }
-  if (type === "percent") {
-    return `${sign}${absValue.toFixed(1)}%`;
-  }
-  
-  // Indian Rupee formatting: Cr / L / K
-  if (absValue >= 1_00_00_000) return `${sign}₹${(absValue / 1_00_00_000).toFixed(2)}Cr`;
-  if (absValue >= 1_00_000) return `${sign}₹${(absValue / 1_00_000).toFixed(2)}L`;
-  if (absValue >= 1_000) return `${sign}₹${(absValue / 1_000).toFixed(1)}K`;
-  return `${sign}₹${absValue.toLocaleString('en-IN')}`;
-}
 
 function getStableHash(str: string): number {
   let hash = 0;

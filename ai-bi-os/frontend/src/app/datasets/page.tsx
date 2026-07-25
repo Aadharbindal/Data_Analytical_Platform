@@ -395,6 +395,7 @@ export default function DatasetsPage() {
   const [compareSelection, setCompareSelection] = useState<string[]>([]);
   const [expandedLineage, setExpandedLineage] = useState<string | null>(null);
   const [transformTarget, setTransformTarget] = useState<Dataset | null>(null);
+  const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
 
   const toggleCompareSelection = (id: string) => {
     setCompareSelection((prev) => {
@@ -559,15 +560,15 @@ export default function DatasetsPage() {
       ) : (
         <div className="rounded-[20px] border border-border bg-surface overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm table-fixed">
+            <table className="w-full min-w-[1080px] text-sm table-fixed">
               <colgroup>
                 <col />
-                <col className="w-[70px] md:w-[90px]" />
-                <col className="w-[100px] md:w-[130px]" />
-                <col className="w-[80px] md:w-[100px]" />
-                <col className="w-[80px] md:w-[100px]" />
-                <col className="w-[90px] md:w-[110px]" />
-                <col className="w-[120px] md:w-[180px]" />
+                <col className="w-[130px]" />
+                <col className="w-[130px]" />
+                <col className="w-[100px]" />
+                <col className="w-[110px]" />
+                <col className="w-[120px]" />
+                <col className="w-[220px]" />
               </colgroup>
             <thead className="bg-background/80 border-b border-border/50">
               <tr>
@@ -598,16 +599,38 @@ export default function DatasetsPage() {
                 const activeInLineage = lineage.find((v) => v.id === activeDataset?.id);
                 return (
                   <React.Fragment key={ds.name}>
-                  <tr
-                    className={`border-b border-border/40 transition-colors group ${isSelected ? "bg-primary/[0.04]" : "hover:bg-white/[0.02]"} ${isExpanded ? "bg-white/[0.015]" : ""}`}
+                  <motion.tr
+                    onMouseEnter={() => setHoveredRowId(ds.id)}
+                    onMouseLeave={() => setHoveredRowId(null)}
+                    animate={{
+                      backgroundColor: isSelected
+                        ? "rgba(59,130,246,0.04)"
+                        : hoveredRowId === ds.id
+                        ? "rgba(255,255,255,0.025)"
+                        : isExpanded
+                        ? "rgba(255,255,255,0.015)"
+                        : "rgba(255,255,255,0)",
+                    }}
+                    transition={{ duration: 0.2 }}
+                    className="relative border-b border-border/40 group"
                   >
-                    <td className="px-3 md:px-6 py-5 font-medium text-foreground truncate" title={ds.name}>
+                    <td className="relative px-3 md:px-6 py-5 font-medium text-foreground truncate" title={ds.name}>
+                      <motion.span
+                        aria-hidden
+                        initial={false}
+                        animate={{
+                          opacity: hoveredRowId === ds.id || isSelected ? 1 : 0,
+                          scaleY: hoveredRowId === ds.id || isSelected ? 1 : 0.3,
+                        }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-primary"
+                      />
                       <div className="flex items-center gap-3">
                         <button
                           type="button"
                           onClick={() => toggleCompareSelection(ds.id)}
                           title={isSelected ? "Selected for comparison — click to deselect" : "Select to compare with another dataset"}
-                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-[6px] border transition-all ${
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-[6px] border transition-all hover:scale-110 active:scale-95 ${
                             isSelected
                               ? "bg-primary border-primary shadow-[0_0_8px_rgba(59,130,246,0.6)]"
                               : "bg-[#0c1017] border-[#1a2235] hover:border-primary/50"
@@ -615,7 +638,7 @@ export default function DatasetsPage() {
                         >
                           {isSelected && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
                         </button>
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] bg-[#0c1017] border border-[#1a2235] shadow-sm">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] bg-[#0c1017] border border-[#1a2235] shadow-sm transition-transform group-hover:scale-105">
                           <File className="h-4 w-4 text-[#3b82f6]" strokeWidth={2} />
                         </div>
                         <span className="truncate">{ds.name}</span>
@@ -645,8 +668,8 @@ export default function DatasetsPage() {
                         <span className="pl-[22px]">v{ds.version || 1}</span>
                       )}
                     </td>
-                    <td className="px-3 md:px-6 py-5 truncate">
-                      <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium border ${sc.color}`}>
+                    <td className="px-3 md:px-6 py-5">
+                      <span className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-medium border ${sc.color}`}>
                         {sc.icon}{ds.status}
                       </span>
                     </td>
@@ -662,57 +685,78 @@ export default function DatasetsPage() {
                       {new Date(ds.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-3 md:px-6 py-5">
-                      <div className="flex items-center gap-2 justify-end">
-                        {activeInLineage && activeInLineage.id !== ds.id && (
-                          <Badge
-                            variant="outline"
-                            className="bg-primary/10 text-primary border-primary/20 text-[10px]"
-                            title={`Rolled back — v${activeInLineage.version ?? 1} is currently active`}
-                          >
-                            v{activeInLineage.version ?? 1} active
-                          </Badge>
-                        )}
-                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        {activeDataset?.id === ds.id ? (
-                          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 mr-1 md:mr-2">
-                            Active
-                          </Badge>
-                        ) : (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-xs mr-1 md:mr-2 text-muted-foreground hover:text-primary px-2"
-                            onClick={() => activateMutation.mutate(ds.id)}
-                            disabled={activateMutation.isPending}
-                          >
-                            <Power className="h-3 w-3 md:mr-1" />
-                            <span className="hidden md:inline">Set Active</span>
-                          </Button>
-                        )}
+                      <div className="flex items-center justify-end h-8">
+                        <AnimatePresence mode="wait" initial={false}>
+                          {hoveredRowId === ds.id ? (
+                            <motion.div
+                              key="actions"
+                              initial={{ opacity: 0, x: 6 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: 6 }}
+                              transition={{ duration: 0.15, ease: "easeOut" }}
+                              className="flex items-center gap-1"
+                            >
+                              {activeDataset?.id !== ds.id && (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 shrink-0 transition-all hover:scale-105 active:scale-95"
+                                  onClick={() => activateMutation.mutate(ds.id)}
+                                  disabled={activateMutation.isPending}
+                                  title="Set as active dataset"
+                                >
+                                  <Power className="h-4 w-4" />
+                                </Button>
+                              )}
 
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-xs mr-1 md:mr-2 text-muted-foreground hover:text-primary px-2"
-                          onClick={() => setTransformTarget(ds)}
-                          title="Rename columns, add a formula column, or merge with another dataset"
-                        >
-                          <Wand2 className="h-3 w-3 md:mr-1" />
-                          <span className="hidden md:inline">Transform</span>
-                        </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 shrink-0 transition-all hover:scale-105 active:scale-95"
+                                onClick={() => setTransformTarget(ds)}
+                                title="Rename columns, add a formula column, or merge with another dataset"
+                              >
+                                <Wand2 className="h-4 w-4" />
+                              </Button>
 
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-error shrink-0"
-                          onClick={() => setDeleteConfirmId(ds.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                        </div>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-error hover:bg-error/10 shrink-0 transition-all hover:scale-105 active:scale-95"
+                                onClick={() => setDeleteConfirmId(ds.id)}
+                                title="Delete dataset"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </motion.div>
+                          ) : (
+                            <motion.div
+                              key="status"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              transition={{ duration: 0.15 }}
+                            >
+                              {activeInLineage && activeInLineage.id !== ds.id ? (
+                                <Badge
+                                  variant="outline"
+                                  className="bg-primary/10 text-primary border-primary/20 text-[10px] shrink-0"
+                                  title={`Rolled back — v${activeInLineage.version ?? 1} is currently active`}
+                                >
+                                  v{activeInLineage.version ?? 1} active
+                                </Badge>
+                              ) : activeDataset?.id === ds.id ? (
+                                <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 shrink-0">
+                                  <CheckCircle className="h-3 w-3" />
+                                  Active
+                                </Badge>
+                              ) : null}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
                     </td>
-                  </tr>
+                  </motion.tr>
                   <AnimatePresence initial={false}>
                     {isExpanded && (
                       <tr>
