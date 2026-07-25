@@ -43,6 +43,7 @@ const NAV_GROUPS = [
     items: [
       { name: "Time Series", href: "/analytics/timeseries", icon: Clock },
       { name: "Trend Analysis", href: "/analytics/trend", icon: TrendingUp },
+      { name: "Forecast Center", href: "/analytics/forecast", icon: LineChart },
       { name: "Confidence Center", href: "/analytics/confidence", icon: CheckCircle },
     ]
   }
