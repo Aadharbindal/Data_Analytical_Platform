@@ -205,6 +205,59 @@ async def get_dataset(dataset_id: str, current_user: dict = Depends(get_current_
         "quality_score": r[10]
     }
 
+@router.get("/{dataset_id}/versions")
+async def list_dataset_versions(dataset_id: str, current_user: dict = Depends(get_current_user)):
+    """Every version sharing this dataset's lineage, newest first.
+
+    Lineage is keyed on (user_id, name) — deliberately the same key
+    save_dataset() uses to pick the next version number, so this returns
+    exactly the set those version numbers were counted against.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT name FROM datasets WHERE id=%s AND user_id=%s", (dataset_id, current_user["id"]))
+    row = cursor.fetchone()
+    if not row:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    name = row[0]
+
+    cursor.execute("SELECT dataset_id FROM active_dataset WHERE user_id=%s", (current_user["id"],))
+    active_row = cursor.fetchone()
+    active_id = active_row[0] if active_row else None
+
+    cursor.execute(
+        '''SELECT id, version, created_at, latest_version, columns, quality_score, status
+           FROM datasets WHERE name=%s AND user_id=%s ORDER BY version DESC, created_at DESC''',
+        (name, current_user["id"]),
+    )
+    rows = cursor.fetchall()
+    conn.close()
+
+    versions = []
+    for r in rows:
+        latest_version = (r[3] if isinstance(r[3], (dict, list)) else json.loads(r[3])) if r[3] else {}
+        columns = (r[4] if isinstance(r[4], (dict, list)) else json.loads(r[4])) if r[4] else []
+        versions.append({
+            "id": r[0],
+            "version": r[1] or 1,
+            "created_at": r[2],
+            "row_count": latest_version.get("row_count"),
+            "file_size_bytes": latest_version.get("file_size_bytes"),
+            "column_count": len(columns),
+            "quality_score": r[5],
+            "status": r[6],
+            "is_active": r[0] == active_id,
+        })
+
+    return {
+        "name": name,
+        "versions": versions,
+        "latest_version": versions[0]["version"] if versions else None,
+        "latest_id": versions[0]["id"] if versions else None,
+    }
+
 @router.get("/{dataset_id}/download")
 async def download_dataset(dataset_id: str, current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()

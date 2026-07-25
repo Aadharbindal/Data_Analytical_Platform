@@ -4,7 +4,7 @@ import React, { useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { datasetsApi, BASE_URL } from "@/lib/api";
-import type { Dataset } from "@/lib/types";
+import type { Dataset, DatasetVersionEntry } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,9 @@ import {
   File,
   ArrowRightLeft,
   Check,
+  ChevronRight,
+  History,
+  RotateCcw,
 } from "lucide-react";
 import { DatasetDetailDrawer } from "@/components/datasets/DatasetDetailDrawer";
 
@@ -244,12 +247,151 @@ function UploadZone({ onSuccess, onRedirect }: { onSuccess: () => void, onRedire
   );
 }
 
+/** Lineage history for one dataset, shown inline under its latest version.
+ *  Fetched from the server rather than derived from the already-loaded list so
+ *  lineage stays defined in one place — the same (user_id, name) key the
+ *  backend uses when assigning version numbers. */
+function VersionHistoryPanel({
+  datasetId,
+  onActivate,
+  activatePending,
+}: {
+  datasetId: string;
+  onActivate: (id: string) => void;
+  activatePending: boolean;
+}) {
+  const router = useRouter();
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ["dataset-versions", datasetId],
+    queryFn: () => datasetsApi.versions(datasetId),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-2 px-4 py-6 text-xs text-muted-foreground">
+        <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+        Loading version history…
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return (
+      <div className="flex items-center gap-3 px-4 py-6 text-xs text-muted-foreground">
+        <AlertCircle className="h-3.5 w-3.5 text-error" />
+        Could not load version history.
+        <button type="button" onClick={() => refetch()} className="text-primary hover:underline">
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  const latestId = data.latest_id;
+
+  return (
+    <div className="flex flex-col gap-1 px-4 py-3">
+      <div className="flex items-center gap-1.5 px-2 pb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+        <History className="h-3 w-3" />
+        Version history
+        <span className="normal-case font-normal tracking-normal text-muted-foreground/50">
+          · {data.versions.length} version{data.versions.length === 1 ? "" : "s"}
+        </span>
+      </div>
+
+      {data.versions.map((v: DatasetVersionEntry, i: number) => {
+        const isLatest = v.id === latestId;
+        return (
+          <motion.div
+            key={v.id}
+            initial={{ opacity: 0, x: -6 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.2, delay: i * 0.04 }}
+            className={`group/ver flex items-center gap-3 rounded-[10px] border px-3 py-2.5 transition-colors ${
+              v.is_active
+                ? "border-primary/30 bg-primary/[0.06]"
+                : "border-border/40 bg-background/40 hover:bg-white/[0.02]"
+            }`}
+          >
+            <span className="w-11 shrink-0 font-mono text-xs text-foreground">v{v.version}</span>
+
+            <span className="w-16 shrink-0 text-xs">
+              {isLatest ? (
+                <span className="rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                  Latest
+                </span>
+              ) : null}
+            </span>
+
+            <span className="tabular-metrics w-20 shrink-0 text-xs text-muted-foreground">
+              {v.row_count?.toLocaleString() ?? "–"} rows
+            </span>
+
+            <span className="tabular-metrics w-20 shrink-0 text-xs text-muted-foreground">
+              {v.file_size_bytes ? `${(v.file_size_bytes / 1024).toFixed(1)} KB` : "–"}
+            </span>
+
+            <span className="tabular-metrics w-16 shrink-0 text-xs text-muted-foreground">
+              {v.column_count} cols
+            </span>
+
+            <span className="w-24 shrink-0 text-xs text-muted-foreground">
+              {v.quality_score ? `${Math.round(v.quality_score)}% quality` : "–"}
+            </span>
+
+            <span className="flex-1 truncate text-xs text-muted-foreground/70">
+              {new Date(v.created_at).toLocaleString()}
+            </span>
+
+            <div className="flex shrink-0 items-center gap-1">
+              {!isLatest && latestId && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 text-[11px] text-muted-foreground hover:text-primary"
+                  onClick={() => router.push(`/datasets/compare?a=${v.id}&b=${latestId}`)}
+                  title={`Compare v${v.version} against the latest version`}
+                >
+                  <ArrowRightLeft className="mr-1 h-3 w-3" />
+                  Compare
+                </Button>
+              )}
+
+              {v.is_active ? (
+                <Badge
+                  variant="outline"
+                  className="border-primary/20 bg-primary/10 text-[10px] text-primary"
+                >
+                  Active
+                </Badge>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 text-[11px] text-muted-foreground hover:text-primary"
+                  onClick={() => onActivate(v.id)}
+                  disabled={activatePending}
+                  title={isLatest ? "Make this version active" : `Roll back to v${v.version}`}
+                >
+                  <RotateCcw className="mr-1 h-3 w-3" />
+                  {isLatest ? "Set Active" : "Roll back"}
+                </Button>
+              )}
+            </div>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function DatasetsPage() {
   const qc = useQueryClient();
   const router = useRouter();
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [compareSelection, setCompareSelection] = useState<string[]>([]);
+  const [expandedLineage, setExpandedLineage] = useState<string | null>(null);
 
   const toggleCompareSelection = (id: string) => {
     setCompareSelection((prev) => {
@@ -272,6 +414,22 @@ export default function DatasetsPage() {
     queryKey: ["activeDataset"],
     queryFn: () => datasetsApi.getActive(),
   });
+
+  // Re-uploading a file under the same name creates a new version rather than a
+  // separate dataset, so collapse each name into one row headed by its newest
+  // version — matching the (user_id, name) lineage the backend versions against.
+  const lineages = React.useMemo(() => {
+    if (!datasets) return [];
+    const byName = new Map<string, Dataset[]>();
+    for (const ds of datasets) {
+      const group = byName.get(ds.name);
+      if (group) group.push(ds);
+      else byName.set(ds.name, [ds]);
+    }
+    return Array.from(byName.values()).map((group) =>
+      [...group].sort((a, b) => (b.version ?? 1) - (a.version ?? 1))
+    );
+  }, [datasets]);
 
   const activateMutation = useMutation({
     mutationFn: (id: string) => datasetsApi.activate(id),
@@ -343,7 +501,12 @@ export default function DatasetsPage() {
           )}
           <Badge variant="outline" className="flex items-center gap-2 rounded-full border-[#1a2235] bg-[#0c1017] px-3 py-1 text-muted-foreground">
             <div className="h-1.5 w-1.5 rounded-full bg-[#3b82f6] shadow-[0_0_8px_rgba(59,130,246,0.9)]"></div>
-            <span>{datasets?.length ?? 0} datasets</span>
+            <span>
+              {lineages.length} dataset{lineages.length === 1 ? "" : "s"}
+              {datasets && datasets.length > lineages.length && (
+                <span className="text-muted-foreground/50"> · {datasets.length} versions</span>
+              )}
+            </span>
           </Badge>
         </div>
       </motion.div>
@@ -410,13 +573,19 @@ export default function DatasetsPage() {
               </tr>
             </thead>
             <tbody>
-              {datasets.map((ds) => {
+              {lineages.map((lineage) => {
+                const ds = lineage[0];
+                const olderCount = lineage.length - 1;
+                const isExpanded = expandedLineage === ds.name;
                 const sc = statusConfig[ds.status] ?? statusConfig.archived;
                 const isSelected = compareSelection.includes(ds.id);
+                // After a roll back the active version is an older one, so look
+                // across the whole lineage rather than just the newest row.
+                const activeInLineage = lineage.find((v) => v.id === activeDataset?.id);
                 return (
+                  <React.Fragment key={ds.name}>
                   <tr
-                    key={ds.id}
-                    className={`border-b border-border/40 transition-colors group ${isSelected ? "bg-primary/[0.04]" : "hover:bg-white/[0.02]"}`}
+                    className={`border-b border-border/40 transition-colors group ${isSelected ? "bg-primary/[0.04]" : "hover:bg-white/[0.02]"} ${isExpanded ? "bg-white/[0.015]" : ""}`}
                   >
                     <td className="px-3 md:px-6 py-5 font-medium text-foreground truncate" title={ds.name}>
                       <div className="flex items-center gap-3">
@@ -439,7 +608,28 @@ export default function DatasetsPage() {
                       </div>
                     </td>
                     <td className="px-3 md:px-6 py-5 text-muted-foreground text-sm font-mono truncate">
-                      v{ds.version || 1}
+                      {olderCount > 0 ? (
+                        <button
+                          type="button"
+                          onClick={() => setExpandedLineage(isExpanded ? null : ds.name)}
+                          title={isExpanded ? "Hide version history" : `Show all ${lineage.length} versions`}
+                          className="-ml-1.5 flex items-center gap-1 rounded-md px-1.5 py-1 transition-colors hover:bg-white/[0.04] hover:text-primary"
+                        >
+                          <motion.span
+                            animate={{ rotate: isExpanded ? 90 : 0 }}
+                            transition={{ duration: 0.18 }}
+                            className="flex"
+                          >
+                            <ChevronRight className="h-3.5 w-3.5" />
+                          </motion.span>
+                          v{ds.version || 1}
+                          <span className="ml-0.5 rounded-full bg-primary/10 px-1.5 text-[10px] text-primary">
+                            +{olderCount}
+                          </span>
+                        </button>
+                      ) : (
+                        <span className="pl-[22px]">v{ds.version || 1}</span>
+                      )}
                     </td>
                     <td className="px-3 md:px-6 py-5 truncate">
                       <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium border ${sc.color}`}>
@@ -458,7 +648,17 @@ export default function DatasetsPage() {
                       {new Date(ds.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-3 md:px-6 py-5">
-                      <div className="flex items-center gap-2 justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center gap-2 justify-end">
+                        {activeInLineage && activeInLineage.id !== ds.id && (
+                          <Badge
+                            variant="outline"
+                            className="bg-primary/10 text-primary border-primary/20 text-[10px]"
+                            title={`Rolled back — v${activeInLineage.version ?? 1} is currently active`}
+                          >
+                            v{activeInLineage.version ?? 1} active
+                          </Badge>
+                        )}
+                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         {activeDataset?.id === ds.id ? (
                           <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 mr-1 md:mr-2">
                             Active
@@ -484,9 +684,32 @@ export default function DatasetsPage() {
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
+                        </div>
                       </div>
                     </td>
                   </tr>
+                  <AnimatePresence initial={false}>
+                    {isExpanded && (
+                      <tr>
+                        <td colSpan={7} className="border-b border-border/40 bg-background/30 p-0">
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.25, ease: "easeOut" }}
+                            className="overflow-hidden"
+                          >
+                            <VersionHistoryPanel
+                              datasetId={ds.id}
+                              onActivate={(id) => activateMutation.mutate(id)}
+                              activatePending={activateMutation.isPending}
+                            />
+                          </motion.div>
+                        </td>
+                      </tr>
+                    )}
+                  </AnimatePresence>
+                  </React.Fragment>
                 );
               })}
             </tbody>

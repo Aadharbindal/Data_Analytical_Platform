@@ -187,6 +187,8 @@ export const datasetsApi = {
     api.get<import("./types").UploadJob>(`/api/v1/datasets/upload/status/${jobId}`),
   delete: (id: string) => api.delete(`/api/v1/datasets/${id}`),
   getActive: () => api.get<import("./types").ActiveDatasetInfo | null>("/api/v1/datasets/active"),
+  versions: (id: string) =>
+    api.get<import("./types").DatasetVersionHistory>(`/api/v1/datasets/${id}/versions`),
   activate: (id: string) => api.post(`/api/v1/datasets/${id}/activate`, {}),
   download: async (id: string) => {
     const res = await fetch(`${BASE_URL}/api/v1/datasets/${id}/download`, { credentials: 'include' });

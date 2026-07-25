@@ -87,6 +87,26 @@ export interface DatasetVersion {
   created_at: string;
 }
 
+/** One entry in a dataset's version lineage (GET /datasets/{id}/versions). */
+export interface DatasetVersionEntry {
+  id: string;
+  version: number;
+  created_at: string;
+  row_count?: number | null;
+  file_size_bytes?: number | null;
+  column_count: number;
+  quality_score?: number | null;
+  status: string;
+  is_active: boolean;
+}
+
+export interface DatasetVersionHistory {
+  name: string;
+  versions: DatasetVersionEntry[];
+  latest_version: number | null;
+  latest_id: string | null;
+}
+
 export interface UploadJob {
   id: string;
   status: "pending" | "processing" | "completed" | "failed";
