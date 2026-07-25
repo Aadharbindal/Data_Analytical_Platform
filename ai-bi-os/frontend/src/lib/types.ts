@@ -87,6 +87,36 @@ export interface DatasetVersion {
   created_at: string;
 }
 
+/** GET /analytics/forecast — projection for one metric at a chosen granularity. */
+export interface ForecastResult {
+  available: boolean;
+  reason?: string;
+  method?: string;
+  freq?: "D" | "W" | "M" | "Q";
+  freq_label?: string;
+  periods?: number;
+  historical?: { date: string; value: number }[];
+  forecast?: { date: string; forecast: number; lower: number; upper: number }[];
+  accuracy?: {
+    mape: number | null;
+    rmse: number;
+    holdout_periods: number;
+    method: string;
+  } | null;
+  summary?: {
+    last_actual: number;
+    next_value: number;
+    next_label: string;
+    /** True when the first projected period is the still-running one. */
+    next_is_in_progress: boolean;
+    change_pct: number | null;
+    horizon_total: number;
+    history_periods: number;
+  };
+  /** Label of a trailing part-period excluded from a summed series, if any. */
+  partial_period_dropped?: string | null;
+}
+
 /** One entry in a dataset's version lineage (GET /datasets/{id}/versions). */
 export interface DatasetVersionEntry {
   id: string;

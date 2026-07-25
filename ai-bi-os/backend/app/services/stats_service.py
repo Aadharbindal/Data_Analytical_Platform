@@ -682,29 +682,43 @@ def compute_metric_importance(variance_share: float = None, avg_corr: float = No
     return int(min(100, max(10, round(score))))
 
 
-def _fit_forecast_model(y: np.ndarray, periods: int):
+# One full seasonal cycle per resampling frequency: a week of days, a year
+# of weeks/months/quarters. Holt-Winters needs two of these to fit at all.
+_SEASONAL_PERIODS = {"D": 7, "W": 52, "M": 12, "Q": 4}
+
+_SEASON_LABEL = {
+    "D": "weekly seasonality",
+    "W": "yearly seasonality",
+    "M": "yearly seasonality",
+    "Q": "yearly seasonality",
+}
+
+
+def _fit_forecast_model(y: np.ndarray, periods: int, freq: str = "M"):
     """
     Fits the best model the series' length supports and returns
     (forecast_array, in_sample_residuals, method_label, k_params).
 
     Tries progressively simpler models and NEVER raises: seasonal
-    Holt-Winters needs 2 full yearly cycles, plain Holt trend needs a
-    handful of points, and a short series falls back to OLS linear trend
-    (the only method the original implementation had).
+    Holt-Winters needs 2 full cycles at the series' own frequency, plain
+    Holt trend needs a handful of points, and a short series falls back to
+    OLS linear trend (the only method the original implementation had).
     """
     n = len(y)
+    seasonal_periods = _SEASONAL_PERIODS.get(freq, 12)
 
-    if n >= 24:
+    if n >= 2 * seasonal_periods:
         try:
             from statsmodels.tsa.holtwinters import ExponentialSmoothing
             fit = ExponentialSmoothing(
-                y, trend='add', seasonal='add', seasonal_periods=12,
+                y, trend='add', seasonal='add', seasonal_periods=seasonal_periods,
                 initialization_method='estimated'
             ).fit()
             fc = np.asarray(fit.forecast(periods), dtype=float)
             resid = np.asarray(fit.resid, dtype=float)
             if np.all(np.isfinite(fc)) and np.all(np.isfinite(resid)) and len(resid) > 0:
-                return fc, resid, "Holt-Winters (trend + yearly seasonality)", 14
+                label = "Holt-Winters (trend + %s)" % _SEASON_LABEL.get(freq, "seasonality")
+                return fc, resid, label, seasonal_periods + 2
         except Exception:
             pass
 
@@ -731,7 +745,7 @@ def _fit_forecast_model(y: np.ndarray, periods: int):
     return fc, resid, "Linear trend projection (OLS)", 2
 
 
-def _backtest_forecast_accuracy(y: np.ndarray) -> Optional[dict]:
+def _backtest_forecast_accuracy(y: np.ndarray, freq: str = "M") -> Optional[dict]:
     """
     Holds out the last few points, refits on the rest, and scores the
     holdout predictions with MAPE/RMSE. Returns None when there isn't
@@ -744,7 +758,7 @@ def _backtest_forecast_accuracy(y: np.ndarray) -> Optional[dict]:
 
     train, test = y[:-holdout], y[-holdout:]
     try:
-        fc, _, method_label, _ = _fit_forecast_model(train, holdout)
+        fc, _, method_label, _ = _fit_forecast_model(train, holdout, freq)
     except Exception:
         return None
 
@@ -765,7 +779,45 @@ def _backtest_forecast_accuracy(y: np.ndarray) -> Optional[dict]:
     }
 
 
-def forecast_series(df: pd.DataFrame, metric_col: str, periods: int = 3, agg: str = "sum") -> dict:
+_FREQ_LABEL = {"D": "day", "W": "week", "M": "month", "Q": "quarter"}
+
+
+def _format_period(period, freq: str) -> str:
+    """Human label for a pandas Period at the given resampling frequency."""
+    if freq == "Q":
+        return "Q%d %d" % (period.quarter, period.year)
+    if freq == "D":
+        return period.strftime('%d %b %Y')
+    if freq == "W":
+        return "w/c %s" % period.start_time.strftime('%d %b %Y')
+    return period.strftime('%b %Y')
+
+
+def _auto_freq(dates: pd.Series) -> str:
+    """Pick the finest frequency the history can actually support.
+
+    Forecasting needs at least a handful of populated buckets, so step down
+    from daily only when the span is too short to give monthly enough of them.
+    """
+    span_days = (dates.max() - dates.min()).days
+    if span_days <= 0:
+        return "M"
+    if span_days < 60:
+        return "D"
+    if span_days < 180:
+        return "W"
+    if span_days < 730:
+        return "M"
+    return "Q"
+
+
+def forecast_series(
+    df: pd.DataFrame,
+    metric_col: str,
+    periods: int = 3,
+    agg: str = "sum",
+    freq: str = "M",
+) -> dict:
     if df.empty:
         return {"available": False, "reason": "Empty dataset"}
 
@@ -783,19 +835,43 @@ def forecast_series(df: pd.DataFrame, metric_col: str, periods: int = 3, agg: st
     df_temp[date_col] = pd.to_datetime(df_temp[date_col], errors='coerce')
     df_temp = df_temp.dropna(subset=[date_col])
 
+    if df_temp.empty:
+        return {"available": False, "reason": "No parseable dates in the date column"}
+
+    freq = str(freq).upper()
+    if freq == "AUTO":
+        freq = _auto_freq(df_temp[date_col])
+    if freq not in _SEASONAL_PERIODS:
+        freq = "M"
+
     agg_fn = "mean" if str(agg).lower() == "mean" else "sum"
-    monthly = df_temp.groupby(df_temp[date_col].dt.to_period('M'))[metric_col].agg(agg_fn).reset_index()
-    monthly = monthly.sort_values(date_col)
+    grouped = df_temp.groupby(df_temp[date_col].dt.to_period(freq))[metric_col].agg(agg_fn).reset_index()
+    grouped = grouped.sort_values(date_col)
 
-    if len(monthly) < 4:
-        return {"available": False, "reason": "Not enough history (need at least 4 periods)"}
+    # A dataset that ends mid-period leaves a final bucket holding only part of
+    # its days. Summed, that reads as a collapse in the metric — it drags the
+    # trend fit down, poisons the backtest, and makes the headline change wildly
+    # wrong. Averages stay valid over a short bucket, so only sums are trimmed.
+    partial_period_dropped = None
+    if agg_fn == "sum" and len(grouped) > 4:
+        last_period = grouped[date_col].iloc[-1]
+        if last_period.end_time.normalize() > df_temp[date_col].max().normalize():
+            partial_period_dropped = _format_period(last_period, freq)
+            grouped = grouped.iloc[:-1]
 
-    y = monthly[metric_col].values.astype(float)
+    if len(grouped) < 4:
+        return {
+            "available": False,
+            "reason": "Not enough history at %sly granularity (%d period%s, need at least 4)"
+                      % (_FREQ_LABEL[freq], len(grouped), "" if len(grouped) == 1 else "s"),
+        }
+
+    y = grouped[metric_col].values.astype(float)
     n = len(y)
-    last_date = monthly[date_col].iloc[-1]
+    last_date = grouped[date_col].iloc[-1]
 
-    accuracy = _backtest_forecast_accuracy(y)
-    fc_values, resid, method_label, k_params = _fit_forecast_model(y, periods)
+    accuracy = _backtest_forecast_accuracy(y, freq)
+    fc_values, resid, method_label, k_params = _fit_forecast_model(y, periods, freq)
 
     sse = float(np.sum(resid ** 2))
     df_err = max(1, n - k_params)
@@ -807,26 +883,51 @@ def forecast_series(df: pd.DataFrame, metric_col: str, periods: int = 3, agg: st
         fy = float(fc_values[i - 1])
         # Widen the interval the further out the forecast reaches
         moe = t_val * std_err * np.sqrt(1 + i / n) if std_err > 0 else 0.0
-        next_month = last_date + i
+        next_period = last_date + i
 
         forecast_values.append({
-            "date": next_month.strftime('%b %Y'),
+            "date": _format_period(next_period, freq),
             "forecast": fy,
             "lower": float(max(0, fy - moe)) if fy >= 0 else float(fy - moe),
             "upper": float(fy + moe)
         })
 
     historical_values = []
-    for _, row in monthly.iterrows():
+    for _, row in grouped.iterrows():
         historical_values.append({
-            "date": row[date_col].strftime('%b %Y'),
+            "date": _format_period(row[date_col], freq),
             "value": float(row[metric_col])
         })
+
+    # Headline numbers the UI would otherwise have to re-derive from the series.
+    last_actual = float(y[-1])
+    next_value = float(fc_values[0])
+    # Trimming a part-period above means the first projected period is that same
+    # still-running one, so it is a completion of the current period rather than
+    # a step into the next. The UI labels the two cases differently.
+    next_is_in_progress = (
+        partial_period_dropped is not None
+        and forecast_values[0]["date"] == partial_period_dropped
+    )
+    summary = {
+        "last_actual": last_actual,
+        "next_value": next_value,
+        "next_label": forecast_values[0]["date"],
+        "next_is_in_progress": next_is_in_progress,
+        "change_pct": round(((next_value - last_actual) / abs(last_actual)) * 100, 2) if last_actual else None,
+        "horizon_total": float(np.sum(fc_values)),
+        "history_periods": n,
+    }
 
     return {
         "available": True,
         "method": method_label,
+        "freq": freq,
+        "freq_label": _FREQ_LABEL[freq],
+        "periods": periods,
         "historical": historical_values,
         "forecast": forecast_values,
-        "accuracy": accuracy
+        "accuracy": accuracy,
+        "summary": summary,
+        "partial_period_dropped": partial_period_dropped,
     }

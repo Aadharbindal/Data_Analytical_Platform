@@ -458,7 +458,21 @@ async def get_kpi_center(current_user: dict = Depends(get_current_user)):
     return {"available_kpis": kpi_data, "omitted_kpis": [], "pipeline_health": pipeline_health}
 
 @router.get("/forecast")
-async def get_forecast(metric: str = None, current_user: dict = Depends(get_current_user)):
+async def get_forecast(
+    metric: str = None,
+    periods: int = 3,
+    freq: str = "M",
+    agg: str = "sum",
+    current_user: dict = Depends(get_current_user),
+):
+    # Clamp rather than reject: the horizon comes straight off a UI control,
+    # and a silently sane forecast beats a 422 in the chart.
+    periods = max(1, min(36, int(periods)))
+    freq = str(freq).upper()
+    if freq not in ("D", "W", "M", "Q", "AUTO"):
+        freq = "M"
+    agg = "mean" if str(agg).lower() == "mean" else "sum"
+
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         raise HTTPException(status_code=400, detail="No active dataset")
@@ -487,8 +501,7 @@ async def get_forecast(metric: str = None, current_user: dict = Depends(get_curr
                 else:
                     return {"available": False, "reason": "No numeric metric column found"}
             
-    res = forecast_series(df, metric)
-    return res
+    return forecast_series(df, metric, periods=periods, agg=agg, freq=freq)
 
 @router.get("/export/{page}")
 async def export_csv(page: str, current_user: dict = Depends(get_current_user)):

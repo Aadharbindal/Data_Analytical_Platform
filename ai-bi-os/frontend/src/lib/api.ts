@@ -289,7 +289,15 @@ export const analyticsApi = {
     recommendations: { verified: number; unverified: number };
     audit_trail: any[];
   }>("/api/v1/analytics/confidence"),
-  forecast: (metric?: string) => api.get<any>(`/api/v1/analytics/forecast${metric ? `?metric=${metric}` : ''}`),
+  forecast: (metric?: string, opts?: { periods?: number; freq?: string; agg?: string }) => {
+    const qs = new URLSearchParams();
+    if (metric) qs.set("metric", metric);
+    if (opts?.periods) qs.set("periods", String(opts.periods));
+    if (opts?.freq) qs.set("freq", opts.freq);
+    if (opts?.agg) qs.set("agg", opts.agg);
+    const q = qs.toString();
+    return api.get<import("./types").ForecastResult>(`/api/v1/analytics/forecast${q ? `?${q}` : ""}`);
+  },
   regressionModels: () => api.get<any[]>("/api/v1/analytics/regression/models"),
   regressionQualitySummary: () => api.get<any>("/api/v1/analytics/regression/quality-summary"),
   classificationModels: () => api.get<any[]>("/api/v1/analytics/classification/models"),
