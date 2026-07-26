@@ -540,7 +540,7 @@ export const ChatUI: React.FC = () => {
           half-cut, since it was being clipped and faded at once. */}
       <div
         className={`min-w-0 overflow-hidden shrink-0 transition-[width] duration-300 ease-in-out ${
-          sidebarOpen ? "w-[260px]" : "w-0"
+          sidebarOpen ? "w-[280px]" : "w-0"
         }`}
       >
         <ChatSessionSidebar

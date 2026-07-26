@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { MessageSquarePlus, Pin, PinOff, Trash2, MessagesSquare } from "lucide-react";
+import { MessageSquarePlus, Pin, PinOff, Trash2, MessagesSquare, MessageSquare, Edit } from "lucide-react";
 import { chatApi } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import type { ChatSession } from "@/lib/types";
@@ -65,22 +65,26 @@ function SessionRow({ session, active, onSelect }: SessionRowProps) {
       }}
       onClick={onSelect}
       className={cn(
-        "group relative flex cursor-pointer items-center gap-2.5 rounded-2xl border px-3 py-2.5 transition-colors",
+        "group relative flex cursor-pointer items-center gap-3 rounded-[20px] border px-3 py-3 transition-all duration-300",
         active
-          ? "border-primary/30 bg-primary/[0.08]"
-          : "border-transparent hover:border-border/50 hover:bg-white/[0.03]"
+          ? "border-[#2684FF]/40 bg-[#2684FF]/[0.03] shadow-[0_0_20px_rgba(38,132,255,0.06)]"
+          : "border-transparent hover:border-white/[0.08] hover:bg-white/[0.02]"
       )}
     >
-      <MessagesSquare
-        className={cn("h-3.5 w-3.5 shrink-0", active ? "text-primary" : "text-muted-foreground/50")}
-      />
+      <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-full border bg-[#0a0d14] transition-colors", active ? "border-[#2684FF]/30 shadow-[0_0_10px_rgba(38,132,255,0.15)]" : "border-white/10 group-hover:border-white/20")}>
+        <MessagesSquare
+          className={cn("h-[18px] w-[18px]", active ? "text-[#2684FF]" : "text-muted-foreground/60 group-hover:text-muted-foreground/80")}
+        />
+      </div>
       <div className="min-w-0 flex-1">
-        <p className={cn("truncate text-[13px] font-medium", active ? "text-foreground" : "text-foreground/80")}>
+        <p className={cn("truncate text-[15px] font-medium leading-none mb-1.5 transition-colors", active ? "text-white" : "text-white/70 group-hover:text-white/90")}>
           {session.title || "New chat"}
         </p>
-        <p className="truncate text-[11px] text-muted-foreground/60">
-          {relativeTime(session.updated_at)} · {session.message_count} msg{session.message_count === 1 ? "" : "s"}
-        </p>
+        <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground/70 font-medium tracking-wide whitespace-nowrap overflow-hidden">
+          <span className="truncate">{relativeTime(session.updated_at)}</span>
+          <span className="text-[#2684FF] text-[6px] opacity-80 shrink-0">●</span>
+          <span className="truncate">{session.message_count} msgs</span>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -90,36 +94,38 @@ function SessionRow({ session, active, onSelect }: SessionRowProps) {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 6 }}
             transition={{ duration: 0.12 }}
-            className="flex shrink-0 items-center gap-1"
+            className="flex shrink-0 items-center gap-1.5"
           >
             <motion.button
               type="button"
               onClick={togglePin}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               title={session.is_pinned ? "Unpin" : "Pin conversation"}
               className={cn(
-                "flex h-6 w-6 items-center justify-center rounded-lg transition-colors",
+                "flex h-[34px] w-[34px] items-center justify-center rounded-xl border transition-all",
                 session.is_pinned
-                  ? "text-primary"
-                  : "text-muted-foreground/50 opacity-0 group-hover:opacity-100 hover:text-primary"
+                  ? "border-[#2684FF]/30 bg-[#2684FF]/10 text-[#2684FF]"
+                  : "border-white/10 bg-white/[0.02] text-muted-foreground/60 hover:text-white hover:bg-white/[0.06] opacity-0 group-hover:opacity-100"
               )}
             >
-              {session.is_pinned ? <PinOff className="h-3.5 w-3.5" /> : <Pin className="h-3.5 w-3.5" />}
+              {session.is_pinned ? <PinOff className="h-4 w-4" /> : <Pin className="h-4 w-4" />}
             </motion.button>
             {hovered && (
               <motion.button
                 type="button"
                 onClick={handleDelete}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 title={confirmingDelete ? "Click again to confirm" : "Delete conversation"}
                 className={cn(
-                  "flex h-6 w-6 items-center justify-center rounded-lg transition-colors",
-                  confirmingDelete ? "bg-error/15 text-error" : "text-muted-foreground/50 hover:text-error"
+                  "flex h-[34px] w-[34px] items-center justify-center rounded-xl border transition-all",
+                  confirmingDelete 
+                    ? "border-red-500/50 bg-red-500/10 text-red-500" 
+                    : "border-red-500/20 bg-red-500/[0.02] text-red-400/70 hover:border-red-500/40 hover:text-red-400 hover:bg-red-500/[0.05]"
                 )}
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <Trash2 className="h-4 w-4" />
               </motion.button>
             )}
           </motion.div>
@@ -146,7 +152,7 @@ export function ChatSessionSidebar({ activeSessionId, onSelect, onNewChat }: Cha
   const recent = (sessions ?? []).filter((s) => !s.is_pinned);
 
   return (
-    <div className="flex h-full w-[260px] shrink-0 flex-col border-r border-border/40 bg-background/40 backdrop-blur-sm">
+    <div className="flex h-full w-[280px] shrink-0 flex-col border-r border-border/40 bg-background/40 backdrop-blur-sm">
       <div className="p-3">
         <motion.button
           type="button"
@@ -171,9 +177,53 @@ export function ChatSessionSidebar({ activeSessionId, onSelect, onNewChat }: Cha
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mt-4 rounded-2xl border border-dashed border-border/40 bg-white/[0.02] px-4 py-8 text-center text-[13px] leading-relaxed text-muted-foreground/70"
+            className="mt-4 flex flex-col items-center justify-center rounded-[20px] border border-white/[0.04] bg-[#0c0e14]/40 p-6 shadow-[inset_0_1px_1px_rgba(255,255,255,0.02)]"
           >
-            No conversations yet — start chatting and it&apos;ll show up here.
+            {/* Glowing Icon Section */}
+            <div className="relative mb-5 mt-2 flex items-center justify-center">
+              {/* Spotlight base */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-8 w-16 bg-[#2684FF]/30 blur-[20px]" />
+              <div className="absolute top-full left-1/2 -translate-x-1/2 -translate-y-2 h-1.5 w-10 bg-[#2684FF]/60 blur-[4px]" />
+              
+              {/* Sparkles */}
+              <motion.div animate={{ opacity: [0.2, 1, 0.2] }} transition={{ duration: 3, repeat: Infinity, delay: 0.2 }} className="absolute -left-5 -top-1">
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="#2684FF" className="opacity-80"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+              </motion.div>
+              <motion.div animate={{ opacity: [0.2, 1, 0.2] }} transition={{ duration: 4, repeat: Infinity, delay: 1 }} className="absolute -right-6 top-3">
+                <svg width="6" height="6" viewBox="0 0 24 24" fill="#2684FF" className="opacity-60"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+              </motion.div>
+              <motion.div animate={{ opacity: [0.1, 0.8, 0.1] }} transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }} className="absolute -left-2 top-7">
+                <svg width="4" height="4" viewBox="0 0 24 24" fill="#2684FF" className="opacity-70"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+              </motion.div>
+              <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 3.5, repeat: Infinity, delay: 1.5 }} className="absolute right-0 -top-4">
+                <svg width="5" height="5" viewBox="0 0 24 24" fill="#2684FF" className="opacity-90"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>
+              </motion.div>
+
+              {/* Main Icon with 3 dots */}
+              <div className="relative">
+                <MessageSquare className="h-11 w-11 text-[#2684FF] drop-shadow-[0_0_12px_rgba(38,132,255,0.7)]" strokeWidth={1.5} />
+                <div className="absolute left-1/2 top-[45%] flex -translate-x-1/2 -translate-y-1/2 gap-1">
+                  <div className="h-1.5 w-1.5 rounded-full bg-[#2684FF] shadow-[0_0_8px_rgba(38,132,255,0.9)]" />
+                  <div className="h-1.5 w-1.5 rounded-full bg-[#2684FF] shadow-[0_0_8px_rgba(38,132,255,0.9)]" />
+                  <div className="h-1.5 w-1.5 rounded-full bg-[#2684FF] shadow-[0_0_8px_rgba(38,132,255,0.9)]" />
+                </div>
+              </div>
+            </div>
+
+            <h3 className="mb-1.5 text-[14px] font-semibold text-white/90 tracking-wide">
+              No conversations yet
+            </h3>
+            <p className="mb-5 text-[12px] leading-[1.6] text-muted-foreground/60 text-center px-1">
+              Start a new chat and your conversations will show up here.
+            </p>
+
+            <button
+              onClick={onNewChat}
+              className="group flex items-center gap-2 rounded-xl border border-[#2684FF]/25 bg-[#2684FF]/[0.05] px-4 py-2 text-[12px] font-medium text-[#2684FF] transition-all hover:border-[#2684FF]/50 hover:bg-[#2684FF]/[0.1] active:scale-95 shadow-[0_0_15px_rgba(38,132,255,0.05)]"
+            >
+              <Edit className="h-3.5 w-3.5" />
+              Start chatting
+            </button>
           </motion.div>
         ) : (
           <>
