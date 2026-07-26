@@ -478,6 +478,57 @@ def init_db():
         )
     ''')
 
+    # Persisted evaluation state — previously status/current_value were
+    # computed fresh on every GET and thrown away, so a rule had no memory of
+    # when it last fired. These let a trigger survive a page reload and back
+    # a real history/notification trail instead of a transient badge.
+    try:
+        cursor.execute("ALTER TABLE rules ADD COLUMN IF NOT EXISTS last_status TEXT")
+        cursor.execute("ALTER TABLE rules ADD COLUMN IF NOT EXISTS last_value REAL")
+        cursor.execute("ALTER TABLE rules ADD COLUMN IF NOT EXISTS last_evaluated_at TEXT")
+        cursor.execute("ALTER TABLE rules ADD COLUMN IF NOT EXISTS last_triggered_at TEXT")
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        print(f"Warning: could not add rules evaluation-state columns: {e}")
+
+    # Audit trail: one row per rule transitioning INTO a triggered state
+    # (not one row per evaluation — that would be one row every page load).
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS rule_events (
+            id TEXT PRIMARY KEY,
+            rule_id TEXT,
+            user_id TEXT,
+            dataset_id TEXT,
+            status TEXT,
+            current_value REAL,
+            threshold REAL,
+            condition TEXT,
+            message TEXT,
+            created_at TEXT,
+            FOREIGN KEY(rule_id) REFERENCES rules(id)
+        )
+    ''')
+
+    # In-app delivery channel for rule triggers (and anything else that wants
+    # to notify a user later) — no SMTP/webhook provider is configured in
+    # this deployment, so the bell icon in the header is the real delivery
+    # surface rather than email.
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS notifications (
+            id TEXT PRIMARY KEY,
+            user_id TEXT,
+            type TEXT,
+            title TEXT,
+            message TEXT,
+            rule_id TEXT,
+            is_read INTEGER DEFAULT 0,
+            created_at TEXT,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+    ''')
+    conn.commit()
+
     # Backs real background upload processing: the upload endpoint now returns
     # immediately and does the actual parse/profile/classify work on a thread,
     # writing progress here so the frontend's existing SSE poll (previously

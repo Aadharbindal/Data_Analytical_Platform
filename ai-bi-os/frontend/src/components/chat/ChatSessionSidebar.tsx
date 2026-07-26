@@ -10,8 +10,17 @@ import type { ChatSession } from "@/lib/types";
 
 const scrollbarHideClass = "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden";
 
+// Backend timestamps are naive UTC strings (datetime.utcnow().isoformat()),
+// with no trailing "Z" or offset. `new Date()` treats a date-time string
+// with no timezone as *local* time, not UTC — without this normalization,
+// every relative time is off by however far the browser's timezone is from
+// UTC (e.g. "5h ago" for something that just happened, in UTC+5:30).
+function parseUtc(iso: string): Date {
+  return new Date(/[Zz]|[+-]\d{2}:?\d{2}$/.test(iso) ? iso : `${iso}Z`);
+}
+
 function relativeTime(iso: string): string {
-  const diffMs = Date.now() - new Date(iso).getTime();
+  const diffMs = Date.now() - parseUtc(iso).getTime();
   const min = Math.floor(diffMs / 60000);
   if (min < 1) return "just now";
   if (min < 60) return `${min}m ago`;
@@ -19,7 +28,7 @@ function relativeTime(iso: string): string {
   if (hr < 24) return `${hr}h ago`;
   const day = Math.floor(hr / 24);
   if (day < 7) return `${day}d ago`;
-  return new Date(iso).toLocaleDateString();
+  return parseUtc(iso).toLocaleDateString();
 }
 
 interface SessionRowProps {

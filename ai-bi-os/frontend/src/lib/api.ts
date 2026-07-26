@@ -357,6 +357,23 @@ export const rulesApi = {
     api.delete<{success: boolean}>(`/api/v1/rules/${id}`),
   parseText: (text: string) =>
     api.post<{success: boolean, parsed: any, error?: string}>("/api/v1/rules/parse-text", { text }),
+  evaluate: () =>
+    api.post<import("./types").BusinessRule[]>("/api/v1/rules/evaluate", {}),
+  history: (id: string) =>
+    api.get<import("./types").RuleEvent[]>(`/api/v1/rules/${id}/history`),
+};
+
+export const notificationsApi = {
+  list: (limit = 30) =>
+    api.get<{ items: import("./types").AppNotification[]; unread_count: number }>(
+      `/api/v1/notifications?limit=${limit}`
+    ),
+  markRead: (id: string) =>
+    api.patch<{ success: boolean }>(`/api/v1/notifications/${id}`, {}),
+  markAllRead: () =>
+    api.post<{ success: boolean }>("/api/v1/notifications/read-all", {}),
+  delete: (id: string) =>
+    api.delete<{ success: boolean }>(`/api/v1/notifications/${id}`),
 };
 
 export const dashboardApi = {

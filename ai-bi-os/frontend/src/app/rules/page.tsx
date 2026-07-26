@@ -3,15 +3,113 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { rulesApi, datasetsApi, analyticsApi } from "@/lib/api";
-import type { BusinessRule } from "@/lib/types";
+import type { BusinessRule, RuleEvent } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
-import { GitBranch, Plus, CheckCircle, XCircle, AlertCircle, X, Loader2, Trash2 } from "lucide-react";
+import { GitBranch, Plus, CheckCircle, XCircle, AlertCircle, X, Loader2, Trash2, History, RefreshCw, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 
-function RuleCard({ rule }: { rule: BusinessRule }) {
+// Backend timestamps are naive UTC strings (datetime.utcnow().isoformat()),
+// with no trailing "Z" or offset. `new Date()` treats a date-time string
+// with no timezone as *local* time, not UTC — without this normalization,
+// every relative time is off by however far the browser's timezone is from
+// UTC (e.g. "5h ago" for something that just happened, in UTC+5:30).
+function parseUtc(iso: string): Date {
+  return new Date(/[Zz]|[+-]\d{2}:?\d{2}$/.test(iso) ? iso : `${iso}Z`);
+}
+
+function relativeTime(iso: string): string {
+  const diffMs = Date.now() - parseUtc(iso).getTime();
+  const min = Math.floor(diffMs / 60000);
+  if (min < 1) return "just now";
+  if (min < 60) return `${min}m ago`;
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return `${hr}h ago`;
+  const day = Math.floor(hr / 24);
+  if (day < 7) return `${day}d ago`;
+  return parseUtc(iso).toLocaleDateString();
+}
+
+function RuleHistoryPanel({ rule, onClose }: { rule: BusinessRule; onClose: () => void }) {
+  const { data: events, isLoading } = useQuery({
+    queryKey: ["rule-history", rule.id],
+    queryFn: () => rulesApi.history(rule.id),
+  });
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-end bg-black/60 backdrop-blur-sm p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ x: 32, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: 32, opacity: 0 }}
+        transition={{ type: "spring", stiffness: 320, damping: 32 }}
+        className="flex h-full w-full max-w-md flex-col rounded-[24px] border border-border/60 bg-background shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between border-b border-border/40 px-5 py-4">
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-foreground">{rule.name}</p>
+            <p className="text-[11px] text-muted-foreground">Trigger history</p>
+          </div>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-5 py-4">
+          {isLoading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="h-16 animate-pulse rounded-xl bg-white/[0.03]" />
+              ))}
+            </div>
+          ) : !events || events.length === 0 ? (
+            <div className="flex flex-col items-center gap-2 py-16 text-center">
+              <History className="h-6 w-6 text-muted-foreground/40" />
+              <p className="text-xs text-muted-foreground">
+                No trigger events yet. This rule hasn&apos;t crossed its threshold since it was created.
+              </p>
+            </div>
+          ) : (
+            <div className="relative space-y-4 pl-5">
+              <div className="absolute left-[7px] top-1 bottom-1 w-px bg-border/50" />
+              {events.map((event: RuleEvent, idx: number) => (
+                <motion.div
+                  key={event.id}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.04 }}
+                  className="relative"
+                >
+                  <span className="absolute -left-5 top-1 h-3.5 w-3.5 rounded-full border-2 border-background bg-error shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
+                  <div className="rounded-xl border border-border/40 bg-white/[0.02] px-3.5 py-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="inline-flex items-center gap-1 rounded-full border border-error/20 bg-error/10 px-2 py-0.5 text-[10px] font-medium text-error">
+                        <AlertCircle className="h-2.5 w-2.5" /> TRIGGERED
+                      </span>
+                      <span className="text-[10px] text-muted-foreground/60">{relativeTime(event.created_at)}</span>
+                    </div>
+                    <p className="mt-2 text-[12px] leading-relaxed text-foreground/80">{event.message}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function RuleCard({ rule, onViewHistory }: { rule: BusinessRule; onViewHistory: () => void }) {
   const qc = useQueryClient();
   const deleteMut = useMutation({
     mutationFn: () => rulesApi.delete(rule.id),
@@ -25,15 +123,24 @@ function RuleCard({ rule }: { rule: BusinessRule }) {
   const isTriggered = rule.status === "TRIGGERED";
   const isOk = rule.status === "OK";
   const isErrorStatus = rule.status?.startsWith("ERROR") || false;
+  const isPending = rule.status?.startsWith("PENDING") || false;
   const isInactive = !rule.is_active || rule.status === "INACTIVE";
-  
+
   return (
-    <div className={`glass-card rounded-[20px] p-5 flex flex-col gap-3 border-l-2 transition-all ${
+    <div className={`relative glass-card rounded-[20px] p-5 flex flex-col gap-3 border-l-2 transition-all ${
       isInactive ? 'opacity-50 border-l-muted' :
-      isTriggered ? 'border-l-error' : 
-      isOk ? 'border-l-success' : 
-      isErrorStatus ? 'border-l-amber-500' : 'border-l-muted'
+      isTriggered ? 'border-l-error' :
+      isOk ? 'border-l-success' :
+      isErrorStatus ? 'border-l-amber-500' :
+      isPending ? 'border-l-primary' : 'border-l-muted'
     }`}>
+      {isTriggered && (
+        <motion.div
+          animate={{ opacity: [0.5, 0.15, 0.5] }}
+          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+          className="pointer-events-none absolute inset-0 rounded-[20px] bg-error/[0.04]"
+        />
+      )}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2 min-w-0">
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 border border-primary/20 shrink-0">
@@ -42,7 +149,7 @@ function RuleCard({ rule }: { rule: BusinessRule }) {
           <h3 className="text-sm font-semibold text-foreground truncate">{rule.name}</h3>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <button 
+          <button
             onClick={() => updateMut.mutate({ is_active: !rule.is_active })}
             className={`w-8 h-4 rounded-full transition-colors relative focus:outline-none ${rule.is_active ? 'bg-primary' : 'bg-muted-foreground/30'}`}
           >
@@ -53,14 +160,19 @@ function RuleCard({ rule }: { rule: BusinessRule }) {
             isTriggered ? "bg-error/10 text-error border-error/20" :
             isOk ? "bg-success/10 text-success border-success/20" :
             isErrorStatus ? "bg-amber-500/10 text-amber-500 border-amber-500/20" :
+            isPending ? "bg-primary/10 text-primary border-primary/20" :
             "bg-muted/10 text-muted-foreground border-border/40"
           }`}>
             {isInactive ? <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/50" /> :
-             isTriggered ? <AlertCircle className="h-2.5 w-2.5" /> : 
-             isOk ? <CheckCircle className="h-2.5 w-2.5" /> : 
+             isTriggered ? <AlertCircle className="h-2.5 w-2.5" /> :
+             isOk ? <CheckCircle className="h-2.5 w-2.5" /> :
+             isPending ? <Clock className="h-2.5 w-2.5" /> :
              <AlertCircle className="h-2.5 w-2.5" />}
             {rule.status}
           </span>
+          <button onClick={onViewHistory} title="View trigger history" className="text-muted-foreground hover:text-primary transition-colors">
+            <History className="h-3.5 w-3.5" />
+          </button>
           <button onClick={() => deleteMut.mutate()} className="text-muted-foreground hover:text-error transition-colors">
             <Trash2 className="h-3.5 w-3.5" />
           </button>
@@ -80,6 +192,12 @@ function RuleCard({ rule }: { rule: BusinessRule }) {
             <span className="text-sm font-semibold text-foreground tabular-nums">
               {rule.window === 'MoM' ? `${rule.current_value.toFixed(2)}%` : rule.current_value.toLocaleString()}
             </span>
+          </div>
+        )}
+        {rule.last_triggered_at && (
+          <div className="flex items-center gap-1.5 px-1 text-[11px] text-muted-foreground/70">
+            <Clock className="h-3 w-3" />
+            Last triggered {relativeTime(rule.last_triggered_at)}
           </div>
         )}
       </div>
@@ -112,10 +230,10 @@ function NewRuleModal({ onClose }: { onClose: () => void }) {
     enabled: tab === "manual",
   });
 
-  const numericColumns = edaData?.schema
-    ? Object.entries(edaData.schema)
-        .filter(([_, type]) => type === "numeric")
-        .map(([col]) => col)
+  // GET /analytics/eda returns { summary: [{ column, mean?, min?, max?, ... }] },
+  // not a `schema` map — numeric columns are the ones with a computed mean.
+  const numericColumns: string[] = Array.isArray(edaData?.summary)
+    ? edaData.summary.filter((c: { mean?: number }) => c.mean != null).map((c: { column: string }) => c.column)
     : [];
 
   const parseMut = useMutation({
@@ -304,7 +422,9 @@ const itemVariants = {
 };
 
 export default function RulesPage() {
+  const qc = useQueryClient();
   const [showModal, setShowModal] = useState(false);
+  const [historyRule, setHistoryRule] = useState<BusinessRule | null>(null);
 
   const { data: activeDataset } = useQuery({
     queryKey: ["activeDataset"],
@@ -317,14 +437,39 @@ export default function RulesPage() {
     enabled: !!activeDataset?.id,
   });
 
+  const evaluateMut = useMutation({
+    mutationFn: () => rulesApi.evaluate(),
+    onSuccess: (updated) => {
+      qc.setQueryData(["rules", activeDataset?.id], updated);
+      qc.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div></div>
         {rules && rules.length > 0 && (
-          <Button onClick={() => setShowModal(true)} className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
-            <Plus className="h-4 w-4" /> New Rule
-          </Button>
+          <div className="flex items-center gap-2.5">
+            <Button
+              variant="outline"
+              onClick={() => evaluateMut.mutate()}
+              disabled={evaluateMut.isPending}
+              className="gap-2"
+            >
+              <motion.span
+                animate={evaluateMut.isPending ? { rotate: 360 } : { rotate: 0 }}
+                transition={evaluateMut.isPending ? { duration: 0.8, repeat: Infinity, ease: "linear" } : {}}
+                className="flex"
+              >
+                <RefreshCw className="h-3.5 w-3.5" />
+              </motion.span>
+              Run checks now
+            </Button>
+            <Button onClick={() => setShowModal(true)} className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
+              <Plus className="h-4 w-4" /> New Rule
+            </Button>
+          </div>
         )}
       </div>
 
@@ -345,7 +490,7 @@ export default function RulesPage() {
         <motion.div variants={containerVariants} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {rules.map((rule) => (
             <motion.div key={rule.id} variants={itemVariants}>
-              <RuleCard rule={rule} />
+              <RuleCard rule={rule} onViewHistory={() => setHistoryRule(rule)} />
             </motion.div>
           ))}
         </motion.div>
@@ -354,6 +499,12 @@ export default function RulesPage() {
       <AnimatePresence>
         {showModal && <NewRuleModal onClose={() => setShowModal(false)} />}
       </AnimatePresence>
+      {/* Not AnimatePresence-wrapped: unmounting here must track React state
+          directly. Gating removal on an exit animation's onComplete firing
+          has left stale slide-over panels behind before (see ChatUI.tsx /
+          CustomizeDashboardModal.tsx) — the panel's own mount-in transition
+          still plays via its `animate` prop regardless. */}
+      {historyRule && <RuleHistoryPanel rule={historyRule} onClose={() => setHistoryRule(null)} />}
     </div>
   );
 }

@@ -374,7 +374,37 @@ export interface BusinessRule {
   window?: string;
   is_active?: boolean;
   status?: string;
-  current_value?: number;
+  current_value?: number | null;
+  /** Persisted copies of status/current_value/last_evaluated_at — survive a
+   *  reload, unlike `status`/`current_value` which are only ever the result
+   *  of the evaluation that just ran. Populated by every rules endpoint. */
+  last_status?: string | null;
+  last_value?: number | null;
+  last_evaluated_at?: string | null;
+  last_triggered_at?: string | null;
+  created_at: string;
+}
+
+/** One row in a rule's audit trail — written only on a fresh transition
+ *  into TRIGGERED, not on every evaluation. */
+export interface RuleEvent {
+  id: string;
+  rule_id: string;
+  status: string;
+  current_value: number | null;
+  threshold: number | null;
+  condition: string;
+  message: string;
+  created_at: string;
+}
+
+export interface AppNotification {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  rule_id?: string | null;
+  is_read: boolean;
   created_at: string;
 }
 

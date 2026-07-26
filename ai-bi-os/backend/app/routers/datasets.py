@@ -75,6 +75,14 @@ async def upload_dataset(file: UploadFile = File(...), force: bool = Form(False)
                 on_progress=lambda pct, step: update_upload_job(job_id, pct, step),
             )
             complete_upload_job(job_id, dataset_info["id"])
+            # Detection should react to new data landing, not only to someone
+            # happening to open the Rules page afterwards. Best-effort: a
+            # rules bug should never fail an otherwise-successful upload.
+            try:
+                from app.services.rule_engine import evaluate_and_persist_rules
+                evaluate_and_persist_rules(current_user["id"], dataset_info["id"])
+            except Exception as rule_err:
+                print(f"Warning: post-upload rule evaluation failed: {rule_err}")
         except ValueError as ve:
             fail_upload_job(job_id, str(ve))
         except Exception as e:

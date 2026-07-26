@@ -1,109 +1,64 @@
-import pandas as pd
-import numpy as np
 import os
 import json
+import re
 import uuid
 from datetime import datetime
-from app.core.database import get_db_connection
-import re
+
 from fastapi import APIRouter, Depends, Body
+from app.core.database import get_db_connection
 from app.services.data_processing import get_active_dataset, get_dataframe
+from app.services.rule_engine import evaluate_and_persist_rules
 from app.core.security import get_current_user
-from app.core.config import DB_PATH, LLM_MODEL
+from app.core.config import LLM_MODEL
 from litellm import completion
 
 router = APIRouter()
+
 
 @router.get("")
 async def get_rules(current_user: dict = Depends(get_current_user)):
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return []
-        
+    return evaluate_and_persist_rules(current_user["id"], dataset_info["id"])
+
+
+@router.post("/evaluate")
+async def evaluate_rules_now(current_user: dict = Depends(get_current_user)):
+    """Manual "Run checks now" trigger — same detection path as GET, just
+    invoked explicitly instead of as a side effect of loading the page."""
+    dataset_info = get_active_dataset(current_user["id"])
+    if not dataset_info:
+        return []
+    return evaluate_and_persist_rules(current_user["id"], dataset_info["id"])
+
+
+@router.get("/{rule_id}/history")
+async def get_rule_history(rule_id: str, current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM rules WHERE user_id = %s AND dataset_id = %s ORDER BY created_at DESC', (current_user["id"], dataset_info["id"]))
-    rules = [dict(r) for r in cursor.fetchall()]
+    cursor.execute('SELECT id FROM rules WHERE id = %s AND user_id = %s', (rule_id, current_user["id"]))
+    if not cursor.fetchone():
+        conn.close()
+        return []
+    cursor.execute(
+        'SELECT * FROM rule_events WHERE rule_id = %s ORDER BY created_at DESC LIMIT 50',
+        (rule_id,),
+    )
+    events = [dict(r) for r in cursor.fetchall()]
     conn.close()
-    
-    # Evaluate rules deterministically
-    df = get_dataframe(dataset_info["id"], current_user["id"])
-    if df is not None:
-        from app.services.stats_service import find_column
-        date_col = find_column(df, r'date|month|year|time')
-        
-        for rule in rules:
-            rule["status"] = "OK"
-            rule["current_value"] = None
-            if not rule.get("is_active"):
-                rule["status"] = "INACTIVE"
-                continue
-                
-            metric = rule.get("metric_column")
-            if not metric or metric not in df.columns or not pd.api.types.is_numeric_dtype(df[metric]):
-                rule["status"] = "ERROR (Invalid Metric)"
-                continue
-                
-            df_temp = df.copy()
-            window = rule.get("window") or "latest"
-            if date_col and window.lower() == "mom":
-                df_temp[date_col] = pd.to_datetime(df_temp[date_col], errors='coerce')
-                df_temp = df_temp.dropna(subset=[date_col])
-                if not df_temp.empty:
-                    monthly = df_temp.groupby(df_temp[date_col].dt.to_period('M'))[metric].sum()
-                    if len(monthly) >= 2:
-                        sorted_periods = sorted(monthly.index)
-                        recent = float(monthly[sorted_periods[-1]])
-                        prior = float(monthly[sorted_periods[-2]])
-                        rule["current_value"] = recent
-                        
-                        if prior > 0:
-                            pct_change = ((recent - prior) / prior) * 100
-                            rule["current_value"] = pct_change
-                            
-                            cond = rule.get("condition") or ">"
-                            cond_map = {"gt": ">", "lt": "<", "pct_change_gt": ">", "pct_change_lt": "<", "eq": "=="}
-                            cond = cond_map.get(cond.lower(), cond)
-                            
-                            thresh = float(rule.get("threshold") or 0)
-                            
-                            if cond == ">" and pct_change > thresh: rule["status"] = "TRIGGERED"
-                            elif cond == "<" and pct_change < thresh: rule["status"] = "TRIGGERED"
-                            elif cond == ">=" and pct_change >= thresh: rule["status"] = "TRIGGERED"
-                            elif cond == "<=" and pct_change <= thresh: rule["status"] = "TRIGGERED"
-                            elif cond == "==" and pct_change == thresh: rule["status"] = "TRIGGERED"
-            else:
-                # Latest value
-                val = float(df_temp[metric].sum())
-                rule["current_value"] = val
-                cond = rule.get("condition") or ">"
-                cond_map = {"gt": ">", "lt": "<", "pct_change_gt": ">", "pct_change_lt": "<", "eq": "=="}
-                cond = cond_map.get(cond.lower(), cond)
-                
-                thresh = float(rule.get("threshold") or 0)
-                if cond == ">" and val > thresh: rule["status"] = "TRIGGERED"
-                elif cond == "<" and val < thresh: rule["status"] = "TRIGGERED"
-                elif cond == ">=" and val >= thresh: rule["status"] = "TRIGGERED"
-                elif cond == "<=" and val <= thresh: rule["status"] = "TRIGGERED"
-                elif cond == "==" and val == thresh: rule["status"] = "TRIGGERED"
-                
-            # Sanitize current_value for JSON serialization (avoid NaN/Infinity)
-            if rule["current_value"] is not None:
-                import math
-                if math.isnan(rule["current_value"]) or math.isinf(rule["current_value"]):
-                    rule["current_value"] = None
+    return events
 
-    return rules
 
 @router.post("")
 async def create_rule(data: dict = Body(...), current_user: dict = Depends(get_current_user)):
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return {"error": "No dataset"}
-        
+
     rule_id = f"rule_{uuid.uuid4().hex[:8]}"
     created_at = datetime.utcnow().isoformat()
-    
+
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
@@ -122,22 +77,23 @@ async def create_rule(data: dict = Body(...), current_user: dict = Depends(get_c
     conn.close()
     return {"id": rule_id, "success": True}
 
+
 @router.patch("/{rule_id}")
 async def update_rule(rule_id: str, data: dict = Body(...), current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     cursor = conn.cursor()
-    
+
     # Get current rule
     cursor.execute('SELECT * FROM rules WHERE id = %s AND user_id = %s', (rule_id, current_user["id"]))
     rule = cursor.fetchone()
     if not rule:
         conn.close()
         return {"error": "Rule not found or unauthorized"}
-        
+
     # Build update query dynamically based on provided fields
     update_fields = []
     params = []
-    
+
     if "is_active" in data:
         update_fields.append("is_active = %s")
         params.append(1 if data["is_active"] else 0)
@@ -156,39 +112,43 @@ async def update_rule(rule_id: str, data: dict = Body(...), current_user: dict =
     if "window" in data:
         update_fields.append('"window" = %s')
         params.append(data["window"])
-        
+
     if update_fields:
         query = f"UPDATE rules SET {', '.join(update_fields)} WHERE id = %s AND user_id = %s"
         params.extend([rule_id, current_user["id"]])
         cursor.execute(query, tuple(params))
         conn.commit()
-        
+
     conn.close()
     return {"success": True}
+
 
 @router.delete("/{rule_id}")
 async def delete_rule(rule_id: str, current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     cursor = conn.cursor()
+    # rule_events has a FK on rule_id — must go first.
+    cursor.execute('DELETE FROM rule_events WHERE rule_id = %s AND user_id = %s', (rule_id, current_user["id"]))
     cursor.execute('DELETE FROM rules WHERE id = %s AND user_id = %s', (rule_id, current_user["id"]))
     conn.commit()
     conn.close()
     return {"success": True}
+
 
 @router.post("/parse-text")
 async def parse_text_rule(data: dict = Body(...), current_user: dict = Depends(get_current_user)):
     api_key = os.getenv("GROQ_API_KEY")
     if not api_key or not api_key.strip():
         return {"error": "AI features are not configured - add GROQ_API_KEY to your .env file."}
-        
+
     text = data.get("text", "")
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return {"error": "No dataset"}
-        
+
     df = get_dataframe(dataset_info["id"], current_user["id"])
     cols = df.columns.tolist() if df is not None else []
-    
+
     prompt = f"""Given the following dataset columns: {cols}
 Parse the user's natural language business rule into a JSON object.
 Rule text: "{text}"
