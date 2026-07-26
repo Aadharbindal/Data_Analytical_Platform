@@ -1,15 +1,28 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import api, { BASE_URL } from "@/lib/api";
-import dynamic from "next/dynamic";
-const LazyCharts = dynamic(() => import("@/components/charts/LazyCharts"), { ssr: false });
+import { useQueryClient } from "@tanstack/react-query";
+import { chatApi } from "@/lib/api";
+import {
+  AreaChart,
+  Area,
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
-import { Bot, User, Send, Database, Loader2 } from "lucide-react";
+import { Bot, Send, Database, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
+import { ChatSessionSidebar } from "@/components/chat/ChatSessionSidebar";
+import type { ChatMessage } from "@/lib/types";
 
 // ─── Page-level entrance variants ───────────────────────────────────────────────
 const containerVariants = {
@@ -51,18 +64,31 @@ const inputVariants = {
 function TypewriterText({
   text,
   delay = 300,
+  instant = false,
   onComplete,
   onTyping,
 }: {
   text: string;
   delay?: number;
+  /** Show the full text immediately — used for messages restored from a
+   *  saved session, so reopening a conversation doesn't re-type it out. */
+  instant?: boolean;
   onComplete?: () => void;
   onTyping?: () => void;
 }) {
-  const [displayedText, setDisplayedText] = useState("");
+  const [displayedText, setDisplayedText] = useState(instant ? text : "");
 
   useEffect(() => {
     if (!text) return;
+    if (instant) {
+      // Restoring a saved message — set synchronously in the same tick as
+      // the state that made `instant` true (session switch), not reacting
+      // to an external system, so this is the legitimate "derive state from
+      // a changed prop" case React's own docs carve out from the rule.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setDisplayedText(text);
+      return;
+    }
 
     setDisplayedText("");
     let currentIndex = 0;
@@ -84,15 +110,21 @@ function TypewriterText({
     }, delay);
 
     return () => clearTimeout(startDelay);
+    // onTyping/instant intentionally excluded — onTyping is a fresh inline
+    // callback every parent render, and instant never changes for a given
+    // message instance, so depending on either would just restart the
+    // typewriter mid-animation.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text, delay]);
 
   const isTyping = displayedText.length < text.length;
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!isTyping && text.length > 0) {
       onComplete?.();
     }
+    // onComplete intentionally excluded — same fresh-inline-callback reason as above.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTyping, text.length]);
 
   return (
@@ -112,6 +144,7 @@ function TypewriterText({
 }
 
 interface Message {
+  id?: string;
   role: "user" | "ai";
   content: string;
   executedSql?: string[];
@@ -119,6 +152,9 @@ interface Message {
     type: "bar" | "line" | "area";
     data: any[];
   };
+  /** True for messages restored from a saved session — renders instantly
+   *  instead of replaying the typewriter effect. */
+  instant?: boolean;
 }
 
 const AIMessageBubble: React.FC<{ msg: Message; onTyping?: () => void }> = ({
@@ -126,17 +162,24 @@ const AIMessageBubble: React.FC<{ msg: Message; onTyping?: () => void }> = ({
   onTyping,
 }) => {
   const [showSql, setShowSql] = useState(false);
-  const [isTyping, setIsTyping] = useState(true);
+  const [isTyping, setIsTyping] = useState(!msg.instant);
 
   return (
     <div className="flex justify-start gap-4 mb-8 group w-full">
-      <div className="relative shrink-0 flex items-center justify-center h-8 w-8 mt-0">
+      <div className="relative shrink-0 flex items-center justify-center h-9 w-9 mt-0">
+        {/* Ambient halo — a soft, continuous pulse behind the avatar so the
+            assistant always reads as "alive", independent of typing state */}
+        <motion.div
+          animate={{ scale: [1, 1.28, 1], opacity: [0.55, 0.18, 0.55] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute w-9 h-9 rounded-full bg-[#2684FF]/40 blur-[6px] pointer-events-none"
+        />
         {isTyping && (
           <>
             <motion.div
               animate={{ scale: [1, 1.8], opacity: [1, 0] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
-              className="absolute w-8 h-8 rounded-full border-[1.5px] border-[#2684FF] shadow-[0_0_8px_#2684FF] pointer-events-none"
+              className="absolute w-9 h-9 rounded-full border-[1.5px] border-[#2684FF] shadow-[0_0_8px_#2684FF] pointer-events-none"
             />
             <motion.div
               animate={{ scale: [1, 1.8], opacity: [1, 0] }}
@@ -146,14 +189,14 @@ const AIMessageBubble: React.FC<{ msg: Message; onTyping?: () => void }> = ({
                 ease: "easeOut",
                 delay: 1,
               }}
-              className="absolute w-8 h-8 rounded-full border-[1.5px] border-[#2684FF] shadow-[0_0_8px_#2684FF] pointer-events-none"
+              className="absolute w-9 h-9 rounded-full border-[1.5px] border-[#2684FF] shadow-[0_0_8px_#2684FF] pointer-events-none"
             />
           </>
         )}
-        <Avatar className="h-8 w-8 shrink-0 bg-[#040812] border border-[#1e3a8a] shadow-[0_0_8px_1px_rgba(38,132,255,0.7)] relative z-10">
+        <Avatar className="h-9 w-9 shrink-0 bg-[#040812] border border-[#1e3a8a] shadow-[0_0_8px_1px_rgba(38,132,255,0.7)] relative z-10">
           <AvatarFallback className="bg-transparent text-[#3b82f6]">
             <Bot
-              size={15}
+              size={16}
               strokeWidth={2.5}
               className="drop-shadow-[0_0_8px_rgba(38,132,255,1)]"
             />
@@ -166,6 +209,7 @@ const AIMessageBubble: React.FC<{ msg: Message; onTyping?: () => void }> = ({
           <TypewriterText
             text={msg.content}
             delay={400}
+            instant={msg.instant}
             onComplete={() => setIsTyping(false)}
             onTyping={onTyping}
           />
@@ -342,15 +386,37 @@ const AIMessageBubble: React.FC<{ msg: Message; onTyping?: () => void }> = ({
   );
 };
 
+const GREETING: Message = {
+  role: "ai",
+  content:
+    "Hello! I am DataMind Copilot. I can query your databases, generate charts, and provide strategic insights. What would you like to know today?",
+  instant: true,
+};
+
+function dbMessageToLocal(m: ChatMessage): Message {
+  return {
+    id: m.id,
+    role: m.role,
+    content: m.content,
+    executedSql: m.executed_sql ?? undefined,
+    chartConfig: m.chart_config ?? undefined,
+    instant: true,
+  };
+}
+
 export const ChatUI: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "ai",
-      content:
-        "Hello! I am DataMind Copilot. I can query your databases, generate charts, and provide strategic insights. What would you like to know today?",
-    },
-  ]);
+  const qc = useQueryClient();
+  const [messages, setMessages] = useState<Message[]>([GREETING]);
+  // Bumped whenever the *whole* conversation is swapped out (new chat /
+  // switch session) so the list remounts cleanly instead of asking
+  // AnimatePresence to individually exit-animate every old message at once
+  // — that per-item diffing was leaving stale nodes behind when a swap
+  // landed while an earlier swap's exit animations hadn't settled yet.
+  const [listGeneration, setListGeneration] = useState(0);
   const [input, setInput] = useState("");
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sessionLoading, setSessionLoading] = useState(false);
 
   // ── Reliable page entrance: trigger CSS transitions after mount ──────────────
   const [pageEntered, setPageEntered] = useState(false);
@@ -363,18 +429,6 @@ export const ChatUI: React.FC = () => {
     transition: "opacity 0.55s cubic-bezier(0.22,1,0.36,1), transform 0.55s cubic-bezier(0.22,1,0.36,1), filter 0.55s cubic-bezier(0.22,1,0.36,1)",
   };
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const query = params.get("q");
-      if (query) {
-        // Clear query param so it doesn't stay in the URL
-        window.history.replaceState({}, "", window.location.pathname);
-        setTimeout(() => handleSend(query), 100);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -412,65 +466,131 @@ export const ChatUI: React.FC = () => {
     setLoading(true);
 
     try {
-      const data = await api.post<any>("/api/v1/chat", { message: userMsg });
-      let aiContent = data.response;
-      let chartConfig = undefined;
-
-      try {
-        let cleanText = aiContent
-          .replace(/```json\n?/g, "")
-          .replace(/```\n?/g, "")
-          .trim();
-        if (cleanText.startsWith("{") && cleanText.endsWith("}")) {
-          const parsed = JSON.parse(cleanText);
-          if (parsed.text_response) {
-            aiContent = parsed.text_response;
-            chartConfig = parsed.chart_config;
-          }
-        }
-      } catch (e) {
-        // Fallback to text
-      }
+      const data = await chatApi.send(userMsg, sessionId);
 
       setMessages((prev) => [
         ...prev,
         {
           role: "ai",
-          content: aiContent,
-          chartConfig: chartConfig,
+          content: data.response,
+          chartConfig: data.chart_config ?? undefined,
           executedSql: data.executed_sql,
         },
       ]);
-    } catch (err: any) {
+
+      if (data.session_id !== sessionId) setSessionId(data.session_id);
+      qc.invalidateQueries({ queryKey: ["chat-sessions"] });
+    } catch (err) {
       setMessages((prev) => [
         ...prev,
-        { role: "ai", content: `Error: ${err.message}` },
+        { role: "ai", content: `Error: ${err instanceof Error ? err.message : "Something went wrong"}` },
       ]);
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <div className="flex flex-col flex-1 w-full relative overflow-hidden">
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const query = params.get("q");
+      if (query) {
+        // Clear query param so it doesn't stay in the URL
+        window.history.replaceState({}, "", window.location.pathname);
+        setTimeout(() => handleSend(query), 100);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-      {/* Connection Status Badge — slides in from right */}
+  const handleNewChat = () => {
+    setSessionId(null);
+    setMessages([GREETING]);
+    setListGeneration((g) => g + 1);
+    setInput("");
+  };
+
+  const handleSelectSession = async (id: string) => {
+    if (id === sessionId || sessionLoading) return;
+    setSessionLoading(true);
+    setSessionId(id);
+    try {
+      const history = await chatApi.messages(id);
+      setMessages(history.length > 0 ? history.map(dbMessageToLocal) : [GREETING]);
+    } catch {
+      setMessages([{ role: "ai", content: "Could not load this conversation. Try again in a moment.", instant: true }]);
+    } finally {
+      setListGeneration((g) => g + 1);
+      setSessionLoading(false);
+      requestAnimationFrame(() => scrollToBottom(false));
+    }
+  };
+
+  return (
+    <div className="flex h-full w-full overflow-hidden">
+      {/* Kept permanently mounted and width-toggled with a plain CSS
+          transition (rather than conditionally mounted through
+          AnimatePresence, or animated via framer-motion's `animate` prop)
+          so collapsing it can't leave a stale full-width copy behind if an
+          exit/animate cycle doesn't get applied. Width is the ONLY animated
+          property — the inner sidebar is a fixed 260px slab that gets
+          clip-revealed by this wrapper's overflow-hidden, like a panel
+          sliding out from behind an edge. Pairing that clip with an opacity
+          fade (as an earlier version did) made in-progress text look
+          half-cut, since it was being clipped and faded at once. */}
       <div
-        style={{
-          ...entered,
-          transitionDelay: pageEntered ? "0ms" : "0ms",
-          opacity: pageEntered ? 1 : 0,
-          transform: pageEntered ? "translateX(0) scale(1)" : "translateX(28px) scale(0.88)",
-        }}
-        className="absolute top-6 right-8 flex items-center gap-2 z-20 bg-surface/40 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/5"
+        className={`min-w-0 overflow-hidden shrink-0 transition-[width] duration-300 ease-in-out ${
+          sidebarOpen ? "w-[260px]" : "w-0"
+        }`}
       >
-        <div className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-        </div>
-        <span className="text-xs font-medium text-muted-foreground">Connected</span>
+        <ChatSessionSidebar
+          activeSessionId={sessionId}
+          onSelect={handleSelectSession}
+          onNewChat={handleNewChat}
+        />
       </div>
-      {/* Messages scroll area — fades up after badge */}
+
+      <div className="flex flex-col flex-1 w-full relative overflow-hidden">
+
+      {/* Top bar — normal document flow (not absolutely positioned), so it
+          always reserves real space above the messages instead of floating
+          over them. Sits flush against the flex-1 content area regardless
+          of whether the sidebar is open (260px) or collapsed (0px). */}
+      <div className="flex shrink-0 items-center justify-between px-6 py-4 border-b border-border/40">
+        <button
+          type="button"
+          onClick={() => setSidebarOpen((v) => !v)}
+          title={sidebarOpen ? "Hide chat history" : "Show chat history"}
+          className="flex h-6 w-6 items-center justify-center rounded-full bg-[#11131a] border border-border text-muted-foreground shadow-[0_0_10px_rgba(0,0,0,0.5)] transition-all duration-200 hover:bg-white/[0.1] hover:text-foreground active:scale-90"
+        >
+          {sidebarOpen ? (
+            <PanelLeftClose className="h-3.5 w-3.5" strokeWidth={2.5} />
+          ) : (
+            <PanelLeftOpen className="h-3.5 w-3.5" strokeWidth={2.5} />
+          )}
+        </button>
+
+        <div
+          style={{
+            ...entered,
+            opacity: pageEntered ? 1 : 0,
+            transform: pageEntered ? "translateX(0) scale(1)" : "translateX(28px) scale(0.88)",
+          }}
+          className="flex items-center gap-2 bg-emerald-500/[0.08] backdrop-blur-sm px-3 py-1.5 rounded-full border border-emerald-500/20"
+        >
+          <div className="relative flex h-2 w-2">
+            <motion.span
+              animate={{ scale: [1, 2.6], opacity: [0.6, 0] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: "easeOut" }}
+              className="absolute inline-flex h-full w-full rounded-full bg-emerald-400"
+            />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </div>
+          <span className="text-xs font-medium text-emerald-400/90">Connected</span>
+        </div>
+      </div>
+
+      {/* Messages scroll area — fades up after the top bar */}
       <div
         style={{
           ...entered,
@@ -482,29 +602,36 @@ export const ChatUI: React.FC = () => {
         id="chat-scroll-container"
         className="flex-1 overflow-y-auto w-full pb-40 scroll-smooth"
       >
-        <div className="max-w-3xl mr-auto ml-4 md:ml-12 lg:ml-24 w-full px-4 md:px-0 space-y-6 pt-8">
-          <AnimatePresence>
+        <motion.div
+          key={listGeneration}
+          animate={{ opacity: sessionLoading ? 0.35 : 1 }}
+          transition={{ duration: 0.15 }}
+          className="max-w-3xl mx-auto w-full px-4 md:px-0 space-y-6 pt-8"
+        >
+          <AnimatePresence mode="popLayout">
             {messages.map((msg, idx) =>
               msg.role === "user" ? (
                 <motion.div
-                  key={idx}
+                  key={msg.id ?? `local-${idx}`}
                   layout
                   variants={messageVariants}
                   initial="hidden"
                   animate="show"
+                  exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.12 } }}
                   className="flex justify-end gap-3 mb-8 group w-full"
                 >
-                  <div className="max-w-[80%] px-5 py-3 rounded-2xl bg-white/[0.06] text-foreground text-[15px] leading-relaxed whitespace-pre-wrap break-words">
+                  <div className="max-w-[80%] px-5 py-3 rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl rounded-br-md bg-white/[0.06] border border-white/[0.06] text-foreground text-[15px] leading-relaxed whitespace-pre-wrap break-words">
                     {msg.content}
                   </div>
                 </motion.div>
               ) : (
                 <motion.div
-                  key={idx}
+                  key={msg.id ?? `local-${idx}`}
                   layout
                   variants={messageVariants}
                   initial="hidden"
                   animate="show"
+                  exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.12 } }}
                   className="w-full"
                 >
                   <AIMessageBubble
@@ -521,7 +648,12 @@ export const ChatUI: React.FC = () => {
                 exit={{ opacity: 0, scale: 0.95 }}
                 className="flex justify-start gap-4 mb-6"
               >
-                <div className="relative shrink-0 flex items-center justify-center h-8 w-8 mt-0">
+                <div className="relative shrink-0 flex items-center justify-center h-9 w-9 mt-0">
+                  <motion.div
+                    animate={{ scale: [1, 1.28, 1], opacity: [0.55, 0.18, 0.55] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute w-9 h-9 rounded-full bg-[#2684FF]/40 blur-[6px] pointer-events-none"
+                  />
                   <motion.div
                     animate={{ scale: [1, 1.8], opacity: [1, 0] }}
                     transition={{
@@ -529,7 +661,7 @@ export const ChatUI: React.FC = () => {
                       repeat: Infinity,
                       ease: "easeOut",
                     }}
-                    className="absolute w-8 h-8 rounded-full border-[1.5px] border-[#2684FF] shadow-[0_0_8px_#2684FF] pointer-events-none"
+                    className="absolute w-9 h-9 rounded-full border-[1.5px] border-[#2684FF] shadow-[0_0_8px_#2684FF] pointer-events-none"
                   />
                   <motion.div
                     animate={{ scale: [1, 1.8], opacity: [1, 0] }}
@@ -539,27 +671,38 @@ export const ChatUI: React.FC = () => {
                       ease: "easeOut",
                       delay: 1,
                     }}
-                    className="absolute w-8 h-8 rounded-full border-[1.5px] border-[#2684FF] shadow-[0_0_8px_#2684FF] pointer-events-none"
+                    className="absolute w-9 h-9 rounded-full border-[1.5px] border-[#2684FF] shadow-[0_0_8px_#2684FF] pointer-events-none"
                   />
-                  <Avatar className="h-8 w-8 shrink-0 bg-[#040812] border border-[#1e3a8a] shadow-[0_0_8px_1px_rgba(38,132,255,0.7)] relative z-10">
+                  <Avatar className="h-9 w-9 shrink-0 bg-[#040812] border border-[#1e3a8a] shadow-[0_0_8px_1px_rgba(38,132,255,0.7)] relative z-10">
                     <AvatarFallback className="bg-transparent text-[#3b82f6]">
                       <Bot
-                        size={15}
+                        size={16}
                         strokeWidth={2.5}
-                        className="drop-shadow-[0_0_8px_rgba(38,132,255,1)] animate-pulse"
+                        className="drop-shadow-[0_0_8px_rgba(38,132,255,1)]"
                       />
                     </AvatarFallback>
                   </Avatar>
                 </div>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Analyzing data...
+                <div className="flex items-center gap-1.5 pt-2.5">
+                  {[0, 1, 2].map((i) => (
+                    <motion.span
+                      key={i}
+                      animate={{ y: [0, -5, 0], opacity: [0.4, 1, 0.4] }}
+                      transition={{
+                        duration: 1,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: i * 0.2,
+                      }}
+                      className="h-1.5 w-1.5 rounded-full bg-[#2684FF]"
+                    />
+                  ))}
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
           <div ref={messagesEndRef} />
-        </div>
+        </motion.div>
       </div>
 
       {/* Input bar — rises from below, longest delay */}
@@ -572,8 +715,8 @@ export const ChatUI: React.FC = () => {
         }}
         className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-background via-background/90 to-transparent pt-16 pointer-events-none flex flex-col items-start"
       >
-        <div className="w-full max-w-3xl pointer-events-auto flex flex-col items-center px-4 md:px-0 ml-4 md:ml-12 lg:ml-24 mr-auto">
-          <div className="relative flex items-center w-full shadow-[0_8px_32px_rgba(0,0,0,0.4)] rounded-2xl bg-white/[0.03] backdrop-blur-[24px] border border-white/10 overflow-hidden group/input">
+        <div className="w-full max-w-3xl pointer-events-auto flex flex-col items-center px-4 md:px-0 mx-auto">
+          <div className="relative flex items-center w-full shadow-[0_8px_32px_rgba(0,0,0,0.4)] rounded-2xl bg-white/[0.03] backdrop-blur-[24px] border border-white/10 overflow-hidden group/input transition-colors duration-300 focus-within:border-[#2684FF]/50 focus-within:shadow-[0_8px_32px_rgba(38,132,255,0.15)]">
             <div className="absolute inset-0 bg-gradient-to-tr from-white/[0.07] via-transparent to-white/[0.03] pointer-events-none opacity-50" />
             <Input
               value={input}
@@ -600,6 +743,7 @@ export const ChatUI: React.FC = () => {
             AI can make mistakes. Consider verifying critical business metrics.
           </p>
         </div>
+      </div>
       </div>
     </div>
   );

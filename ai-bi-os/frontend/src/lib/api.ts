@@ -365,6 +365,19 @@ export const dashboardApi = {
     api.patch<{ success: boolean; pinned_kpis: string[] }>("/api/v1/dashboard/layout", { pinned_kpis: pinnedKpis }),
 };
 
+export const chatApi = {
+  sessions: () => api.get<import("./types").ChatSession[]>("/api/v1/chat/sessions"),
+  messages: (sessionId: string) =>
+    api.get<import("./types").ChatMessage[]>(`/api/v1/chat/sessions/${sessionId}/messages`),
+  send: (message: string, sessionId?: string | null) =>
+    api.post<import("./types").ChatResponse>("/api/v1/chat", { message, session_id: sessionId ?? null }),
+  pin: (sessionId: string, isPinned: boolean) =>
+    api.patch<{ success: boolean }>(`/api/v1/chat/sessions/${sessionId}`, { is_pinned: isPinned }),
+  rename: (sessionId: string, title: string) =>
+    api.patch<{ success: boolean }>(`/api/v1/chat/sessions/${sessionId}`, { title }),
+  delete: (sessionId: string) => api.delete<{ success: boolean }>(`/api/v1/chat/sessions/${sessionId}`),
+};
+
 // Recommendations (Module 15)
 export const recommendationsApi = {
   list: (datasetVersionId?: string) =>

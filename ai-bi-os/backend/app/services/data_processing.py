@@ -518,6 +518,38 @@ def init_db():
     ''')
     conn.commit()
 
+    # Chat/copilot session persistence: previously every conversation lived
+    # only in React state and vanished on reload. A session groups an
+    # ordered run of messages; is_pinned lets a user keep a conversation
+    # around indefinitely instead of it scrolling off the recent list.
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS chat_sessions (
+            id TEXT PRIMARY KEY,
+            user_id TEXT,
+            title TEXT,
+            is_pinned INTEGER DEFAULT 0,
+            created_at TEXT,
+            updated_at TEXT,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS chat_messages (
+            id TEXT PRIMARY KEY,
+            session_id TEXT,
+            user_id TEXT,
+            role TEXT,
+            content TEXT,
+            executed_sql JSONB,
+            chart_config JSONB,
+            trace_id TEXT,
+            created_at TEXT,
+            FOREIGN KEY(session_id) REFERENCES chat_sessions(id),
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+    ''')
+    conn.commit()
+
     # Dynamically alter table to add columns for older DB schemas
     for col, ctype, default in [
         ("skipped_rows", "INTEGER", "0"),

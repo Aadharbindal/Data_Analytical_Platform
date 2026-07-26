@@ -357,7 +357,12 @@ def delete_account(response: Response, current_user: dict = Depends(get_current_
     # Only rows actually scoped to this user get erased here — datasets,
     # regression models and the catalog are shared/global (no user_id column),
     # so account deletion doesn't touch data other users may depend on.
-    for table in ("active_dataset", "knowledge_base", "insights", "ai_evaluation_logs", "recommendations", "rules", "sessions", "recovery_codes"):
+    # chat_messages must be deleted before chat_sessions (FK on session_id).
+    for table in (
+        "active_dataset", "knowledge_base", "insights", "ai_evaluation_logs",
+        "recommendations", "rules", "sessions", "recovery_codes",
+        "dashboard_preferences", "upload_jobs", "chat_messages", "chat_sessions",
+    ):
         cursor.execute(f"DELETE FROM {table} WHERE user_id=%s", (user_id,))
     cursor.execute("DELETE FROM users WHERE id=%s", (user_id,))
     conn.commit()

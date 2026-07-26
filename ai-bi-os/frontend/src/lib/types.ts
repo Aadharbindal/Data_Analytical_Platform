@@ -303,6 +303,39 @@ export interface DashboardLayout {
   pinned_kpis: string[] | null;
 }
 
+export interface ChatSession {
+  id: string;
+  title: string;
+  is_pinned: boolean;
+  created_at: string;
+  updated_at: string;
+  message_count: number;
+}
+
+export interface ChatChartConfig {
+  type: "bar" | "line" | "area";
+  data: Array<Record<string, unknown>>;
+}
+
+export interface ChatMessage {
+  id: string;
+  role: "user" | "ai";
+  content: string;
+  executed_sql?: string[] | null;
+  chart_config?: ChatChartConfig | null;
+  trace_id?: string | null;
+  created_at: string;
+}
+
+export interface ChatResponse {
+  response: string;
+  executed_sql: string[];
+  chart_config?: ChatChartConfig | null;
+  trace_id?: string | null;
+  session_id: string;
+  is_new_session: boolean;
+}
+
 export interface TrendData {
   period: string;
   value: number;
