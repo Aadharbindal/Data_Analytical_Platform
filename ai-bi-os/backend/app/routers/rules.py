@@ -7,7 +7,7 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, Body
 from app.core.database import get_db_connection
 from app.services.data_processing import get_active_dataset, get_dataframe
-from app.services.rule_engine import evaluate_and_persist_rules
+from app.services.rule_engine import evaluate_and_persist_rules, get_metric_series
 from app.core.security import get_current_user
 from app.core.config import LLM_MODEL
 from litellm import completion
@@ -48,6 +48,19 @@ async def get_rule_history(rule_id: str, current_user: dict = Depends(get_curren
     events = [dict(r) for r in cursor.fetchall()]
     conn.close()
     return events
+
+
+@router.get("/{rule_id}/series")
+async def get_rule_series(rule_id: str, current_user: dict = Depends(get_current_user)):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM rules WHERE id = %s AND user_id = %s', (rule_id, current_user["id"]))
+    rule = cursor.fetchone()
+    conn.close()
+    if not rule:
+        return []
+    rule = dict(rule)
+    return get_metric_series(current_user["id"], rule["dataset_id"], rule.get("metric_column"))
 
 
 @router.post("")

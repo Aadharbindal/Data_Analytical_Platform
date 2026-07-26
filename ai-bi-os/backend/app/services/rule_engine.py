@@ -94,6 +94,32 @@ def evaluate_rule_condition(df: pd.DataFrame, rule: dict) -> Tuple[str, Optional
     return status, _sanitize(val)
 
 
+def get_metric_series(user_id: str, dataset_id: str, metric: Optional[str], periods: int = 6) -> list:
+    """Last `periods` months of `metric`'s summed value, for a rule card's
+    sparkline. Returns [] whenever a real trend can't be computed (no metric,
+    no date column, no data) — never fabricated placeholder points."""
+    from app.services.data_processing import get_dataframe
+    from app.services.stats_service import find_column
+
+    df = get_dataframe(dataset_id, user_id)
+    if df is None or not metric or metric not in df.columns or not pd.api.types.is_numeric_dtype(df[metric]):
+        return []
+
+    date_col = find_column(df, r"date|month|year|time")
+    if not date_col:
+        return []
+
+    df_temp = df.copy()
+    df_temp[date_col] = pd.to_datetime(df_temp[date_col], errors="coerce")
+    df_temp = df_temp.dropna(subset=[date_col])
+    if df_temp.empty:
+        return []
+
+    monthly = df_temp.groupby(df_temp[date_col].dt.to_period("M"))[metric].sum()
+    sorted_periods = sorted(monthly.index)[-periods:]
+    return [{"period": str(p), "value": _sanitize(float(monthly[p]))} for p in sorted_periods]
+
+
 def evaluate_and_persist_rules(user_id: str, dataset_id: str) -> list[dict]:
     """Evaluates every rule the user has against `dataset_id`, persists the
     result, and delivers a notification for each fresh TRIGGERED transition.

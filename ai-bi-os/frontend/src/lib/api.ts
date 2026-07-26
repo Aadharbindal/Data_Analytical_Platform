@@ -361,6 +361,8 @@ export const rulesApi = {
     api.post<import("./types").BusinessRule[]>("/api/v1/rules/evaluate", {}),
   history: (id: string) =>
     api.get<import("./types").RuleEvent[]>(`/api/v1/rules/${id}/history`),
+  series: (id: string) =>
+    api.get<import("./types").RuleSeriesPoint[]>(`/api/v1/rules/${id}/series`),
 };
 
 export const notificationsApi = {

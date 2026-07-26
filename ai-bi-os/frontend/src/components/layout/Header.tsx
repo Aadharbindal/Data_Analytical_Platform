@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { datasetsApi, notificationsApi } from "@/lib/api";
 import type { AppNotification } from "@/lib/types";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Search, Bell, GitBranch, CheckCheck, Inbox } from "lucide-react";
+import { Search, Bell, GitBranch, CheckCheck, Inbox, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 // Backend timestamps are naive UTC strings (datetime.utcnow().isoformat()),
@@ -54,6 +54,10 @@ function NotificationBell() {
     mutationFn: () => notificationsApi.markAllRead(),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["notifications"] }),
   });
+  const deleteMut = useMutation({
+    mutationFn: (id: string) => notificationsApi.delete(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["notifications"] }),
+  });
 
   const handleItemClick = (n: AppNotification) => {
     if (!n.is_read) markReadMut.mutate(n.id);
@@ -77,8 +81,13 @@ function NotificationBell() {
         )}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" sideOffset={10} className="w-[380px] max-w-[92vw] rounded-2xl border border-border/60 bg-popover/95 p-0 shadow-2xl backdrop-blur-xl">
-        <div className="flex items-center justify-between border-b border-border/40 px-4 py-3">
-          <span className="text-sm font-semibold text-foreground">Notifications</span>
+        <div className="flex items-center justify-between border-b border-border/40 px-4 py-3.5">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-blue-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_0_10px_-3px_var(--primary)]">
+              <Bell className="h-4 w-4 text-white" />
+            </div>
+            <span className="text-sm font-semibold text-foreground">Notifications</span>
+          </div>
           {unreadCount > 0 && (
             <button
               onClick={() => markAllReadMut.mutate()}
@@ -91,42 +100,63 @@ function NotificationBell() {
 
         <div className="max-h-[420px] overflow-y-auto">
           {items.length === 0 ? (
-            <div className="flex flex-col items-center gap-2 px-6 py-10 text-center">
-              <Inbox className="h-6 w-6 text-muted-foreground/40" />
-              <p className="text-xs text-muted-foreground">
-                No notifications yet — you&apos;ll see rule triggers here.
-              </p>
+            <div className="relative flex flex-col items-center gap-3 overflow-hidden px-6 py-12 text-center">
+              <div className="relative flex h-14 w-14 items-center justify-center">
+                <motion.div
+                  animate={{ scale: [1, 1.25, 1], opacity: [0.5, 0.15, 0.5] }}
+                  transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute inset-0 rounded-full bg-primary/40 blur-md"
+                />
+                <div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary to-blue-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_0_16px_-3px_var(--primary)]">
+                  <Inbox className="h-6 w-6 text-white" />
+                </div>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground">No notifications yet</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  You&apos;ll see rule triggers and alerts here.
+                </p>
+              </div>
             </div>
           ) : (
-            <AnimatePresence initial={false} mode="popLayout">
-              {items.map((n) => (
-                <motion.button
-                  key={n.id}
-                  layout
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  onClick={() => handleItemClick(n)}
-                  className={`flex w-full items-start gap-3 border-b border-border/20 px-4 py-3 text-left transition-colors last:border-b-0 hover:bg-white/[0.03] ${
-                    n.is_read ? "" : "bg-primary/[0.04]"
-                  }`}
+            // Not AnimatePresence-wrapped: this list shrinks (mark-read count
+            // changes, and now deletes), and gating the DOM removal on an
+            // exit animation completing has left stale rows behind before in
+            // this app (see ChatUI.tsx / CustomizeDashboardModal.tsx) — each
+            // row still gets its own mount-in fade via `initial`/`animate`.
+            items.map((n) => (
+              <motion.div
+                key={n.id}
+                layout
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                onClick={() => handleItemClick(n)}
+                className={`group relative flex w-full cursor-pointer items-start gap-3 border-b border-border/20 px-4 py-3 text-left transition-colors last:border-b-0 hover:bg-white/[0.03] ${
+                  n.is_read ? "" : "bg-primary/[0.04]"
+                }`}
+              >
+                <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-error to-red-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_0_8px_-3px_var(--error)]">
+                  <GitBranch className="h-3.5 w-3.5 text-white" />
+                </div>
+                <div className="min-w-0 flex-1 pr-5">
+                  <div className="flex items-center gap-1.5">
+                    {!n.is_read && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />}
+                    <p className="truncate text-[13px] font-medium text-foreground">{n.title}</p>
+                  </div>
+                  <p className="mt-0.5 line-clamp-2 text-[12px] text-muted-foreground">{n.message}</p>
+                  <p className="mt-1 text-[10px] uppercase tracking-wide text-muted-foreground/50">
+                    {relativeTime(n.created_at)}
+                  </p>
+                </div>
+                <button
+                  onClick={(e) => { e.stopPropagation(); deleteMut.mutate(n.id); }}
+                  title="Dismiss"
+                  className="absolute right-2.5 top-3 flex h-5 w-5 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-white/10 hover:text-foreground group-hover:opacity-100"
                 >
-                  <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-error/20 bg-error/10">
-                    <GitBranch className="h-3.5 w-3.5 text-error" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
-                      {!n.is_read && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />}
-                      <p className="truncate text-[13px] font-medium text-foreground">{n.title}</p>
-                    </div>
-                    <p className="mt-0.5 line-clamp-2 text-[12px] text-muted-foreground">{n.message}</p>
-                    <p className="mt-1 text-[10px] uppercase tracking-wide text-muted-foreground/50">
-                      {relativeTime(n.created_at)}
-                    </p>
-                  </div>
-                </motion.button>
-              ))}
-            </AnimatePresence>
+                  <X className="h-3 w-3" />
+                </button>
+              </motion.div>
+            ))
           )}
         </div>
       </DropdownMenuContent>

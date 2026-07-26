@@ -398,6 +398,13 @@ export interface RuleEvent {
   created_at: string;
 }
 
+/** One point in a rule's metric history — real monthly data behind a card's
+ *  sparkline, never fabricated. Empty when a trend can't be computed. */
+export interface RuleSeriesPoint {
+  period: string;
+  value: number | null;
+}
+
 export interface AppNotification {
   id: string;
   type: string;

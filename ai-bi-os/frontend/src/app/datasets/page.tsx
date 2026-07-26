@@ -453,11 +453,19 @@ export default function DatasetsPage() {
     },
   });
 
+  // Surfaced in the confirm dialog. Without this a failed delete just left the
+  // dialog sitting there doing nothing, with no indication anything went wrong.
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
   const deleteMutation = useMutation({
     mutationFn: (id: string) => datasetsApi.delete(id),
     onSuccess: () => {
       qc.invalidateQueries();
       setDeleteConfirmId(null);
+      setDeleteError(null);
+    },
+    onError: (err: unknown) => {
+      setDeleteError(err instanceof Error ? err.message : "Could not delete this dataset. Please try again.");
     },
   });
 
@@ -723,7 +731,7 @@ export default function DatasetsPage() {
                                 variant="ghost"
                                 size="icon"
                                 className="h-8 w-8 text-muted-foreground hover:text-error hover:bg-error/10 shrink-0 transition-all hover:scale-105 active:scale-95"
-                                onClick={() => setDeleteConfirmId(ds.id)}
+                                onClick={() => { setDeleteConfirmId(ds.id); setDeleteError(null); }}
                                 title="Delete dataset"
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -801,19 +809,21 @@ export default function DatasetsPage() {
         onClose={() => setTransformTarget(null)}
       />
 
-      {/* Delete Confirmation Modal */}
-      <AnimatePresence>
-        {deleteConfirmId && (
+      {/* Delete Confirmation Modal — deliberately NOT wrapped in
+          AnimatePresence. Closing has to track React state directly: gating
+          the unmount on an exit animation completing has repeatedly left
+          stale overlays on screen here (see ChatUI.tsx, RuleHistoryPanel),
+          which for this dialog looks exactly like "delete isn't working"
+          even when the delete succeeded. The open transition still plays. */}
+      {deleteConfirmId && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm"
           >
             <motion.div
               initial={{ scale: 0.8, opacity: 0, y: 15 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.8, opacity: 0, y: 15 }}
               transition={{ type: "spring", damping: 25, stiffness: 350 }}
               className="relative w-full max-w-[420px] overflow-hidden rounded-[24px] border border-[#1f2937] bg-[#111520] p-7 shadow-2xl"
             >
@@ -855,17 +865,27 @@ export default function DatasetsPage() {
                 >
                   Are you sure you want to delete this dataset? This action cannot be undone and will remove the file and all its associated metadata.
                 </motion.p>
-                
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }} 
-                  animate={{ opacity: 1, y: 0 }} 
+
+                {deleteError && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-4 rounded-xl border border-[#ef4444]/25 bg-[#ef4444]/10 px-3.5 py-2.5 text-[13px] leading-relaxed text-[#fca5a5]"
+                  >
+                    {deleteError}
+                  </motion.p>
+                )}
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.25 }}
                   className="mt-8 flex justify-end gap-3"
                 >
-                  <Button 
-                    variant="ghost" 
+                  <Button
+                    variant="ghost"
                     className="rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-white px-6 hover:text-white transition-all hover:scale-105 active:scale-95"
-                    onClick={() => setDeleteConfirmId(null)}
+                    onClick={() => { setDeleteConfirmId(null); setDeleteError(null); }}
                   >
                     Cancel
                   </Button>
@@ -882,7 +902,6 @@ export default function DatasetsPage() {
             </motion.div>
           </motion.div>
         )}
-      </AnimatePresence>
     </motion.div>
   );
 }

@@ -384,6 +384,18 @@ async def delete_dataset(dataset_id: str, current_user: dict = Depends(get_curre
     cursor.execute("DELETE FROM shared_links WHERE dataset_id=%s", (dataset_id,))
     cursor.execute("DELETE FROM insights WHERE dataset_id=%s", (dataset_id,))
     cursor.execute("DELETE FROM recommendations WHERE dataset_id=%s", (dataset_id,))
+    # rule_events has an FK on rules(id) and notifications point at rule_id, so
+    # both have to go before the rules themselves — otherwise deleting a dataset
+    # whose rules ever fired raises a foreign-key violation and the whole delete
+    # fails.
+    cursor.execute(
+        "DELETE FROM rule_events WHERE rule_id IN (SELECT id FROM rules WHERE dataset_id=%s)",
+        (dataset_id,),
+    )
+    cursor.execute(
+        "DELETE FROM notifications WHERE rule_id IN (SELECT id FROM rules WHERE dataset_id=%s)",
+        (dataset_id,),
+    )
     cursor.execute("DELETE FROM rules WHERE dataset_id=%s", (dataset_id,))
     cursor.execute("DELETE FROM catalog WHERE id=%s AND user_id=%s", (dataset_id, current_user["id"]))
     
