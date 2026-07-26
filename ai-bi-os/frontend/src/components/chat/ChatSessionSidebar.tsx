@@ -171,7 +171,7 @@ export function ChatSessionSidebar({ activeSessionId, onSelect, onNewChat }: Cha
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mt-4 rounded-2xl border border-dashed border-border/40 px-3 py-6 text-center text-xs text-muted-foreground"
+            className="mt-4 rounded-2xl border border-dashed border-border/40 bg-white/[0.02] px-4 py-8 text-center text-[13px] leading-relaxed text-muted-foreground/70"
           >
             No conversations yet — start chatting and it&apos;ll show up here.
           </motion.div>

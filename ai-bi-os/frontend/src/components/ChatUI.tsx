@@ -165,7 +165,7 @@ const AIMessageBubble: React.FC<{ msg: Message; onTyping?: () => void }> = ({
   const [isTyping, setIsTyping] = useState(!msg.instant);
 
   return (
-    <div className="flex justify-start gap-4 mb-8 group w-full">
+    <div className="flex justify-start gap-5 mb-8 group w-full">
       <div className="relative shrink-0 flex items-center justify-center h-9 w-9 mt-0">
         {/* Ambient halo — a soft, continuous pulse behind the avatar so the
             assistant always reads as "alive", independent of typing state */}
@@ -551,24 +551,22 @@ export const ChatUI: React.FC = () => {
       </div>
 
       <div className="flex flex-col flex-1 w-full relative overflow-hidden">
+        
+        {/* Sidebar Toggle Strip */}
+        <button
+          type="button"
+          onClick={() => setSidebarOpen((v) => !v)}
+          title={sidebarOpen ? "Hide chat history" : "Show chat history"}
+          className="absolute left-0 top-1/2 -translate-y-1/2 h-20 w-4 flex items-center justify-start group z-50 focus:outline-none cursor-pointer"
+        >
+          <div className="h-full w-1 bg-white/[0.06] group-hover:bg-primary/80 group-hover:w-1.5 transition-all duration-300 rounded-r-md" />
+        </button>
 
       {/* Top bar — normal document flow (not absolutely positioned), so it
           always reserves real space above the messages instead of floating
           over them. Sits flush against the flex-1 content area regardless
           of whether the sidebar is open (260px) or collapsed (0px). */}
-      <div className="flex shrink-0 items-center justify-between px-6 py-4 border-b border-border/40">
-        <button
-          type="button"
-          onClick={() => setSidebarOpen((v) => !v)}
-          title={sidebarOpen ? "Hide chat history" : "Show chat history"}
-          className="flex h-6 w-6 items-center justify-center rounded-full bg-[#11131a] border border-border text-muted-foreground shadow-[0_0_10px_rgba(0,0,0,0.5)] transition-all duration-200 hover:bg-white/[0.1] hover:text-foreground active:scale-90"
-        >
-          {sidebarOpen ? (
-            <PanelLeftClose className="h-3.5 w-3.5" strokeWidth={2.5} />
-          ) : (
-            <PanelLeftOpen className="h-3.5 w-3.5" strokeWidth={2.5} />
-          )}
-        </button>
+      <div className="flex shrink-0 items-center justify-end px-6 py-4 border-b border-border/40 h-[61px]">
 
         <div
           style={{
@@ -606,7 +604,7 @@ export const ChatUI: React.FC = () => {
           key={listGeneration}
           animate={{ opacity: sessionLoading ? 0.35 : 1 }}
           transition={{ duration: 0.15 }}
-          className="max-w-3xl mx-auto w-full px-4 md:px-0 space-y-6 pt-8"
+          className="max-w-4xl mx-auto w-full px-6 md:px-12 space-y-8 pt-8"
         >
           <AnimatePresence mode="popLayout">
             {messages.map((msg, idx) =>
@@ -646,7 +644,7 @@ export const ChatUI: React.FC = () => {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="flex justify-start gap-4 mb-6"
+                className="flex justify-start gap-5 mb-6"
               >
                 <div className="relative shrink-0 flex items-center justify-center h-9 w-9 mt-0">
                   <motion.div
@@ -715,7 +713,7 @@ export const ChatUI: React.FC = () => {
         }}
         className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-background via-background/90 to-transparent pt-16 pointer-events-none flex flex-col items-start"
       >
-        <div className="w-full max-w-3xl pointer-events-auto flex flex-col items-center px-4 md:px-0 mx-auto">
+        <div className="w-full max-w-4xl pointer-events-auto flex flex-col items-center px-6 md:px-12 mx-auto">
           <div className="relative flex items-center w-full shadow-[0_8px_32px_rgba(0,0,0,0.4)] rounded-2xl bg-white/[0.03] backdrop-blur-[24px] border border-white/10 overflow-hidden group/input transition-colors duration-300 focus-within:border-[#2684FF]/50 focus-within:shadow-[0_8px_32px_rgba(38,132,255,0.15)]">
             <div className="absolute inset-0 bg-gradient-to-tr from-white/[0.07] via-transparent to-white/[0.03] pointer-events-none opacity-50" />
             <Input
