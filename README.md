@@ -97,47 +97,42 @@ A dedicated transparency dashboard showing what percentage of AI-generated insig
 A decoupled two-service system with a deterministic core and an AI layer that sits *around* it, never *inside* the math.
 
 ```
-                            ┌──────────────────────────────┐
-                            │   Next.js 16 + React 19 UI    │
-                            │  Studio · Copilot · Insights  │
-                            │   TanStack Query · Zustand    │
-                            └───────────────┬──────────────┘
-                                            │  REST /api/v1
-                            ┌───────────────▼──────────────┐
-                            │        FastAPI Backend        │
-                            │  14 routers · Pydantic models │
-                            ├───────────────────────────────┤
-   ┌── Auth ────────────────┤  bcrypt + JWT + refresh cookie + slowapi rate limiting
-   │                        │
-   ├── Analytics Engine ────┤  pandas · numpy · scipy · statsmodels   ◄── deterministic,
-   │                        │                                              LLM-free math
-   ├── Regression ──────────┤  scikit-learn (regression · classification · clustering)
-   │                        │
-   ├── Rules Engine ────────┤  deterministic threshold checks ──► persisted events ──► notifications
-   │                        │
-   ├── Copilot Agent ───────┤  ReAct loop ──► DuckDB (real SQL execution)
-   │                        │
-   ├── Insights Engine ─────┤  LLM narration + SQL sandbox + independent re-verification
-   │                        │
-   ├── RAG Engine ──────────┤  pgvector cosine search + cross-encoder re-ranking
-   │                        │
-   ├── AI Gateway ──────────┤  LiteLLM routing · cost engine · circuit breaker · fallbacks
-   │                        │
-   └── PDF Generator ───────┤  reportlab + matplotlib
-                            └───────────────┬──────────────┘
-                    ┌───────────────────────┼───────────────────────┐
-                    ▼                       ▼                       ▼
-          ┌──────────────────┐   ┌──────────────────┐   ┌──────────────────┐
-          │     PostgreSQL    │   │   DuckDB (in-mem) │   │  Celery + Redis   │
-          │  system-of-record │   │  analytical engine│   │   async AI jobs   │
-          │  + pgvector       │   │  over your CSVs   │   │   + Prometheus    │
-          └──────────────────┘   └──────────────────┘   └──────────────────┘
-                    │
-                    ▼
-          LiteLLM  ──►  Groq, tiered by task:
-                        Llama 3.1 8B (fast, templated) · Llama 3.3 70B (complex, agentic)
-                        auto-fallback on tool-call failure · pluggable to Gemini / OpenAI / Anthropic
-                        used ONLY for chat, summaries & insight narration
+              ┌───────────────────────────┐
+              │   Next.js 16 + React 19    │
+              │  Studio · Copilot · RAG    │
+              └──────────────┬─────────────┘
+                             │ REST /api/v1
+              ┌──────────────▼─────────────┐
+              │       FastAPI Backend       │
+              │   14 routers · Pydantic     │
+              ├─────────────────────────────┤
+  Auth ────────┤ bcrypt + JWT + rate limit
+  Analytics ───┤ pandas/numpy/scipy/statsmodels
+                 (deterministic, LLM-free)
+  Regression ──┤ scikit-learn — regression,
+                 classification, clustering
+  Rules Engine ─┤ thresholds → events →
+                  notifications
+  Copilot ──────┤ ReAct loop → DuckDB (SQL)
+  Insights ─────┤ LLM narration + SQL sandbox
+                  + independent re-verification
+  RAG Engine ───┤ pgvector search + re-ranking
+  AI Gateway ───┤ LiteLLM routing, cost engine,
+                  circuit breaker, fallbacks
+  PDF Export ───┤ reportlab + matplotlib
+              └──────────────┬─────────────┘
+        ┌────────────────────┼────────────────────┐
+        ▼                    ▼                    ▼
+  ┌───────────┐        ┌───────────┐        ┌───────────┐
+  │ Postgres  │        │  DuckDB   │        │  Celery   │
+  │+ pgvector │        │ (in-mem)  │        │ + Redis   │
+  └───────────┘        └───────────┘        └───────────┘
+        │
+        ▼
+  LiteLLM → Groq, tiered by task:
+    Llama 3.1 8B (fast) · Llama 3.3 70B (agentic)
+    auto-fallback · pluggable to Gemini/OpenAI/Anthropic
+    used ONLY for chat, summaries & insight narration
 ```
 
 **The key architectural inversion:** Python deterministically computes every candidate insight (all numbers pandas-computed), a scoring function selects the strongest ones, and *only then* does the LLM write the sentence around them — the reverse of the usual "LLM writes SQL and numbers, hope for the best" pipeline.
@@ -170,17 +165,17 @@ None of these were found by guessing. They were found by refusing to accept "it 
 Groq's free tier runs every AI feature in this project at **zero cost**. Without a key, AI features degrade to clear "not configured" states instead of failing silently — but a **`DATABASE_URL`** (PostgreSQL) is required at startup; there's no SQLite fallback.
 
 ```bash
-# 1 — Backend  (FastAPI · Python 3.11+)
+# 1 — Backend (FastAPI · Python 3.11+)
 cd ai-bi-os/backend
-python -m venv venv && source venv/bin/activate        # Windows: venv\Scripts\activate
+python -m venv venv && source venv/bin/activate  # Win: venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env                                    # add DATABASE_URL, GROQ_API_KEY, SECRET_KEY
-uvicorn app.main:app --reload                           # ► http://localhost:8000
+cp .env.example .env   # add DATABASE_URL, GROQ_API_KEY, SECRET_KEY
+uvicorn app.main:app --reload   # ► http://localhost:8000
 
-# 2 — Frontend  (Next.js 16 · React 19)
+# 2 — Frontend (Next.js 16 · React 19)
 cd ai-bi-os/frontend
 npm install
-npm run dev                                             # ► http://localhost:3000
+npm run dev   # ► http://localhost:3000
 ```
 
 > **On Windows?** `ai-bi-os/start_servers.bat` frees ports 3000/8000 and launches both services in separate terminals.
@@ -189,8 +184,8 @@ npm run dev                                             # ► http://localhost:3
 
 ### Running the tests
 ```bash
-cd ai-bi-os/backend && python -m pytest tests/     # deterministic-math regression suite
-cd ai-bi-os/frontend && npm test                   # Jest + Testing Library
+cd ai-bi-os/backend && python -m pytest tests/   # deterministic-math suite
+cd ai-bi-os/frontend && npm test                 # Jest + Testing Library
 ```
 
 ---
@@ -242,6 +237,6 @@ Everything in this repository is downstream of that question.
 
 **Built by [Aadhar Bindal](https://github.com/Aadharbindal)**
 
-*If this made you think differently about AI + data, a ⭐ means a lot.*
+*If this made you think differently about AI + data, that means a lot.*
 
 </div>
