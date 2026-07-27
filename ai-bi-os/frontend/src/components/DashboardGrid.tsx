@@ -186,7 +186,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
       {/* Bottom Row: Insights */}
       <motion.div variants={itemVariants} className="col-span-12 grid grid-cols-3 gap-6">
         {insightPanels.map((panel, index) => (
-          <InsightPanel key={`${panel.title}-${index}`} {...panel} />
+          <InsightPanel key={`${panel.title}-${index}`} {...panel} index={index} />
         ))}
       </motion.div>
 

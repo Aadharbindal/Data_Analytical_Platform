@@ -242,6 +242,7 @@ export function SharedDashboardClient({ token }: { token: string }) {
                   description={ins.description ?? ""}
                   category={ins.category || "Insight"}
                   verified
+                  index={i}
                 />
               ))}
             </div>

@@ -42,14 +42,19 @@ async def get_executive_summary(current_user: dict = Depends(get_current_user)):
 
     # ── INR currency formatter ─────────────────────────────────────────────
     def format_inr(val: float) -> str:
-        """Format a value in Indian number system (Cr / L / K)."""
-        if val >= 1_00_00_000:
-            return f"\u20b9{val / 1_00_00_000:.2f}Cr"
-        if val >= 1_00_000:
-            return f"\u20b9{val / 1_00_000:.2f}L"
-        if val >= 1_000:
-            return f"\u20b9{val / 1_000:.2f}K"
-        return f"\u20b9{val:,.2f}"
+        """Format a value in Indian number system (Cr / L / K). Abbreviates
+        by magnitude regardless of sign, so a negative total (e.g. a net
+        refund/loss figure) gets "-\u20b93.40L" instead of the raw
+        "\u20b9-3,400,718.52" the old sign-blind >= checks fell through to."""
+        sign = "-" if val < 0 else ""
+        abs_val = abs(val)
+        if abs_val >= 1_00_00_000:
+            return f"{sign}\u20b9{abs_val / 1_00_00_000:.2f}Cr"
+        if abs_val >= 1_00_000:
+            return f"{sign}\u20b9{abs_val / 1_00_000:.2f}L"
+        if abs_val >= 1_000:
+            return f"{sign}\u20b9{abs_val / 1_000:.2f}K"
+        return f"{sign}\u20b9{abs_val:,.2f}"
 
     rev_col = find_column(df, r'revenue|sales|amount|\bmrr\b|\barr\b|turnover|income|earnings|\bgmv\b|sales_amount|order_value|net_revenue|total_revenue', numeric_only=True)
     date_col = find_column(df, r'date|month|year|time')

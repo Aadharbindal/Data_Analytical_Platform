@@ -17,32 +17,32 @@ interface MetricCardProps {
 const THEMES = [
   {
     icon: DollarSign,
-    bg: "bg-[#4c1d95]/20",
-    text: "text-[#a78bfa]",
+    gradient: "from-[#a78bfa] to-[#7c3aed]",
+    glow: "rgba(167, 139, 250, 0.6)",
     stroke: "#a78bfa",
     stop1: "rgba(167, 139, 250, 0.4)",
     stop2: "rgba(167, 139, 250, 0)",
   },
   {
     icon: Users,
-    bg: "bg-[#1e3a8a]/20",
-    text: "text-[#60a5fa]",
+    gradient: "from-[#60a5fa] to-[#2563eb]",
+    glow: "rgba(96, 165, 250, 0.6)",
     stroke: "#60a5fa",
     stop1: "rgba(96, 165, 250, 0.4)",
     stop2: "rgba(96, 165, 250, 0)",
   },
   {
     icon: CreditCard,
-    bg: "bg-[#064e3b]/20",
-    text: "text-[#34d399]",
+    gradient: "from-[#34d399] to-[#059669]",
+    glow: "rgba(52, 211, 153, 0.6)",
     stroke: "#34d399",
     stop1: "rgba(52, 211, 153, 0.4)",
     stop2: "rgba(52, 211, 153, 0)",
   },
   {
     icon: Activity,
-    bg: "bg-[#7c2d12]/20",
-    text: "text-[#fb923c]",
+    gradient: "from-[#fb923c] to-[#ea580c]",
+    glow: "rgba(251, 146, 60, 0.6)",
     stroke: "#fb923c",
     stop1: "rgba(251, 146, 60, 0.4)",
     stop2: "rgba(251, 146, 60, 0)",
@@ -59,7 +59,7 @@ export function MetricCard({ title, value, trend, trendDown = false, index = 0 }
       whileHover={{ y: -2, scale: 1.01 }}
       whileTap={{ scale: 0.98 }}
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
-      className="h-full relative overflow-hidden rounded-[20px]"
+      className="group h-full relative overflow-hidden rounded-[20px]"
     >
       <Card className="glass-card relative overflow-hidden h-full flex flex-col transition-all hover:bg-surface/50 border border-border/50 rounded-[20px]">
         {/* Glow Sweep */}
@@ -73,13 +73,17 @@ export function MetricCard({ title, value, trend, trendDown = false, index = 0 }
         
         <div className="p-4 flex flex-col flex-1 relative z-10">
           <div className="flex items-center gap-3 mb-3">
-            <motion.div 
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1], delay: (delayMs + 120) / 1000 }}
-              className={cn("flex items-center justify-center w-10 h-10 rounded-xl", theme.bg)}
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0, rotate: -10 }}
+              animate={{ scale: 1, opacity: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 380, damping: 18, delay: (delayMs + 120) / 1000 }}
+              className={cn(
+                "flex shrink-0 items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br transition-[filter] duration-300 group-hover:brightness-110",
+                theme.gradient
+              )}
+              style={{ boxShadow: `inset 0 1px 0 rgba(255,255,255,0.35), 0 0 16px -4px ${theme.glow}` }}
             >
-              <Icon className={cn("w-5 h-5", theme.text)} />
+              <Icon className="w-5 h-5 text-white" strokeWidth={2.25} />
             </motion.div>
             <span className="text-[15px] font-medium text-foreground/80">{title}</span>
           </div>

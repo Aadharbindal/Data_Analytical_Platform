@@ -351,9 +351,20 @@ export const insightsApi = {
       `/api/v1/insights${datasetVersionId ? `?dataset_version_id=${datasetVersionId}` : ""}`
     ),
   executiveSummary: () =>
-    api.get<{ summary: string; highlights?: string[]; verified: boolean }>(
-      "/api/v1/insights/executive-summary"
-    ),
+    api.get<{
+      summary: string;
+      highlights?: string[];
+      verified: boolean;
+      facts?: {
+        dataset_name: string;
+        row_count: number;
+        row_label: string;
+        total_value?: number;
+        metric_name?: string;
+        formatted_total?: string;
+        percent_change?: number;
+      };
+    }>("/api/v1/insights/executive-summary"),
   deepAnalyze: () =>
     api.post<{ success: boolean; insights: any[] }>("/api/v1/insights/deep-analyze", {}),
 };
