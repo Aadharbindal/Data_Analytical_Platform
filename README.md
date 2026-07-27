@@ -652,36 +652,13 @@ It receives verified analytical context.
 
 ```mermaid
 flowchart TD
-
-Question
-
--->
-
-Planner
-
--->
-
-SQL Generator
-
--->
-
-DuckDB
-
--->
-
-Verification
-
--->
-
-Context Builder
-
--->
-
-LLM
-
--->
-
-Verified Response
+A[Question] --> B[Planner]
+B --> C[SQL Generator]
+C --> D[DuckDB]
+D --> E[Verification]
+E --> F[Context Builder]
+F --> G[LLM]
+G --> H[Verified Response]
 ```
 
 ---
@@ -692,44 +669,15 @@ Every uploaded dataset passes through a deterministic analytical pipeline.
 
 ```mermaid
 flowchart LR
-
-CSV
-
--->
-
-Validation
-
--->
-
-Schema Detection
-
--->
-
-Column Inference
-
--->
-
-Profiling
-
--->
-
-Statistical Analysis
-
--->
-
-Forecasting
-
--->
-
-Insight Generation
-
--->
-
-Verification
-
--->
-
-Dashboard
+A[CSV] --> B[Validation]
+B --> C[Schema Detection]
+C --> D[Column Inference]
+D --> E[Profiling]
+E --> F[Statistical Analysis]
+F --> G[Forecasting]
+G --> H[Insight Generation]
+H --> I[Verification]
+I --> J[Dashboard]
 ```
 
 ---
