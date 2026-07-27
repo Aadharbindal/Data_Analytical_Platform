@@ -71,31 +71,31 @@ This architecture makes every insight explainable, auditable and reproducible.
 Most AI analytics platforms follow a familiar pipeline.
 
 ```
-Data
-    │
-    ▼
-LLM
-    │
-    ▼
-Charts
+                            Data
+                              │
+                              ▼
+                            LLM
+                              │
+                              ▼
+                           Charts
 ```
 
 Numerate OS deliberately reverses that relationship.
 
 ```
-Data
-    │
-    ▼
-Deterministic Analytics
-    │
-    ▼
-Verification
-    │
-    ▼
-Artificial Intelligence
-    │
-    ▼
-Business Explanation
+                            Data
+                              │
+                              ▼
+                  Deterministic Analytics
+                              │
+                              ▼
+                        Verification
+                              │
+                              ▼
+                  Artificial Intelligence
+                              │
+                              ▼
+                    Business Explanation
 ```
 
 The difference appears subtle.
@@ -181,22 +181,22 @@ Autonomous business insight generation with deterministic verification before pu
 # Platform Workflow
 
 ```text
-                 Upload Dataset
-                        │
-                        ▼
-              Schema Identification
-                        │
-                        ▼
-         Deterministic Analytics Engine
-                        │
-                        ▼
-          Insight Verification Layer
-                        │
-                        ▼
-             Artificial Intelligence
-                        │
-                        ▼
-        Executive Summary & Dashboard
+                       Upload Dataset
+                              │
+                              ▼
+                   Schema Identification
+                              │
+                              ▼
+               Deterministic Analytics Engine
+                              │
+                              ▼
+                 Insight Verification Layer
+                              │
+                              ▼
+                  Artificial Intelligence
+                              │
+                              ▼
+               Executive Summary & Dashboard
 ```
 
 ---
@@ -337,22 +337,22 @@ Instead of generating confident guesses, the Copilot converts natural language i
 Every response follows the same execution pipeline.
 
 ```text
-Natural Language
-        │
-        ▼
-SQL Generation
-        │
-        ▼
-Validation
-        │
-        ▼
-DuckDB Execution
-        │
-        ▼
-Result Verification
-        │
-        ▼
-AI Explanation
+                      Natural Language
+                              │
+                              ▼
+                       SQL Generation
+                              │
+                              ▼
+                         Validation
+                              │
+                              ▼
+                      DuckDB Execution
+                              │
+                              ▼
+                    Result Verification
+                              │
+                              ▼
+                       AI Explanation
 ```
 
 The executed query remains visible, allowing every answer to be independently audited.
@@ -402,22 +402,22 @@ Business knowledge can be stored alongside datasets and retrieved through semant
 The retrieval pipeline uses a two-stage architecture.
 
 ```text
-Knowledge Base
-       │
-       ▼
-Vector Embeddings
-       │
-       ▼
-Semantic Search
-       │
-       ▼
-Cross Encoder Re-ranking
-       │
-       ▼
-Context Selection
-       │
-       ▼
-LLM Response
+                       Knowledge Base
+                              │
+                              ▼
+                     Vector Embeddings
+                              │
+                              ▼
+                      Semantic Search
+                              │
+                              ▼
+                  Cross Encoder Re-ranking
+                              │
+                              ▼
+                     Context Selection
+                              │
+                              ▼
+                        LLM Response
 ```
 
 Only the highest-ranked contextual information is supplied to the language model.
@@ -482,34 +482,34 @@ All exported values originate from verified computation.
 Traditional AI analytics systems generally follow this workflow.
 
 ```text
-Dataset
-    │
-    ▼
-Language Model
-    │
-    ▼
-Charts
+                          Dataset
+                              │
+                              ▼
+                       Language Model
+                              │
+                              ▼
+                           Charts
 ```
 
 Numerate OS follows a different architecture.
 
 ```text
-Dataset
-    │
-    ▼
-Deterministic Computation
-    │
-    ▼
-Statistical Verification
-    │
-    ▼
-Business Intelligence
-    │
-    ▼
-Artificial Intelligence
-    │
-    ▼
-Human Explanation
+                          Dataset
+                              │
+                              ▼
+                 Deterministic Computation
+                              │
+                              ▼
+                  Statistical Verification
+                              │
+                              ▼
+                   Business Intelligence
+                              │
+                              ▼
+                  Artificial Intelligence
+                              │
+                              ▼
+                     Human Explanation
 ```
 
 The distinction is architectural rather than cosmetic.
@@ -535,31 +535,25 @@ Artificial intelligence operates only after computation has already been complet
 # High-Level Architecture
 
 ```text
-Dataset Upload
-
-↓
-
-Schema Detection
-
-↓
-
-Analytics Engine
-
-↓
-
-Verification Layer
-
-↓
-
-Business Intelligence
-
-↓
-
-AI Services
-
-↓
-
-Dashboard
+                       Dataset Upload
+                              │
+                              ▼
+                      Schema Detection
+                              │
+                              ▼
+                      Analytics Engine
+                              │
+                              ▼
+                     Verification Layer
+                              │
+                              ▼
+                   Business Intelligence
+                              │
+                              ▼
+                        AI Services
+                              │
+                              ▼
+                         Dashboard
 ```
 
 ---
@@ -589,35 +583,28 @@ FastAPI Backend
 Every request follows a deterministic execution path before AI becomes involved.
 
 ```text
-User
-
-↓
-
-Frontend
-
-↓
-
-Backend
-
-↓
-
-Analytics Engine
-
-↓
-
-Verified Results
-
-↓
-
-AI Gateway
-
-↓
-
-Explanation
-
-↓
-
-Dashboard Rendered
+                            User
+                              │
+                              ▼
+                          Frontend
+                              │
+                              ▼
+                          Backend
+                              │
+                              ▼
+                      Analytics Engine
+                              │
+                              ▼
+                      Verified Results
+                              │
+                              ▼
+                         AI Gateway
+                              │
+                              ▼
+                        Explanation
+                              │
+                              ▼
+                     Dashboard Rendered
 ```
 
 ---
@@ -629,35 +616,28 @@ Artificial intelligence never receives raw business requests.
 It receives verified analytical context.
 
 ```text
-Question
-
-↓
-
-Planner
-
-↓
-
-SQL Generator
-
-↓
-
-DuckDB
-
-↓
-
-Verification
-
-↓
-
-Context Builder
-
-↓
-
-LLM
-
-↓
-
-Verified Response
+                          Question
+                              │
+                              ▼
+                          Planner
+                              │
+                              ▼
+                       SQL Generator
+                              │
+                              ▼
+                           DuckDB
+                              │
+                              ▼
+                        Verification
+                              │
+                              ▼
+                      Context Builder
+                              │
+                              ▼
+                            LLM
+                              │
+                              ▼
+                     Verified Response
 ```
 
 ---
@@ -667,43 +647,34 @@ Verified Response
 Every uploaded dataset passes through a deterministic analytical pipeline.
 
 ```text
-CSV
-
-↓
-
-Validation
-
-↓
-
-Schema Detection
-
-↓
-
-Column Inference
-
-↓
-
-Profiling
-
-↓
-
-Statistical Analysis
-
-↓
-
-Forecasting
-
-↓
-
-Insight Generation
-
-↓
-
-Verification
-
-↓
-
-Dashboard
+                            CSV
+                              │
+                              ▼
+                         Validation
+                              │
+                              ▼
+                      Schema Detection
+                              │
+                              ▼
+                      Column Inference
+                              │
+                              ▼
+                         Profiling
+                              │
+                              ▼
+                    Statistical Analysis
+                              │
+                              ▼
+                        Forecasting
+                              │
+                              ▼
+                     Insight Generation
+                              │
+                              ▼
+                        Verification
+                              │
+                              ▼
+                         Dashboard
 ```
 
 ---
@@ -711,43 +682,34 @@ Dashboard
 # Data Flow
 
 ```text
-Dataset
-
-↓
-
-Validation
-
-↓
-
-Cleaning
-
-↓
-
-Schema Detection
-
-↓
-
-DuckDB
-
-↓
-
-Analytics
-
-↓
-
-Business Rules
-
-↓
-
-Verified Results
-
-↓
-
-AI Explanation
-
-↓
-
-Dashboard
+                          Dataset
+                              │
+                              ▼
+                         Validation
+                              │
+                              ▼
+                          Cleaning
+                              │
+                              ▼
+                      Schema Detection
+                              │
+                              ▼
+                           DuckDB
+                              │
+                              ▼
+                         Analytics
+                              │
+                              ▼
+                       Business Rules
+                              │
+                              ▼
+                      Verified Results
+                              │
+                              ▼
+                       AI Explanation
+                              │
+                              ▼
+                         Dashboard
 ```
 
 ---
@@ -817,27 +779,22 @@ numerate-os/
 # Backend Layers
 
 ```text
-Presentation Layer
-
-↓
-
-API Layer
-
-↓
-
-Business Services
-
-↓
-
-Analytics Engine
-
-↓
-
-Repositories
-
-↓
-
-Database
+                     Presentation Layer
+                              │
+                              ▼
+                         API Layer
+                              │
+                              ▼
+                     Business Services
+                              │
+                              ▼
+                      Analytics Engine
+                              │
+                              ▼
+                        Repositories
+                              │
+                              ▼
+                          Database
 ```
 
 Every layer has clearly defined boundaries.
@@ -853,31 +810,25 @@ Analytics remain independent from AI.
 # Frontend Architecture
 
 ```text
-Pages
-
-↓
-
-Feature Modules
-
-↓
-
-Reusable Components
-
-↓
-
-Hooks
-
-↓
-
-State Management
-
-↓
-
-API Client
-
-↓
-
-Backend
+                           Pages
+                              │
+                              ▼
+                      Feature Modules
+                              │
+                              ▼
+                    Reusable Components
+                              │
+                              ▼
+                           Hooks
+                              │
+                              ▼
+                      State Management
+                              │
+                              ▼
+                         API Client
+                              │
+                              ▼
+                          Backend
 ```
 
 Each feature owns its own components, state and business logic.
@@ -891,35 +842,28 @@ Shared components remain framework-agnostic whenever possible.
 The language model is intentionally positioned as the final layer of the analytical pipeline.
 
 ```text
-Verified Data
-
-↓
-
-Context Builder
-
-↓
-
-Prompt Assembly
-
-↓
-
-Provider Gateway
-
-↓
-
-LLM
-
-↓
-
-Verification
-
-↓
-
-Response Formatter
-
-↓
-
-Frontend
+                       Verified Data
+                              │
+                              ▼
+                      Context Builder
+                              │
+                              ▼
+                      Prompt Assembly
+                              │
+                              ▼
+                      Provider Gateway
+                              │
+                              ▼
+                            LLM
+                              │
+                              ▼
+                        Verification
+                              │
+                              ▼
+                     Response Formatter
+                              │
+                              ▼
+                          Frontend
 ```
 
 This prevents language models from influencing analytical computation.
@@ -1020,43 +964,25 @@ This validation process was repeated throughout development whenever analytical 
 # Validation Workflow
 
 ```text
-Business Dataset
-
-        │
-
-        ▼
-
-Numerate OS
-
-        │
-
-        ▼
-
-Generated Results
-
-        │
-
-        ▼
-
-Independent Python Verification
-
-        │
-
-        ▼
-
-Result Comparison
-
-        │
-
-        ▼
-
-Match
-
-        │
-
-        ▼
-
-Accepted
+                      Business Dataset
+                              │
+                              ▼
+                        Numerate OS
+                              │
+                              ▼
+                     Generated Results
+                              │
+                              ▼
+              Independent Python Verification
+                              │
+                              ▼
+                     Result Comparison
+                              │
+                              ▼
+                           Match
+                              │
+                              ▼
+                          Accepted
 ```
 
 ---
