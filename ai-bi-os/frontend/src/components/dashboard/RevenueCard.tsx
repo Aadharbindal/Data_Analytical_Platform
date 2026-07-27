@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { TrendingUp } from "lucide-react";
 import dynamic from "next/dynamic";
 const LazyCharts = dynamic(() => import("@/components/charts/LazyCharts"), { ssr: false });
 
@@ -141,8 +142,16 @@ export function RevenueCard({ data, semanticDict }: RevenueCardProps) {
         {/* Header */}
         <div className="flex flex-row justify-between items-start mb-6">
           <div>
-            <h2 className="text-xl font-bold text-white tracking-tight">{chartTitle}</h2>
-            <p className="text-[#848a97] text-sm mt-1 mb-4">Total processed volume, with next-month projection</p>
+            <div className="flex items-start gap-3">
+              <div
+                className="flex shrink-0 items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-[#60a5fa] to-[#2563eb]"
+                style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.35), 0 0 16px -4px rgba(96,165,250,0.6)" }}
+              >
+                <TrendingUp className="w-5 h-5 text-white" strokeWidth={2.25} />
+              </div>
+              <h2 className="text-xl font-bold text-white tracking-tight">{chartTitle}</h2>
+            </div>
+            <p className="text-[#848a97] text-sm mt-1 mb-4 ml-[52px]">Total processed volume, with next-month projection</p>
             
             <div className="flex items-end gap-4">
               <span className="text-4xl font-extrabold tracking-tight">
@@ -158,7 +167,8 @@ export function RevenueCard({ data, semanticDict }: RevenueCardProps) {
           </div>
 
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-2 bg-[#171a22] border border-[#2a2d35] text-xs font-medium text-[#a0a5b1] rounded-md px-3 py-1.5 outline-none hover:bg-[#1f222a] transition-colors shadow-sm cursor-pointer">
+            <DropdownMenuTrigger className="flex items-center gap-2 bg-[#171a22] border border-[#2a3a52] text-xs font-medium text-white rounded-full px-4 py-2 outline-none hover:bg-[#1f222a] hover:border-[#3b5478] transition-colors shadow-[0_0_12px_rgba(59,130,246,0.12)] cursor-pointer">
+              <svg className="h-3.5 w-3.5 text-[#4d9fff] drop-shadow-[0_0_4px_rgba(77,159,255,0.75)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></rect><line x1="16" y1="2" x2="16" y2="6" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></line><line x1="8" y1="2" x2="8" y2="6" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></line><line x1="3" y1="10" x2="21" y2="10" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></line></svg>
               {range === '12m' ? 'Last 12 Months' : range === 'ytd' ? 'Year to Date' : 'All Time'}
               <svg className="h-3.5 w-3.5 text-[#646a77]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
             </DropdownMenuTrigger>
