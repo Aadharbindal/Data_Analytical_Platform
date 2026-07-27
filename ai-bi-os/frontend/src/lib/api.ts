@@ -74,6 +74,26 @@ async function request<T>(path: string, options?: RequestInit, isRetry = false):
   return res.json();
 }
 
+// Same auth + silent-refresh-and-retry behavior as request(), but for binary
+// responses (PDF downloads etc.) that can't go through res.json().
+async function fetchBlob(path: string, isRetry = false): Promise<Blob> {
+  const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+  const res = await fetch(`${BASE_URL}${path}`, {
+    credentials: "include",
+    headers: token ? { "Authorization": `Bearer ${token}` } : {},
+  });
+  if (!res.ok) {
+    if (res.status === 401 && !isRetry) {
+      const refreshed = await refreshSession();
+      if (refreshed) {
+        return fetchBlob(path, true);
+      }
+    }
+    throw new Error(`Request failed with status ${res.status}`);
+  }
+  return res.blob();
+}
+
 const api = {
   get: <T>(path: string) => request<T>(path),
   post: <T>(path: string, body: unknown) =>
@@ -316,6 +336,7 @@ export const analyticsApi = {
     api.get<import("./types").TrendData[]>(
       `/api/v1/analytics/trends?dataset_version_id=${datasetVersionId}`
     ),
+  downloadReportPdf: () => fetchBlob(`/api/v1/analytics/report.pdf?t=${Date.now()}`),
 };
 
 // Shareable read-only dashboard links

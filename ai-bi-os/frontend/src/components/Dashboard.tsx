@@ -102,12 +102,7 @@ export const Dashboard: React.FC = () => {
         <button
           onClick={async () => {
             try {
-              const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-              const res = await fetch(`${API_URL}/api/v1/analytics/report.pdf?t=${Date.now()}`, {
-                credentials: "include"
-              });
-              if (!res.ok) throw new Error("Failed to download report");
-              const blob = await res.blob();
+              const blob = await analyticsApi.downloadReportPdf();
               const url = window.URL.createObjectURL(blob);
               const a = document.createElement("a");
               a.href = url;
