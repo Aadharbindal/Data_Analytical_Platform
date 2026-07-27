@@ -535,7 +535,11 @@ Artificial intelligence operates only after computation has already been complet
 # High-Level Architecture
 
 <p align="center">
-  <img src="docs/images/high-level-architecture.png" alt="High-Level Architecture" width="70%">
+  <img
+    src="docs/images/high-level-architecture.png"
+    alt="High-Level Architecture"
+    width="100%"
+  />
 </p>
 
 ---
