@@ -62,7 +62,7 @@ Numerate OS intentionally separates these responsibilities.
 - Generates forecasts
 - Validates every metric
 
-↓
+          ↓
 
 ### Artificial Intelligence
 
@@ -87,10 +87,10 @@ Most AI analytics platforms follow a familiar pipeline.
                             Data
                               │
                               ▼
-                            LLM
+                             LLM
                               │
                               ▼
-                           Charts
+                            Charts
 ```
 
 Numerate OS deliberately reverses that relationship.
