@@ -62,7 +62,7 @@ Numerate OS intentionally separates these responsibilities.
 - Generates forecasts
 - Validates every metric
 
-          ↓
+↓
 
 ### Artificial Intelligence
 
