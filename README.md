@@ -534,35 +534,9 @@ Artificial intelligence operates only after computation has already been complet
 
 # High-Level Architecture
 
-```mermaid
-flowchart LR
-
-A[Dataset Upload]
-
--->
-
-B[Schema Detection]
-
--->
-
-C[Analytics Engine]
-
--->
-
-D[Verification Layer]
-
--->
-
-E[Business Intelligence]
-
--->
-
-F[AI Services]
-
--->
-
-G[Dashboard]
-```
+<p align="center">
+  <img src="docs/images/high-level-architecture.png" alt="High-Level Architecture" width="70%">
+</p>
 
 ---
 
