@@ -534,50 +534,52 @@ Artificial intelligence operates only after computation has already been complet
 
 # High-Level Architecture
 
-<p align="center">
-  <img src="docs/images/high-level-architecture.png" alt="High-Level Architecture" width="70%">
-</p>
+```text
+Dataset Upload
+
+↓
+
+Schema Detection
+
+↓
+
+Analytics Engine
+
+↓
+
+Verification Layer
+
+↓
+
+Business Intelligence
+
+↓
+
+AI Services
+
+↓
+
+Dashboard
+```
 
 ---
 
 # System Architecture
 
-```mermaid
-flowchart TD
+```text
+Next.js Frontend
 
-UI[Next.js Frontend]
+↓
 
-API[FastAPI Backend]
+FastAPI Backend
 
-DUCK[DuckDB Analytics Engine]
+↓
 
-POSTGRES[(PostgreSQL)]
-
-RULES[Rules Engine]
-
-AI[AI Gateway]
-
-RAG[RAG Pipeline]
-
-REPORTS[PDF Generator]
-
-NOTIFY[Notification Center]
-
-UI --> API
-
-API --> DUCK
-
-API --> POSTGRES
-
-API --> RULES
-
-API --> AI
-
-AI --> RAG
-
-RULES --> NOTIFY
-
-API --> REPORTS
+├── DuckDB Analytics Engine
+├── PostgreSQL
+├── Rules Engine → Notification Center
+├── AI Gateway → RAG Pipeline
+└── PDF Generator
 ```
 
 ---
@@ -586,34 +588,36 @@ API --> REPORTS
 
 Every request follows a deterministic execution path before AI becomes involved.
 
-```mermaid
-sequenceDiagram
+```text
+User
 
-participant User
+↓
 
-participant Frontend
+Frontend
 
-participant Backend
+↓
 
-participant Analytics
+Backend
 
-participant AI
+↓
 
-User->>Frontend: Ask Question
+Analytics Engine
 
-Frontend->>Backend: API Request
+↓
 
-Backend->>Analytics: Execute Analysis
+Verified Results
 
-Analytics-->>Backend: Verified Results
+↓
 
-Backend->>AI: Context + Verified Data
+AI Gateway
 
-AI-->>Backend: Explanation
+↓
 
-Backend-->>Frontend: Final Response
+Explanation
 
-Frontend-->>User: Render Dashboard
+↓
+
+Dashboard Rendered
 ```
 
 ---
@@ -624,15 +628,36 @@ Artificial intelligence never receives raw business requests.
 
 It receives verified analytical context.
 
-```mermaid
-flowchart TD
-A[Question] --> B[Planner]
-B --> C[SQL Generator]
-C --> D[DuckDB]
-D --> E[Verification]
-E --> F[Context Builder]
-F --> G[LLM]
-G --> H[Verified Response]
+```text
+Question
+
+↓
+
+Planner
+
+↓
+
+SQL Generator
+
+↓
+
+DuckDB
+
+↓
+
+Verification
+
+↓
+
+Context Builder
+
+↓
+
+LLM
+
+↓
+
+Verified Response
 ```
 
 ---
@@ -641,17 +666,44 @@ G --> H[Verified Response]
 
 Every uploaded dataset passes through a deterministic analytical pipeline.
 
-```mermaid
-flowchart LR
-A[CSV] --> B[Validation]
-B --> C[Schema Detection]
-C --> D[Column Inference]
-D --> E[Profiling]
-E --> F[Statistical Analysis]
-F --> G[Forecasting]
-G --> H[Insight Generation]
-H --> I[Verification]
-I --> J[Dashboard]
+```text
+CSV
+
+↓
+
+Validation
+
+↓
+
+Schema Detection
+
+↓
+
+Column Inference
+
+↓
+
+Profiling
+
+↓
+
+Statistical Analysis
+
+↓
+
+Forecasting
+
+↓
+
+Insight Generation
+
+↓
+
+Verification
+
+↓
+
+Dashboard
 ```
 
 ---
