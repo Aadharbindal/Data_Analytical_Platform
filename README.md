@@ -28,7 +28,7 @@ An enterprise analytics platform where every metric is computed by deterministic
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
 
-<br><br>
+---
 
 ## Dashboard Preview
 
@@ -72,18 +72,18 @@ Most AI analytics platforms follow a familiar pipeline.
 
 ```
 Data
-    │
-    ▼
+ │
+ ▼
 LLM
-    │
-    ▼
+ │
+ ▼
 Charts
 ```
 
 Numerate OS deliberately reverses that relationship.
 
 ```
-Data
+  Data
     │
     ▼
 Deterministic Analytics
@@ -537,27 +537,27 @@ Artificial intelligence operates only after computation has already been complet
 ```text
 Dataset Upload
 
-↓
+    ↓
 
 Schema Detection
 
-↓
+    ↓
 
 Analytics Engine
 
-↓
+    ↓
 
 Verification Layer
 
-↓
+    ↓
 
 Business Intelligence
 
-↓
+    ↓
 
 AI Services
 
-↓
+    ↓
 
 Dashboard
 ```
@@ -569,11 +569,11 @@ Dashboard
 ```text
 Next.js Frontend
 
-↓
+    ↓
 
 FastAPI Backend
 
-↓
+    ↓
 
 ├── DuckDB Analytics Engine
 ├── PostgreSQL
@@ -591,31 +591,31 @@ Every request follows a deterministic execution path before AI becomes involved.
 ```text
 User
 
-↓
+  ↓
 
 Frontend
 
-↓
+  ↓
 
 Backend
 
-↓
+  ↓
 
 Analytics Engine
 
-↓
+  ↓
 
 Verified Results
 
-↓
+  ↓
 
 AI Gateway
 
-↓
+  ↓
 
 Explanation
 
-↓
+  ↓
 
 Dashboard Rendered
 ```
@@ -631,31 +631,31 @@ It receives verified analytical context.
 ```text
 Question
 
-↓
+   ↓
 
 Planner
 
-↓
+   ↓
 
 SQL Generator
 
-↓
+   ↓
 
 DuckDB
 
-↓
+   ↓
 
 Verification
 
-↓
+   ↓
 
 Context Builder
 
-↓
+   ↓
 
 LLM
 
-↓
+   ↓
 
 Verified Response
 ```
@@ -1553,8 +1553,8 @@ For larger changes, discussing the proposal first helps keep the project consist
 
 <div align="center">
 
-# Numerate OS
-
 Built by **Aadhar Bindal**
+
+---
 
 </div>
