@@ -319,10 +319,25 @@ export const analyticsApi = {
 };
 
 // Shareable read-only dashboard links
+export interface ShareLink {
+  token: string;
+  created_at: string;
+  view_count: number;
+  has_password: boolean;
+  expires_at: string | null;
+}
+
 export const shareApi = {
-  create: () => api.post<{ token: string; created_at: string; view_count: number }>("/api/v1/share/create", {}),
+  // opts omitted entirely = "just get me the link", leaves any existing
+  // password/expiry untouched. Pass the keys explicitly to change them.
+  create: (opts?: { password?: string | null; expiresInHours?: number | null }) => {
+    const body: Record<string, string | number | null> = {};
+    if (opts && "password" in opts) body.password = opts.password ?? null;
+    if (opts && "expiresInHours" in opts) body.expires_in_hours = opts.expiresInHours ?? null;
+    return api.post<ShareLink>("/api/v1/share/create", body);
+  },
   mine: () =>
-    api.get<{ token: string; dataset_id: string; dataset_name: string; created_at: string; view_count: number; last_viewed_at: string | null }[]>(
+    api.get<(ShareLink & { dataset_id: string; dataset_name: string; last_viewed_at: string | null })[]>(
       "/api/v1/share/mine"
     ),
   revoke: (token: string) => api.delete(`/api/v1/share/${token}`),

@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { BarChart3, Loader2, ShieldAlert } from "lucide-react";
+import { BarChart3, Loader2, ShieldAlert, Lock, ArrowRight, Clock } from "lucide-react";
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { InsightPanel } from "@/components/dashboard/InsightPanel";
 import { BASE_URL } from "@/lib/api";
@@ -30,34 +30,65 @@ function formatKpiValue(value: number, type?: string): string {
   return `${sign}${formatIndianCurrency(abs)}`;
 }
 
+type ViewState =
+  | { kind: "loading" }
+  | { kind: "password"; wrongAttempt: boolean }
+  | { kind: "expired" }
+  | { kind: "error"; message: string }
+  | { kind: "ready"; data: SharedData };
+
+async function loadSharedDashboard(token: string, pwd?: string): Promise<ViewState> {
+  try {
+    const res = await fetch(`${BASE_URL}/api/v1/share/${token}/data`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: pwd ?? null }),
+    });
+    if (res.status === 410) {
+      return { kind: "expired" };
+    }
+    if (res.status === 401) {
+      const body = await res.json().catch(() => null);
+      const code = body?.detail?.error;
+      return { kind: "password", wrongAttempt: code === "incorrect_password" };
+    }
+    if (!res.ok) {
+      const body = await res.json().catch(() => null);
+      const detail = typeof body?.detail === "string" ? body.detail : "This share link is invalid or has been revoked.";
+      return { kind: "error", message: detail };
+    }
+    const json = await res.json();
+    return { kind: "ready", data: json };
+  } catch {
+    return { kind: "error", message: "Could not load this shared dashboard." };
+  }
+}
+
 export function SharedDashboardClient({ token }: { token: string }) {
-  const [data, setData] = useState<SharedData | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [state, setState] = useState<ViewState>({ kind: "loading" });
+  const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch(`${BASE_URL}/api/v1/share/${token}/data`);
-        if (!res.ok) {
-          const body = await res.json().catch(() => null);
-          throw new Error(body?.detail || "This share link is invalid or has been revoked.");
-        }
-        const json = await res.json();
-        if (!cancelled) setData(json);
-      } catch (e: any) {
-        if (!cancelled) setError(e.message || "Could not load this shared dashboard.");
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
+    loadSharedDashboard(token).then((result) => {
+      if (!cancelled) setState(result);
+    });
     return () => {
       cancelled = true;
     };
   }, [token]);
 
-  if (loading) {
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!password) return;
+    setSubmitting(true);
+    const result = await loadSharedDashboard(token, password);
+    setState(result);
+    setSubmitting(false);
+  };
+
+  if (state.kind === "loading") {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -65,16 +96,79 @@ export function SharedDashboardClient({ token }: { token: string }) {
     );
   }
 
-  if (error || !data) {
+  if (state.kind === "password") {
     return (
-      <div className="flex h-screen w-full flex-col items-center justify-center bg-background gap-3 text-center px-6">
-        <ShieldAlert className="h-10 w-10 text-muted-foreground/60" />
-        <h1 className="text-lg font-semibold text-foreground">Link unavailable</h1>
-        <p className="text-sm text-muted-foreground max-w-sm">{error}</p>
+      <div className="flex h-screen w-full flex-col items-center justify-center bg-background gap-5 px-6 text-center">
+        <motion.div
+          initial={{ scale: 0.5, opacity: 0, rotate: -12 }}
+          animate={{ scale: 1, opacity: 1, rotate: 0 }}
+          transition={{ type: "spring", stiffness: 380, damping: 18 }}
+          className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-blue-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_0_20px_-4px_var(--primary)]"
+        >
+          <Lock className="h-6 w-6 text-white" strokeWidth={2.5} />
+        </motion.div>
+        <div>
+          <h1 className="text-lg font-semibold text-foreground">This dashboard is password protected</h1>
+          <p className="mt-1.5 text-sm text-muted-foreground">Enter the password the owner shared with you.</p>
+        </div>
+        <form onSubmit={handlePasswordSubmit} className="flex w-full max-w-xs flex-col gap-3">
+          <input
+            type="password"
+            autoFocus
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            className="h-11 rounded-xl border border-border/60 bg-surface/60 px-4 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/30"
+          />
+          <AnimatePresence>
+            {state.wrongAttempt && (
+              <motion.p
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="text-xs text-error"
+              >
+                Incorrect password. Try again.
+              </motion.p>
+            )}
+          </AnimatePresence>
+          <button
+            type="submit"
+            disabled={submitting || !password}
+            className="flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-blue-600 text-sm font-medium text-white shadow-lg shadow-primary/20 transition-opacity hover:opacity-90 disabled:opacity-50"
+          >
+            {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Unlock <ArrowRight className="h-4 w-4" /></>}
+          </button>
+        </form>
       </div>
     );
   }
 
+  if (state.kind === "expired") {
+    return (
+      <div className="flex h-screen w-full flex-col items-center justify-center bg-background gap-3 text-center px-6">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/20">
+          <Clock className="h-6 w-6 text-amber-500" />
+        </div>
+        <h1 className="text-lg font-semibold text-foreground">This link has expired</h1>
+        <p className="max-w-sm text-sm text-muted-foreground">
+          Ask the dashboard owner to share a fresh link.
+        </p>
+      </div>
+    );
+  }
+
+  if (state.kind === "error") {
+    return (
+      <div className="flex h-screen w-full flex-col items-center justify-center bg-background gap-3 text-center px-6">
+        <ShieldAlert className="h-10 w-10 text-muted-foreground/60" />
+        <h1 className="text-lg font-semibold text-foreground">Link unavailable</h1>
+        <p className="text-sm text-muted-foreground max-w-sm">{state.message}</p>
+      </div>
+    );
+  }
+
+  const data = state.data;
   const metricCards = data.kpis.slice(0, 4).map((k) => ({
     title: k.name,
     value: formatKpiValue(k.value, k.type),

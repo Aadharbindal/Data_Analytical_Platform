@@ -386,6 +386,16 @@ def init_db():
         )
     ''')
 
+    # Enterprise sharing controls: a link with no password_hash/expires_at
+    # behaves exactly as before (permanent, unprotected). Both are opt-in.
+    try:
+        cursor.execute("ALTER TABLE shared_links ADD COLUMN IF NOT EXISTS password_hash TEXT")
+        cursor.execute("ALTER TABLE shared_links ADD COLUMN IF NOT EXISTS expires_at TEXT")
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        print(f"Warning: could not add shared_links protection columns: {e}")
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS classification_models (
             id SERIAL PRIMARY KEY,
