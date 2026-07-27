@@ -33,7 +33,7 @@ An enterprise analytics platform where every metric is computed by deterministic
 ## Dashboard Preview
 
 <p align="center">
-  <img src="docs/images/dashboard-preview.png" alt="Numerate OS Dashboard Preview" width="100%">
+  <img src="docs/images/dashboard.png" alt="Numerate OS Dashboard Preview" width="100%">
 </p>
 
 <br>
