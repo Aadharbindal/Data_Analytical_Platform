@@ -91,7 +91,7 @@ class PremiumCanvas(canvas.Canvas):
         
         self.setFont('Helvetica', 7.5)
         self.setFillColor(MUTED)
-        self.drawString(22*mm, 10*mm, "DataMind OS")
+        self.drawString(22*mm, 10*mm, "Numerate OS")
         self.drawRightString(A4[0] - 22*mm, 10*mm, f"Page {self._pageNumber} of {page_count}")
         self.restoreState()
 

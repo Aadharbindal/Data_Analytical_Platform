@@ -1,6 +1,6 @@
 <div align="center">
 
-# DataMind OS
+# Numerate OS
 
 ### *An AI business intelligence platform that never lets an AI make up a number.*
 
@@ -22,7 +22,7 @@ Upload a CSV. Get real KPIs, real forecasts, real correlations — computed the 
 
 <br/>
 
-**`~22.8K LOC`** · **`10 API routers`** · **`28 app routes`** · **`9 real statistical engines`** · **`pgvector RAG`**
+**`~32K LOC`** · **`14 API routers`** · **`32 app routes`** · **`11 real statistical & ML engines`** · **`pgvector RAG`**
 
 [The one iron rule](#the-one-iron-rule) · [What it does](#what-it-actually-does) · [Architecture](#architecture) · [How I know it works](#how-i-actually-know-it-works) · [Quickstart](#quickstart) · [Tech stack](#tech-stack)
 
@@ -34,7 +34,7 @@ Upload a CSV. Get real KPIs, real forecasts, real correlations — computed the 
 
 Most "AI analytics" tools share one failure mode: ask them a hard question and they hand back a confident, well-formatted, **completely wrong** answer. The number *sounds* right. The sentence is fluent. It's just not true.
 
-DataMind OS is built around the opposite instinct — a single constraint applied without exception:
+Numerate OS is built around the opposite instinct — a single constraint applied without exception:
 
 ## The one iron rule
 
@@ -60,9 +60,9 @@ Drop in a CSV — sales data, bank statements, SaaS subscriptions, anything. Duc
 <td width="50%" valign="top">
 
 ### The Analytics Studio
-Nine exploration tools, **all backed by real computation** — never an LLM:
+Eleven exploration tools, **all backed by real computation** — never an LLM:
 
-`EDA` · `Statistics` · `Correlation` · `Distribution` · `Outliers` (Z-score **and** IQR) · `Trend` (regression slope + r²) · `Time Series` · `Regression` (scikit-learn) · `Forecast` (linear + Holt-Winters, with confidence bounds)
+`EDA` · `Statistics` · `Correlation` · `Distribution` · `Outliers` (Z-score **and** IQR) · `Trend` (regression slope + r²) · `Time Series` · `Regression` (scikit-learn) · `Forecast` (linear + Holt-Winters, with confidence bounds, adjustable horizon/granularity) · `Classification` (scikit-learn) · `Clustering` (scikit-learn)
 
 None of this touches a model. It doesn't need to.
 
@@ -105,13 +105,15 @@ A decoupled two-service system with a deterministic core and an AI layer that si
                                             │  REST /api/v1
                             ┌───────────────▼──────────────┐
                             │        FastAPI Backend        │
-                            │  10 routers · Pydantic models │
+                            │  14 routers · Pydantic models │
                             ├───────────────────────────────┤
    ┌── Auth ────────────────┤  bcrypt + JWT + refresh cookie + slowapi rate limiting
    │                        │
    ├── Analytics Engine ────┤  pandas · numpy · scipy · statsmodels   ◄── deterministic,
    │                        │                                              LLM-free math
-   ├── Regression ──────────┤  scikit-learn
+   ├── Regression ──────────┤  scikit-learn (regression · classification · clustering)
+   │                        │
+   ├── Rules Engine ────────┤  deterministic threshold checks ──► persisted events ──► notifications
    │                        │
    ├── Copilot Agent ───────┤  ReAct loop ──► DuckDB (real SQL execution)
    │                        │
@@ -215,13 +217,12 @@ cd ai-bi-os/frontend && npm test                   # Jest + Testing Library
 
 ## Roadmap — and what's honestly *not* here yet
 
-**Shipped and working today:** deterministic analytics, the Copilot, Deep Insights, the Confidence Center, pgvector-backed RAG, Dataset Comparison, PDF export, and auth with silent session refresh.
+**Shipped and working today:** deterministic analytics (including classification and clustering), the Copilot, Deep Insights, the Confidence Center, pgvector-backed RAG, Dataset Comparison and versioning, a deterministic Rules Engine (detection → persistence → in-app notifications), password-protected and expiring dashboard share links, PDF export, and auth with silent session refresh.
 
 **Known limitations, documented rather than hidden:**
 
 - PostgreSQL is a single instance — solid for individual/small-team use, not yet hardened for large multi-tenant scale.
 - Rate limiting falls back to per-process in-memory counting if Redis is unreachable — correct on one instance, not coordinated across several.
-- Regression is linear-only for now — no classification or clustering yet.
 - Desktop-first UI — a responsive mobile layout is on the list.
 - A handful of admin-facing routes (Knowledge Console, Python Console, AI Evaluation, Business Rules admin) are scaffolded but not built yet — they render a plain "Coming Soon" and aren't linked from any nav menu.
 

@@ -117,13 +117,13 @@ export function Sidebar() {
 
       {/* Brand / Logo */}
       <motion.div variants={itemVariants} className={cn("flex h-[72px] shrink-0 items-center border-b border-border/40 mb-2 transition-all duration-400", isCollapsed ? "px-0 justify-center" : "px-6")}>
-        <Link href="/" className="flex items-center text-foreground font-semibold text-[15px] tracking-wide" title="DataMind">
+        <Link href="/" className="flex items-center text-foreground font-semibold text-[15px] tracking-wide" title="Numerate">
           <AnimatedLogo />
           <div className={cn(
             "overflow-hidden whitespace-nowrap flex items-center",
             isCollapsed ? "max-w-0 opacity-0 ml-0" : "max-w-[120px] opacity-100 ml-3"
           )} style={{ transition: 'max-width 420ms cubic-bezier(0.65,0,0.35,1), opacity 300ms ease, margin-left 420ms cubic-bezier(0.65,0,0.35,1)' }}>
-            <span>DataMind</span>
+            <span>Numerate</span>
           </div>
         </Link>
       </motion.div>

@@ -958,7 +958,7 @@ def _finish_persisting(df, file_content, filename, user_id, metadata, version, c
         "name": filename,
         "domain": domain,
         "description": description or f"Auto-generated catalog entry for {filename}. Contains {row_count} rows and {col_count} columns.",
-        "owner": "DataMind OS",
+        "owner": "Numerate OS",
         "tags": tags or ["auto-inferred", "raw-data"]
     }
 

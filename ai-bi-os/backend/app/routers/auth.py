@@ -414,7 +414,7 @@ def setup_2fa(current_user: dict = Depends(get_current_user)):
     conn.commit()
     conn.close()
 
-    uri = pyotp.totp.TOTP(secret).provisioning_uri(name=current_user["email"], issuer_name="DataMind")
+    uri = pyotp.totp.TOTP(secret).provisioning_uri(name=current_user["email"], issuer_name="Numerate")
     qr_img = qrcode.make(uri)
     buf = io.BytesIO()
     qr_img.save(buf, format="PNG")

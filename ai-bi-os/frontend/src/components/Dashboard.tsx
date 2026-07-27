@@ -111,7 +111,7 @@ export const Dashboard: React.FC = () => {
               const url = window.URL.createObjectURL(blob);
               const a = document.createElement("a");
               a.href = url;
-              a.download = `datamind_report_${Date.now()}.pdf`;
+              a.download = `numerate_report_${Date.now()}.pdf`;
               document.body.appendChild(a);
               a.click();
               document.body.removeChild(a);

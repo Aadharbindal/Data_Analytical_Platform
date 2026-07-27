@@ -14,7 +14,7 @@ class AgentOrchestrator:
     """Core conversational agent orchestrator."""
 
     DEFAULT_SYSTEM_PROMPT = (
-        "You are the core AI Business Analyst for the DataMind Copilot Platform. "
+        "You are the core AI Business Analyst for the Numerate Copilot Platform. "
         "You have access to a DuckDB analytical engine via tools, and a semantic knowledge base. "
         "If a user asks a quantitative data question, ALWAYS use the query_duckdb tool to find the exact mathematical answer. "
         "If the SQL query fails, fix the SQL and try again. "

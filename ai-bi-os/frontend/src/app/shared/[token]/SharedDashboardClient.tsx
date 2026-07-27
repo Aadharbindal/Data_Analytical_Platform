@@ -181,7 +181,7 @@ export function SharedDashboardClient({ token }: { token: string }) {
       <header className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-background/80 backdrop-blur-md border-b border-white/[0.06]">
         <div className="flex items-center gap-2">
           <BarChart3 className="h-5 w-5 text-primary" />
-          <span className="text-sm font-semibold">DataMind</span>
+          <span className="text-sm font-semibold">Numerate</span>
           <span className="text-xs text-muted-foreground border border-border/50 rounded-full px-2 py-0.5 ml-2">
             Shared read-only view
           </span>
@@ -250,7 +250,7 @@ export function SharedDashboardClient({ token }: { token: string }) {
         )}
 
         <p className="text-center text-xs text-muted-foreground/60 pt-4 pb-8">
-          This is a read-only view shared by the dataset owner. Powered by DataMind.
+          This is a read-only view shared by the dataset owner. Powered by Numerate.
         </p>
       </motion.div>
     </div>

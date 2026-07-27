@@ -1,4 +1,4 @@
-# DataMind OS
+# Numerate OS
 
 **An AI business intelligence platform that never lets an AI make up a number.**
 

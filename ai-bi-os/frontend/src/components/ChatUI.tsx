@@ -389,7 +389,7 @@ const AIMessageBubble: React.FC<{ msg: Message; onTyping?: () => void }> = ({
 const GREETING: Message = {
   role: "ai",
   content:
-    "Hello! I am DataMind Copilot. I can query your databases, generate charts, and provide strategic insights. What would you like to know today?",
+    "Hello! I am Numerate Copilot. I can query your databases, generate charts, and provide strategic insights. What would you like to know today?",
   instant: true,
 };
 
@@ -725,7 +725,7 @@ export const ChatUI: React.FC = () => {
                   handleSend();
                 }
               }}
-              placeholder="Ask DataMind to query datasets, generate charts, or predict trends..."
+              placeholder="Ask Numerate to query datasets, generate charts, or predict trends..."
               className="w-full pl-5 pr-14 py-4 min-h-[56px] rounded-2xl bg-transparent border-0 text-foreground placeholder:text-muted-foreground focus-visible:ring-0 shadow-none text-[15px]"
             />
             <Button

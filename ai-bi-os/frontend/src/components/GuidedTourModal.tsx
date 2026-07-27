@@ -43,7 +43,7 @@ function Slide1() {
           Bring in your data
         </h1>
         <p className="gt-float-in" style={{ fontSize: 16.5, lineHeight: 1.45, color: "#98a1b2", margin: 0, maxWidth: 760, animationDelay: ".14s" }}>
-          Drop a CSV, JSON, Parquet or Excel file — DataMind reads the columns and gets to work in seconds.
+          Drop a CSV, JSON, Parquet or Excel file — Numerate reads the columns and gets to work in seconds.
         </p>
       </div>
       <div
@@ -214,7 +214,7 @@ function Slide3() {
               <div style={{ fontSize: 11, color: "#727b8c", textAlign: "right" }}>
                 7 cols
                 <br />
-                DataMind OS
+                Numerate OS
               </div>
             </div>
             <div style={{ fontSize: 12.5, color: "#8a93a4", marginTop: 4, maxWidth: 560 }}>Auto-generated catalog entry. Contains 971 rows and 7 columns.</div>
@@ -235,7 +235,7 @@ function Slide4() {
       <SlideHeader
         eyebrow="04 · ASK"
         title="Ask in plain English"
-        caption="Type a question the way you'd say it. DataMind writes the query, runs it, and hands back the answer — with the SQL if you want to check its work."
+        caption="Type a question the way you'd say it. Numerate writes the query, runs it, and hands back the answer — with the SQL if you want to check its work."
       />
       <div style={{ marginTop: 16, flex: 1, border: "1px solid rgba(255,255,255,.07)", borderRadius: 16, background: "linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.005))", padding: 12, display: "flex", flexDirection: "column", gap: 10, overflow: "hidden" }}>
         <Dots />
@@ -277,7 +277,7 @@ function Slide5() {
       <SlideHeader
         eyebrow="05 · INSIGHTS"
         title="The signal, surfaced"
-        caption="DataMind reads every column so you don't have to — flagging anomalies, trends, and the one number worth acting on this week."
+        caption="Numerate reads every column so you don't have to — flagging anomalies, trends, and the one number worth acting on this week."
       />
       <div style={{ marginTop: 16, flex: 1, display: "flex", flexDirection: "column", gap: 10, overflow: "hidden" }}>
         <div style={{ border: "1px solid rgba(255,193,7,.22)", borderRadius: 14, padding: "12px 16px", background: "linear-gradient(180deg,rgba(255,193,7,.06),transparent)", display: "flex", gap: 12 }}>
@@ -387,7 +387,7 @@ function Slide6() {
             <path d="M10 13a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1" />
             <path d="M14 11a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1" />
           </svg>
-          <span style={{ flex: 1, fontSize: 13, color: "#9aa3b3", fontFamily: "ui-monospace,monospace" }}>datamind.app/s/97a1-transactions</span>
+          <span style={{ flex: 1, fontSize: 13, color: "#9aa3b3", fontFamily: "ui-monospace,monospace" }}>numerate.app/s/97a1-transactions</span>
           <button
             type="button"
             style={{ border: "1px solid rgba(59,130,246,.4)", background: "rgba(59,130,246,.12)", color: "#8fb4ff", fontSize: 12.5, fontWeight: 600, padding: "7px 14px", borderRadius: 8, cursor: "pointer" }}
@@ -413,7 +413,7 @@ function Slide7() {
       </div>
       <h1 style={{ fontSize: 44, fontWeight: 800, margin: "22px 0 12px", color: "#f6f7fa", letterSpacing: "-.02em" }}>You&apos;re all set</h1>
       <p style={{ fontSize: 18, lineHeight: 1.5, color: "#98a1b2", margin: 0, maxWidth: 520 }}>
-        Your workspace is ready. Upload a dataset and DataMind takes it from raw file to executive dashboard — automatically.
+        Your workspace is ready. Upload a dataset and Numerate takes it from raw file to executive dashboard — automatically.
       </p>
       <div style={{ display: "flex", gap: 10, marginTop: 26, flexWrap: "wrap", justifyContent: "center" }}>
         <span style={{ fontSize: 13, color: "#aeb6c5", border: "1px solid rgba(255,255,255,.1)", padding: "8px 15px", borderRadius: 999 }}>Auto dashboards</span>
@@ -692,7 +692,7 @@ export function GuidedTourModal({ open, onClose }: { open: boolean; onClose: () 
               e.currentTarget.style.boxShadow = "0 8px 26px -6px rgba(47,107,255,.7)";
             }}
           >
-            {isLast ? "Enter DataMind" : "Next"}
+            {isLast ? "Enter Numerate" : "Next"}
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
               <path d="M9 6l6 6-6 6" />
             </svg>

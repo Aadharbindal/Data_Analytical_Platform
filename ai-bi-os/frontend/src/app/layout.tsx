@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DataMind",
+  title: "Numerate",
   description: "Enterprise AI Business Intelligence Operating System",
 };
 
