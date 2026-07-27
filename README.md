@@ -28,7 +28,7 @@ An enterprise analytics platform where every metric is computed by deterministic
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
 
-<br><br>
+---
 
 ## Dashboard Preview
 
@@ -563,11 +563,11 @@ Artificial intelligence operates only after computation has already been complet
 ```text
 Next.js Frontend
 
-↓
+    ↓
 
 FastAPI Backend
 
-↓
+    ↓
 
 ├── DuckDB Analytics Engine
 ├── PostgreSQL
@@ -1479,8 +1479,8 @@ For larger changes, discussing the proposal first helps keep the project consist
 
 <div align="center">
 
-# Numerate OS
-
 Built by **Aadhar Bindal**
+
+---
 
 </div>
