@@ -157,12 +157,14 @@ export function RevenueCard({ data, semanticDict }: RevenueCardProps) {
               <span className="text-4xl font-extrabold tracking-tight">
                 {formatBigNumber(total)}
               </span>
-              <div className="flex items-center gap-2 mb-1.5">
-                <span className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full ${trend >= 0 ? 'bg-[#062d1b] text-[#10b981]' : 'bg-[#3b1219] text-[#ef4444]'}`}>
-                  {trend >= 0 ? '↑' : '↓'} {Math.abs(trend).toFixed(1)}%
-                </span>
-                <span className="text-[#646a77] text-xs font-medium">vs. previous period</span>
-              </div>
+              {trend !== 0 && (
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full ${trend > 0 ? 'bg-[#062d1b] text-[#10b981]' : 'bg-[#3b1219] text-[#ef4444]'}`}>
+                    {trend > 0 ? '↑' : '↓'} {Math.abs(trend).toFixed(1)}%
+                  </span>
+                  <span className="text-[#646a77] text-xs font-medium">vs. previous period</span>
+                </div>
+              )}
             </div>
           </div>
 
