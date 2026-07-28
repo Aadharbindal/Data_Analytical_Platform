@@ -44,25 +44,38 @@ An enterprise analytics platform where every metric is computed by deterministic
 
 ---
 
-# Overview
+## Overview
 
-Modern analytics platforms have a fundamental trust problem.
+> **Numerate OS separates mathematics from language.**
 
-Large language models are exceptional at communicating information, but they should never be responsible for producing the numbers they describe.
+Modern analytics platforms often ask AI to both calculate and explain business metrics.
 
-Numerate OS is designed around a strict architectural separation between **computation** and **language**.
+Numerate OS intentionally separates these responsibilities.
 
-Every metric, KPI, forecast, anomaly, recommendation, trend, comparison and statistical result is produced by deterministic analytical engines before an AI model is involved.
+---
 
-The AI layer never performs arithmetic.
+### Deterministic Layer
 
-It never estimates values.
+- Computes KPIs
+- Performs statistical analysis
+- Detects anomalies
+- Generates forecasts
+- Validates every metric
 
-It never invents metrics.
+↓
 
-Its responsibility begins only after deterministic systems have already verified the underlying computation.
+### Artificial Intelligence
 
-This architecture makes every insight explainable, auditable and reproducible.
+- Explains results
+- Answers business questions
+- Writes executive summaries
+- Produces recommendations
+
+---
+
+The language model never produces numbers.
+
+It only communicates computation that has already been verified.
 
 ---
 
@@ -74,10 +87,10 @@ Most AI analytics platforms follow a familiar pipeline.
                             Data
                               │
                               ▼
-                            LLM
+                             LLM
                               │
                               ▼
-                           Charts
+                            Charts
 ```
 
 Numerate OS deliberately reverses that relationship.
@@ -482,7 +495,7 @@ All exported values originate from verified computation.
 Traditional AI analytics systems generally follow this workflow.
 
 ```text
-                          Dataset
+                           Dataset
                               │
                               ▼
                        Language Model
@@ -494,7 +507,7 @@ Traditional AI analytics systems generally follow this workflow.
 Numerate OS follows a different architecture.
 
 ```text
-                          Dataset
+                           Dataset
                               │
                               ▼
                  Deterministic Computation
@@ -647,7 +660,7 @@ It receives verified analytical context.
 Every uploaded dataset passes through a deterministic analytical pipeline.
 
 ```text
-                            CSV
+                             CSV
                               │
                               ▼
                          Validation
@@ -810,7 +823,7 @@ Analytics remain independent from AI.
 # Frontend Architecture
 
 ```text
-                           Pages
+                            Pages
                               │
                               ▼
                       Feature Modules
@@ -828,7 +841,7 @@ Analytics remain independent from AI.
                          API Client
                               │
                               ▼
-                          Backend
+                           Backend
 ```
 
 Each feature owns its own components, state and business logic.
@@ -976,13 +989,13 @@ This validation process was repeated throughout development whenever analytical 
               Independent Python Verification
                               │
                               ▼
-                     Result Comparison
+                      Result Comparison
                               │
                               ▼
-                           Match
+                            Match
                               │
                               ▼
-                          Accepted
+                           Accepted
 ```
 
 ---
