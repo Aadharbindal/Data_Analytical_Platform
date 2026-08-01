@@ -38,6 +38,12 @@ const statusConfig: Record<string, { color: string; icon: React.ReactNode }> = {
     color: "bg-success/10 text-success border-success/20",
     icon: <CheckCircle className="h-3 w-3" />,
   },
+  // Uploaded and usable, just not the dataset currently being analysed. Muted
+  // so the one active row stands out instead of every row claiming to be it.
+  ready: {
+    color: "bg-muted/10 text-muted-foreground border-border/40",
+    icon: <Database className="h-3 w-3" />,
+  },
   processing: {
     color: "bg-warning/10 text-warning border-warning/20",
     icon: <Clock className="h-3 w-3" />,
@@ -600,11 +606,20 @@ export default function DatasetsPage() {
                 const ds = lineage[0];
                 const olderCount = lineage.length - 1;
                 const isExpanded = expandedLineage === ds.name;
-                const sc = statusConfig[ds.status] ?? statusConfig.archived;
                 const isSelected = compareSelection.includes(ds.id);
                 // After a roll back the active version is an older one, so look
                 // across the whole lineage rather than just the newest row.
                 const activeInLineage = lineage.find((v) => v.id === activeDataset?.id);
+                // The stored status is "active" for every dataset that uploaded
+                // cleanly, so printing it marked the whole table Active. Only
+                // the lineage actually being analysed gets that badge; the rest
+                // are uploaded and ready to be selected.
+                const statusText = activeInLineage
+                  ? "active"
+                  : ds.status === "active"
+                    ? "ready"
+                    : ds.status;
+                const sc = statusConfig[statusText] ?? statusConfig.archived;
                 return (
                   <React.Fragment key={ds.name}>
                   <motion.tr
@@ -678,7 +693,7 @@ export default function DatasetsPage() {
                     </td>
                     <td className="px-3 md:px-6 py-5">
                       <span className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-medium border ${sc.color}`}>
-                        {sc.icon}{ds.status}
+                        {sc.icon}{statusText}
                       </span>
                     </td>
                     <td className="px-3 md:px-6 py-5 tabular-metrics text-muted-foreground truncate">

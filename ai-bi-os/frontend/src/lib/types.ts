@@ -37,7 +37,11 @@ export interface Dataset {
   workspace_id: string;
   name: string;
   description?: string;
+  /** Processing state. "active" here means the upload succeeded, not that this
+   *  is the dataset currently being analysed — see `is_active` for that. */
   status: "active" | "archived" | "deleted" | "processing";
+  /** True only for the one dataset the rest of the app is currently reading. */
+  is_active?: boolean;
   owner_id?: string;
   project_id?: string;
   created_at: string;

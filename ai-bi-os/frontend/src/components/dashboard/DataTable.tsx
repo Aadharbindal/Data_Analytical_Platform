@@ -22,10 +22,20 @@ interface DataTableProps {
 
 const statusColors: Record<string, string> = {
   active: "bg-success/10 text-success border-success/20",
+  ready: "bg-muted/10 text-muted-foreground border-border/40",
   processing: "bg-warning/10 text-warning border-warning/20",
   failed: "bg-error/10 text-error border-error/20",
   archived: "bg-muted/10 text-muted-foreground border-border/40",
 };
+
+/** The stored status says "active" for every dataset that uploaded cleanly, so
+ *  showing it verbatim marked all of them Active at once when only one is
+ *  actually being analysed. Reserve "Active" for that one and call the rest
+ *  what they are: uploaded and ready to be selected. */
+function statusLabel(ds: { status: string; is_active?: boolean }): string {
+  if (ds.is_active) return "active";
+  return ds.status === "active" ? "ready" : ds.status;
+}
 
 export function DataTable({ datasets, loading }: DataTableProps) {
   if (loading) return <TableSkeleton rows={5} />;
@@ -65,9 +75,9 @@ export function DataTable({ datasets, loading }: DataTableProps) {
                 <TableCell className="px-6 py-4">
                   <Badge
                     variant="outline"
-                    className={`rounded-full px-2.5 py-0.5 capitalize ${statusColors[ds.status] ?? statusColors.archived}`}
+                    className={`rounded-full px-2.5 py-0.5 capitalize ${statusColors[statusLabel(ds)] ?? statusColors.archived}`}
                   >
-                    {ds.status}
+                    {statusLabel(ds)}
                   </Badge>
                 </TableCell>
                 <TableCell className="tabular-metrics text-muted-foreground px-6 py-4">

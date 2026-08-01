@@ -150,11 +150,20 @@ async def list_datasets(workspace_id: Optional[str] = None, current_user: dict =
     cursor.execute('SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score FROM datasets WHERE user_id=%s ORDER BY created_at DESC', (current_user["id"],))
     rows = cursor.fetchall()
     conn.close()
-    
+
+    # `status` is the processing state and reads "active" for every dataset that
+    # uploaded successfully. Which dataset is *selected* lives in a separate
+    # table, so the registry was labelling all sixty of a user's uploads
+    # "Active" at once. Expose the selection separately and let the UI say which
+    # one the rest of the app is actually reading.
+    active = get_active_dataset(current_user["id"])
+    active_id = active["id"] if active else None
+
     return [
         {
-            "id": r[0], "name": r[1], "status": r[2], 
-            "created_at": r[3], 
+            "id": r[0], "name": r[1], "status": r[2],
+            "is_active": r[0] == active_id,
+            "created_at": r[3],
             "latest_version": (r[4] if isinstance(r[4], (dict, list)) else json.loads(r[4])) if r[4] else {}, 
             "filepath": r[5], 
             "columns": (r[6] if isinstance(r[6], (dict, list)) else json.loads(r[6])) if r[6] else [],
