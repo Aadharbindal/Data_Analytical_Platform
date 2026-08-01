@@ -155,7 +155,16 @@ function StatCard({
       ease: EASE,
       onUpdate: (v) => setDisplay(format(v)),
     });
-    return controls.stop;
+    // The count-up runs on animation frames, which browsers pause in a
+    // backgrounded or throttled tab. Because it starts from zero, a run where
+    // no frame ever fires leaves the card reading "0" — presented as the
+    // forecast itself rather than as a missing animation. Land on the real
+    // value regardless of whether the animation got to run.
+    const settle = setTimeout(() => setDisplay(format(raw)), 1400);
+    return () => {
+      controls.stop();
+      clearTimeout(settle);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [raw]);
 
@@ -226,7 +235,12 @@ function ForecastCenterInner() {
 
   useEffect(() => {
     if (statsData?.stats?.length > 0 && !metric) {
-      setMetric(statsData.stats[0].column);
+      // Reference/account/ID columns are numeric, so they appear in the stats
+      // list, but forecasting them is meaningless. Open on the first real
+      // measure and only fall back to the raw first column if every numeric
+      // column looks like an identifier.
+      const real = statsData.stats.find((s: { is_identifier?: boolean }) => !s.is_identifier);
+      setMetric((real ?? statsData.stats[0]).column);
     }
   }, [statsData, metric]);
 
@@ -403,7 +417,14 @@ function ForecastCenterInner() {
   );
   const handleChartLeave = useCallback(() => setHover(null), []);
 
-  const toolbarMetricOptions = (statsData?.stats ?? []).map((s: { column: string }) => ({ value: s.column, label: s.column }));
+  // Hide identifier columns from the picker for the same reason they aren't the
+  // default — a forecast of reference numbers is noise. Keep them if filtering
+  // would empty the list, and always keep whatever is currently selected (it can
+  // come from the URL) so the pill never displays a value it can't offer.
+  const allMetricOptions = (statsData?.stats ?? []) as { column: string; is_identifier?: boolean }[];
+  const realMetricOptions = allMetricOptions.filter((s) => !s.is_identifier || s.column === metric);
+  const toolbarMetricOptions = (realMetricOptions.length > 0 ? realMetricOptions : allMetricOptions)
+    .map((s) => ({ value: s.column, label: s.column }));
 
   const toolbar = (
     <div className="flex items-center gap-2">

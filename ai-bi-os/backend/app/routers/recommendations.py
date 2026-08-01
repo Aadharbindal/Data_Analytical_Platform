@@ -1,4 +1,5 @@
 import pandas as pd
+from app.services.stats_service import to_datetime_safe
 import numpy as np
 import os
 import json
@@ -62,8 +63,10 @@ async def generate_recommendations(force: bool = False, current_user: dict = Dep
     
     main_num = bus_term.get("primary_metric") if bus_term else None
     if not main_num or main_num not in df.columns:
-        num_cols = df.select_dtypes(include=[np.number]).columns
-        main_num = num_cols[0] if len(num_cols) > 0 else None
+        from app.services.stats_service import pick_default_metric
+        # Recommendations built on the first numeric column were, on a bank
+        # statement, recommendations about reference numbers.
+        main_num = pick_default_metric(df)
         
     main_cat = None
     cat_fields = sem_dict.get("categorical_fields", []) if sem_dict else []
@@ -129,7 +132,7 @@ async def generate_recommendations(force: bool = False, current_user: dict = Dep
             
     if date_col and date_col in df.columns and main_num:
         temp_df = df.copy()
-        temp_df[date_col] = pd.to_datetime(temp_df[date_col], errors='coerce')
+        temp_df[date_col] = to_datetime_safe(temp_df[date_col])
         temp_df = temp_df.dropna(subset=[date_col])
         if len(temp_df) > 0:
             monthly = temp_df.groupby(temp_df[date_col].dt.to_period("M"))[main_num].sum().reset_index()

@@ -8,6 +8,7 @@ from typing import List, Dict, Any
 from app.services.data_processing import get_active_dataset, get_dataframe
 from app.core.config import DB_PATH
 from app.core.security import get_current_user
+from app.services.stats_service import is_identifier_like, explain_insufficient_rows
 from pydantic import BaseModel
 
 router = APIRouter()
@@ -24,7 +25,14 @@ async def get_regression_columns(current_user: dict = Depends(get_current_user))
     from app.services.stats_service import find_column
     import re
     
-    targets = df.select_dtypes(include=[np.number]).columns.tolist()
+    # /train already rejects an identifier target, so offering one here only
+    # leads the user into an error — the dropdown listed "Ref No" for a bank
+    # statement. Screen targets with the same test the trainer uses.
+    total_rows = len(df)
+    targets = [
+        c for c in df.select_dtypes(include=[np.number]).columns.tolist()
+        if not is_identifier_like(df[c], c, total_rows)
+    ]
     
     features = []
     for col in df.columns:
@@ -41,7 +49,7 @@ async def get_regression_columns(current_user: dict = Depends(get_current_user))
         total_rows = len(df)
         
         # ID-like columns
-        if 'id' in col.lower() or num_unique > total_rows * 0.5:
+        if is_identifier_like(df[col], col, total_rows):
             continue
             
         # Categorical with too many distinct values
@@ -84,7 +92,7 @@ async def train_regression_model(req: TrainRequest, current_user: dict = Depends
             
         num_unique = df[f].nunique()
         total_rows = len(df)
-        if 'id' in f.lower() or num_unique > total_rows * 0.5:
+        if is_identifier_like(df[f], f, total_rows):
             raise HTTPException(status_code=400, detail=f"'{f}' cannot be used: identifier-like column ({num_unique} distinct values in {total_rows} rows).")
             
         if not pd.api.types.is_numeric_dtype(df[f]) and num_unique > 20:
@@ -95,7 +103,7 @@ async def train_regression_model(req: TrainRequest, current_user: dict = Depends
     df_sub = df[cols].dropna()
     
     if len(df_sub) < 20:
-        raise HTTPException(status_code=400, detail="Not enough data: must have >= 20 rows after dropping nulls")
+        raise HTTPException(status_code=400, detail=explain_insufficient_rows(df, cols))
         
     X = df_sub[req.features]
     y = df_sub[req.target]
@@ -168,14 +176,28 @@ async def train_regression_model(req: TrainRequest, current_user: dict = Depends
         X_vif = X.astype(float).copy()
         X_vif.insert(0, "_intercept", 1.0)
         for i, col in enumerate(X.columns):
+            vif_val, is_infinite = None, False
             try:
-                vif_val = float(variance_inflation_factor(X_vif.values, i + 1))
+                raw_vif = float(variance_inflation_factor(X_vif.values, i + 1))
+                # VIF is 1/(1-R²) from regressing this feature on the others, so
+                # a perfectly collinear feature yields infinity. That is a real
+                # finding — the strongest possible collinearity — but infinity
+                # has no JSON representation and leaving it in fails
+                # serialisation, 500-ing the entire training run. Report the
+                # magnitude as null while keeping the finding itself.
+                if np.isfinite(raw_vif):
+                    vif_val = raw_vif
+                else:
+                    is_infinite = True
             except Exception:
                 vif_val = None
             multicollinearity.append({
                 "feature": col,
                 "vif": vif_val,
-                "concern": vif_val is not None and vif_val > 10 and np.isfinite(vif_val)
+                "vif_infinite": is_infinite,
+                # np.isfinite returns numpy.bool_, and `and` yields its last
+                # operand, so this needs an explicit cast to stay JSON-safe.
+                "concern": bool(is_infinite or (vif_val is not None and vif_val > 10)),
             })
     except Exception:
         multicollinearity = []

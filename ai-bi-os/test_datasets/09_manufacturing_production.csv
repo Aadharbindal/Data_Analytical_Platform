@@ -1,0 +1,901 @@
+batch_id,machine_id,product,date,shift,units_produced,defect_count,downtime_minutes,operator,energy_consumed_kwh
+BATCH20000,M-07,Valve Component,2025-01-01,Morning,1207,68,30,Operator 42,277.44
+BATCH20001,M-07,Gear Box Unit,2025-01-02,Afternoon,3511,125,0,,769.12
+BATCH20002,M-08,Bearing Assembly,2025-01-02,Morning,891,43,0,Operator 29,129.45
+BATCH20003,M-10,Gear Box Unit,2025-01-02,Afternoon,3354,55,0,Operator 5,408.17
+BATCH20004,M-12,Piston Ring,2025-01-03,Morning,452,35,0,Operator 44,76.18
+BATCH20005,M-01,Piston Ring,2025-01-03,Morning,350,3,15,Operator 30,76.63
+BATCH20006,M-10,Bearing Assembly,2025-01-05,Afternoon,4687,176,15,Operator 17,1096.18
+BATCH20007,M-05,Valve Component,2025-01-07,Night,3197,184,15,Operator 37,461.49
+BATCH20008,M-07,Valve Component,2025-01-07,Morning,2680,185,30,Operator 19,647.55
+BATCH20009,M-08,Steel Rod 12mm,2025-01-07,Morning,3802,250,0,Operator 8,943.45
+BATCH20010,M-03,Piston Ring,2025-01-08,Afternoon,2254,150,0,Operator 7,200.76
+BATCH20011,M-04,Bearing Assembly,2025-01-09,Morning,2698,100,60,Operator 18,233.3
+BATCH20012,M-03,Gear Box Unit,2025-01-10,Morning,4391,174,0,Operator 36,585.94
+BATCH20013,M-04,Steel Rod 12mm,2025-01-11,Night,4631,197,15,Operator 8,397.47
+BATCH20014,M-04,Steel Rod 12mm,2025-01-12,Morning,1433,73,0,Operator 17,135.87
+BATCH20015,M-05,Gear Box Unit,2025-01-13,Night,4631,229,0,Operator 16,908.88
+BATCH20016,M-02,Bearing Assembly,2025-01-13,Afternoon,819,50,0,Operator 17,95.56
+BATCH20017,M-02,Valve Component,2025-01-13,Morning,982,50,30,Operator 35,234.57
+BATCH20018,M-05,Gear Box Unit,2025-01-13,Morning,3601,194,60,Operator 9,519.64
+BATCH20019,M-09,Piston Ring,2025-01-13,Afternoon,1878,24,0,Operator 37,196.34
+BATCH20020,M-08,Valve Component,2025-01-13,Afternoon,1059,8,0,Operator 37,206.05
+BATCH20021,M-08,Gear Box Unit,2025-01-14,Night,4485,274,15,Operator 10,848.03
+BATCH20022,M-03,Piston Ring,2025-01-15,Night,2392,62,0,Operator 23,258.28
+BATCH20023,M-03,Piston Ring,2025-01-15,Afternoon,3849,246,0,Operator 33,579.72
+BATCH20024,M-11,Bearing Assembly,2025-01-15,Afternoon,4835,207,0,Operator 26,1072.96
+BATCH20025,M-05,Steel Rod 12mm,2025-01-16,Morning,1773,28,120,Operator 29,176.78
+BATCH20026,M-01,Gear Box Unit,2025-01-17,Morning,302,5,0,Operator 32,60.48
+BATCH20027,M-08,Valve Component,2025-01-19,Morning,3300,130,0,Operator 18,769.6
+BATCH20028,M-06,Piston Ring,2025-01-19,Afternoon,376,2,0,Operator 10,50.79
+BATCH20029,M-10,Piston Ring,2025-01-19,Afternoon,3501,279,120,Operator 8,533.68
+BATCH20030,M-10,Piston Ring,2025-01-19,Morning,1124,36,60,Operator 5,261.61
+BATCH20031,M-01,Valve Component,2025-01-19,Night,3346,68,60,Operator 1,448.52
+BATCH20032,M-03,Gear Box Unit,2025-01-20,Morning,4697,184,0,Operator 37,654.73
+BATCH20033,M-07,Bearing Assembly,2025-01-20,Morning,2473,152,0,Operator 19,431.65
+BATCH20034,M-07,Valve Component,2025-01-21,Night,2735,198,0,Operator 16,343.95
+BATCH20035,M-11,Bearing Assembly,2025-01-21,Morning,202,15,0,Operator 22,49.78
+BATCH20036,M-09,Piston Ring,2025-01-21,Morning,2504,148,0,Operator 25,468.45
+BATCH20037,M-04,Bearing Assembly,2025-01-21,Afternoon,3586,154,0,Operator 14,841.36
+BATCH20038,M-08,Valve Component,2025-01-23,Afternoon,3619,87,0,Operator 20,382.97
+BATCH20039,M-05,Valve Component,2025-01-25,Afternoon,233,3,0,Operator 24,46.75
+BATCH20040,M-10,Steel Rod 12mm,2025-01-25,Morning,3232,181,30,Operator 15,794.18
+BATCH20041,M-02,Steel Rod 12mm,2025-01-26,Afternoon,3327,50,30,Operator 5,712.01
+BATCH20042,M-10,Valve Component,2025-01-26,Night,1427,84,60,Operator 26,196.58
+BATCH20043,M-02,Steel Rod 12mm,2025-01-27,Morning,512,3,60,Operator 36,84.51
+BATCH20044,M-03,Piston Ring,2025-01-27,Night,826,13,0,Operator 40,158.25
+BATCH20045,M-12,Steel Rod 12mm,2025-01-29,Night,4936,58,0,Operator 9,638.49
+BATCH20046,M-03,Gear Box Unit,2025-01-29,Morning,2196,122,0,Operator 1,392.73
+BATCH20047,M-08,Steel Rod 12mm,2025-02-01,Night,2525,60,0,Operator 10,229.79
+BATCH20048,M-09,Bearing Assembly,2025-02-01,Night,1705,116,0,Operator 43,277.84
+BATCH20049,M-12,Gear Box Unit,2025-02-01,Afternoon,2753,123,0,Operator 24,487.37
+BATCH20050,M-07,Valve Component,2025-02-01,Morning,2767,116,0,Operator 29,520.48
+BATCH20051,M-09,Valve Component,2025-02-02,Morning,1889,115,30,Operator 34,394.71
+BATCH20052,M-11,Bearing Assembly,2025-02-03,Night,987,19,0,Operator 21,206.16
+BATCH20053,M-11,Bearing Assembly,2025-02-04,Afternoon,350,22,60,Operator 27,37.84
+BATCH20054,M-09,Piston Ring,2025-02-05,Afternoon,325,13,0,Operator 30,35.49
+BATCH20055,M-05,Valve Component,2025-02-05,Morning,4328,136,0,Operator 40,759.66
+BATCH20056,M-03,Valve Component,2025-02-05,Afternoon,1022,44,0,Operator 37,226.28
+BATCH20057,M-01,Gear Box Unit,2025-02-05,Morning,2913,31,0,Operator 15,440.67
+BATCH20058,M-11,Valve Component,2025-02-06,Morning,2277,103,0,Operator 14,386.12
+BATCH20059,M-08,Gear Box Unit,2025-02-06,Afternoon,386,28,0,Operator 4,67.04
+BATCH20060,M-10,Steel Rod 12mm,2025-02-07,Afternoon,1362,11,30,Operator 17,166.13
+BATCH20061,M-10,Steel Rod 12mm,2025-02-10,Morning,3493,121,0,Operator 19,772.76
+BATCH20062,M-02,Steel Rod 12mm,2025-02-10,Night,4329,156,0,Operator 10,548.23
+BATCH20063,M-03,Steel Rod 12mm,2025-02-11,Morning,2491,43,30,Operator 31,399.94
+BATCH20064,M-06,Bearing Assembly,2025-02-11,Morning,303,23,0,Operator 26,24.49
+BATCH20065,M-01,Gear Box Unit,2025-02-12,Night,4963,353,0,Operator 32,726.27
+BATCH20066,M-10,Piston Ring,2025-02-13,Afternoon,268,15,60,Operator 8,56.33
+BATCH20067,M-09,Bearing Assembly,2025-02-13,Afternoon,1573,39,0,Operator 43,337.69
+BATCH20068,M-06,Gear Box Unit,2025-02-13,Afternoon,3305,72,0,Operator 37,782.85
+BATCH20069,M-02,Bearing Assembly,2025-02-14,Afternoon,563,41,0,Operator 11,96.13
+BATCH20070,M-01,Steel Rod 12mm,2025-02-15,Night,1549,71,30,Operator 44,332.63
+BATCH20071,M-06,Valve Component,2025-02-15,Afternoon,883,6,0,Operator 43,126.68
+BATCH20072,M-08,Valve Component,2025-02-15,Night,4208,123,15,Operator 38,748.62
+BATCH20073,M-08,Valve Component,2025-02-16,Night,3317,157,0,Operator 17,517.35
+BATCH20074,M-01,Valve Component,2025-02-16,Night,3750,275,60,Operator 33,539.72
+BATCH20075,M-02,Valve Component,2025-02-17,Afternoon,2626,170,0,Operator 9,611.55
+BATCH20076,M-07,Gear Box Unit,2025-02-19,Morning,3867,120,0,Operator 26,607.68
+BATCH20077,M-05,Valve Component,2025-02-19,Night,2554,181,60,Operator 25,345.33
+BATCH20078,M-09,Valve Component,2025-02-20,Afternoon,2333,104,0,Operator 17,510.65
+BATCH20079,M-06,Gear Box Unit,2025-02-21,Night,1215,80,60,Operator 20,149.52
+BATCH20080,M-11,Bearing Assembly,2025-02-21,Night,4528,174,0,Operator 42,542.55
+BATCH20081,M-06,Steel Rod 12mm,2025-02-21,Afternoon,4695,274,15,Operator 15,748.46
+BATCH20082,M-02,Gear Box Unit,2025-02-22,Afternoon,1519,21,0,Operator 39,371.36
+BATCH20083,M-03,Steel Rod 12mm,2025-02-22,Morning,508,38,0,Operator 34,75.55
+BATCH20084,M-02,Bearing Assembly,2025-02-24,Morning,4058,196,0,Operator 4,853.82
+BATCH20085,M-01,Valve Component,2025-02-24,Morning,4542,265,0,Operator 43,772.21
+BATCH20086,M-02,Bearing Assembly,2025-02-25,Afternoon,3370,26,30,Operator 3,334.16
+BATCH20087,M-11,Piston Ring,2025-02-25,Night,680,19,120,Operator 22,62.12
+BATCH20088,M-02,Bearing Assembly,2025-02-25,Afternoon,731,45,0,Operator 6,76.73
+BATCH20089,M-09,Piston Ring,2025-02-26,Morning,4937,70,0,Operator 15,565.08
+BATCH20090,M-06,Valve Component,2025-02-27,Morning,519,37,15,Operator 24,73.0
+BATCH20091,M-01,Valve Component,2025-03-01,Afternoon,1375,104,15,Operator 42,251.7
+BATCH20092,M-09,Bearing Assembly,2025-03-01,Afternoon,614,21,0,Operator 22,99.18
+BATCH20093,M-10,Bearing Assembly,2025-03-02,Night,4129,28,0,Operator 3,725.42
+BATCH20094,M-11,Gear Box Unit,2025-03-02,Night,2710,99,0,Operator 41,545.95
+BATCH20095,M-09,Gear Box Unit,2025-03-03,Night,503,3,0,Operator 14,91.01
+BATCH20096,M-12,Steel Rod 12mm,2025-03-03,Morning,647,38,15,Operator 19,103.73
+BATCH20097,M-08,Gear Box Unit,2025-03-04,Night,651,6,0,Operator 23,142.75
+BATCH20098,M-10,Valve Component,2025-03-04,Night,2240,52,0,Operator 40,285.09
+BATCH20099,M-04,Steel Rod 12mm,2025-03-06,Afternoon,4148,188,0,Operator 7,928.85
+BATCH20100,M-02,Bearing Assembly,2025-03-06,Night,2601,151,60,Operator 39,507.64
+BATCH20101,M-06,Bearing Assembly,2025-03-07,Morning,1794,51,0,Operator 34,236.07
+BATCH20102,M-01,Piston Ring,2025-03-11,Night,1190,36,0,Operator 31,108.84
+BATCH20103,M-11,Valve Component,2025-03-12,Morning,4686,38,60,Operator 43,440.65
+BATCH20104,M-04,Piston Ring,2025-03-12,Morning,2151,65,0,Operator 26,276.03
+BATCH20105,M-09,Steel Rod 12mm,2025-03-12,Night,2480,112,60,Operator 25,484.68
+BATCH20106,M-06,Steel Rod 12mm,2025-03-13,Night,4844,373,0,Operator 4,766.84
+BATCH20107,M-09,Piston Ring,2025-03-13,Night,3501,138,0,Operator 25,670.15
+BATCH20108,M-10,Bearing Assembly,2025-03-14,Morning,4185,289,0,Operator 30,569.21
+BATCH20109,M-11,Gear Box Unit,2025-03-14,Morning,3245,195,0,Operator 22,417.16
+BATCH20110,M-02,Valve Component,2025-03-14,Morning,3225,236,0,Operator 40,455.47
+BATCH20111,M-04,Piston Ring,2025-03-15,Afternoon,4592,127,0,Operator 27,684.96
+BATCH20112,M-03,Bearing Assembly,2025-03-16,Afternoon,4179,51,0,Operator 11,663.29
+BATCH20113,M-11,Valve Component,2025-03-19,Morning,2175,80,0,Operator 39,270.26
+BATCH20114,M-04,Steel Rod 12mm,2025-03-20,Morning,1688,32,0,Operator 38,239.3
+BATCH20115,M-02,Piston Ring,2025-03-21,Afternoon,4892,185,240,Operator 6,1016.73
+BATCH20116,M-12,Gear Box Unit,2025-03-21,Afternoon,1853,85,0,Operator 32,436.46
+BATCH20117,M-12,Bearing Assembly,2025-03-21,Afternoon,3852,130,60,Operator 11,344.18
+BATCH20118,M-05,Gear Box Unit,2025-03-22,Night,3785,110,0,Operator 39,517.21
+BATCH20119,M-12,Bearing Assembly,2025-03-22,Night,1595,60,0,Operator 14,391.75
+BATCH20120,M-04,Piston Ring,2025-03-23,Night,3955,268,0,Operator 28,898.4
+BATCH20121,M-08,Bearing Assembly,2025-03-25,Afternoon,1608,101,0,Operator 24,239.18
+BATCH20122,M-12,Gear Box Unit,2025-03-25,Morning,4095,237,0,Operator 33,467.47
+BATCH20123,M-07,Steel Rod 12mm,2025-03-25,Morning,2395,49,0,Operator 17,216.72
+BATCH20124,M-04,Steel Rod 12mm,2025-03-25,Afternoon,1814,126,0,Operator 16,249.98
+BATCH20125,M-05,Bearing Assembly,2025-03-26,Morning,2808,152,15,Operator 21,508.84
+BATCH20126,M-04,Piston Ring,2025-03-27,Night,4621,311,30,Operator 34,1119.38
+BATCH20127,M-07,Steel Rod 12mm,2025-03-28,Night,2587,173,0,Operator 8,635.52
+BATCH20128,M-07,Steel Rod 12mm,2025-03-29,Afternoon,4147,158,15,Operator 22,866.22
+BATCH20129,M-08,Valve Component,2025-03-29,Morning,3561,279,0,Operator 35,569.42
+BATCH20130,M-08,Bearing Assembly,2025-03-30,Afternoon,4666,238,0,,668.27
+BATCH20131,M-01,Steel Rod 12mm,2025-03-30,Morning,3867,20,15,Operator 4,461.89
+BATCH20132,M-10,Piston Ring,2025-03-31,Afternoon,1705,88,60,Operator 38,415.88
+BATCH20133,M-12,Valve Component,2025-03-31,Morning,337,18,0,Operator 7,49.96
+BATCH20134,M-10,Valve Component,2025-04-03,Night,3537,40,60,Operator 8,726.62
+BATCH20135,M-10,Bearing Assembly,2025-04-05,Night,2079,122,120,Operator 35,486.38
+BATCH20136,M-04,Valve Component,2025-04-06,Morning,760,45,0,Operator 24,94.74
+BATCH20137,M-10,Bearing Assembly,2025-04-07,Morning,1971,110,60,,380.85
+BATCH20138,M-08,Piston Ring,2025-04-08,Afternoon,3373,196,60,Operator 5,323.05
+BATCH20139,M-04,Gear Box Unit,2025-04-09,Night,4966,77,0,Operator 1,1128.96
+BATCH20140,M-10,Piston Ring,2025-04-10,Afternoon,4108,39,15,Operator 13,913.55
+BATCH20141,M-12,Gear Box Unit,2025-04-10,Night,1389,45,0,Operator 42,316.69
+BATCH20142,M-11,Bearing Assembly,2025-04-12,Morning,3725,183,0,Operator 4,312.28
+BATCH20143,M-11,Valve Component,2025-04-14,Night,2432,138,60,Operator 28,450.0
+BATCH20144,M-03,Bearing Assembly,2025-04-15,Afternoon,3159,213,0,Operator 38,683.68
+BATCH20145,M-02,Piston Ring,2025-04-15,Morning,1460,43,60,Operator 16,233.04
+BATCH20146,M-10,Steel Rod 12mm,2025-04-16,Night,3046,103,0,Operator 19,749.4
+BATCH20147,M-12,Steel Rod 12mm,2025-04-16,Night,3072,204,15,Operator 40,331.77
+BATCH20148,M-11,Steel Rod 12mm,2025-04-16,Morning,496,14,0,Operator 44,83.93
+BATCH20149,M-04,Gear Box Unit,2025-04-18,Afternoon,2766,213,0,Operator 7,262.41
+BATCH20150,M-07,Gear Box Unit,2025-04-18,Night,1680,30,15,Operator 20,271.82
+BATCH20151,M-05,Bearing Assembly,2025-04-19,Afternoon,4193,88,0,Operator 9,374.44
+BATCH20152,M-07,Steel Rod 12mm,2025-04-19,Morning,1820,61,15,Operator 8,358.57
+BATCH20153,M-08,Piston Ring,2025-04-19,Afternoon,1150,8,0,Operator 31,108.44
+BATCH20154,M-01,Bearing Assembly,2025-04-19,Morning,346,19,15,Operator 3,47.53
+BATCH20155,M-04,Bearing Assembly,2025-04-21,Afternoon,3692,232,60,Operator 30,907.94
+BATCH20156,M-12,Piston Ring,2025-04-22,Night,2825,164,15,Operator 39,614.62
+BATCH20157,M-01,Steel Rod 12mm,2025-04-22,Night,2393,110,0,Operator 25,436.82
+BATCH20158,M-06,Bearing Assembly,2025-04-22,Afternoon,4556,317,60,Operator 38,649.09
+BATCH20159,M-10,Valve Component,2025-04-23,Afternoon,3907,81,0,Operator 30,778.05
+BATCH20160,M-05,Steel Rod 12mm,2025-04-24,Night,2865,90,0,Operator 39,394.89
+BATCH20161,M-11,Steel Rod 12mm,2025-04-25,Night,211,7,0,Operator 28,50.32
+BATCH20162,M-08,Steel Rod 12mm,2025-04-26,Night,2612,60,0,Operator 19,472.44
+BATCH20163,M-03,Steel Rod 12mm,2025-04-27,Night,1982,35,0,Operator 36,420.8
+BATCH20164,M-09,Steel Rod 12mm,2025-04-27,Night,3685,204,60,Operator 30,507.03
+BATCH20165,M-10,Valve Component,2025-04-27,Morning,4581,297,240,Operator 35,459.2
+BATCH20166,M-09,Piston Ring,2025-04-29,Morning,2819,25,0,Operator 20,480.66
+BATCH20167,M-07,Bearing Assembly,2025-04-29,Night,467,28,0,Operator 15,95.28
+BATCH20168,M-03,Steel Rod 12mm,2025-04-29,Morning,2362,63,0,Operator 40,429.48
+BATCH20169,M-08,Valve Component,2025-04-30,Morning,3721,296,30,Operator 16,687.39
+BATCH20170,M-01,Piston Ring,2025-05-01,Morning,1888,39,0,Operator 29,414.65
+BATCH20171,M-01,Piston Ring,2025-05-02,Night,1793,82,0,Operator 9,358.55
+BATCH20172,M-10,Valve Component,2025-05-03,Morning,2877,21,0,Operator 5,503.41
+BATCH20173,M-04,Gear Box Unit,2025-05-03,Night,3362,82,30,Operator 39,551.6
+BATCH20174,M-06,Gear Box Unit,2025-05-04,Morning,3313,222,0,Operator 19,429.81
+BATCH20175,M-08,Gear Box Unit,2025-05-05,Afternoon,1705,77,0,Operator 38,334.32
+BATCH20176,M-12,Valve Component,2025-05-05,Afternoon,4420,151,60,Operator 7,545.03
+BATCH20177,M-11,Gear Box Unit,2025-05-06,Afternoon,3490,65,0,Operator 1,605.86
+BATCH20178,M-03,Piston Ring,2025-05-06,Afternoon,4857,168,0,Operator 28,1120.32
+BATCH20179,M-05,Bearing Assembly,2025-05-06,Afternoon,1603,92,0,Operator 15,166.45
+BATCH20180,M-06,Steel Rod 12mm,2025-05-07,Afternoon,2566,140,0,Operator 30,319.1
+BATCH20181,M-01,Gear Box Unit,2025-05-07,Morning,2257,121,0,Operator 35,315.72
+BATCH20182,M-09,Bearing Assembly,2025-05-08,Night,4262,220,0,Operator 20,460.65
+BATCH20183,M-08,Valve Component,2025-05-09,Morning,1949,74,0,Operator 23,345.3
+BATCH20184,M-09,Piston Ring,2025-05-10,Night,3955,29,60,Operator 16,508.95
+BATCH20185,M-01,Valve Component,2025-05-11,Afternoon,1472,95,0,Operator 32,192.44
+BATCH20186,M-11,Valve Component,2025-05-12,Afternoon,4073,190,0,Operator 14,374.55
+BATCH20187,M-08,Bearing Assembly,2025-05-12,Afternoon,3128,92,0,Operator 21,727.03
+BATCH20188,M-06,Gear Box Unit,2025-05-12,Night,2077,13,0,Operator 1,506.69
+BATCH20189,M-05,Steel Rod 12mm,2025-05-16,Afternoon,1728,49,60,Operator 6,307.01
+BATCH20190,M-05,Bearing Assembly,2025-05-17,Night,1714,18,0,Operator 44,263.26
+BATCH20191,M-02,Steel Rod 12mm,2025-05-18,Morning,3520,21,30,Operator 4,501.24
+BATCH20192,M-09,Steel Rod 12mm,2025-05-18,Afternoon,966,69,120,Operator 16,211.98
+BATCH20193,M-02,Valve Component,2025-05-18,Night,2191,165,0,Operator 10,227.29
+BATCH20194,M-01,Valve Component,2025-05-18,Night,3538,50,0,Operator 39,329.42
+BATCH20195,M-11,Piston Ring,2025-05-20,Afternoon,3338,205,0,Operator 22,303.5
+BATCH20196,M-05,Gear Box Unit,2025-05-21,Morning,4819,181,0,Operator 19,488.58
+BATCH20197,M-03,Bearing Assembly,2025-05-22,Morning,3373,194,0,Operator 15,300.04
+BATCH20198,M-08,Piston Ring,2025-05-23,Night,2779,206,0,Operator 13,375.19
+BATCH20199,M-07,Gear Box Unit,2025-05-24,Afternoon,1932,116,0,Operator 20,267.27
+BATCH20200,M-02,Steel Rod 12mm,2025-05-24,Morning,3662,268,60,Operator 21,526.31
+BATCH20201,M-10,Steel Rod 12mm,2025-05-24,Morning,1639,79,0,Operator 40,143.85
+BATCH20202,M-04,Steel Rod 12mm,2025-05-27,Night,4451,158,0,Operator 7,600.5
+BATCH20203,M-11,Steel Rod 12mm,2025-05-28,Afternoon,1186,48,0,Operator 11,148.39
+BATCH20204,M-03,Bearing Assembly,2025-05-28,Morning,2277,135,30,Operator 5,397.94
+BATCH20205,M-08,Bearing Assembly,2025-05-29,Night,3443,60,60,Operator 41,633.09
+BATCH20206,M-03,Gear Box Unit,2025-05-29,Afternoon,540,33,0,Operator 26,117.51
+BATCH20207,M-09,Gear Box Unit,2025-05-30,Morning,3079,179,15,Operator 27,662.58
+BATCH20208,M-02,Piston Ring,2025-05-31,Morning,2159,11,0,Operator 2,285.75
+BATCH20209,M-11,Gear Box Unit,2025-05-31,Night,4474,267,0,Operator 33,897.08
+BATCH20210,M-08,Piston Ring,2025-06-01,Morning,232,5,30,,50.86
+BATCH20211,M-04,Bearing Assembly,2025-06-01,Morning,2297,91,0,Operator 34,333.87
+BATCH20212,M-06,Valve Component,2025-06-02,Morning,4208,191,0,Operator 40,917.08
+BATCH20213,M-03,Valve Component,2025-06-02,Night,2742,211,120,Operator 25,577.48
+BATCH20214,M-06,Piston Ring,2025-06-02,Night,3009,162,0,Operator 26,323.08
+BATCH20215,M-06,Bearing Assembly,2025-06-03,Night,3043,31,60,Operator 12,653.24
+BATCH20216,M-04,Bearing Assembly,2025-06-04,Afternoon,4683,215,15,Operator 9,582.07
+BATCH20217,M-09,Bearing Assembly,2025-06-05,Morning,4620,216,240,Operator 1,1104.83
+BATCH20218,M-09,Bearing Assembly,2025-06-05,Night,3305,148,0,Operator 5,332.4
+BATCH20219,M-07,Gear Box Unit,2025-06-06,Afternoon,278,20,0,Operator 15,44.57
+BATCH20220,M-07,Piston Ring,2025-06-06,Morning,3622,98,30,Operator 13,789.75
+BATCH20221,M-08,Valve Component,2025-06-07,Afternoon,2967,95,0,Operator 5,675.94
+BATCH20222,M-04,Piston Ring,2025-06-08,Morning,505,19,0,Operator 15,76.92
+BATCH20223,M-05,Steel Rod 12mm,2025-06-08,Night,3221,40,0,Operator 21,300.06
+BATCH20224,M-04,Valve Component,2025-06-08,Afternoon,570,11,0,Operator 35,59.91
+BATCH20225,M-09,Steel Rod 12mm,2025-06-10,Night,1993,50,0,Operator 41,318.5
+BATCH20226,M-08,Steel Rod 12mm,2025-06-11,Night,768,8,0,Operator 40,189.29
+BATCH20227,M-06,Piston Ring,2025-06-12,Afternoon,2586,202,0,Operator 8,241.75
+BATCH20228,M-06,Piston Ring,2025-06-12,Night,1449,48,0,Operator 11,173.66
+BATCH20229,M-06,Piston Ring,2025-06-13,Morning,458,18,0,Operator 30,109.81
+BATCH20230,M-08,Gear Box Unit,2025-06-13,Morning,3002,143,0,Operator 16,426.46
+BATCH20231,M-08,Steel Rod 12mm,2025-06-14,Night,4133,49,0,Operator 21,895.44
+BATCH20232,M-01,Steel Rod 12mm,2025-06-14,Night,3857,115,0,Operator 24,838.73
+BATCH20233,M-09,Valve Component,2025-06-15,Morning,2840,196,0,Operator 32,445.6
+BATCH20234,M-01,Valve Component,2025-06-15,Morning,3715,187,0,Operator 23,799.69
+BATCH20235,M-09,Piston Ring,2025-06-16,Morning,1743,81,0,Operator 25,368.29
+BATCH20236,M-12,Gear Box Unit,2025-06-17,Morning,396,29,0,Operator 13,97.06
+BATCH20237,M-04,Valve Component,2025-06-19,Morning,3389,113,30,Operator 14,601.38
+BATCH20238,M-08,Gear Box Unit,2025-06-21,Afternoon,2634,114,30,Operator 13,377.69
+BATCH20239,M-06,Gear Box Unit,2025-06-21,Night,1685,71,0,Operator 2,317.57
+BATCH20240,M-04,Bearing Assembly,2025-06-22,Night,582,38,0,Operator 28,87.17
+BATCH20241,M-02,Valve Component,2025-06-22,Afternoon,798,54,120,Operator 19,114.98
+BATCH20242,M-02,Bearing Assembly,2025-06-23,Night,3597,231,0,Operator 18,895.17
+BATCH20243,M-12,Valve Component,2025-06-24,Morning,3040,210,30,Operator 18,661.8
+BATCH20244,M-01,Steel Rod 12mm,2025-06-24,Night,1520,79,0,Operator 16,140.58
+BATCH20245,M-10,Valve Component,2025-06-25,Morning,2051,63,30,Operator 11,257.39
+BATCH20246,M-08,Gear Box Unit,2025-06-25,Afternoon,1834,32,0,Operator 5,451.35
+BATCH20247,M-10,Steel Rod 12mm,2025-06-25,Night,435,33,15,Operator 1,51.37
+BATCH20248,M-06,Gear Box Unit,2025-06-26,Morning,2623,182,0,Operator 12,559.52
+BATCH20249,M-03,Bearing Assembly,2025-06-27,Afternoon,3304,118,15,Operator 20,445.65
+BATCH20250,M-02,Bearing Assembly,2025-06-27,Morning,1131,86,0,Operator 36,281.63
+BATCH20251,M-09,Piston Ring,2025-06-27,Morning,3291,223,30,Operator 43,812.32
+BATCH20252,M-12,Valve Component,2025-06-27,Afternoon,1304,16,0,Operator 44,197.05
+BATCH20253,M-08,Bearing Assembly,2025-06-29,Night,579,14,0,Operator 37,83.12
+BATCH20254,M-05,Valve Component,2025-06-30,Night,2620,87,0,Operator 18,533.98
+BATCH20255,M-03,Bearing Assembly,2025-07-04,Morning,4492,87,0,Operator 41,381.74
+BATCH20256,M-02,Bearing Assembly,2025-07-04,Afternoon,4385,198,0,Operator 34,546.51
+BATCH20257,M-08,Steel Rod 12mm,2025-07-04,Afternoon,248,3,60,Operator 1,56.9
+BATCH20258,M-06,Gear Box Unit,2025-07-04,Night,3660,258,0,Operator 20,491.39
+BATCH20259,M-06,Steel Rod 12mm,2025-07-04,Afternoon,3423,265,30,Operator 28,675.71
+BATCH20260,M-07,Bearing Assembly,2025-07-04,Afternoon,3423,159,15,Operator 22,413.54
+BATCH20261,M-12,Valve Component,2025-07-05,Afternoon,2191,17,0,Operator 30,405.64
+BATCH20262,M-11,Gear Box Unit,2025-07-05,Afternoon,4997,100,60,Operator 12,448.72
+BATCH20263,M-07,Piston Ring,2025-07-05,Afternoon,2362,159,0,Operator 4,376.46
+BATCH20264,M-02,Steel Rod 12mm,2025-07-05,Afternoon,1116,29,0,Operator 1,251.97
+BATCH20265,M-09,Gear Box Unit,2025-07-06,Night,2129,41,0,Operator 16,377.32
+BATCH20266,M-09,Valve Component,2025-07-07,Afternoon,4702,274,0,Operator 20,581.83
+BATCH20267,M-03,Gear Box Unit,2025-07-07,Night,4110,102,0,Operator 17,766.59
+BATCH20268,M-08,Steel Rod 12mm,2025-07-07,Night,3707,249,0,Operator 10,681.55
+BATCH20269,M-04,Bearing Assembly,2025-07-07,Night,1225,18,120,Operator 41,112.99
+BATCH20270,M-10,Bearing Assembly,2025-07-07,Morning,1745,101,0,Operator 16,287.48
+BATCH20271,M-02,Piston Ring,2025-07-07,Afternoon,2689,187,240,Operator 41,281.58
+BATCH20272,M-01,Piston Ring,2025-07-07,Morning,790,49,0,Operator 6,98.04
+BATCH20273,M-09,Valve Component,2025-07-08,Afternoon,2654,88,30,Operator 1,308.21
+BATCH20274,M-05,Steel Rod 12mm,2025-07-09,Afternoon,4715,308,0,Operator 16,1047.19
+BATCH20275,M-11,Piston Ring,2025-07-09,Afternoon,3085,124,0,Operator 16,472.76
+BATCH20276,M-08,Bearing Assembly,2025-07-09,Afternoon,3009,44,15,Operator 42,589.37
+BATCH20277,M-06,Valve Component,2025-07-10,Morning,3194,88,0,Operator 28,733.29
+BATCH20278,M-06,Bearing Assembly,2025-07-10,Morning,4401,309,0,Operator 39,595.76
+BATCH20279,M-09,Steel Rod 12mm,2025-07-11,Morning,4991,247,0,Operator 25,861.94
+BATCH20280,M-05,Valve Component,2025-07-11,Morning,869,41,60,Operator 6,164.42
+BATCH20281,M-01,Piston Ring,2025-07-11,Afternoon,4683,255,0,Operator 37,494.67
+BATCH20282,M-07,Valve Component,2025-07-12,Night,1184,76,60,Operator 25,222.32
+BATCH20283,M-07,Valve Component,2025-07-13,Afternoon,1162,54,60,Operator 23,213.47
+BATCH20284,M-07,Gear Box Unit,2025-07-13,Morning,2774,172,0,Operator 17,390.52
+BATCH20285,M-11,Steel Rod 12mm,2025-07-14,Morning,1891,99,0,Operator 13,361.77
+BATCH20286,M-05,Gear Box Unit,2025-07-14,Afternoon,2537,84,0,Operator 38,213.07
+BATCH20287,M-03,Bearing Assembly,2025-07-15,Morning,3239,228,30,Operator 17,804.67
+BATCH20288,M-06,Gear Box Unit,2025-07-16,Morning,1720,73,0,Operator 24,284.08
+BATCH20289,M-05,Piston Ring,2025-07-17,Night,2848,127,0,Operator 28,596.3
+BATCH20290,M-09,Steel Rod 12mm,2025-07-18,Afternoon,985,37,0,Operator 27,91.23
+BATCH20291,M-03,Steel Rod 12mm,2025-07-18,Afternoon,1453,85,240,Operator 43,153.68
+BATCH20292,M-02,Valve Component,2025-07-19,Night,1686,18,0,Operator 10,301.91
+BATCH20293,M-11,Valve Component,2025-07-19,Morning,1674,37,0,Operator 18,272.83
+BATCH20294,M-02,Gear Box Unit,2025-07-20,Night,4596,194,0,Operator 33,783.96
+BATCH20295,M-04,Gear Box Unit,2025-07-21,Afternoon,1414,32,0,Operator 33,120.27
+BATCH20296,M-09,Bearing Assembly,2025-07-22,Morning,2813,186,0,Operator 9,317.21
+BATCH20297,M-05,Piston Ring,2025-07-23,Afternoon,2450,57,0,Operator 10,346.88
+BATCH20298,M-06,Valve Component,2025-07-23,Night,4865,265,0,Operator 25,554.85
+BATCH20299,M-09,Valve Component,2025-07-23,Morning,1572,59,0,Operator 11,176.45
+BATCH20300,M-05,Steel Rod 12mm,2025-07-25,Night,3728,226,0,Operator 9,639.62
+BATCH20301,M-03,Valve Component,2025-07-26,Night,1079,76,0,Operator 1,261.54
+BATCH20302,M-05,Gear Box Unit,2025-07-26,Afternoon,2495,46,60,Operator 44,272.31
+BATCH20303,M-04,Valve Component,2025-07-26,Night,2455,74,0,Operator 20,475.24
+BATCH20304,M-08,Valve Component,2025-07-26,Night,3604,201,0,Operator 16,688.87
+BATCH20305,M-01,Bearing Assembly,2025-07-27,Night,3081,214,0,Operator 21,580.44
+BATCH20306,M-02,Bearing Assembly,2025-07-29,Night,3832,179,0,Operator 31,609.05
+BATCH20307,M-07,Bearing Assembly,2025-07-30,Night,606,33,0,Operator 22,106.13
+BATCH20308,M-06,Piston Ring,2025-07-30,Morning,1680,57,0,,190.9
+BATCH20309,M-12,Gear Box Unit,2025-07-30,Morning,226,6,0,Operator 6,47.72
+BATCH20310,M-08,Bearing Assembly,2025-07-30,Morning,2260,125,0,,195.52
+BATCH20311,M-01,Gear Box Unit,2025-07-31,Morning,4223,194,0,Operator 20,792.67
+BATCH20312,M-03,Bearing Assembly,2025-08-01,Afternoon,394,22,0,Operator 25,68.17
+BATCH20313,M-03,Bearing Assembly,2025-08-02,Afternoon,879,60,60,Operator 37,175.84
+BATCH20314,M-03,Piston Ring,2025-08-03,Afternoon,2324,90,0,Operator 29,349.5
+BATCH20315,M-01,Gear Box Unit,2025-08-04,Afternoon,4604,345,15,Operator 36,652.42
+BATCH20316,M-06,Bearing Assembly,2025-08-05,Night,1711,125,0,Operator 41,214.97
+BATCH20317,M-01,Valve Component,2025-08-05,Night,361,10,0,Operator 38,34.37
+BATCH20318,M-04,Steel Rod 12mm,2025-08-06,Night,2819,69,30,Operator 6,486.64
+BATCH20319,M-01,Gear Box Unit,2025-08-06,Morning,4511,349,0,Operator 10,440.08
+BATCH20320,M-09,Gear Box Unit,2025-08-06,Morning,2023,111,60,Operator 44,244.99
+BATCH20321,M-07,Steel Rod 12mm,2025-08-07,Night,2684,62,0,Operator 23,303.06
+BATCH20322,M-09,Steel Rod 12mm,2025-08-07,Morning,3026,48,0,Operator 25,656.27
+BATCH20323,M-12,Gear Box Unit,2025-08-07,Afternoon,2984,23,0,Operator 25,290.33
+BATCH20324,M-08,Bearing Assembly,2025-08-09,Afternoon,1602,81,0,Operator 32,236.21
+BATCH20325,M-01,Valve Component,2025-08-10,Night,4244,127,0,Operator 34,1042.21
+BATCH20326,M-11,Piston Ring,2025-08-10,Night,1873,129,0,Operator 42,208.3
+BATCH20327,M-11,Piston Ring,2025-08-10,Afternoon,1028,41,120,Operator 4,220.33
+BATCH20328,M-07,Gear Box Unit,2025-08-11,Night,2513,138,15,Operator 37,477.19
+BATCH20329,M-01,Gear Box Unit,2025-08-12,Night,315,4,0,Operator 36,49.45
+BATCH20330,M-11,Valve Component,2025-08-13,Afternoon,3695,146,0,Operator 41,439.75
+BATCH20331,M-06,Valve Component,2025-08-14,Night,2948,58,0,Operator 17,490.55
+BATCH20332,M-12,Valve Component,2025-08-14,Afternoon,2054,92,120,Operator 19,246.8
+BATCH20333,M-06,Piston Ring,2025-08-14,Night,3660,98,15,Operator 40,314.74
+BATCH20334,M-09,Steel Rod 12mm,2025-08-15,Night,2979,69,60,Operator 29,628.92
+BATCH20335,M-03,Bearing Assembly,2025-08-18,Morning,1947,152,0,Operator 1,400.73
+BATCH20336,M-06,Valve Component,2025-08-19,Night,3449,142,30,Operator 28,737.41
+BATCH20337,M-03,Valve Component,2025-08-20,Morning,3791,256,15,Operator 14,509.33
+BATCH20338,M-05,Bearing Assembly,2025-08-21,Night,1135,46,0,Operator 1,107.48
+BATCH20339,M-07,Valve Component,2025-08-21,Night,1264,77,60,Operator 14,132.27
+BATCH20340,M-03,Valve Component,2025-08-23,Night,2580,142,0,Operator 30,338.37
+BATCH20341,M-12,Steel Rod 12mm,2025-08-24,Afternoon,3397,105,120,Operator 17,802.77
+BATCH20342,M-10,Piston Ring,2025-08-24,Morning,922,45,30,Operator 39,166.17
+BATCH20343,M-08,Steel Rod 12mm,2025-08-24,Morning,4486,224,0,Operator 11,1095.48
+BATCH20344,M-04,Valve Component,2025-08-25,Night,391,25,0,Operator 39,74.5
+BATCH20345,M-09,Gear Box Unit,2025-08-25,Night,3057,65,0,Operator 12,747.82
+BATCH20346,M-08,Gear Box Unit,2025-08-26,Night,2553,16,0,Operator 30,249.2
+BATCH20347,M-03,Bearing Assembly,2025-08-28,Morning,3947,147,0,Operator 36,694.54
+BATCH20348,M-02,Piston Ring,2025-08-28,Morning,507,33,0,Operator 1,84.23
+BATCH20349,M-05,Bearing Assembly,2025-08-29,Morning,2507,101,30,Operator 15,604.07
+BATCH20350,M-10,Piston Ring,2025-09-01,Afternoon,908,28,0,Operator 35,202.81
+BATCH20351,M-03,Valve Component,2025-09-01,Night,3973,145,0,Operator 29,560.45
+BATCH20352,M-03,Steel Rod 12mm,2025-09-01,Night,437,8,0,Operator 43,87.5
+BATCH20353,M-09,Valve Component,2025-09-02,Afternoon,3149,17,0,Operator 28,655.63
+BATCH20354,M-02,Piston Ring,2025-09-02,Afternoon,2040,52,0,Operator 7,501.63
+BATCH20355,M-10,Piston Ring,2025-09-03,Morning,4237,178,30,Operator 30,1014.38
+BATCH20356,M-07,Gear Box Unit,2025-09-03,Afternoon,1300,83,0,Operator 37,319.02
+BATCH20357,M-11,Gear Box Unit,2025-09-03,Morning,1745,13,15,Operator 3,399.72
+BATCH20358,M-02,Valve Component,2025-09-03,Morning,3566,119,120,Operator 4,504.99
+BATCH20359,M-03,Piston Ring,2025-09-04,Afternoon,4298,222,0,Operator 35,472.86
+BATCH20360,M-02,Bearing Assembly,2025-09-04,Morning,3629,80,15,Operator 7,339.3
+BATCH20361,M-09,Bearing Assembly,2025-09-05,Morning,1114,76,0,Operator 37,95.84
+BATCH20362,M-12,Valve Component,2025-09-05,Night,1845,131,15,Operator 19,250.76
+BATCH20363,M-02,Steel Rod 12mm,2025-09-07,Afternoon,2477,189,0,Operator 42,517.45
+BATCH20364,M-08,Gear Box Unit,2025-09-07,Night,3490,257,0,Operator 1,607.75
+BATCH20365,M-02,Steel Rod 12mm,2025-09-08,Afternoon,1130,27,0,Operator 27,268.16
+BATCH20366,M-09,Gear Box Unit,2025-09-08,Night,2350,32,15,Operator 28,501.79
+BATCH20367,M-08,Valve Component,2025-09-09,Morning,1077,65,30,Operator 39,155.76
+BATCH20368,M-05,Bearing Assembly,2025-09-09,Night,819,9,0,Operator 21,186.1
+BATCH20369,M-04,Valve Component,2025-09-10,Night,4024,64,60,Operator 23,328.15
+BATCH20370,M-01,Gear Box Unit,2025-09-10,Afternoon,1830,49,0,Operator 1,319.39
+BATCH20371,M-05,Bearing Assembly,2025-09-10,Night,1414,102,0,Operator 42,199.68
+BATCH20372,M-05,Bearing Assembly,2025-09-11,Morning,3470,65,0,Operator 12,542.0
+BATCH20373,M-01,Piston Ring,2025-09-11,Afternoon,4681,83,15,Operator 40,759.71
+BATCH20374,M-05,Bearing Assembly,2025-09-11,Morning,3201,100,0,Operator 41,444.85
+BATCH20375,M-12,Gear Box Unit,2025-09-11,Night,2236,76,0,Operator 30,463.9
+BATCH20376,M-04,Piston Ring,2025-09-12,Afternoon,2014,73,0,Operator 33,190.05
+BATCH20377,M-06,Steel Rod 12mm,2025-09-13,Night,2792,29,15,Operator 30,243.51
+BATCH20378,M-09,Valve Component,2025-09-14,Morning,1281,23,0,Operator 39,204.46
+BATCH20379,M-06,Valve Component,2025-09-15,Night,2669,56,0,Operator 43,226.84
+BATCH20380,M-09,Valve Component,2025-09-15,Night,3397,155,0,Operator 22,528.24
+BATCH20381,M-06,Bearing Assembly,2025-09-15,Afternoon,4598,146,0,Operator 6,1090.5
+BATCH20382,M-01,Piston Ring,2025-09-16,Night,2973,236,0,Operator 23,546.87
+BATCH20383,M-10,Bearing Assembly,2025-09-16,Afternoon,1913,57,30,Operator 39,378.41
+BATCH20384,M-11,Gear Box Unit,2025-09-17,Night,4698,214,0,Operator 5,434.74
+BATCH20385,M-12,Valve Component,2025-09-17,Morning,292,1,0,Operator 33,29.24
+BATCH20386,M-10,Piston Ring,2025-09-18,Night,2349,152,0,Operator 7,534.43
+BATCH20387,M-06,Valve Component,2025-09-18,Night,4611,210,120,Operator 16,970.45
+BATCH20388,M-03,Gear Box Unit,2025-09-19,Morning,535,29,30,Operator 40,110.77
+BATCH20389,M-11,Piston Ring,2025-09-19,Afternoon,4068,48,60,Operator 15,592.96
+BATCH20390,M-01,Steel Rod 12mm,2025-09-21,Morning,4052,256,0,Operator 12,452.62
+BATCH20391,M-08,Valve Component,2025-09-22,Morning,434,15,60,Operator 34,99.63
+BATCH20392,M-11,Bearing Assembly,2025-09-22,Night,4898,147,15,Operator 1,676.98
+BATCH20393,M-04,Steel Rod 12mm,2025-09-22,Night,1125,81,0,Operator 35,118.02
+BATCH20394,M-06,Gear Box Unit,2025-09-23,Night,1880,81,0,Operator 31,422.24
+BATCH20395,M-08,Bearing Assembly,2025-09-23,Night,4431,130,0,Operator 13,675.16
+BATCH20396,M-11,Gear Box Unit,2025-09-23,Night,3166,25,15,Operator 9,418.81
+BATCH20397,M-12,Valve Component,2025-09-24,Night,4443,257,0,Operator 14,1047.42
+BATCH20398,M-08,Bearing Assembly,2025-09-26,Afternoon,3181,151,0,Operator 36,702.23
+BATCH20399,M-12,Gear Box Unit,2025-09-26,Night,972,22,0,Operator 25,220.55
+BATCH20400,M-12,Bearing Assembly,2025-09-26,Afternoon,541,12,15,Operator 12,79.44
+BATCH20401,M-10,Gear Box Unit,2025-09-28,Morning,1705,60,60,Operator 13,312.43
+BATCH20402,M-10,Gear Box Unit,2025-09-28,Morning,3714,212,0,Operator 16,756.99
+BATCH20403,M-01,Valve Component,2025-09-29,Morning,1183,68,30,Operator 17,97.34
+BATCH20404,M-11,Bearing Assembly,2025-09-29,Night,4534,194,120,Operator 17,495.62
+BATCH20405,M-05,Valve Component,2025-09-29,Afternoon,3745,129,30,Operator 37,509.56
+BATCH20406,M-06,Steel Rod 12mm,2025-09-29,Afternoon,2006,136,0,Operator 5,491.57
+BATCH20407,M-09,Bearing Assembly,2025-09-29,Morning,2343,184,60,Operator 7,533.99
+BATCH20408,M-04,Bearing Assembly,2025-09-30,Night,4220,333,60,Operator 6,843.31
+BATCH20409,M-05,Gear Box Unit,2025-10-01,Afternoon,1503,28,15,Operator 9,190.07
+BATCH20410,M-05,Piston Ring,2025-10-02,Morning,203,8,15,Operator 33,27.37
+BATCH20411,M-05,Piston Ring,2025-10-02,Morning,2418,48,0,Operator 16,206.08
+BATCH20412,M-02,Piston Ring,2025-10-03,Morning,450,12,0,Operator 33,38.27
+BATCH20413,M-03,Piston Ring,2025-10-03,Afternoon,3578,47,0,Operator 40,350.9
+BATCH20414,M-12,Piston Ring,2025-10-04,Morning,1142,51,30,Operator 13,215.97
+BATCH20415,M-12,Steel Rod 12mm,2025-10-04,Afternoon,4069,275,60,Operator 4,815.34
+BATCH20416,M-11,Gear Box Unit,2025-10-04,Morning,4766,289,0,Operator 14,570.79
+BATCH20417,M-08,Bearing Assembly,2025-10-04,Night,2024,108,0,Operator 36,388.07
+BATCH20418,M-07,Bearing Assembly,2025-10-04,Morning,1414,19,0,Operator 30,214.68
+BATCH20419,M-07,Piston Ring,2025-10-04,Night,420,5,0,Operator 20,69.54
+BATCH20420,M-11,Piston Ring,2025-10-05,Night,4507,227,30,,728.06
+BATCH20421,M-12,Valve Component,2025-10-05,Afternoon,3867,89,15,Operator 23,511.58
+BATCH20422,M-07,Piston Ring,2025-10-06,Night,4856,36,0,Operator 8,545.9
+BATCH20423,M-05,Valve Component,2025-10-06,Morning,2550,198,0,Operator 43,358.84
+BATCH20424,M-11,Bearing Assembly,2025-10-07,Night,1671,64,0,Operator 4,162.09
+BATCH20425,M-06,Piston Ring,2025-10-08,Afternoon,3482,19,0,Operator 13,547.97
+BATCH20426,M-10,Piston Ring,2025-10-12,Afternoon,3276,167,0,Operator 33,717.93
+BATCH20427,M-07,Gear Box Unit,2025-10-13,Night,1684,59,30,Operator 7,335.71
+BATCH20428,M-03,Valve Component,2025-10-15,Afternoon,3060,157,0,Operator 17,405.41
+BATCH20429,M-07,Piston Ring,2025-10-16,Night,3432,58,0,Operator 8,485.96
+BATCH20430,M-07,Gear Box Unit,2025-10-17,Night,3304,254,0,Operator 43,352.41
+BATCH20431,M-02,Valve Component,2025-10-18,Morning,721,28,0,Operator 40,178.23
+BATCH20432,M-03,Steel Rod 12mm,2025-10-18,Night,245,6,30,Operator 44,32.76
+BATCH20433,M-05,Bearing Assembly,2025-10-18,Morning,840,15,30,Operator 2,206.06
+BATCH20434,M-10,Gear Box Unit,2025-10-20,Night,1149,45,0,Operator 25,140.41
+BATCH20435,M-05,Valve Component,2025-10-21,Afternoon,1594,114,15,,257.57
+BATCH20436,M-01,Gear Box Unit,2025-10-21,Morning,4277,30,0,Operator 19,631.59
+BATCH20437,M-03,Bearing Assembly,2025-10-22,Morning,321,18,0,Operator 38,48.02
+BATCH20438,M-10,Gear Box Unit,2025-10-22,Afternoon,2666,152,0,Operator 10,501.38
+BATCH20439,M-08,Bearing Assembly,2025-10-23,Night,3685,286,0,,590.14
+BATCH20440,M-08,Valve Component,2025-10-24,Night,3968,49,0,Operator 9,934.13
+BATCH20441,M-08,Gear Box Unit,2025-10-24,Morning,598,36,0,Operator 7,133.04
+BATCH20442,M-11,Gear Box Unit,2025-10-25,Night,3940,194,0,Operator 29,664.8
+BATCH20443,M-03,Gear Box Unit,2025-10-26,Morning,2235,61,30,Operator 4,540.48
+BATCH20444,M-11,Gear Box Unit,2025-10-26,Night,3133,122,0,Operator 37,519.77
+BATCH20445,M-09,Piston Ring,2025-10-27,Morning,1428,72,0,Operator 7,313.29
+BATCH20446,M-08,Steel Rod 12mm,2025-10-27,Night,949,34,0,Operator 27,112.24
+BATCH20447,M-10,Bearing Assembly,2025-10-28,Night,3272,76,0,Operator 19,664.03
+BATCH20448,M-08,Steel Rod 12mm,2025-10-28,Morning,3337,83,0,Operator 35,646.65
+BATCH20449,M-10,Bearing Assembly,2025-10-28,Morning,1362,37,0,Operator 17,187.61
+BATCH20450,M-05,Valve Component,2025-10-28,Afternoon,281,6,120,Operator 29,48.8
+BATCH20451,M-10,Piston Ring,2025-10-29,Night,459,29,0,Operator 2,59.74
+BATCH20452,M-07,Piston Ring,2025-10-29,Morning,1580,67,0,Operator 20,240.2
+BATCH20453,M-01,Gear Box Unit,2025-10-30,Morning,4407,88,0,Operator 16,504.25
+BATCH20454,M-03,Piston Ring,2025-10-30,Morning,3050,31,0,Operator 44,335.41
+BATCH20455,M-04,Valve Component,2025-10-31,Morning,1441,111,15,Operator 38,130.65
+BATCH20456,M-07,Bearing Assembly,2025-11-02,Morning,3210,75,60,Operator 26,658.64
+BATCH20457,M-05,Valve Component,2025-11-02,Morning,234,13,0,Operator 39,44.29
+BATCH20458,M-03,Bearing Assembly,2025-11-02,Morning,3372,84,30,Operator 35,465.27
+BATCH20459,M-10,Gear Box Unit,2025-11-02,Morning,2795,69,240,Operator 10,653.8
+BATCH20460,M-09,Valve Component,2025-11-03,Night,1872,140,60,Operator 11,410.21
+BATCH20461,M-08,Valve Component,2025-11-03,Afternoon,2934,119,60,Operator 31,327.9
+BATCH20462,M-03,Steel Rod 12mm,2025-11-04,Afternoon,3417,93,0,Operator 16,433.41
+BATCH20463,M-04,Piston Ring,2025-11-05,Night,1702,116,60,Operator 4,200.44
+BATCH20464,M-10,Bearing Assembly,2025-11-05,Night,4812,355,0,Operator 26,455.6
+BATCH20465,M-02,Gear Box Unit,2025-11-06,Afternoon,4332,64,0,Operator 2,669.94
+BATCH20466,M-11,Steel Rod 12mm,2025-11-06,Morning,1719,30,30,Operator 44,236.01
+BATCH20467,M-09,Steel Rod 12mm,2025-11-06,Morning,3246,111,0,Operator 38,653.9
+BATCH20468,M-05,Valve Component,2025-11-07,Morning,3416,253,30,Operator 38,491.31
+BATCH20469,M-08,Valve Component,2025-11-08,Afternoon,2865,15,0,Operator 39,668.02
+BATCH20470,M-02,Valve Component,2025-11-08,Afternoon,2183,68,120,Operator 10,371.89
+BATCH20471,M-02,Gear Box Unit,2025-11-08,Night,4918,353,30,Operator 22,789.09
+BATCH20472,M-03,Bearing Assembly,2025-11-09,Afternoon,2127,32,0,Operator 29,460.68
+BATCH20473,M-02,Valve Component,2025-11-09,Night,1420,19,0,Operator 44,191.06
+BATCH20474,M-11,Steel Rod 12mm,2025-11-09,Morning,3300,249,60,Operator 26,620.11
+BATCH20475,M-02,Valve Component,2025-11-09,Afternoon,2605,128,240,Operator 16,433.36
+BATCH20476,M-03,Gear Box Unit,2025-11-10,Morning,4248,211,0,Operator 37,655.47
+BATCH20477,M-12,Valve Component,2025-11-10,Morning,1442,31,30,Operator 33,128.43
+BATCH20478,M-11,Steel Rod 12mm,2025-11-11,Night,1671,67,0,Operator 24,199.97
+BATCH20479,M-06,Bearing Assembly,2025-11-11,Night,1736,132,30,Operator 31,247.27
+BATCH20480,M-02,Bearing Assembly,2025-11-11,Night,4543,248,0,Operator 26,951.41
+BATCH20481,M-06,Valve Component,2025-11-12,Morning,836,57,120,Operator 7,189.9
+BATCH20482,M-06,Steel Rod 12mm,2025-11-12,Morning,467,25,15,Operator 21,74.64
+BATCH20483,M-09,Bearing Assembly,2025-11-14,Afternoon,847,38,0,Operator 6,198.19
+BATCH20484,M-09,Bearing Assembly,2025-11-17,Morning,4036,90,0,Operator 9,596.65
+BATCH20485,M-08,Gear Box Unit,2025-11-17,Night,616,41,60,Operator 8,67.59
+BATCH20486,M-03,Valve Component,2025-11-18,Morning,911,50,0,Operator 27,219.18
+BATCH20487,M-01,Bearing Assembly,2025-11-19,Night,877,32,120,Operator 5,182.37
+BATCH20488,M-11,Valve Component,2025-11-19,Morning,2693,206,0,Operator 19,269.73
+BATCH20489,M-08,Steel Rod 12mm,2025-11-19,Afternoon,2185,150,0,Operator 23,409.1
+BATCH20490,M-07,Piston Ring,2025-11-20,Afternoon,2176,150,15,Operator 25,252.8
+BATCH20491,M-02,Piston Ring,2025-11-21,Morning,337,11,0,Operator 26,58.61
+BATCH20492,M-02,Piston Ring,2025-11-21,Afternoon,2283,35,0,Operator 31,198.68
+BATCH20493,M-06,Valve Component,2025-11-21,Afternoon,4084,139,30,Operator 31,657.17
+BATCH20494,M-02,Steel Rod 12mm,2025-11-22,Night,3531,23,0,Operator 39,596.73
+BATCH20495,M-12,Bearing Assembly,2025-11-23,Afternoon,4207,209,0,Operator 42,363.77
+BATCH20496,M-03,Piston Ring,2025-11-23,Morning,3832,170,0,Operator 44,509.62
+BATCH20497,M-01,Piston Ring,2025-11-23,Afternoon,1003,42,60,Operator 14,199.87
+BATCH20498,M-01,Piston Ring,2025-11-23,Night,1678,33,0,Operator 31,414.3
+BATCH20499,M-05,Valve Component,2025-11-24,Night,1000,47,0,Operator 11,105.41
+BATCH20500,M-09,Gear Box Unit,2025-11-25,Night,3560,266,15,Operator 20,361.05
+BATCH20501,M-12,Gear Box Unit,2025-11-26,Morning,4912,388,0,Operator 31,1145.44
+BATCH20502,M-08,Valve Component,2025-11-27,Afternoon,1410,104,120,Operator 36,308.55
+BATCH20503,M-03,Gear Box Unit,2025-11-27,Morning,2765,201,0,Operator 23,495.65
+BATCH20504,M-12,Gear Box Unit,2025-11-27,Night,807,9,120,Operator 39,175.78
+BATCH20505,M-04,Piston Ring,2025-11-28,Morning,4794,30,0,Operator 3,955.61
+BATCH20506,M-05,Piston Ring,2025-11-28,Night,1840,76,60,Operator 40,267.28
+BATCH20507,M-10,Steel Rod 12mm,2025-11-29,Afternoon,3430,244,15,Operator 20,748.95
+BATCH20508,M-06,Bearing Assembly,2025-11-30,Morning,2440,100,0,Operator 44,448.49
+BATCH20509,M-07,Valve Component,2025-11-30,Afternoon,4318,240,30,Operator 23,942.73
+BATCH20510,M-02,Bearing Assembly,2025-12-01,Morning,2872,144,120,Operator 27,319.58
+BATCH20511,M-01,Bearing Assembly,2025-12-01,Morning,202,7,0,Operator 8,42.18
+BATCH20512,M-06,Piston Ring,2025-12-02,Night,1423,48,60,Operator 27,268.94
+BATCH20513,M-08,Steel Rod 12mm,2025-12-02,Night,1277,83,0,Operator 40,130.81
+BATCH20514,M-11,Valve Component,2025-12-03,Morning,1495,42,240,Operator 24,192.09
+BATCH20515,M-06,Valve Component,2025-12-04,Night,1660,74,0,Operator 27,386.5
+BATCH20516,M-05,Valve Component,2025-12-04,Night,1424,27,240,Operator 39,322.7
+BATCH20517,M-12,Bearing Assembly,2025-12-04,Afternoon,3333,264,0,Operator 11,803.69
+BATCH20518,M-05,Piston Ring,2025-12-05,Morning,3861,283,0,Operator 43,889.77
+BATCH20519,M-11,Valve Component,2025-12-05,Afternoon,1161,13,60,Operator 36,220.29
+BATCH20520,M-05,Steel Rod 12mm,2025-12-06,Night,2685,203,15,Operator 6,218.88
+BATCH20521,M-12,Valve Component,2025-12-06,Night,2221,94,0,Operator 28,428.87
+BATCH20522,M-12,Gear Box Unit,2025-12-08,Night,4310,153,240,Operator 16,826.69
+BATCH20523,M-10,Valve Component,2025-12-08,Afternoon,4736,47,0,Operator 15,731.61
+BATCH20524,M-02,Steel Rod 12mm,2025-12-10,Night,2540,37,240,Operator 3,449.31
+BATCH20525,M-02,Bearing Assembly,2025-12-10,Night,1208,93,30,Operator 8,251.94
+BATCH20526,M-01,Valve Component,2025-12-12,Morning,2619,150,0,Operator 7,389.03
+BATCH20527,M-12,Piston Ring,2025-12-13,Afternoon,4026,165,0,Operator 26,350.58
+BATCH20528,M-03,Gear Box Unit,2025-12-14,Afternoon,1705,111,0,Operator 36,394.98
+BATCH20529,M-11,Bearing Assembly,2025-12-14,Morning,1213,76,30,Operator 14,222.98
+BATCH20530,M-11,Piston Ring,2025-12-15,Morning,3550,30,60,Operator 33,814.88
+BATCH20531,M-03,Bearing Assembly,2025-12-15,Night,4677,32,0,Operator 41,1128.31
+BATCH20532,M-09,Valve Component,2025-12-15,Afternoon,1456,98,0,Operator 12,285.92
+BATCH20533,M-06,Steel Rod 12mm,2025-12-16,Afternoon,1052,18,0,Operator 13,102.3
+BATCH20534,M-03,Piston Ring,2025-12-16,Morning,4511,151,0,Operator 39,891.36
+BATCH20535,M-10,Valve Component,2025-12-17,Night,824,58,0,Operator 34,156.32
+BATCH20536,M-08,Steel Rod 12mm,2025-12-18,Night,3115,177,0,Operator 42,429.47
+BATCH20537,M-05,Valve Component,2025-12-18,Morning,1764,99,30,Operator 42,333.62
+BATCH20538,M-02,Gear Box Unit,2025-12-19,Night,4175,267,120,Operator 40,341.29
+BATCH20539,M-11,Steel Rod 12mm,2025-12-20,Afternoon,2429,92,0,Operator 34,450.26
+BATCH20540,M-04,Bearing Assembly,2025-12-21,Morning,843,38,0,Operator 25,209.83
+BATCH20541,M-08,Bearing Assembly,2025-12-21,Night,4676,145,0,Operator 15,656.53
+BATCH20542,M-03,Steel Rod 12mm,2025-12-21,Morning,3506,87,15,Operator 39,508.92
+BATCH20543,M-07,Valve Component,2025-12-22,Night,1957,12,60,Operator 25,199.46
+BATCH20544,M-07,Valve Component,2025-12-23,Afternoon,2108,104,0,Operator 30,437.29
+BATCH20545,M-12,Valve Component,2025-12-23,Morning,2591,176,0,,289.76
+BATCH20546,M-06,Gear Box Unit,2025-12-24,Afternoon,1757,54,0,Operator 11,260.47
+BATCH20547,M-06,Valve Component,2025-12-24,Night,2573,135,0,Operator 10,297.17
+BATCH20548,M-01,Bearing Assembly,2025-12-25,Afternoon,1895,106,0,Operator 29,364.07
+BATCH20549,M-02,Gear Box Unit,2025-12-26,Afternoon,4939,246,0,Operator 25,696.28
+BATCH20550,M-10,Valve Component,2025-12-26,Afternoon,4003,266,0,Operator 34,469.21
+BATCH20551,M-07,Steel Rod 12mm,2025-12-26,Night,2399,139,0,Operator 23,490.0
+BATCH20552,M-04,Valve Component,2025-12-28,Afternoon,1724,62,0,Operator 5,231.28
+BATCH20553,M-03,Gear Box Unit,2025-12-28,Afternoon,874,12,0,Operator 26,191.85
+BATCH20554,M-05,Piston Ring,2025-12-28,Afternoon,2264,159,15,Operator 43,274.81
+BATCH20555,M-01,Bearing Assembly,2025-12-29,Afternoon,1394,40,240,Operator 35,334.49
+BATCH20556,M-07,Piston Ring,2025-12-30,Morning,3768,42,0,Operator 9,645.21
+BATCH20557,M-03,Piston Ring,2025-12-30,Morning,3093,107,0,Operator 5,282.59
+BATCH20558,M-04,Valve Component,2025-12-31,Night,1561,43,0,Operator 33,268.16
+BATCH20559,M-10,Piston Ring,2025-12-31,Afternoon,4813,313,0,Operator 40,911.88
+BATCH20560,M-06,Valve Component,2026-01-01,Morning,3084,84,60,Operator 17,567.16
+BATCH20561,M-03,Valve Component,2026-01-02,Night,4825,222,0,Operator 31,1126.44
+BATCH20562,M-01,Steel Rod 12mm,2026-01-02,Night,2604,104,0,Operator 31,444.43
+BATCH20563,M-04,Valve Component,2026-01-02,Night,3885,166,0,Operator 35,786.47
+BATCH20564,M-09,Bearing Assembly,2026-01-02,Night,495,4,0,Operator 33,68.59
+BATCH20565,M-12,Gear Box Unit,2026-01-03,Afternoon,1173,65,0,Operator 18,129.63
+BATCH20566,M-09,Piston Ring,2026-01-03,Morning,3659,285,15,Operator 41,585.37
+BATCH20567,M-07,Gear Box Unit,2026-01-04,Night,780,20,15,Operator 37,183.92
+BATCH20568,M-03,Gear Box Unit,2026-01-04,Night,286,21,0,Operator 34,56.8
+BATCH20569,M-11,Steel Rod 12mm,2026-01-04,Morning,1590,15,0,Operator 39,132.24
+BATCH20570,M-05,Bearing Assembly,2026-01-06,Afternoon,4352,335,0,Operator 28,658.09
+BATCH20571,M-05,Bearing Assembly,2026-01-06,Morning,2694,111,0,Operator 13,216.8
+BATCH20572,M-09,Bearing Assembly,2026-01-07,Night,3060,164,0,Operator 8,488.24
+BATCH20573,M-05,Piston Ring,2026-01-08,Afternoon,247,13,0,Operator 22,22.55
+BATCH20574,M-05,Bearing Assembly,2026-01-08,Night,2311,17,30,Operator 35,462.92
+BATCH20575,M-11,Valve Component,2026-01-08,Night,3689,258,0,Operator 6,575.06
+BATCH20576,M-09,Steel Rod 12mm,2026-01-08,Afternoon,3926,264,0,Operator 2,953.16
+BATCH20577,M-09,Steel Rod 12mm,2026-01-09,Night,4359,176,30,Operator 34,538.98
+BATCH20578,M-03,Piston Ring,2026-01-09,Afternoon,2338,15,120,Operator 36,286.04
+BATCH20579,M-04,Steel Rod 12mm,2026-01-11,Morning,3806,239,0,Operator 40,754.34
+BATCH20580,M-07,Bearing Assembly,2026-01-11,Morning,4711,60,60,Operator 39,442.79
+BATCH20581,M-03,Valve Component,2026-01-14,Afternoon,602,4,120,Operator 38,64.27
+BATCH20582,M-04,Bearing Assembly,2026-01-14,Afternoon,3079,221,30,Operator 44,459.41
+BATCH20583,M-01,Steel Rod 12mm,2026-01-15,Morning,1543,118,0,Operator 37,232.4
+BATCH20584,M-04,Bearing Assembly,2026-01-15,Morning,3582,160,0,Operator 40,643.05
+BATCH20585,M-07,Bearing Assembly,2026-01-17,Night,1065,10,120,Operator 40,89.38
+BATCH20586,M-06,Steel Rod 12mm,2026-01-17,Morning,4267,221,0,Operator 28,1034.39
+BATCH20587,M-12,Gear Box Unit,2026-01-18,Morning,263,3,0,Operator 32,27.29
+BATCH20588,M-08,Valve Component,2026-01-19,Morning,396,6,0,Operator 11,68.12
+BATCH20589,M-06,Valve Component,2026-01-19,Night,4276,242,0,Operator 18,437.67
+BATCH20590,M-05,Valve Component,2026-01-20,Afternoon,865,49,0,Operator 43,141.99
+BATCH20591,M-07,Bearing Assembly,2026-01-20,Morning,2261,91,0,Operator 34,389.12
+BATCH20592,M-02,Bearing Assembly,2026-01-21,Night,2164,89,0,Operator 42,189.88
+BATCH20593,M-10,Piston Ring,2026-01-21,Night,895,70,0,Operator 4,139.92
+BATCH20594,M-11,Gear Box Unit,2026-01-22,Afternoon,1777,103,120,Operator 43,436.6
+BATCH20595,M-06,Piston Ring,2026-01-22,Night,2137,135,0,Operator 14,273.85
+BATCH20596,M-03,Gear Box Unit,2026-01-22,Night,502,10,60,Operator 2,67.22
+BATCH20597,M-05,Bearing Assembly,2026-01-23,Morning,556,43,0,Operator 24,120.81
+BATCH20598,M-07,Valve Component,2026-01-24,Afternoon,915,32,0,Operator 40,228.7
+BATCH20599,M-06,Gear Box Unit,2026-01-24,Afternoon,4121,303,0,Operator 41,430.93
+BATCH20600,M-06,Valve Component,2026-01-25,Afternoon,1118,42,0,Operator 21,90.48
+BATCH20601,M-06,Piston Ring,2026-01-26,Morning,3822,274,0,Operator 18,894.44
+BATCH20602,M-03,Valve Component,2026-01-26,Afternoon,2852,64,0,Operator 36,473.35
+BATCH20603,M-08,Valve Component,2026-01-26,Afternoon,4967,254,0,Operator 10,931.18
+BATCH20604,M-04,Bearing Assembly,2026-01-26,Morning,2276,52,30,Operator 38,511.41
+BATCH20605,M-11,Gear Box Unit,2026-01-27,Afternoon,1306,63,120,Operator 37,177.78
+BATCH20606,M-11,Gear Box Unit,2026-01-27,Morning,845,59,0,Operator 2,88.8
+BATCH20607,M-08,Piston Ring,2026-01-27,Night,1395,57,15,Operator 31,346.6
+BATCH20608,M-06,Piston Ring,2026-01-27,Night,1212,39,0,Operator 3,239.86
+BATCH20609,M-03,Gear Box Unit,2026-01-28,Night,831,44,0,Operator 37,118.23
+BATCH20610,M-05,Valve Component,2026-01-28,Afternoon,4157,124,60,Operator 37,469.24
+BATCH20611,M-06,Gear Box Unit,2026-01-29,Morning,1488,81,60,Operator 26,351.92
+BATCH20612,M-10,Gear Box Unit,2026-01-29,Afternoon,1718,122,120,Operator 19,311.09
+BATCH20613,M-07,Gear Box Unit,2026-01-29,Night,4947,38,60,Operator 39,874.43
+BATCH20614,M-05,Steel Rod 12mm,2026-01-30,Afternoon,2711,141,0,Operator 17,490.8
+BATCH20615,M-12,Bearing Assembly,2026-01-31,Morning,2860,43,0,Operator 27,304.5
+BATCH20616,M-01,Piston Ring,2026-01-31,Afternoon,2936,115,0,Operator 23,379.27
+BATCH20617,M-04,Valve Component,2026-01-31,Morning,2255,87,60,Operator 18,366.12
+BATCH20618,M-06,Gear Box Unit,2026-02-01,Night,985,56,0,Operator 2,82.94
+BATCH20619,M-04,Bearing Assembly,2026-02-02,Night,1303,57,30,Operator 1,156.46
+BATCH20620,M-11,Gear Box Unit,2026-02-02,Afternoon,3038,154,15,Operator 43,289.78
+BATCH20621,M-04,Valve Component,2026-02-02,Morning,1825,65,0,Operator 31,302.61
+BATCH20622,M-09,Steel Rod 12mm,2026-02-02,Night,4139,149,15,Operator 28,978.02
+BATCH20623,M-11,Bearing Assembly,2026-02-02,Morning,449,33,15,Operator 18,108.03
+BATCH20624,M-03,Piston Ring,2026-02-04,Afternoon,385,25,60,Operator 40,85.52
+BATCH20625,M-11,Bearing Assembly,2026-02-04,Afternoon,4288,330,0,,903.86
+BATCH20626,M-11,Steel Rod 12mm,2026-02-05,Morning,471,14,120,Operator 19,90.77
+BATCH20627,M-05,Bearing Assembly,2026-02-05,Afternoon,2646,58,0,Operator 21,541.16
+BATCH20628,M-06,Steel Rod 12mm,2026-02-07,Night,4184,280,0,,629.95
+BATCH20629,M-02,Valve Component,2026-02-08,Night,4093,74,0,Operator 26,1008.63
+BATCH20630,M-08,Steel Rod 12mm,2026-02-08,Morning,2799,19,0,Operator 39,669.88
+BATCH20631,M-03,Steel Rod 12mm,2026-02-08,Afternoon,732,48,60,Operator 1,101.51
+BATCH20632,M-11,Piston Ring,2026-02-09,Morning,2077,117,0,Operator 39,210.02
+BATCH20633,M-11,Bearing Assembly,2026-02-10,Morning,4633,192,0,Operator 3,1038.41
+BATCH20634,M-01,Steel Rod 12mm,2026-02-10,Night,4022,84,0,,353.09
+BATCH20635,M-09,Steel Rod 12mm,2026-02-10,Night,3312,176,30,Operator 25,326.86
+BATCH20636,M-01,Bearing Assembly,2026-02-11,Afternoon,1921,25,240,Operator 31,472.43
+BATCH20637,M-08,Piston Ring,2026-02-11,Morning,3907,232,60,Operator 40,933.97
+BATCH20638,M-08,Steel Rod 12mm,2026-02-11,Night,1023,33,60,Operator 40,233.74
+BATCH20639,M-03,Bearing Assembly,2026-02-11,Morning,3963,149,0,Operator 8,610.46
+BATCH20640,M-08,Bearing Assembly,2026-02-11,Afternoon,4815,311,0,Operator 40,905.86
+BATCH20641,M-01,Valve Component,2026-02-11,Morning,2895,154,15,Operator 18,273.15
+BATCH20642,M-07,Steel Rod 12mm,2026-02-12,Afternoon,2633,167,30,Operator 16,531.96
+BATCH20643,M-09,Piston Ring,2026-02-13,Afternoon,801,32,0,Operator 27,73.94
+BATCH20644,M-09,Gear Box Unit,2026-02-13,Night,787,58,0,Operator 19,180.36
+BATCH20645,M-04,Gear Box Unit,2026-02-15,Afternoon,2526,53,30,Operator 27,399.77
+BATCH20646,M-04,Gear Box Unit,2026-02-15,Afternoon,485,36,0,Operator 36,105.74
+BATCH20647,M-12,Valve Component,2026-02-15,Afternoon,2313,177,0,Operator 37,540.55
+BATCH20648,M-05,Valve Component,2026-02-16,Afternoon,4087,73,120,Operator 20,327.45
+BATCH20649,M-10,Bearing Assembly,2026-02-17,Night,4214,253,0,Operator 18,990.58
+BATCH20650,M-06,Bearing Assembly,2026-02-17,Afternoon,3789,301,0,Operator 8,738.0
+BATCH20651,M-04,Valve Component,2026-02-17,Night,366,3,60,Operator 44,86.66
+BATCH20652,M-10,Valve Component,2026-02-18,Night,2492,93,0,Operator 23,221.29
+BATCH20653,M-03,Valve Component,2026-02-18,Morning,3251,113,0,Operator 10,646.21
+BATCH20654,M-05,Piston Ring,2026-02-18,Afternoon,729,3,0,Operator 32,71.45
+BATCH20655,M-05,Valve Component,2026-02-18,Night,443,27,0,Operator 18,54.99
+BATCH20656,M-10,Steel Rod 12mm,2026-02-18,Morning,3536,117,0,Operator 35,797.9
+BATCH20657,M-08,Bearing Assembly,2026-02-19,Night,2957,129,15,Operator 3,646.12
+BATCH20658,M-03,Gear Box Unit,2026-02-19,Morning,3353,154,0,Operator 33,399.26
+BATCH20659,M-01,Piston Ring,2026-02-20,Morning,713,45,0,Operator 28,159.47
+BATCH20660,M-04,Gear Box Unit,2026-02-21,Night,4857,209,0,Operator 18,404.25
+BATCH20661,M-01,Piston Ring,2026-02-21,Morning,2656,39,30,Operator 3,644.08
+BATCH20662,M-05,Gear Box Unit,2026-02-22,Morning,1795,55,0,Operator 41,207.37
+BATCH20663,M-11,Piston Ring,2026-02-23,Afternoon,1039,31,0,Operator 28,155.56
+BATCH20664,M-02,Bearing Assembly,2026-02-24,Night,325,4,30,Operator 31,58.39
+BATCH20665,M-10,Valve Component,2026-02-24,Night,1945,51,0,Operator 6,213.78
+BATCH20666,M-08,Piston Ring,2026-02-24,Night,569,34,0,Operator 41,52.59
+BATCH20667,M-01,Valve Component,2026-02-25,Morning,3082,189,30,Operator 3,286.1
+BATCH20668,M-09,Bearing Assembly,2026-02-25,Afternoon,343,6,0,Operator 42,58.63
+BATCH20669,M-11,Gear Box Unit,2026-02-25,Night,730,42,15,Operator 43,147.43
+BATCH20670,M-01,Valve Component,2026-02-25,Night,1052,16,0,Operator 25,137.53
+BATCH20671,M-08,Bearing Assembly,2026-02-26,Afternoon,3744,127,0,Operator 1,837.72
+BATCH20672,M-08,Steel Rod 12mm,2026-02-27,Morning,3663,163,0,Operator 10,354.14
+BATCH20673,M-04,Bearing Assembly,2026-02-27,Night,1909,125,30,Operator 32,459.43
+BATCH20674,M-02,Gear Box Unit,2026-02-27,Morning,1755,25,0,Operator 27,348.62
+BATCH20675,M-07,Piston Ring,2026-02-27,Night,4962,167,30,Operator 35,620.86
+BATCH20676,M-08,Piston Ring,2026-02-27,Afternoon,3902,165,60,Operator 16,941.88
+BATCH20677,M-03,Gear Box Unit,2026-02-27,Night,1731,31,30,Operator 31,231.16
+BATCH20678,M-01,Bearing Assembly,2026-02-27,Night,3816,157,0,Operator 11,686.21
+BATCH20679,M-01,Bearing Assembly,2026-02-27,Afternoon,3715,137,0,Operator 9,633.38
+BATCH20680,M-09,Gear Box Unit,2026-03-02,Morning,4862,380,0,Operator 37,1185.1
+BATCH20681,M-07,Bearing Assembly,2026-03-02,Night,3574,29,0,Operator 4,740.74
+BATCH20682,M-09,Piston Ring,2026-03-03,Night,1178,15,0,Operator 27,230.71
+BATCH20683,M-02,Steel Rod 12mm,2026-03-03,Afternoon,3609,137,120,Operator 17,772.08
+BATCH20684,M-07,Valve Component,2026-03-04,Night,1353,96,0,Operator 10,300.17
+BATCH20685,M-06,Steel Rod 12mm,2026-03-04,Morning,2125,102,0,Operator 4,179.73
+BATCH20686,M-08,Piston Ring,2026-03-04,Night,3201,225,0,Operator 16,535.13
+BATCH20687,M-07,Steel Rod 12mm,2026-03-05,Night,4882,291,0,Operator 32,1081.43
+BATCH20688,M-12,Steel Rod 12mm,2026-03-06,Afternoon,1189,56,0,Operator 40,133.54
+BATCH20689,M-03,Steel Rod 12mm,2026-03-06,Night,4056,71,30,Operator 17,715.35
+BATCH20690,M-11,Steel Rod 12mm,2026-03-08,Afternoon,3297,106,0,Operator 20,281.43
+BATCH20691,M-07,Steel Rod 12mm,2026-03-08,Morning,3323,248,0,Operator 15,824.37
+BATCH20692,M-06,Piston Ring,2026-03-09,Afternoon,1529,24,0,Operator 10,285.89
+BATCH20693,M-09,Steel Rod 12mm,2026-03-11,Morning,4230,254,0,Operator 17,571.94
+BATCH20694,M-02,Steel Rod 12mm,2026-03-11,Afternoon,3888,32,0,Operator 39,465.53
+BATCH20695,M-01,Bearing Assembly,2026-03-12,Night,4949,46,0,Operator 12,564.55
+BATCH20696,M-03,Valve Component,2026-03-13,Morning,3195,16,0,Operator 18,604.11
+BATCH20697,M-06,Steel Rod 12mm,2026-03-15,Afternoon,1946,115,0,Operator 14,254.9
+BATCH20698,M-12,Gear Box Unit,2026-03-16,Morning,2305,80,120,,323.71
+BATCH20699,M-03,Piston Ring,2026-03-16,Morning,3178,158,30,Operator 23,599.96
+BATCH20700,M-04,Gear Box Unit,2026-03-16,Afternoon,1668,59,60,Operator 17,147.87
+BATCH20701,M-12,Valve Component,2026-03-18,Night,2944,105,30,Operator 43,676.9
+BATCH20702,M-03,Piston Ring,2026-03-19,Afternoon,1044,30,0,Operator 35,200.98
+BATCH20703,M-01,Piston Ring,2026-03-20,Night,4690,220,30,Operator 35,412.5
+BATCH20704,M-12,Steel Rod 12mm,2026-03-20,Night,1472,69,0,Operator 21,224.47
+BATCH20705,M-01,Piston Ring,2026-03-21,Morning,3160,155,120,Operator 6,279.33
+BATCH20706,M-09,Bearing Assembly,2026-03-21,Morning,3262,222,60,Operator 2,318.46
+BATCH20707,M-01,Piston Ring,2026-03-22,Afternoon,1087,67,0,Operator 15,259.07
+BATCH20708,M-11,Valve Component,2026-03-23,Afternoon,2155,99,0,Operator 20,481.38
+BATCH20709,M-02,Steel Rod 12mm,2026-03-23,Afternoon,1948,74,120,Operator 37,401.23
+BATCH20710,M-02,Valve Component,2026-03-25,Night,3784,58,30,,376.11
+BATCH20711,M-03,Bearing Assembly,2026-03-25,Afternoon,4014,133,120,Operator 37,457.91
+BATCH20712,M-08,Valve Component,2026-03-27,Afternoon,3501,28,30,Operator 34,417.39
+BATCH20713,M-12,Piston Ring,2026-03-28,Morning,3384,265,30,Operator 14,685.83
+BATCH20714,M-07,Steel Rod 12mm,2026-03-29,Afternoon,597,18,0,Operator 17,117.87
+BATCH20715,M-08,Gear Box Unit,2026-03-29,Night,1603,104,0,Operator 20,148.38
+BATCH20716,M-01,Valve Component,2026-03-30,Morning,3401,50,60,Operator 13,711.08
+BATCH20717,M-01,Piston Ring,2026-03-30,Night,3146,250,0,Operator 5,615.85
+BATCH20718,M-12,Piston Ring,2026-03-30,Night,4498,301,0,Operator 41,706.03
+BATCH20719,M-08,Valve Component,2026-03-30,Night,1423,19,120,Operator 14,195.78
+BATCH20720,M-08,Bearing Assembly,2026-03-31,Afternoon,4002,28,0,Operator 35,555.17
+BATCH20721,M-12,Bearing Assembly,2026-04-01,Morning,4330,324,30,Operator 28,869.98
+BATCH20722,M-07,Gear Box Unit,2026-04-02,Morning,3891,55,120,Operator 12,373.18
+BATCH20723,M-06,Bearing Assembly,2026-04-05,Afternoon,3952,156,0,Operator 32,353.36
+BATCH20724,M-04,Piston Ring,2026-04-05,Night,1397,100,0,Operator 21,126.12
+BATCH20725,M-04,Piston Ring,2026-04-05,Afternoon,2238,125,60,Operator 41,357.11
+BATCH20726,M-06,Piston Ring,2026-04-06,Afternoon,3690,62,0,Operator 24,601.46
+BATCH20727,M-07,Bearing Assembly,2026-04-06,Morning,4814,371,0,Operator 7,976.22
+BATCH20728,M-07,Valve Component,2026-04-07,Afternoon,2810,34,0,Operator 27,235.75
+BATCH20729,M-04,Bearing Assembly,2026-04-09,Morning,4449,57,0,Operator 2,699.32
+BATCH20730,M-12,Steel Rod 12mm,2026-04-09,Night,2678,186,0,Operator 11,380.78
+BATCH20731,M-02,Steel Rod 12mm,2026-04-11,Night,2379,143,0,Operator 30,491.71
+BATCH20732,M-04,Piston Ring,2026-04-12,Morning,3095,147,0,Operator 24,467.91
+BATCH20733,M-11,Piston Ring,2026-04-12,Night,4392,41,30,Operator 37,924.94
+BATCH20734,M-07,Bearing Assembly,2026-04-12,Morning,3266,164,0,Operator 25,768.73
+BATCH20735,M-04,Bearing Assembly,2026-04-13,Afternoon,4089,82,30,Operator 28,998.42
+BATCH20736,M-03,Gear Box Unit,2026-04-14,Night,416,14,0,Operator 5,39.87
+BATCH20737,M-10,Bearing Assembly,2026-04-15,Night,3187,215,15,Operator 43,363.39
+BATCH20738,M-07,Steel Rod 12mm,2026-04-15,Afternoon,306,2,0,Operator 15,70.96
+BATCH20739,M-05,Valve Component,2026-04-16,Afternoon,322,19,0,Operator 23,52.24
+BATCH20740,M-08,Gear Box Unit,2026-04-17,Morning,2516,171,30,Operator 8,348.57
+BATCH20741,M-04,Gear Box Unit,2026-04-17,Morning,1186,36,60,Operator 3,177.55
+BATCH20742,M-10,Steel Rod 12mm,2026-04-17,Afternoon,2141,22,60,Operator 7,420.64
+BATCH20743,M-12,Steel Rod 12mm,2026-04-18,Afternoon,1428,62,240,Operator 23,313.61
+BATCH20744,M-07,Bearing Assembly,2026-04-18,Night,1706,30,60,Operator 25,170.71
+BATCH20745,M-06,Gear Box Unit,2026-04-18,Morning,4649,98,0,Operator 26,377.42
+BATCH20746,M-09,Steel Rod 12mm,2026-04-18,Morning,4222,321,0,Operator 11,1041.25
+BATCH20747,M-04,Piston Ring,2026-04-19,Night,1880,129,0,Operator 1,295.39
+BATCH20748,M-10,Gear Box Unit,2026-04-19,Afternoon,2198,125,0,Operator 7,306.17
+BATCH20749,M-03,Bearing Assembly,2026-04-19,Afternoon,3764,49,120,Operator 34,769.89
+BATCH20750,M-04,Gear Box Unit,2026-04-19,Morning,1664,104,0,Operator 8,383.06
+BATCH20751,M-11,Piston Ring,2026-04-20,Night,521,31,120,Operator 23,84.36
+BATCH20752,M-10,Steel Rod 12mm,2026-04-20,Morning,4444,283,0,Operator 20,487.49
+BATCH20753,M-01,Bearing Assembly,2026-04-21,Morning,2362,15,0,Operator 13,499.2
+BATCH20754,M-02,Gear Box Unit,2026-04-23,Morning,3122,178,15,Operator 43,290.96
+BATCH20755,M-05,Bearing Assembly,2026-04-23,Night,2545,82,0,Operator 24,517.4
+BATCH20756,M-04,Bearing Assembly,2026-04-23,Afternoon,3727,102,0,Operator 1,378.11
+BATCH20757,M-09,Piston Ring,2026-04-24,Morning,3636,287,15,Operator 20,629.02
+BATCH20758,M-01,Valve Component,2026-04-24,Morning,366,19,0,Operator 16,74.16
+BATCH20759,M-05,Bearing Assembly,2026-04-25,Morning,4852,216,30,Operator 4,1153.27
+BATCH20760,M-10,Steel Rod 12mm,2026-04-25,Afternoon,3080,51,0,Operator 42,734.68
+BATCH20761,M-02,Steel Rod 12mm,2026-04-26,Morning,1039,13,0,Operator 37,98.98
+BATCH20762,M-02,Piston Ring,2026-04-27,Morning,4203,203,0,Operator 38,929.35
+BATCH20763,M-12,Gear Box Unit,2026-04-27,Night,2743,15,0,Operator 25,446.19
+BATCH20764,M-06,Bearing Assembly,2026-04-28,Night,3076,110,0,Operator 33,444.34
+BATCH20765,M-06,Piston Ring,2026-04-29,Night,383,17,0,Operator 38,60.51
+BATCH20766,M-11,Bearing Assembly,2026-04-29,Night,3829,180,0,Operator 27,610.72
+BATCH20767,M-03,Bearing Assembly,2026-04-30,Afternoon,436,26,0,Operator 30,66.05
+BATCH20768,M-09,Gear Box Unit,2026-05-02,Morning,3491,99,0,Operator 27,575.39
+BATCH20769,M-05,Steel Rod 12mm,2026-05-02,Afternoon,3227,217,0,Operator 7,666.8
+BATCH20770,M-05,Piston Ring,2026-05-03,Night,3261,232,0,Operator 24,784.53
+BATCH20771,M-12,Steel Rod 12mm,2026-05-04,Morning,2850,80,30,Operator 8,566.69
+BATCH20772,M-04,Valve Component,2026-05-04,Night,1104,81,0,Operator 8,256.54
+BATCH20773,M-03,Valve Component,2026-05-04,Night,4688,34,0,Operator 24,1073.65
+BATCH20774,M-07,Valve Component,2026-05-05,Night,4395,347,60,Operator 34,845.03
+BATCH20775,M-12,Piston Ring,2026-05-05,Morning,1233,81,0,Operator 33,197.28
+BATCH20776,M-11,Piston Ring,2026-05-07,Morning,1514,98,0,,357.01
+BATCH20777,M-12,Gear Box Unit,2026-05-08,Afternoon,4645,221,30,Operator 39,611.71
+BATCH20778,M-04,Gear Box Unit,2026-05-09,Morning,2963,74,0,Operator 40,391.15
+BATCH20779,M-03,Gear Box Unit,2026-05-10,Afternoon,3248,69,0,Operator 18,661.68
+BATCH20780,M-06,Steel Rod 12mm,2026-05-10,Night,794,39,0,Operator 28,181.81
+BATCH20781,M-11,Piston Ring,2026-05-11,Morning,1659,113,60,Operator 26,389.4
+BATCH20782,M-10,Piston Ring,2026-05-11,Night,2876,106,0,Operator 22,325.06
+BATCH20783,M-08,Steel Rod 12mm,2026-05-12,Morning,2276,64,0,Operator 6,315.67
+BATCH20784,M-01,Steel Rod 12mm,2026-05-12,Night,1448,27,120,Operator 39,156.46
+BATCH20785,M-06,Bearing Assembly,2026-05-12,Night,2420,79,0,Operator 3,324.13
+BATCH20786,M-11,Valve Component,2026-05-13,Morning,656,7,0,Operator 9,102.64
+BATCH20787,M-04,Bearing Assembly,2026-05-13,Night,1233,41,0,Operator 39,180.05
+BATCH20788,M-08,Steel Rod 12mm,2026-05-15,Afternoon,213,13,0,Operator 15,31.3
+BATCH20789,M-06,Bearing Assembly,2026-05-15,Morning,2666,142,0,Operator 38,343.66
+BATCH20790,M-03,Bearing Assembly,2026-05-15,Night,4745,182,0,Operator 33,955.17
+BATCH20791,M-02,Steel Rod 12mm,2026-05-16,Night,800,48,60,Operator 35,148.99
+BATCH20792,M-06,Steel Rod 12mm,2026-05-16,Afternoon,4109,167,0,Operator 4,463.35
+BATCH20793,M-03,Gear Box Unit,2026-05-18,Afternoon,2296,135,60,Operator 38,315.42
+BATCH20794,M-03,Bearing Assembly,2026-05-19,Afternoon,1010,50,0,Operator 41,119.06
+BATCH20795,M-06,Valve Component,2026-05-19,Afternoon,1659,22,30,Operator 44,377.26
+BATCH20796,M-11,Valve Component,2026-05-21,Morning,4031,175,0,Operator 30,859.74
+BATCH20797,M-02,Piston Ring,2026-05-21,Morning,2801,57,0,Operator 18,349.5
+BATCH20798,M-08,Bearing Assembly,2026-05-21,Morning,1134,78,30,Operator 36,269.23
+BATCH20799,M-08,Steel Rod 12mm,2026-05-22,Afternoon,2291,132,0,Operator 13,445.82
+BATCH20800,M-11,Gear Box Unit,2026-05-22,Afternoon,1818,132,0,Operator 31,414.42
+BATCH20801,M-07,Bearing Assembly,2026-05-22,Morning,1042,48,0,Operator 13,214.77
+BATCH20802,M-09,Bearing Assembly,2026-05-23,Morning,3159,131,0,Operator 9,512.12
+BATCH20803,M-09,Valve Component,2026-05-23,Afternoon,956,63,0,Operator 2,122.42
+BATCH20804,M-05,Valve Component,2026-05-23,Afternoon,1431,63,30,Operator 20,203.81
+BATCH20805,M-05,Piston Ring,2026-05-24,Night,3900,272,0,Operator 12,951.15
+BATCH20806,M-05,Bearing Assembly,2026-05-24,Morning,2544,187,60,Operator 3,468.22
+BATCH20807,M-12,Piston Ring,2026-05-24,Night,4020,147,0,Operator 12,481.76
+BATCH20808,M-10,Steel Rod 12mm,2026-05-24,Afternoon,3045,148,0,Operator 24,528.08
+BATCH20809,M-12,Valve Component,2026-05-25,Afternoon,2893,206,0,Operator 25,411.99
+BATCH20810,M-10,Piston Ring,2026-05-25,Night,423,6,30,Operator 36,103.91
+BATCH20811,M-06,Bearing Assembly,2026-05-26,Morning,619,46,0,Operator 8,123.91
+BATCH20812,M-07,Bearing Assembly,2026-05-26,Night,1143,79,15,Operator 16,127.52
+BATCH20813,M-01,Valve Component,2026-05-27,Night,2576,110,15,Operator 17,320.74
+BATCH20814,M-01,Steel Rod 12mm,2026-05-27,Night,4133,294,0,Operator 35,442.12
+BATCH20815,M-06,Steel Rod 12mm,2026-05-27,Afternoon,383,2,0,Operator 37,78.92
+BATCH20816,M-09,Valve Component,2026-05-27,Night,2946,135,120,Operator 18,642.47
+BATCH20817,M-04,Valve Component,2026-05-30,Afternoon,246,8,30,Operator 23,54.58
+BATCH20818,M-01,Steel Rod 12mm,2026-06-01,Morning,3213,129,30,Operator 17,729.56
+BATCH20819,M-02,Valve Component,2026-06-01,Night,257,16,0,Operator 41,37.85
+BATCH20820,M-07,Gear Box Unit,2026-06-01,Night,4155,310,30,Operator 12,527.3
+BATCH20821,M-01,Piston Ring,2026-06-02,Morning,2236,57,0,Operator 16,527.59
+BATCH20822,M-10,Piston Ring,2026-06-02,Night,2176,32,60,Operator 28,398.26
+BATCH20823,M-01,Piston Ring,2026-06-03,Morning,886,46,60,Operator 33,101.37
+BATCH20824,M-03,Gear Box Unit,2026-06-03,Night,3617,35,0,Operator 28,594.76
+BATCH20825,M-03,Steel Rod 12mm,2026-06-04,Afternoon,3006,98,0,Operator 9,591.83
+BATCH20826,M-06,Steel Rod 12mm,2026-06-04,Night,3981,118,30,Operator 22,877.47
+BATCH20827,M-10,Valve Component,2026-06-04,Night,3014,227,240,Operator 23,339.83
+BATCH20828,M-03,Piston Ring,2026-06-05,Afternoon,2206,98,30,Operator 20,326.25
+BATCH20829,M-06,Gear Box Unit,2026-06-05,Night,608,14,0,Operator 31,103.13
+BATCH20830,M-05,Steel Rod 12mm,2026-06-07,Morning,3675,223,60,Operator 11,617.28
+BATCH20831,M-08,Gear Box Unit,2026-06-08,Morning,3812,192,0,Operator 11,701.09
+BATCH20832,M-06,Valve Component,2026-06-08,Morning,1407,86,240,Operator 17,132.24
+BATCH20833,M-03,Piston Ring,2026-06-08,Night,2559,151,0,Operator 27,305.52
+BATCH20834,M-06,Piston Ring,2026-06-09,Afternoon,2475,185,15,Operator 35,259.22
+BATCH20835,M-04,Piston Ring,2026-06-09,Afternoon,3123,83,0,Operator 9,643.71
+BATCH20836,M-01,Steel Rod 12mm,2026-06-10,Morning,1896,135,15,Operator 32,217.87
+BATCH20837,M-09,Piston Ring,2026-06-11,Afternoon,730,4,15,Operator 31,137.98
+BATCH20838,M-02,Bearing Assembly,2026-06-11,Afternoon,4915,75,0,Operator 39,989.96
+BATCH20839,M-08,Bearing Assembly,2026-06-11,Afternoon,2770,73,240,Operator 40,685.55
+BATCH20840,M-11,Valve Component,2026-06-12,Afternoon,4968,357,0,Operator 4,907.57
+BATCH20841,M-05,Valve Component,2026-06-12,Night,3800,262,60,Operator 23,832.0
+BATCH20842,M-12,Piston Ring,2026-06-13,Night,316,5,30,Operator 9,52.57
+BATCH20843,M-08,Piston Ring,2026-06-13,Night,3924,24,0,Operator 33,636.48
+BATCH20844,M-12,Piston Ring,2026-06-13,Morning,4116,26,0,Operator 31,468.64
+BATCH20845,M-02,Steel Rod 12mm,2026-06-14,Afternoon,1662,70,0,Operator 9,362.26
+BATCH20846,M-06,Gear Box Unit,2026-06-14,Night,2693,124,30,Operator 15,325.14
+BATCH20847,M-04,Gear Box Unit,2026-06-15,Morning,970,38,0,Operator 35,185.77
+BATCH20848,M-04,Steel Rod 12mm,2026-06-16,Night,3349,55,60,Operator 14,600.37
+BATCH20849,M-10,Steel Rod 12mm,2026-06-16,Night,539,6,30,Operator 9,118.55
+BATCH20850,M-08,Bearing Assembly,2026-06-19,Afternoon,2807,181,0,Operator 2,613.63
+BATCH20851,M-05,Gear Box Unit,2026-06-19,Morning,4369,334,60,Operator 30,970.25
+BATCH20852,M-09,Bearing Assembly,2026-06-20,Afternoon,692,24,0,,97.15
+BATCH20853,M-05,Valve Component,2026-06-20,Night,3202,18,0,Operator 8,573.01
+BATCH20854,M-09,Gear Box Unit,2026-06-20,Night,4491,110,15,Operator 44,1068.36
+BATCH20855,M-03,Gear Box Unit,2026-06-21,Afternoon,1583,65,0,Operator 38,223.75
+BATCH20856,M-05,Bearing Assembly,2026-06-21,Morning,1725,34,15,Operator 33,179.42
+BATCH20857,M-12,Piston Ring,2026-06-23,Afternoon,1104,87,120,Operator 9,203.05
+BATCH20858,M-02,Steel Rod 12mm,2026-06-24,Morning,2579,19,0,Operator 44,222.5
+BATCH20859,M-03,Piston Ring,2026-06-25,Morning,2004,141,0,Operator 2,263.97
+BATCH20860,M-11,Gear Box Unit,2026-06-26,Night,3233,131,30,Operator 1,590.94
+BATCH20861,M-01,Valve Component,2026-06-26,Morning,4304,312,120,Operator 21,1063.29
+BATCH20862,M-11,Gear Box Unit,2026-06-27,Night,2498,79,0,Operator 9,200.76
+BATCH20863,M-10,Steel Rod 12mm,2026-06-30,Night,3996,206,0,Operator 10,688.57
+BATCH20864,M-12,Steel Rod 12mm,2026-06-30,Afternoon,3484,99,0,Operator 30,795.21
+BATCH20865,M-10,Bearing Assembly,2026-07-01,Afternoon,3734,142,0,Operator 26,412.99
+BATCH20866,M-07,Gear Box Unit,2026-07-02,Night,2904,118,0,Operator 5,267.02
+BATCH20867,M-02,Gear Box Unit,2026-07-02,Morning,2878,54,60,Operator 4,392.88
+BATCH20868,M-01,Bearing Assembly,2026-07-03,Afternoon,2972,58,0,,241.59
+BATCH20869,M-11,Gear Box Unit,2026-07-03,Morning,4026,136,0,Operator 25,889.09
+BATCH20870,M-04,Bearing Assembly,2026-07-03,Afternoon,1804,57,0,Operator 24,241.95
+BATCH20871,M-12,Valve Component,2026-07-05,Morning,3888,34,0,Operator 18,871.91
+BATCH20872,M-04,Valve Component,2026-07-05,Afternoon,996,29,60,Operator 10,101.3
+BATCH20873,M-05,Steel Rod 12mm,2026-07-06,Morning,584,24,0,Operator 38,111.5
+BATCH20874,M-07,Bearing Assembly,2026-07-06,Morning,272,9,0,Operator 14,26.69
+BATCH20875,M-07,Valve Component,2026-07-06,Night,4406,189,0,Operator 9,559.11
+BATCH20876,M-02,Piston Ring,2026-07-07,Morning,3000,135,0,Operator 40,615.03
+BATCH20877,M-01,Steel Rod 12mm,2026-07-07,Afternoon,483,21,0,Operator 41,108.5
+BATCH20878,M-12,Bearing Assembly,2026-07-07,Afternoon,3443,41,120,Operator 4,657.73
+BATCH20879,M-02,Steel Rod 12mm,2026-07-09,Night,302,9,0,Operator 28,73.87
+BATCH20880,M-09,Bearing Assembly,2026-07-10,Morning,2570,121,0,Operator 35,286.17
+BATCH20881,M-09,Steel Rod 12mm,2026-07-10,Morning,3743,128,0,Operator 12,366.21
+BATCH20882,M-10,Gear Box Unit,2026-07-11,Afternoon,358,21,0,Operator 29,89.49
+BATCH20883,M-04,Valve Component,2026-07-11,Night,1478,94,0,Operator 1,306.74
+BATCH20884,M-09,Gear Box Unit,2026-07-12,Night,3870,90,0,Operator 15,605.78
+BATCH20885,M-05,Bearing Assembly,2026-07-12,Morning,309,16,0,Operator 29,46.12
+BATCH20886,M-11,Valve Component,2026-07-13,Morning,2904,35,60,Operator 10,322.85
+BATCH20887,M-06,Valve Component,2026-07-14,Morning,3732,136,0,Operator 20,405.82
+BATCH20888,M-01,Steel Rod 12mm,2026-07-14,Afternoon,1659,96,0,Operator 14,408.31
+BATCH20889,M-05,Valve Component,2026-07-16,Morning,4561,256,120,Operator 22,657.95
+BATCH20890,M-12,Piston Ring,2026-07-17,Morning,4553,65,30,Operator 19,1050.71
+BATCH20891,M-07,Steel Rod 12mm,2026-07-18,Afternoon,763,39,0,Operator 6,130.24
+BATCH20892,M-06,Valve Component,2026-07-18,Morning,1580,123,0,Operator 2,138.2
+BATCH20893,M-03,Valve Component,2026-07-18,Night,4286,311,15,Operator 18,563.21
+BATCH20894,M-09,Steel Rod 12mm,2026-07-19,Afternoon,629,5,0,Operator 20,129.58
+BATCH20895,M-09,Bearing Assembly,2026-07-21,Morning,914,68,60,Operator 33,93.58
+BATCH20896,M-10,Valve Component,2026-07-22,Afternoon,1942,73,15,Operator 37,215.67
+BATCH20897,M-03,Steel Rod 12mm,2026-07-23,Afternoon,862,18,0,Operator 22,147.11
+BATCH20898,M-08,Piston Ring,2026-07-23,Morning,1224,88,15,Operator 16,133.9
+BATCH20899,M-02,Gear Box Unit,2026-07-24,Morning,3275,21,0,Operator 26,769.96

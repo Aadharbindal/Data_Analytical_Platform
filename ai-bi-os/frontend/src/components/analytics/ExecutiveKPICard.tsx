@@ -7,6 +7,7 @@ const LazyCharts = dynamic(() => import("@/components/charts/LazyCharts"), { ssr
 import { ResponsiveContainer, AreaChart, Area, Tooltip, XAxis, YAxis } from "recharts";
 import { Info, TrendingUp, TrendingDown, Minus, Activity, ShieldCheck, FileSearch, HelpCircle, Code, Link, Database, Network, ChevronDown } from "lucide-react";
 import { ExecutiveKPIReport } from "@/lib/types";
+import { formatKpiValue } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 
@@ -15,29 +16,14 @@ interface ExecutiveKPICardProps {
   index?: number;
 }
 
+// Executive KPI cards and dashboard metric cards show the same figures, so they
+// have to format them identically. This used to be a near-copy of formatKpiValue
+// that had drifted: it abbreviated counts ("1.4K" for 1,372 transactions) and
+// used Western millions where the rest of the app uses Cr/L, so the same number
+// read differently depending on which page you were on.
 function formatValue(value: number | null, type: string): string {
   if (value === null || value === undefined) return "N/A";
-  
-  const isNegative = value < 0;
-  const absValue = Math.abs(value);
-  const sign = isNegative ? "-" : "";
-
-  if (type === "percent") return `${sign}${absValue.toFixed(1)}%`;
-  
-  if (type === "count" || type === "generic" || type === "numeric") {
-    if (absValue >= 1_000_000) return `${sign}${parseFloat((absValue / 1_000_000).toFixed(1))}M`;
-    if (absValue >= 1_000) return `${sign}${parseFloat((absValue / 1_000).toFixed(1))}K`;
-    return `${sign}${parseFloat(absValue.toFixed(2))}`;
-  }
-  
-  if (type === "currency") {
-    if (absValue >= 1_00_00_000) return `${sign}₹${parseFloat((absValue / 1_00_00_000).toFixed(2))}Cr`;
-    if (absValue >= 1_00_000) return `${sign}₹${parseFloat((absValue / 1_00_000).toFixed(2))}L`;
-    if (absValue >= 1_000) return `${sign}₹${parseFloat((absValue / 1_000).toFixed(1))}K`;
-    return `${sign}₹${absValue.toLocaleString('en-IN')}`;
-  }
-  
-  return `${sign}${parseFloat(absValue.toFixed(2))}`;
+  return formatKpiValue(value, type);
 }
 
 export const ExecutiveKPICard: React.FC<ExecutiveKPICardProps> = ({ kpi, index = 0 }) => {
@@ -678,9 +664,16 @@ function CountUpValue({ valueString, delayMs = 0 }: { valueString: string; delay
     timeoutId = setTimeout(() => {
       frameId = requestAnimationFrame(step);
     }, delayMs);
-    
+
+    // requestAnimationFrame is paused in backgrounded/throttled tabs, and this
+    // counter starts at zero — so guarantee the real figure is shown even if no
+    // frame ever runs. Losing the animation is fine; displaying 0 for a live
+    // metric is not.
+    const settleId = setTimeout(() => setDisplay(valueString), delayMs + duration + 250);
+
     return () => {
       clearTimeout(timeoutId);
+      clearTimeout(settleId);
       if (frameId) cancelAnimationFrame(frameId);
     };
   }, [valueString, delayMs]);

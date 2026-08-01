@@ -27,6 +27,14 @@ class DuckDBEngine:
             
     def execute(self, sql: str) -> Dict[str, Any]:
         """Executes a SQL query and returns results and schema."""
+        # The LLM generating these queries consistently reaches for MySQL-style
+        # backtick-quoted identifiers (`Column Name`) for any column whose name
+        # has a space — but DuckDB only accepts double-quoted identifiers, so
+        # every such query was failing with a parser error regardless of what
+        # the rest of the SQL looked like. DuckDB has no other legitimate use
+        # for a backtick character, so swapping it for a double quote here is
+        # safe and fixes this for any column name, not just ones seen so far.
+        sql = sql.replace('`', '"')
         try:
             # Execute query and get the result relation
             relation = self.con.sql(sql)

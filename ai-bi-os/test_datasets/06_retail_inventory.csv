@@ -1,0 +1,501 @@
+sku,product_name,category,warehouse,stock_qty,reorder_level,unit_cost,unit_price,supplier,last_restock_date,units_sold_last_month,is_active
+SKU10000,Electronics Item 1,Electronics,WH-Bengaluru,2427,86,1624.68,1941.31,Metro Distributors,2025-10-29,333,True
+SKU10001,Electronics Item 2,Electronics,WH-Delhi,2355,118,1442.52,2265.22,Apex Traders,2026-03-25,521,True
+SKU10002,FMCG Item 3,FMCG,WH-Kolkata,885,347,1734.96,3279.22,Prime Wholesale,2025-11-19,779,False
+SKU10003,Apparel Item 4,Apparel,WH-Mumbai,1129,419,137.47,264.04,Unity Vendors,2026-04-10,365,True
+SKU10004,FMCG Item 5,FMCG,WH-Kolkata,1918,388,1324.68,2161.77,Unity Vendors,2025-07-07,4,True
+SKU10005,Home Decor Item 6,Home Decor,WH-Mumbai,986,184,1376.82,1886.06,Apex Traders,2025-06-27,695,True
+SKU10006,Electronics Item 7,Electronics,WH-Bengaluru,1508,384,109.09,229.97,Prime Wholesale,2026-06-08,152,True
+SKU10007,Home Decor Item 8,Home Decor,WH-Kolkata,3753,460,70.56,133.24,Metro Distributors,2026-05-19,668,True
+SKU10008,Stationery Item 9,Stationery,WH-Bengaluru,45,342,70.12,97.46,Unity Vendors,2025-10-23,488,True
+SKU10009,Apparel Item 10,Apparel,WH-Kolkata,660,156,515.34,751.99,Prime Wholesale,2026-01-22,341,False
+SKU10010,Stationery Item 11,Stationery,WH-Kolkata,1724,126,230.16,387.94,Unity Vendors,2026-06-22,68,True
+SKU10011,Home Decor Item 12,Home Decor,WH-Bengaluru,2125,195,2709.74,3735.8,Metro Distributors,2025-12-02,47,True
+SKU10012,Electronics Item 13,Electronics,WH-Kolkata,4229,364,1120.57,2291.36,Metro Distributors,2026-05-19,334,True
+SKU10013,FMCG Item 14,FMCG,WH-Delhi,4165,483,2958.53,4484.87,Prime Wholesale,2025-10-18,230,False
+SKU10014,Electronics Item 15,Electronics,WH-Bengaluru,149,158,2160.73,4028.22,Apex Traders,2026-02-10,761,True
+SKU10015,FMCG Item 16,FMCG,WH-Bengaluru,2301,90,1318.24,2736.96,Apex Traders,2026-05-11,725,True
+SKU10016,Stationery Item 17,Stationery,WH-Delhi,3488,422,174.13,232.44,Prime Wholesale,2025-12-28,249,True
+SKU10017,Apparel Item 18,Apparel,WH-Delhi,3446,187,1096.8,1955.11,Prime Wholesale,2025-11-24,519,True
+SKU10018,Apparel Item 19,Apparel,WH-Bengaluru,2792,494,2143.85,2950.14,Apex Traders,2025-09-20,106,True
+SKU10019,Apparel Item 20,Apparel,WH-Bengaluru,297,210,2282.08,3224.66,Prime Wholesale,2025-10-28,461,True
+SKU10020,Home Decor Item 21,Home Decor,WH-Delhi,2885,73,602.49,1158.87,Metro Distributors,2026-02-11,249,True
+SKU10021,Home Decor Item 22,Home Decor,WH-Kolkata,2362,364,2760.12,5863.9,Unity Vendors,2025-11-24,569,False
+SKU10022,FMCG Item 23,FMCG,WH-Mumbai,811,447,983.01,1955.1,Prime Wholesale,2025-11-27,779,True
+SKU10023,Home Decor Item 24,Home Decor,WH-Kolkata,1207,498,572.31,871.78,Global Supplies Co,2025-07-19,665,False
+SKU10024,Apparel Item 25,Apparel,WH-Bengaluru,2759,472,1990.46,4107.9,Prime Wholesale,2026-02-20,137,False
+SKU10025,Home Decor Item 26,Home Decor,WH-Delhi,4138,353,1606.28,2572.97,Prime Wholesale,2025-10-20,256,False
+SKU10026,Electronics Item 27,Electronics,WH-Kolkata,1382,389,1875.46,3161.88,Apex Traders,2025-07-19,385,True
+SKU10027,Electronics Item 28,Electronics,WH-Kolkata,4083,127,1837.25,3608.26,Prime Wholesale,2026-01-19,710,True
+SKU10028,Stationery Item 29,Stationery,WH-Mumbai,1549,271,1102.06,2372.88,Global Supplies Co,2025-09-15,118,True
+SKU10029,Apparel Item 30,Apparel,WH-Kolkata,765,464,136.89,281.86,Metro Distributors,2026-01-13,5,False
+SKU10030,Stationery Item 31,Stationery,WH-Bengaluru,3489,66,260.6,343.94,Prime Wholesale,2025-07-12,309,True
+SKU10031,Stationery Item 32,Stationery,WH-Kolkata,3655,409,600.55,1187.16,Prime Wholesale,2026-07-26,381,False
+SKU10032,FMCG Item 33,FMCG,WH-Delhi,550,93,452.98,615.62,Apex Traders,2026-04-09,2,True
+SKU10033,Stationery Item 34,Stationery,WH-Mumbai,3895,372,1371.27,2532.91,Global Supplies Co,2026-05-16,540,True
+SKU10034,Stationery Item 35,Stationery,WH-Mumbai,954,144,2709.63,5829.02,Apex Traders,2026-02-19,303,True
+SKU10035,Home Decor Item 36,Home Decor,WH-Mumbai,3883,239,499.55,687.41,Unity Vendors,2025-11-02,66,True
+SKU10036,Home Decor Item 37,Home Decor,WH-Delhi,4086,56,736.63,955.32,Unity Vendors,2025-08-09,584,True
+SKU10037,FMCG Item 38,FMCG,WH-Bengaluru,1061,297,1976.67,3288.3,Metro Distributors,2026-05-05,474,False
+SKU10038,FMCG Item 39,FMCG,WH-Delhi,2017,345,1171.65,2087.07,Unity Vendors,2026-03-07,783,False
+SKU10039,Electronics Item 40,Electronics,WH-Bengaluru,3933,342,,124.01,Apex Traders,2026-01-05,629,True
+SKU10040,Apparel Item 41,Apparel,WH-Bengaluru,2406,443,1646.0,3501.64,Apex Traders,2025-08-14,598,True
+SKU10041,FMCG Item 42,FMCG,WH-Mumbai,287,304,2952.36,6403.0,Global Supplies Co,2025-11-08,571,False
+SKU10042,Electronics Item 43,Electronics,WH-Delhi,4099,125,1631.64,3316.92,Apex Traders,2025-07-14,377,False
+SKU10043,Apparel Item 44,Apparel,WH-Delhi,2875,205,1875.36,3252.6,,2025-08-08,612,False
+SKU10044,FMCG Item 45,FMCG,WH-Bengaluru,3214,302,848.28,1184.3,Unity Vendors,2025-07-29,484,True
+SKU10045,Apparel Item 46,Apparel,WH-Kolkata,3357,101,1695.49,3470.18,Metro Distributors,2026-04-03,53,True
+SKU10046,Electronics Item 47,Electronics,WH-Mumbai,4600,197,2660.81,3761.24,Apex Traders,2025-08-20,205,True
+SKU10047,Apparel Item 48,Apparel,WH-Delhi,3863,167,282.04,387.9,Prime Wholesale,2025-08-16,116,True
+SKU10048,Stationery Item 49,Stationery,WH-Mumbai,1048,136,550.85,1137.32,Apex Traders,2025-07-09,81,False
+SKU10049,Apparel Item 50,Apparel,WH-Delhi,530,417,1234.04,1510.36,Prime Wholesale,2025-10-16,360,True
+SKU10050,FMCG Item 51,FMCG,WH-Delhi,2703,404,,3852.14,Prime Wholesale,2025-08-20,87,True
+SKU10051,Home Decor Item 52,Home Decor,WH-Bengaluru,590,276,926.75,1951.13,Global Supplies Co,2025-12-02,196,True
+SKU10052,FMCG Item 53,FMCG,WH-Mumbai,2495,230,475.51,1015.67,Global Supplies Co,2025-09-13,135,True
+SKU10053,Home Decor Item 54,Home Decor,WH-Mumbai,4452,472,156.32,336.11,Prime Wholesale,2026-06-30,41,True
+SKU10054,Stationery Item 55,Stationery,WH-Mumbai,3226,343,896.01,1096.65,Global Supplies Co,2025-11-18,195,False
+SKU10055,Electronics Item 56,Electronics,WH-Mumbai,4530,410,722.56,1561.37,,2026-04-24,282,True
+SKU10056,Stationery Item 57,Stationery,WH-Mumbai,3810,364,234.59,394.73,Prime Wholesale,2026-01-02,56,False
+SKU10057,Stationery Item 58,Stationery,WH-Kolkata,3769,337,2707.8,5392.14,Global Supplies Co,2025-08-14,620,False
+SKU10058,Stationery Item 59,Stationery,WH-Kolkata,1967,384,2796.74,4507.52,Unity Vendors,2026-01-09,457,True
+SKU10059,Home Decor Item 60,Home Decor,WH-Kolkata,945,300,1371.01,1970.55,Prime Wholesale,2025-10-05,598,False
+SKU10060,Home Decor Item 61,Home Decor,WH-Bengaluru,2739,129,,3729.64,Global Supplies Co,2026-06-14,670,True
+SKU10061,Electronics Item 62,Electronics,WH-Delhi,4325,371,911.04,1264.18,Prime Wholesale,2026-02-11,221,True
+SKU10062,Stationery Item 63,Stationery,WH-Mumbai,1519,264,488.35,859.79,Metro Distributors,2026-07-12,85,True
+SKU10063,Home Decor Item 64,Home Decor,WH-Delhi,4569,125,2299.85,2965.28,Apex Traders,2026-02-05,219,False
+SKU10064,Electronics Item 65,Electronics,WH-Kolkata,1548,109,262.49,401.51,Prime Wholesale,2025-07-01,152,True
+SKU10065,Apparel Item 66,Apparel,WH-Bengaluru,3180,462,994.85,1777.51,Prime Wholesale,2026-05-11,490,True
+SKU10066,FMCG Item 67,FMCG,WH-Kolkata,1183,347,1607.92,1860.68,Metro Distributors,2026-02-15,634,True
+SKU10067,Home Decor Item 68,Home Decor,WH-Delhi,4377,99,1514.89,2753.96,Unity Vendors,2026-05-16,212,True
+SKU10068,Apparel Item 69,Apparel,WH-Delhi,1856,51,150.1,197.76,Apex Traders,2026-01-07,88,True
+SKU10069,Stationery Item 70,Stationery,WH-Kolkata,1867,461,2149.56,3145.33,Global Supplies Co,2025-12-26,701,True
+SKU10070,Electronics Item 71,Electronics,WH-Mumbai,3931,486,1800.73,3812.17,Unity Vendors,2025-11-19,391,True
+SKU10071,FMCG Item 72,FMCG,WH-Mumbai,4754,452,450.14,733.83,Global Supplies Co,2025-08-17,389,True
+SKU10072,Stationery Item 73,Stationery,WH-Delhi,2000,128,651.93,1069.21,Unity Vendors,2026-03-01,194,True
+SKU10073,Apparel Item 74,Apparel,WH-Delhi,2035,90,560.5,685.21,Prime Wholesale,2026-06-09,422,True
+SKU10074,Home Decor Item 75,Home Decor,WH-Mumbai,1884,437,822.76,1376.21,Global Supplies Co,2025-12-04,456,True
+SKU10075,Electronics Item 76,Electronics,WH-Mumbai,4407,361,1699.16,2699.46,Global Supplies Co,2026-03-06,400,True
+SKU10076,Electronics Item 77,Electronics,WH-Mumbai,754,139,469.98,567.43,Prime Wholesale,2026-03-25,266,True
+SKU10077,Apparel Item 78,Apparel,WH-Kolkata,4056,299,232.94,284.65,Global Supplies Co,2026-03-30,655,False
+SKU10078,Electronics Item 79,Electronics,WH-Delhi,2627,222,1049.13,1882.83,Unity Vendors,2026-06-27,148,True
+SKU10079,FMCG Item 80,FMCG,WH-Delhi,2563,107,389.46,589.78,Unity Vendors,2026-06-20,359,True
+SKU10080,Electronics Item 81,Electronics,WH-Bengaluru,711,70,1344.99,2790.29,Global Supplies Co,2025-11-15,727,False
+SKU10081,Stationery Item 82,Stationery,WH-Mumbai,3426,80,2095.58,3883.73,Metro Distributors,2026-01-02,526,True
+SKU10082,Stationery Item 83,Stationery,WH-Mumbai,2886,386,1993.01,2366.27,Prime Wholesale,2026-06-15,9,True
+SKU10083,Stationery Item 84,Stationery,WH-Mumbai,1616,479,139.02,265.27,Global Supplies Co,2026-03-25,177,True
+SKU10084,Electronics Item 85,Electronics,WH-Mumbai,1369,102,2369.3,4278.53,Global Supplies Co,2026-04-14,619,True
+SKU10085,Apparel Item 86,Apparel,WH-Mumbai,3369,251,80.57,93.29,Apex Traders,2025-10-07,160,True
+SKU10086,FMCG Item 87,FMCG,WH-Mumbai,3793,433,983.3,1733.97,Unity Vendors,2025-11-27,143,False
+SKU10087,Electronics Item 88,Electronics,WH-Kolkata,2435,262,2671.78,4727.81,Unity Vendors,2026-03-19,56,True
+SKU10088,Home Decor Item 89,Home Decor,WH-Mumbai,497,461,2616.62,5010.05,Unity Vendors,2026-01-25,280,False
+SKU10089,Electronics Item 90,Electronics,WH-Bengaluru,1476,322,1892.07,3011.84,Prime Wholesale,2026-04-10,103,True
+SKU10090,Stationery Item 91,Stationery,WH-Delhi,1475,439,719.21,1170.41,Metro Distributors,2026-03-25,370,True
+SKU10091,Stationery Item 92,Stationery,WH-Delhi,2045,207,2248.71,4086.12,Unity Vendors,2025-08-01,58,True
+SKU10092,Apparel Item 93,Apparel,WH-Kolkata,919,264,2300.22,4718.49,Metro Distributors,2025-09-08,147,True
+SKU10093,Home Decor Item 94,Home Decor,WH-Mumbai,2858,257,1241.98,1461.09,Unity Vendors,2026-02-11,150,False
+SKU10094,Electronics Item 95,Electronics,WH-Mumbai,3371,286,2053.92,2367.15,Apex Traders,2026-03-05,31,True
+SKU10095,Home Decor Item 96,Home Decor,WH-Mumbai,1771,236,2694.55,3369.81,Prime Wholesale,2026-05-28,309,False
+SKU10096,Home Decor Item 97,Home Decor,WH-Kolkata,1662,207,1759.56,3694.31,Prime Wholesale,2025-12-29,537,False
+SKU10097,FMCG Item 98,FMCG,WH-Mumbai,4332,361,822.67,1407.46,Global Supplies Co,2025-10-30,536,False
+SKU10098,FMCG Item 99,FMCG,WH-Mumbai,533,277,722.32,1418.92,,2025-12-12,610,True
+SKU10099,FMCG Item 100,FMCG,WH-Delhi,4315,57,220.79,439.71,Global Supplies Co,2026-05-18,735,False
+SKU10100,Stationery Item 101,Stationery,WH-Mumbai,4969,193,,3007.59,Apex Traders,2025-12-06,607,True
+SKU10101,Electronics Item 102,Electronics,WH-Mumbai,1356,133,768.17,1025.55,Apex Traders,2025-07-24,635,True
+SKU10102,FMCG Item 103,FMCG,WH-Bengaluru,3217,315,614.75,1202.4,Apex Traders,2026-03-20,624,True
+SKU10103,Electronics Item 104,Electronics,WH-Kolkata,3517,372,2892.75,3397.54,Prime Wholesale,2026-07-24,175,False
+SKU10104,Stationery Item 105,Stationery,WH-Delhi,1643,256,2044.33,3781.79,Global Supplies Co,2026-05-02,501,False
+SKU10105,Stationery Item 106,Stationery,WH-Bengaluru,3721,198,1144.14,2233.27,Prime Wholesale,2026-05-01,247,True
+SKU10106,Home Decor Item 107,Home Decor,WH-Delhi,2305,455,2271.53,2733.22,Prime Wholesale,2026-01-13,697,True
+SKU10107,Apparel Item 108,Apparel,WH-Mumbai,2102,166,1927.25,3712.03,Global Supplies Co,2025-09-15,386,True
+SKU10108,FMCG Item 109,FMCG,WH-Bengaluru,1180,473,756.02,1426.07,Apex Traders,2026-06-30,749,True
+SKU10109,FMCG Item 110,FMCG,WH-Mumbai,1624,51,2631.08,4124.75,,2025-07-05,322,True
+SKU10110,Home Decor Item 111,Home Decor,WH-Bengaluru,1826,458,2080.59,3647.78,Unity Vendors,2026-07-07,244,True
+SKU10111,Electronics Item 112,Electronics,WH-Bengaluru,858,101,1569.36,3287.91,Metro Distributors,2026-01-24,632,False
+SKU10112,Home Decor Item 113,Home Decor,WH-Mumbai,4092,296,80.06,116.91,Unity Vendors,2025-12-12,330,False
+SKU10113,Stationery Item 114,Stationery,WH-Bengaluru,4596,272,726.54,962.51,Prime Wholesale,2026-02-10,419,True
+SKU10114,Stationery Item 115,Stationery,WH-Mumbai,53,213,2854.38,5533.74,Global Supplies Co,2026-05-28,229,True
+SKU10115,Apparel Item 116,Apparel,WH-Delhi,3188,289,2981.85,6363.33,Metro Distributors,2025-10-15,217,True
+SKU10116,FMCG Item 117,FMCG,WH-Delhi,848,103,2870.28,5502.72,Unity Vendors,2025-12-25,395,True
+SKU10117,FMCG Item 118,FMCG,WH-Mumbai,418,284,1310.58,2648.48,Prime Wholesale,2026-06-14,252,True
+SKU10118,Home Decor Item 119,Home Decor,WH-Kolkata,445,191,925.15,1381.5,Global Supplies Co,2025-09-21,653,True
+SKU10119,FMCG Item 120,FMCG,WH-Delhi,2290,191,2748.53,3515.11,Metro Distributors,2025-11-17,707,False
+SKU10120,Electronics Item 121,Electronics,WH-Kolkata,466,453,1605.49,2374.87,Unity Vendors,2026-04-16,340,True
+SKU10121,Home Decor Item 122,Home Decor,WH-Bengaluru,185,78,1455.2,2325.25,Unity Vendors,2025-09-09,91,False
+SKU10122,Home Decor Item 123,Home Decor,WH-Kolkata,4209,147,738.3,1005.99,Metro Distributors,2025-10-18,283,False
+SKU10123,Stationery Item 124,Stationery,WH-Bengaluru,1891,178,543.44,769.52,Apex Traders,2026-05-23,332,True
+SKU10124,Stationery Item 125,Stationery,WH-Delhi,1643,253,534.6,826.71,Apex Traders,2025-08-24,308,True
+SKU10125,Electronics Item 126,Electronics,WH-Mumbai,1403,99,1357.29,2853.65,Apex Traders,2026-02-14,461,True
+SKU10126,Apparel Item 127,Apparel,WH-Mumbai,4704,149,509.92,812.59,Prime Wholesale,2025-07-15,154,True
+SKU10127,FMCG Item 128,FMCG,WH-Mumbai,4885,262,2175.19,3430.55,Unity Vendors,2026-04-27,94,True
+SKU10128,FMCG Item 129,FMCG,WH-Delhi,2263,487,2521.61,3564.47,Prime Wholesale,2026-07-02,331,False
+SKU10129,Stationery Item 130,Stationery,WH-Kolkata,1606,193,1288.44,2402.18,Global Supplies Co,2026-01-22,795,False
+SKU10130,Apparel Item 131,Apparel,WH-Bengaluru,1305,473,63.24,113.77,Global Supplies Co,2025-11-25,516,True
+SKU10131,Apparel Item 132,Apparel,WH-Bengaluru,4433,292,2681.29,5452.27,Apex Traders,2026-06-12,368,True
+SKU10132,Home Decor Item 133,Home Decor,WH-Kolkata,3360,497,614.54,821.29,Apex Traders,2025-09-09,789,True
+SKU10133,Apparel Item 134,Apparel,WH-Mumbai,548,148,,141.5,Global Supplies Co,2026-03-28,579,False
+SKU10134,Electronics Item 135,Electronics,WH-Delhi,4231,363,1999.99,3868.26,Global Supplies Co,2026-03-17,155,True
+SKU10135,Apparel Item 136,Apparel,WH-Mumbai,4461,130,1706.66,3003.4,Metro Distributors,2025-11-11,471,True
+SKU10136,Electronics Item 137,Electronics,WH-Delhi,4469,358,680.56,993.47,Prime Wholesale,2026-04-13,225,True
+SKU10137,Apparel Item 138,Apparel,WH-Delhi,1400,110,2498.55,3779.57,Unity Vendors,2025-10-19,358,True
+SKU10138,Home Decor Item 139,Home Decor,WH-Mumbai,3749,213,2328.73,3576.28,Prime Wholesale,2026-02-14,550,True
+SKU10139,FMCG Item 140,FMCG,WH-Mumbai,4703,393,421.69,924.77,Prime Wholesale,2026-04-05,709,True
+SKU10140,Electronics Item 141,Electronics,WH-Mumbai,3790,270,2784.87,4091.49,Unity Vendors,2025-07-23,772,True
+SKU10141,Home Decor Item 142,Home Decor,WH-Mumbai,1717,471,536.32,1115.59,Apex Traders,2025-12-11,391,True
+SKU10142,Electronics Item 143,Electronics,WH-Delhi,2005,187,2293.17,4471.73,Unity Vendors,2026-04-13,727,True
+SKU10143,Home Decor Item 144,Home Decor,WH-Kolkata,4464,439,151.71,200.48,Prime Wholesale,2026-02-09,334,True
+SKU10144,FMCG Item 145,FMCG,WH-Bengaluru,449,238,1994.61,2916.27,Prime Wholesale,2026-02-12,568,True
+SKU10145,Electronics Item 146,Electronics,WH-Kolkata,2523,320,2850.33,5905.07,Global Supplies Co,2026-06-11,368,True
+SKU10146,FMCG Item 147,FMCG,WH-Kolkata,2482,325,2830.97,4913.79,Unity Vendors,2026-05-04,53,True
+SKU10147,Stationery Item 148,Stationery,WH-Kolkata,4966,454,1400.23,2248.8,Global Supplies Co,2025-10-25,291,True
+SKU10148,Stationery Item 149,Stationery,WH-Mumbai,4349,196,2450.02,3619.84,Unity Vendors,2026-06-16,201,False
+SKU10149,Electronics Item 150,Electronics,WH-Delhi,4424,89,1517.83,2074.06,Apex Traders,2026-01-10,661,True
+SKU10150,Home Decor Item 151,Home Decor,WH-Kolkata,1743,258,898.77,1044.01,Unity Vendors,2025-11-26,518,True
+SKU10151,FMCG Item 152,FMCG,WH-Mumbai,1441,338,1083.09,1457.93,Apex Traders,2026-01-09,175,True
+SKU10152,Electronics Item 153,Electronics,WH-Delhi,1124,366,2598.02,5524.34,Global Supplies Co,2025-09-14,5,True
+SKU10153,FMCG Item 154,FMCG,WH-Kolkata,20,244,527.76,850.39,Global Supplies Co,2025-07-23,429,True
+SKU10154,Stationery Item 155,Stationery,WH-Kolkata,2129,367,1282.16,2447.41,Prime Wholesale,2026-03-05,34,True
+SKU10155,FMCG Item 156,FMCG,WH-Mumbai,4027,396,645.64,943.65,Global Supplies Co,2025-10-11,292,True
+SKU10156,Stationery Item 157,Stationery,WH-Delhi,1599,484,1489.31,1945.65,Apex Traders,2026-03-09,596,False
+SKU10157,FMCG Item 158,FMCG,WH-Delhi,3605,415,434.77,781.04,Prime Wholesale,2025-07-15,220,True
+SKU10158,Electronics Item 159,Electronics,WH-Bengaluru,810,327,2867.6,5177.68,Metro Distributors,2026-01-16,207,True
+SKU10159,FMCG Item 160,FMCG,WH-Mumbai,2566,218,1936.46,3661.31,Metro Distributors,2026-07-26,448,True
+SKU10160,Apparel Item 161,Apparel,WH-Mumbai,4054,176,1488.9,2412.85,Apex Traders,2025-08-15,526,True
+SKU10161,Stationery Item 162,Stationery,WH-Mumbai,4715,84,1916.17,3825.31,Global Supplies Co,2025-11-12,786,False
+SKU10162,Electronics Item 163,Electronics,WH-Mumbai,3693,94,2179.4,2899.94,Prime Wholesale,2025-07-18,257,False
+SKU10163,Apparel Item 164,Apparel,WH-Mumbai,610,486,1327.82,2442.45,Unity Vendors,2026-01-22,496,True
+SKU10164,Electronics Item 165,Electronics,WH-Kolkata,3531,220,1904.55,2619.03,Unity Vendors,2025-09-05,140,True
+SKU10165,Electronics Item 166,Electronics,WH-Mumbai,745,323,1469.23,2994.65,Global Supplies Co,2026-06-18,47,True
+SKU10166,Home Decor Item 167,Home Decor,WH-Mumbai,2723,136,1481.55,2090.34,Prime Wholesale,2026-04-18,544,True
+SKU10167,Home Decor Item 168,Home Decor,WH-Delhi,2753,175,206.39,309.71,Prime Wholesale,2025-08-09,74,True
+SKU10168,Stationery Item 169,Stationery,WH-Kolkata,2143,232,2955.36,5058.21,Apex Traders,2026-06-27,495,True
+SKU10169,FMCG Item 170,FMCG,WH-Delhi,4415,350,1869.17,2174.96,Unity Vendors,2025-11-08,252,False
+SKU10170,Electronics Item 171,Electronics,WH-Kolkata,3247,401,111.38,209.94,Prime Wholesale,2026-04-22,20,True
+SKU10171,Electronics Item 172,Electronics,WH-Bengaluru,1078,51,2451.11,4581.46,Metro Distributors,2026-07-18,304,False
+SKU10172,Stationery Item 173,Stationery,WH-Kolkata,4379,411,585.25,1003.46,Apex Traders,2025-07-08,649,True
+SKU10173,FMCG Item 174,FMCG,WH-Delhi,3863,251,1145.1,1907.01,Global Supplies Co,2026-02-17,629,False
+SKU10174,Home Decor Item 175,Home Decor,WH-Mumbai,2356,408,1396.86,3004.97,Prime Wholesale,2025-12-13,769,False
+SKU10175,Electronics Item 176,Electronics,WH-Mumbai,17,409,1347.52,2516.14,Prime Wholesale,2026-01-21,318,True
+SKU10176,Apparel Item 177,Apparel,WH-Delhi,2956,101,1955.04,2748.58,Prime Wholesale,2026-01-13,733,False
+SKU10177,FMCG Item 178,FMCG,WH-Kolkata,3710,487,1105.33,1603.11,Apex Traders,2025-12-06,243,True
+SKU10178,FMCG Item 179,FMCG,WH-Mumbai,1550,472,2020.05,3573.65,Metro Distributors,2026-07-22,762,True
+SKU10179,Electronics Item 180,Electronics,WH-Mumbai,2021,73,1971.01,3019.42,,2026-06-29,726,True
+SKU10180,Apparel Item 181,Apparel,WH-Delhi,104,219,740.18,1367.38,Apex Traders,2025-11-15,290,True
+SKU10181,Electronics Item 182,Electronics,WH-Bengaluru,2060,71,2020.19,3956.88,Unity Vendors,2026-05-27,632,True
+SKU10182,Stationery Item 183,Stationery,WH-Kolkata,98,453,1493.01,2928.11,Prime Wholesale,2026-05-08,235,True
+SKU10183,Home Decor Item 184,Home Decor,WH-Mumbai,1980,351,1124.53,2122.11,Metro Distributors,2026-07-05,52,True
+SKU10184,Electronics Item 185,Electronics,WH-Mumbai,4811,441,823.13,1509.83,Prime Wholesale,2026-01-27,288,True
+SKU10185,FMCG Item 186,FMCG,WH-Delhi,4429,259,32.01,59.9,Global Supplies Co,2025-12-02,75,True
+SKU10186,Electronics Item 187,Electronics,WH-Bengaluru,2335,198,2784.88,5246.53,Apex Traders,2025-07-10,198,False
+SKU10187,Apparel Item 188,Apparel,WH-Delhi,3494,160,1426.32,2873.39,Unity Vendors,2025-09-23,773,True
+SKU10188,FMCG Item 189,FMCG,WH-Delhi,3311,172,2652.03,3972.91,Metro Distributors,2025-12-22,340,False
+SKU10189,Stationery Item 190,Stationery,WH-Delhi,1457,390,507.03,793.34,Unity Vendors,2025-10-25,513,True
+SKU10190,Home Decor Item 191,Home Decor,WH-Mumbai,2630,85,228.52,295.54,Global Supplies Co,2025-12-02,556,True
+SKU10191,Stationery Item 192,Stationery,WH-Bengaluru,3858,94,2146.29,3493.87,Prime Wholesale,2025-10-24,405,False
+SKU10192,Apparel Item 193,Apparel,WH-Mumbai,2281,230,2132.07,2539.77,Global Supplies Co,2026-01-03,326,True
+SKU10193,Apparel Item 194,Apparel,WH-Delhi,26,459,614.33,861.47,Apex Traders,2026-06-17,27,True
+SKU10194,Home Decor Item 195,Home Decor,WH-Bengaluru,3469,183,1161.54,2287.81,Global Supplies Co,2025-10-04,109,True
+SKU10195,Apparel Item 196,Apparel,WH-Delhi,562,161,258.97,545.45,Metro Distributors,2026-01-25,379,True
+SKU10196,Home Decor Item 197,Home Decor,WH-Bengaluru,3198,312,1694.64,3635.13,Metro Distributors,2025-11-10,286,True
+SKU10197,Electronics Item 198,Electronics,WH-Bengaluru,426,180,1195.44,2447.08,Apex Traders,2025-09-29,525,True
+SKU10198,Electronics Item 199,Electronics,WH-Mumbai,392,390,2014.89,2535.74,Unity Vendors,2026-03-14,782,True
+SKU10199,Stationery Item 200,Stationery,WH-Kolkata,2073,455,162.36,306.42,Unity Vendors,2026-03-20,224,True
+SKU10200,Electronics Item 201,Electronics,WH-Bengaluru,3246,391,1619.57,3313.88,Metro Distributors,2025-07-04,22,True
+SKU10201,Apparel Item 202,Apparel,WH-Bengaluru,1173,164,2128.6,3916.29,Metro Distributors,2026-03-25,698,True
+SKU10202,Apparel Item 203,Apparel,WH-Mumbai,3406,256,1046.26,2146.14,Metro Distributors,2026-02-18,76,True
+SKU10203,Home Decor Item 204,Home Decor,WH-Kolkata,2841,468,,3334.18,Prime Wholesale,2026-07-15,11,True
+SKU10204,Electronics Item 205,Electronics,WH-Bengaluru,53,178,1289.92,2314.78,Unity Vendors,2025-11-03,486,True
+SKU10205,Stationery Item 206,Stationery,WH-Bengaluru,4006,69,1690.24,2520.07,Unity Vendors,2025-09-17,787,True
+SKU10206,Home Decor Item 207,Home Decor,WH-Kolkata,2031,361,48.94,106.62,Metro Distributors,2026-07-17,791,True
+SKU10207,Stationery Item 208,Stationery,WH-Delhi,2136,127,2870.78,5649.02,,2026-06-09,230,True
+SKU10208,Apparel Item 209,Apparel,WH-Delhi,3176,397,2697.57,5541.74,Prime Wholesale,2026-04-29,709,True
+SKU10209,FMCG Item 210,FMCG,WH-Delhi,1871,343,1950.82,3348.17,Prime Wholesale,2026-06-12,137,False
+SKU10210,Home Decor Item 211,Home Decor,WH-Bengaluru,3379,189,678.1,1409.15,Unity Vendors,2026-03-09,700,True
+SKU10211,Stationery Item 212,Stationery,WH-Bengaluru,851,198,2722.17,4242.91,Unity Vendors,2026-03-26,502,True
+SKU10212,FMCG Item 213,FMCG,WH-Mumbai,3796,360,1676.72,3542.44,Apex Traders,2025-11-10,179,False
+SKU10213,Electronics Item 214,Electronics,WH-Kolkata,1703,385,523.33,917.23,Apex Traders,2025-11-29,622,True
+SKU10214,Apparel Item 215,Apparel,WH-Mumbai,2109,278,1421.98,1952.94,Global Supplies Co,2025-08-21,362,True
+SKU10215,Home Decor Item 216,Home Decor,WH-Mumbai,976,497,,4464.31,Unity Vendors,2025-09-17,597,True
+SKU10216,Stationery Item 217,Stationery,WH-Mumbai,1188,145,474.71,842.49,Global Supplies Co,2025-10-13,341,True
+SKU10217,Apparel Item 218,Apparel,WH-Delhi,4078,189,2829.82,6004.84,Metro Distributors,2026-03-16,499,True
+SKU10218,FMCG Item 219,FMCG,WH-Delhi,2307,277,56.61,121.33,Apex Traders,2025-12-07,331,True
+SKU10219,Electronics Item 220,Electronics,WH-Mumbai,2464,214,1011.38,1378.55,Prime Wholesale,2026-06-06,237,True
+SKU10220,Stationery Item 221,Stationery,WH-Kolkata,3386,119,2493.03,3073.46,Global Supplies Co,2025-11-21,745,True
+SKU10221,FMCG Item 222,FMCG,WH-Mumbai,229,191,2262.97,4641.49,Unity Vendors,2026-02-23,327,False
+SKU10222,Stationery Item 223,Stationery,WH-Bengaluru,2230,404,1460.59,2528.28,Apex Traders,2026-02-04,176,True
+SKU10223,FMCG Item 224,FMCG,WH-Mumbai,486,204,723.98,1411.56,Apex Traders,2026-01-08,26,True
+SKU10224,Home Decor Item 225,Home Decor,WH-Kolkata,4164,243,2978.44,4269.82,Prime Wholesale,2025-06-29,325,False
+SKU10225,Home Decor Item 226,Home Decor,WH-Kolkata,3283,453,1347.0,1887.14,,2025-09-10,329,True
+SKU10226,Electronics Item 227,Electronics,WH-Bengaluru,1249,212,2721.41,3795.05,Unity Vendors,2025-08-05,340,True
+SKU10227,Electronics Item 228,Electronics,WH-Mumbai,2632,308,95.64,203.26,Unity Vendors,2026-02-15,717,True
+SKU10228,Home Decor Item 229,Home Decor,WH-Kolkata,2583,312,2794.27,6029.54,Global Supplies Co,2026-04-12,42,True
+SKU10229,Apparel Item 230,Apparel,WH-Mumbai,2368,205,2822.23,4180.15,Unity Vendors,2025-12-09,179,True
+SKU10230,Apparel Item 231,Apparel,WH-Mumbai,716,317,1466.82,2486.28,Unity Vendors,2025-06-29,698,True
+SKU10231,Home Decor Item 232,Home Decor,WH-Delhi,119,382,497.52,699.39,Apex Traders,2026-06-30,665,True
+SKU10232,Electronics Item 233,Electronics,WH-Kolkata,1738,182,2699.69,5056.86,Apex Traders,2026-04-25,436,False
+SKU10233,FMCG Item 234,FMCG,WH-Kolkata,2677,114,1591.26,2681.69,Metro Distributors,2026-01-03,200,True
+SKU10234,Electronics Item 235,Electronics,WH-Delhi,1174,210,258.56,376.81,Unity Vendors,2025-07-18,469,True
+SKU10235,Apparel Item 236,Apparel,WH-Mumbai,1427,468,874.27,1430.73,Apex Traders,2025-08-13,601,True
+SKU10236,Stationery Item 237,Stationery,WH-Mumbai,2052,333,1994.61,2483.61,Prime Wholesale,2026-01-18,747,False
+SKU10237,Stationery Item 238,Stationery,WH-Mumbai,1706,158,348.81,650.66,Metro Distributors,2025-08-02,75,False
+SKU10238,Electronics Item 239,Electronics,WH-Bengaluru,1256,236,129.56,173.49,Global Supplies Co,2025-08-01,321,True
+SKU10239,FMCG Item 240,FMCG,WH-Delhi,1113,195,1818.93,2390.97,Apex Traders,2026-06-15,440,True
+SKU10240,Electronics Item 241,Electronics,WH-Mumbai,2701,481,2190.79,2753.0,Unity Vendors,2025-09-05,421,True
+SKU10241,Apparel Item 242,Apparel,WH-Delhi,1678,342,2994.14,6444.71,Unity Vendors,2026-03-07,670,True
+SKU10242,Stationery Item 243,Stationery,WH-Delhi,4538,256,73.29,114.59,Prime Wholesale,2025-12-18,534,True
+SKU10243,Electronics Item 244,Electronics,WH-Mumbai,2512,435,1930.19,2942.41,Metro Distributors,2026-04-25,750,True
+SKU10244,Apparel Item 245,Apparel,WH-Mumbai,3026,234,29.09,34.79,Prime Wholesale,2026-06-08,693,False
+SKU10245,Stationery Item 246,Stationery,WH-Kolkata,3907,63,2817.81,5936.6,Prime Wholesale,2025-09-23,319,True
+SKU10246,Home Decor Item 247,Home Decor,WH-Bengaluru,1877,219,1601.26,2936.47,Unity Vendors,2026-01-02,286,True
+SKU10247,Electronics Item 248,Electronics,WH-Delhi,2508,198,2818.7,5806.26,Apex Traders,2026-01-04,457,True
+SKU10248,Electronics Item 249,Electronics,WH-Mumbai,4416,125,2145.28,4201.35,Unity Vendors,2025-11-04,125,False
+SKU10249,Apparel Item 250,Apparel,WH-Delhi,580,241,1275.34,1468.82,Apex Traders,2026-03-03,555,True
+SKU10250,Stationery Item 251,Stationery,WH-Kolkata,1820,341,116.16,243.78,Global Supplies Co,2026-06-09,76,False
+SKU10251,Apparel Item 252,Apparel,WH-Mumbai,2423,438,345.89,601.22,Apex Traders,2026-03-18,606,True
+SKU10252,Electronics Item 253,Electronics,WH-Bengaluru,1499,335,1555.04,2029.63,Metro Distributors,2026-07-02,335,True
+SKU10253,Home Decor Item 254,Home Decor,WH-Delhi,1006,110,711.25,1073.81,Unity Vendors,2026-06-09,233,True
+SKU10254,Electronics Item 255,Electronics,WH-Delhi,4709,159,385.81,569.46,Prime Wholesale,2025-08-30,210,True
+SKU10255,Electronics Item 256,Electronics,WH-Bengaluru,3260,234,418.52,526.98,Prime Wholesale,2026-02-18,688,False
+SKU10256,Home Decor Item 257,Home Decor,WH-Mumbai,223,273,2368.87,3393.67,Apex Traders,2026-04-13,288,False
+SKU10257,Apparel Item 258,Apparel,WH-Delhi,1122,391,516.87,1003.16,Metro Distributors,2025-11-01,750,False
+SKU10258,Apparel Item 259,Apparel,WH-Bengaluru,364,368,376.19,797.47,Global Supplies Co,2025-07-09,57,True
+SKU10259,FMCG Item 260,FMCG,WH-Kolkata,132,111,1634.68,2590.83,Metro Distributors,2025-09-15,448,False
+SKU10260,Apparel Item 261,Apparel,WH-Mumbai,2131,474,625.73,795.29,Global Supplies Co,2026-05-01,185,True
+SKU10261,Apparel Item 262,Apparel,WH-Bengaluru,4274,269,431.72,654.53,Unity Vendors,2026-02-27,752,True
+SKU10262,Home Decor Item 263,Home Decor,WH-Kolkata,3883,101,72.13,114.89,Metro Distributors,2026-03-25,369,False
+SKU10263,Electronics Item 264,Electronics,WH-Delhi,1263,261,2520.43,3251.29,Unity Vendors,2026-06-16,772,True
+SKU10264,Stationery Item 265,Stationery,WH-Bengaluru,420,259,2439.0,5182.59,Metro Distributors,2025-12-16,730,True
+SKU10265,FMCG Item 266,FMCG,WH-Bengaluru,528,436,1621.82,2518.67,Global Supplies Co,2025-09-09,306,False
+SKU10266,Electronics Item 267,Electronics,WH-Delhi,210,181,1209.93,1944.52,Apex Traders,2026-07-07,144,True
+SKU10267,Electronics Item 268,Electronics,WH-Delhi,667,65,2367.48,3046.68,Apex Traders,2025-08-20,369,True
+SKU10268,Apparel Item 269,Apparel,WH-Mumbai,1555,392,1151.1,1596.0,Prime Wholesale,2026-06-02,223,False
+SKU10269,Apparel Item 270,Apparel,WH-Bengaluru,971,174,1038.33,1699.86,Global Supplies Co,2025-08-06,216,True
+SKU10270,Home Decor Item 271,Home Decor,WH-Mumbai,2125,168,1489.6,3104.13,Unity Vendors,2025-10-09,3,True
+SKU10271,Electronics Item 272,Electronics,WH-Delhi,2357,301,559.32,657.61,Metro Distributors,2025-12-28,198,False
+SKU10272,Electronics Item 273,Electronics,WH-Kolkata,193,61,620.44,788.22,Apex Traders,2026-04-25,301,False
+SKU10273,Stationery Item 274,Stationery,WH-Bengaluru,4216,323,1260.78,1790.07,Unity Vendors,2025-08-07,149,False
+SKU10274,Home Decor Item 275,Home Decor,WH-Delhi,212,112,641.56,1003.76,Global Supplies Co,2026-07-25,788,True
+SKU10275,Home Decor Item 276,Home Decor,WH-Mumbai,1002,371,1981.62,3132.9,Global Supplies Co,2025-08-11,522,True
+SKU10276,Home Decor Item 277,Home Decor,WH-Bengaluru,84,495,2687.24,3597.16,Global Supplies Co,2025-07-25,232,False
+SKU10277,Stationery Item 278,Stationery,WH-Delhi,1373,489,859.23,1234.72,Metro Distributors,2026-01-13,44,True
+SKU10278,FMCG Item 279,FMCG,WH-Mumbai,2090,229,2458.26,4164.53,Apex Traders,2026-07-10,112,True
+SKU10279,Home Decor Item 280,Home Decor,WH-Delhi,1307,380,282.59,562.5,Apex Traders,2025-08-15,711,True
+SKU10280,Stationery Item 281,Stationery,WH-Kolkata,1097,168,2759.72,4228.64,Prime Wholesale,2025-08-10,743,True
+SKU10281,Home Decor Item 282,Home Decor,WH-Kolkata,4577,375,1163.57,2199.66,Metro Distributors,2026-05-07,445,True
+SKU10282,Home Decor Item 283,Home Decor,WH-Kolkata,554,472,1606.29,2608.99,Unity Vendors,2025-07-17,582,True
+SKU10283,Electronics Item 284,Electronics,WH-Bengaluru,1074,209,1352.99,1923.26,Apex Traders,2026-01-31,158,True
+SKU10284,FMCG Item 285,FMCG,WH-Kolkata,3061,357,1677.64,3219.28,Metro Distributors,2025-07-31,542,True
+SKU10285,FMCG Item 286,FMCG,WH-Bengaluru,1355,220,1842.15,2462.83,Metro Distributors,2025-11-17,432,True
+SKU10286,Stationery Item 287,Stationery,WH-Bengaluru,1671,321,2975.91,4184.32,Global Supplies Co,2025-12-19,324,True
+SKU10287,FMCG Item 288,FMCG,WH-Kolkata,158,69,2201.58,4001.55,Global Supplies Co,2025-09-22,143,True
+SKU10288,Home Decor Item 289,Home Decor,WH-Mumbai,2949,340,,4758.04,Global Supplies Co,2026-07-21,66,True
+SKU10289,Stationery Item 290,Stationery,WH-Mumbai,392,225,144.04,274.14,Apex Traders,2026-06-01,710,True
+SKU10290,Electronics Item 291,Electronics,WH-Delhi,4351,441,1817.84,2649.5,Unity Vendors,2025-06-28,364,True
+SKU10291,FMCG Item 292,FMCG,WH-Bengaluru,1025,207,54.25,88.82,Global Supplies Co,2026-03-13,461,True
+SKU10292,Home Decor Item 293,Home Decor,WH-Kolkata,4270,82,1666.33,2194.89,Unity Vendors,2025-09-23,463,False
+SKU10293,Electronics Item 294,Electronics,WH-Delhi,3345,235,1153.19,2156.89,Unity Vendors,2026-07-12,448,True
+SKU10294,FMCG Item 295,FMCG,WH-Delhi,346,336,631.37,1201.62,Apex Traders,2025-08-28,421,False
+SKU10295,Home Decor Item 296,Home Decor,WH-Bengaluru,763,282,231.72,476.86,Apex Traders,2025-11-26,57,False
+SKU10296,FMCG Item 297,FMCG,WH-Delhi,1099,352,2676.99,3242.06,Apex Traders,2026-01-06,1,True
+SKU10297,Stationery Item 298,Stationery,WH-Kolkata,2104,245,744.22,1337.65,Unity Vendors,2025-09-17,338,True
+SKU10298,FMCG Item 299,FMCG,WH-Mumbai,2806,305,1561.88,1803.41,Prime Wholesale,2026-04-11,239,False
+SKU10299,Home Decor Item 300,Home Decor,WH-Bengaluru,1536,395,1511.38,2224.34,Metro Distributors,2025-08-27,670,False
+SKU10300,Home Decor Item 301,Home Decor,WH-Mumbai,2876,98,1021.9,1817.57,,2025-08-13,650,False
+SKU10301,Electronics Item 302,Electronics,WH-Mumbai,1492,194,672.36,1419.6,Apex Traders,2026-05-18,734,True
+SKU10302,Electronics Item 303,Electronics,WH-Delhi,4923,402,1559.6,2412.69,Metro Distributors,2026-07-06,520,True
+SKU10303,Apparel Item 304,Apparel,WH-Mumbai,2549,372,1204.85,2226.79,Metro Distributors,2025-12-16,474,True
+SKU10304,Electronics Item 305,Electronics,WH-Kolkata,2111,304,1020.04,2071.34,Apex Traders,2026-05-19,77,True
+SKU10305,FMCG Item 306,FMCG,WH-Delhi,1069,325,1228.29,2392.16,Unity Vendors,2025-11-14,249,False
+SKU10306,Electronics Item 307,Electronics,WH-Bengaluru,2657,414,2158.77,4724.83,Metro Distributors,2025-12-02,514,True
+SKU10307,FMCG Item 308,FMCG,WH-Kolkata,4868,272,942.67,1481.99,Prime Wholesale,2026-04-05,481,True
+SKU10308,Apparel Item 309,Apparel,WH-Mumbai,3068,405,2650.5,5138.03,Global Supplies Co,2026-02-20,193,True
+SKU10309,Stationery Item 310,Stationery,WH-Mumbai,1299,426,2269.28,3950.41,Unity Vendors,2025-11-14,119,False
+SKU10310,Stationery Item 311,Stationery,WH-Delhi,3530,461,2002.16,2358.23,Metro Distributors,2025-07-31,227,True
+SKU10311,Electronics Item 312,Electronics,WH-Delhi,2208,404,151.05,254.15,Global Supplies Co,2025-08-22,492,True
+SKU10312,Home Decor Item 313,Home Decor,WH-Mumbai,2890,419,2262.84,2873.09,Unity Vendors,2026-01-02,216,True
+SKU10313,Electronics Item 314,Electronics,WH-Kolkata,2126,474,2080.13,3585.53,Global Supplies Co,2026-03-07,355,False
+SKU10314,Home Decor Item 315,Home Decor,WH-Delhi,80,171,1386.91,2173.81,Global Supplies Co,2025-10-05,408,True
+SKU10315,Stationery Item 316,Stationery,WH-Mumbai,1868,317,2990.07,5825.02,Apex Traders,2026-04-08,467,False
+SKU10316,Home Decor Item 317,Home Decor,WH-Delhi,3113,238,1429.59,2465.45,Apex Traders,2026-03-23,687,True
+SKU10317,FMCG Item 318,FMCG,WH-Mumbai,4399,284,122.92,261.76,Metro Distributors,2026-07-18,727,True
+SKU10318,Apparel Item 319,Apparel,WH-Bengaluru,2865,174,1869.83,2552.5,Unity Vendors,2026-03-17,492,True
+SKU10319,Stationery Item 320,Stationery,WH-Delhi,4053,116,703.46,1336.41,Global Supplies Co,2025-08-05,620,True
+SKU10320,Home Decor Item 321,Home Decor,WH-Kolkata,4697,438,498.79,1065.65,Prime Wholesale,2026-02-19,354,True
+SKU10321,Apparel Item 322,Apparel,WH-Kolkata,3423,427,2577.62,4292.95,Prime Wholesale,2026-06-16,191,False
+SKU10322,Apparel Item 323,Apparel,WH-Mumbai,3543,160,2961.99,5971.21,Global Supplies Co,2026-05-09,574,True
+SKU10323,Home Decor Item 324,Home Decor,WH-Kolkata,2173,424,258.01,410.97,Apex Traders,2025-11-09,194,True
+SKU10324,Home Decor Item 325,Home Decor,WH-Kolkata,3984,191,1700.98,3332.42,Metro Distributors,2026-04-24,50,True
+SKU10325,Apparel Item 326,Apparel,WH-Kolkata,2667,421,687.0,1436.02,Metro Distributors,2025-10-22,361,False
+SKU10326,FMCG Item 327,FMCG,WH-Kolkata,562,133,1259.86,2236.21,Global Supplies Co,2026-03-18,625,True
+SKU10327,Electronics Item 328,Electronics,WH-Delhi,3341,440,2542.39,5249.87,Prime Wholesale,2026-05-02,488,False
+SKU10328,Stationery Item 329,Stationery,WH-Kolkata,2079,50,2750.12,3502.5,Metro Distributors,2025-10-18,151,True
+SKU10329,Apparel Item 330,Apparel,WH-Mumbai,1682,100,886.71,1593.96,Metro Distributors,2026-07-04,263,False
+SKU10330,FMCG Item 331,FMCG,WH-Delhi,1841,400,880.19,1030.5,Metro Distributors,2025-12-17,344,True
+SKU10331,FMCG Item 332,FMCG,WH-Bengaluru,848,418,1355.06,1786.52,Prime Wholesale,2026-04-18,81,True
+SKU10332,Home Decor Item 333,Home Decor,WH-Kolkata,1755,423,1984.76,3066.84,Unity Vendors,2026-02-05,789,True
+SKU10333,Electronics Item 334,Electronics,WH-Bengaluru,896,464,2093.81,3934.38,Global Supplies Co,2026-03-03,536,True
+SKU10334,Home Decor Item 335,Home Decor,WH-Kolkata,2110,292,2475.08,2935.57,Unity Vendors,2026-02-26,489,True
+SKU10335,Stationery Item 336,Stationery,WH-Bengaluru,2011,379,1967.24,2385.51,Global Supplies Co,2026-03-17,260,False
+SKU10336,Electronics Item 337,Electronics,WH-Mumbai,4545,64,2014.82,2906.57,Apex Traders,2026-03-27,453,False
+SKU10337,Home Decor Item 338,Home Decor,WH-Mumbai,3706,421,1491.63,2404.62,Global Supplies Co,2025-08-27,443,True
+SKU10338,FMCG Item 339,FMCG,WH-Kolkata,4333,108,2455.86,3173.47,Prime Wholesale,2025-08-10,395,True
+SKU10339,Stationery Item 340,Stationery,WH-Kolkata,228,189,600.86,1035.95,Global Supplies Co,2025-11-12,96,True
+SKU10340,Apparel Item 341,Apparel,WH-Kolkata,1548,297,2283.16,2677.84,Unity Vendors,2025-11-21,511,True
+SKU10341,Apparel Item 342,Apparel,WH-Kolkata,1980,487,781.19,920.89,Apex Traders,2025-07-28,32,True
+SKU10342,Electronics Item 343,Electronics,WH-Bengaluru,3037,377,2468.74,4697.9,Prime Wholesale,2026-06-30,637,False
+SKU10343,Apparel Item 344,Apparel,WH-Bengaluru,3443,302,250.54,506.27,Metro Distributors,2026-01-24,208,True
+SKU10344,FMCG Item 345,FMCG,WH-Bengaluru,3206,258,2497.04,5096.53,Apex Traders,2026-06-04,733,True
+SKU10345,Home Decor Item 346,Home Decor,WH-Delhi,3825,410,1698.67,3112.96,Metro Distributors,2025-07-28,178,True
+SKU10346,FMCG Item 347,FMCG,WH-Delhi,8,477,1721.21,3752.48,Apex Traders,2026-02-11,706,True
+SKU10347,Home Decor Item 348,Home Decor,WH-Delhi,676,262,999.69,1871.67,Metro Distributors,2026-02-25,727,True
+SKU10348,Stationery Item 349,Stationery,WH-Mumbai,1595,293,2138.4,4375.17,Apex Traders,2026-02-05,129,True
+SKU10349,Electronics Item 350,Electronics,WH-Kolkata,4347,470,53.1,98.31,Global Supplies Co,2025-11-29,701,True
+SKU10350,Electronics Item 351,Electronics,WH-Delhi,3904,50,1206.4,1653.18,Global Supplies Co,2025-07-12,276,True
+SKU10351,Stationery Item 352,Stationery,WH-Mumbai,2969,166,2275.43,3315.35,Prime Wholesale,2025-07-08,418,True
+SKU10352,Home Decor Item 353,Home Decor,WH-Mumbai,2151,489,745.6,1607.14,Prime Wholesale,2026-03-02,260,False
+SKU10353,FMCG Item 354,FMCG,WH-Kolkata,2219,235,2920.62,5724.24,Unity Vendors,2026-04-18,424,True
+SKU10354,Electronics Item 355,Electronics,WH-Delhi,1076,326,744.5,1090.08,Apex Traders,2026-03-13,192,True
+SKU10355,FMCG Item 356,FMCG,WH-Delhi,4752,194,1399.74,3014.13,Unity Vendors,2026-04-14,794,False
+SKU10356,Home Decor Item 357,Home Decor,WH-Kolkata,4203,305,577.85,1199.05,Global Supplies Co,2026-03-20,10,True
+SKU10357,FMCG Item 358,FMCG,WH-Bengaluru,1590,400,2535.92,4041.9,Apex Traders,2026-05-25,164,True
+SKU10358,FMCG Item 359,FMCG,WH-Delhi,49,160,2648.72,5346.94,Prime Wholesale,2026-03-22,23,True
+SKU10359,Stationery Item 360,Stationery,WH-Kolkata,1460,263,816.29,1573.3,Unity Vendors,2025-09-29,389,True
+SKU10360,FMCG Item 361,FMCG,WH-Mumbai,2830,378,2722.24,5123.18,Global Supplies Co,2026-03-28,546,False
+SKU10361,Home Decor Item 362,Home Decor,WH-Delhi,1286,199,2261.41,3482.95,Apex Traders,2026-04-20,401,True
+SKU10362,Electronics Item 363,Electronics,WH-Bengaluru,672,374,909.0,1296.57,Apex Traders,2026-03-16,429,True
+SKU10363,Home Decor Item 364,Home Decor,WH-Mumbai,2756,328,2033.71,4182.85,Prime Wholesale,2026-07-07,792,True
+SKU10364,Home Decor Item 365,Home Decor,WH-Delhi,4013,377,1767.35,2121.24,Metro Distributors,2026-07-28,375,True
+SKU10365,FMCG Item 366,FMCG,WH-Delhi,2538,173,2090.29,4345.89,Global Supplies Co,2026-05-31,550,True
+SKU10366,Apparel Item 367,Apparel,WH-Delhi,2601,239,684.12,1037.14,Global Supplies Co,2026-06-26,385,True
+SKU10367,Home Decor Item 368,Home Decor,WH-Mumbai,3213,167,1036.58,1695.57,Metro Distributors,2025-11-15,621,True
+SKU10368,Home Decor Item 369,Home Decor,WH-Bengaluru,3336,170,68.78,133.54,Metro Distributors,2025-08-21,753,True
+SKU10369,Apparel Item 370,Apparel,WH-Delhi,4920,198,2444.59,4844.95,Global Supplies Co,2025-07-27,401,True
+SKU10370,Home Decor Item 371,Home Decor,WH-Bengaluru,4279,267,2818.0,4238.92,Prime Wholesale,2026-02-27,639,False
+SKU10371,Apparel Item 372,Apparel,WH-Kolkata,1005,101,2533.38,4995.76,Apex Traders,2025-12-08,430,True
+SKU10372,Apparel Item 373,Apparel,WH-Delhi,4761,354,2352.04,3903.62,Metro Distributors,2026-06-17,757,False
+SKU10373,Home Decor Item 374,Home Decor,WH-Mumbai,1828,480,389.38,503.52,Global Supplies Co,2026-07-20,335,True
+SKU10374,Electronics Item 375,Electronics,WH-Delhi,120,58,1860.94,3888.53,Apex Traders,2026-03-04,329,True
+SKU10375,FMCG Item 376,FMCG,WH-Bengaluru,1303,176,1941.52,3363.24,Apex Traders,2025-10-14,15,True
+SKU10376,Stationery Item 377,Stationery,WH-Delhi,5,330,1048.9,1867.17,Global Supplies Co,2025-07-24,545,True
+SKU10377,Home Decor Item 378,Home Decor,WH-Bengaluru,4857,411,2063.34,3997.07,Prime Wholesale,2026-03-12,214,True
+SKU10378,FMCG Item 379,FMCG,WH-Delhi,2994,170,1880.3,3591.41,Unity Vendors,2025-10-31,92,True
+SKU10379,Stationery Item 380,Stationery,WH-Bengaluru,4600,134,1226.64,1924.8,Prime Wholesale,2026-04-09,189,True
+SKU10380,Electronics Item 381,Electronics,WH-Mumbai,368,100,1243.66,2443.48,Prime Wholesale,2026-01-12,110,True
+SKU10381,Home Decor Item 382,Home Decor,WH-Delhi,3256,90,2024.15,3362.71,Unity Vendors,2026-05-25,376,True
+SKU10382,Apparel Item 383,Apparel,WH-Kolkata,502,203,516.59,1013.0,Global Supplies Co,2025-07-25,584,True
+SKU10383,Home Decor Item 384,Home Decor,WH-Bengaluru,965,437,126.48,173.8,Unity Vendors,2026-02-05,343,True
+SKU10384,Electronics Item 385,Electronics,WH-Mumbai,848,284,878.92,1302.09,Apex Traders,2026-02-23,172,True
+SKU10385,Home Decor Item 386,Home Decor,WH-Bengaluru,2626,389,130.67,206.7,Global Supplies Co,2025-10-19,84,True
+SKU10386,Home Decor Item 387,Home Decor,WH-Mumbai,864,99,704.44,963.6,Metro Distributors,2025-07-17,95,True
+SKU10387,Home Decor Item 388,Home Decor,WH-Kolkata,4320,390,1536.04,2961.39,Unity Vendors,2025-10-08,698,True
+SKU10388,Stationery Item 389,Stationery,WH-Mumbai,1441,370,384.63,781.03,Unity Vendors,2026-05-02,226,True
+SKU10389,Home Decor Item 390,Home Decor,WH-Bengaluru,4828,406,2019.56,4099.68,Metro Distributors,2025-06-30,113,False
+SKU10390,Home Decor Item 391,Home Decor,WH-Kolkata,4598,356,1301.56,2252.27,Metro Distributors,2025-12-02,720,True
+SKU10391,Stationery Item 392,Stationery,WH-Bengaluru,4218,86,2996.52,4336.22,Apex Traders,2025-12-20,294,False
+SKU10392,Electronics Item 393,Electronics,WH-Kolkata,46,465,359.9,674.71,Apex Traders,2026-04-05,169,True
+SKU10393,FMCG Item 394,FMCG,WH-Bengaluru,1670,360,417.15,798.53,Metro Distributors,2025-12-12,673,True
+SKU10394,Apparel Item 395,Apparel,WH-Mumbai,558,149,734.91,1033.49,Unity Vendors,2025-09-19,649,True
+SKU10395,Electronics Item 396,Electronics,WH-Mumbai,1816,197,1949.66,3815.74,Metro Distributors,2026-05-14,471,False
+SKU10396,Apparel Item 397,Apparel,WH-Kolkata,3335,320,2704.89,4669.89,Unity Vendors,2026-03-12,151,True
+SKU10397,Apparel Item 398,Apparel,WH-Kolkata,3999,219,2764.6,5170.79,Apex Traders,2026-06-29,272,True
+SKU10398,Stationery Item 399,Stationery,WH-Bengaluru,4769,308,2373.22,5182.2,Metro Distributors,2025-07-30,263,True
+SKU10399,Home Decor Item 400,Home Decor,WH-Bengaluru,1480,75,2958.84,5028.51,Unity Vendors,2025-12-06,396,True
+SKU10400,FMCG Item 401,FMCG,WH-Bengaluru,1112,465,1422.45,1990.18,Prime Wholesale,2026-07-09,698,True
+SKU10401,Stationery Item 402,Stationery,WH-Kolkata,4113,256,926.38,1763.49,Prime Wholesale,2026-06-15,501,True
+SKU10402,Home Decor Item 403,Home Decor,WH-Kolkata,4555,326,1944.35,2548.5,Apex Traders,2025-07-27,633,True
+SKU10403,Apparel Item 404,Apparel,WH-Kolkata,2394,440,1755.05,3603.33,Global Supplies Co,2026-05-09,98,True
+SKU10404,Electronics Item 405,Electronics,WH-Mumbai,4858,75,1105.79,1916.46,Global Supplies Co,2026-02-07,15,True
+SKU10405,Electronics Item 406,Electronics,WH-Mumbai,656,58,455.01,534.99,Unity Vendors,2025-12-15,44,False
+SKU10406,Home Decor Item 407,Home Decor,WH-Delhi,2937,452,2115.16,3531.66,Metro Distributors,2026-07-20,604,False
+SKU10407,Apparel Item 408,Apparel,WH-Delhi,1785,419,2529.86,4829.65,Unity Vendors,2025-07-18,329,True
+SKU10408,Apparel Item 409,Apparel,WH-Mumbai,2789,126,1527.18,2678.06,Global Supplies Co,2026-07-25,523,True
+SKU10409,Stationery Item 410,Stationery,WH-Kolkata,1977,436,1248.81,1972.98,Metro Distributors,2025-11-18,146,True
+SKU10410,FMCG Item 411,FMCG,WH-Bengaluru,2327,436,1885.41,2194.65,Apex Traders,2025-12-11,45,True
+SKU10411,Home Decor Item 412,Home Decor,WH-Delhi,301,131,2305.24,3353.1,Metro Distributors,2025-08-08,413,False
+SKU10412,Electronics Item 413,Electronics,WH-Bengaluru,2907,290,146.42,231.93,Apex Traders,2025-10-09,552,True
+SKU10413,Home Decor Item 414,Home Decor,WH-Delhi,737,97,2531.71,5197.09,Prime Wholesale,2026-04-14,532,True
+SKU10414,Home Decor Item 415,Home Decor,WH-Mumbai,4328,139,1401.94,2353.39,Metro Distributors,2025-07-22,336,True
+SKU10415,FMCG Item 416,FMCG,WH-Kolkata,3386,161,1188.84,2101.56,Unity Vendors,2026-01-31,75,True
+SKU10416,Electronics Item 417,Electronics,WH-Bengaluru,1257,314,2813.78,5283.92,Global Supplies Co,2026-03-27,319,True
+SKU10417,Electronics Item 418,Electronics,WH-Bengaluru,2092,122,246.2,467.51,Metro Distributors,2025-10-05,181,True
+SKU10418,Home Decor Item 419,Home Decor,WH-Mumbai,2374,51,1086.1,1981.51,Prime Wholesale,2025-11-12,755,True
+SKU10419,Apparel Item 420,Apparel,WH-Bengaluru,1812,436,277.72,589.29,Unity Vendors,2025-07-22,711,False
+SKU10420,Home Decor Item 421,Home Decor,WH-Bengaluru,525,64,2523.88,4061.95,Global Supplies Co,2026-02-04,95,True
+SKU10421,Apparel Item 422,Apparel,WH-Mumbai,492,464,455.29,950.86,Metro Distributors,2025-12-18,765,True
+SKU10422,Apparel Item 423,Apparel,WH-Mumbai,3430,445,587.75,778.24,Apex Traders,2025-08-18,441,True
+SKU10423,Home Decor Item 424,Home Decor,WH-Bengaluru,3617,109,944.63,1329.94,Apex Traders,2026-07-19,555,True
+SKU10424,FMCG Item 425,FMCG,WH-Delhi,4699,198,824.2,1192.82,Apex Traders,2025-07-06,625,True
+SKU10425,Electronics Item 426,Electronics,WH-Mumbai,2025,357,2287.68,4926.01,Metro Distributors,2025-09-29,678,True
+SKU10426,Electronics Item 427,Electronics,WH-Mumbai,1714,207,27.63,32.67,Metro Distributors,2025-10-29,698,False
+SKU10427,Apparel Item 428,Apparel,WH-Bengaluru,2673,476,1229.77,1701.73,Prime Wholesale,2026-03-12,382,True
+SKU10428,Electronics Item 429,Electronics,WH-Kolkata,3774,283,1635.89,3014.85,Metro Distributors,2025-08-11,31,True
+SKU10429,Home Decor Item 430,Home Decor,WH-Bengaluru,4164,132,2802.97,3529.74,Global Supplies Co,2025-09-25,147,True
+SKU10430,Home Decor Item 431,Home Decor,WH-Mumbai,1890,414,2920.75,3520.52,Unity Vendors,2026-05-13,504,True
+SKU10431,FMCG Item 432,FMCG,WH-Delhi,2542,452,2241.51,3067.51,Global Supplies Co,2026-07-23,407,True
+SKU10432,Apparel Item 433,Apparel,WH-Kolkata,2452,173,1278.1,2159.66,Metro Distributors,2025-08-09,371,True
+SKU10433,FMCG Item 434,FMCG,WH-Mumbai,3784,264,2705.24,3924.02,Apex Traders,2026-01-08,569,True
+SKU10434,Apparel Item 435,Apparel,WH-Mumbai,4735,364,2205.55,4407.59,Apex Traders,2026-04-16,415,True
+SKU10435,Apparel Item 436,Apparel,WH-Kolkata,4278,374,1522.49,1907.81,Prime Wholesale,2025-08-22,353,True
+SKU10436,Stationery Item 437,Stationery,WH-Delhi,2715,364,145.13,307.58,Apex Traders,2025-08-17,522,False
+SKU10437,Apparel Item 438,Apparel,WH-Mumbai,2170,97,1065.51,1364.77,Unity Vendors,2025-12-11,296,False
+SKU10438,Home Decor Item 439,Home Decor,WH-Delhi,4518,265,626.11,1291.5,Prime Wholesale,2026-06-05,506,False
+SKU10439,Apparel Item 440,Apparel,WH-Delhi,3867,295,1061.23,1968.79,Global Supplies Co,2026-01-02,82,True
+SKU10440,FMCG Item 441,FMCG,WH-Bengaluru,3405,350,787.19,1700.32,Unity Vendors,2026-07-21,149,True
+SKU10441,FMCG Item 442,FMCG,WH-Kolkata,2703,208,1351.86,2208.42,Apex Traders,2025-08-11,598,False
+SKU10442,Electronics Item 443,Electronics,WH-Bengaluru,2798,121,863.71,1308.21,Apex Traders,2025-08-02,670,True
+SKU10443,Electronics Item 444,Electronics,WH-Mumbai,2481,379,2703.27,4973.34,Global Supplies Co,2025-08-24,64,True
+SKU10444,Stationery Item 445,Stationery,WH-Mumbai,4377,380,2706.37,4592.49,Apex Traders,2025-11-20,172,True
+SKU10445,Electronics Item 446,Electronics,WH-Mumbai,4438,145,170.36,297.07,Global Supplies Co,2025-11-20,566,True
+SKU10446,Stationery Item 447,Stationery,WH-Bengaluru,4084,302,1007.42,1163.71,Prime Wholesale,2026-01-01,682,True
+SKU10447,Stationery Item 448,Stationery,WH-Delhi,3655,92,2675.86,3969.08,Metro Distributors,2026-03-17,153,True
+SKU10448,Apparel Item 449,Apparel,WH-Delhi,3120,408,2797.27,3971.37,Apex Traders,2025-10-22,682,True
+SKU10449,Apparel Item 450,Apparel,WH-Bengaluru,2572,317,1671.68,2202.57,Unity Vendors,2025-11-20,199,True
+SKU10450,Home Decor Item 451,Home Decor,WH-Delhi,3651,113,2180.0,4005.79,Prime Wholesale,2026-01-12,52,True
+SKU10451,Home Decor Item 452,Home Decor,WH-Delhi,3011,149,1186.07,2374.17,Prime Wholesale,2026-02-13,13,True
+SKU10452,FMCG Item 453,FMCG,WH-Delhi,4805,489,1362.71,2234.08,Global Supplies Co,2026-04-13,716,True
+SKU10453,Electronics Item 454,Electronics,WH-Mumbai,3313,146,1747.82,3731.7,Global Supplies Co,2025-11-13,111,True
+SKU10454,Electronics Item 455,Electronics,WH-Kolkata,4410,243,1730.21,2940.66,Metro Distributors,2025-10-19,357,True
+SKU10455,Stationery Item 456,Stationery,WH-Mumbai,610,357,1246.15,2471.33,Apex Traders,2026-05-08,348,True
+SKU10456,Electronics Item 457,Electronics,WH-Mumbai,2347,181,1467.96,2976.79,Metro Distributors,2026-04-14,89,False
+SKU10457,Home Decor Item 458,Home Decor,WH-Kolkata,2806,197,1766.08,3165.59,Global Supplies Co,2026-04-11,750,True
+SKU10458,FMCG Item 459,FMCG,WH-Delhi,2064,370,1206.98,1470.94,Unity Vendors,2026-02-19,542,True
+SKU10459,Home Decor Item 460,Home Decor,WH-Bengaluru,1567,312,,2707.46,Apex Traders,2025-12-23,212,True
+SKU10460,FMCG Item 461,FMCG,WH-Kolkata,1445,391,1443.56,3123.58,,2026-06-19,44,True
+SKU10461,Apparel Item 462,Apparel,WH-Delhi,1310,77,118.75,257.35,Metro Distributors,2026-05-17,117,True
+SKU10462,Apparel Item 463,Apparel,WH-Kolkata,4227,210,1919.07,2815.63,Metro Distributors,2025-11-13,434,True
+SKU10463,FMCG Item 464,FMCG,WH-Kolkata,4280,359,937.63,1546.36,Global Supplies Co,2026-07-22,367,True
+SKU10464,Electronics Item 465,Electronics,WH-Kolkata,2414,160,2207.96,3514.06,,2025-09-02,355,True
+SKU10465,Electronics Item 466,Electronics,WH-Delhi,1515,183,1777.96,3277.1,Unity Vendors,2026-07-21,272,True
+SKU10466,Electronics Item 467,Electronics,WH-Mumbai,1270,222,2664.8,4053.54,Global Supplies Co,2026-04-21,475,True
+SKU10467,Stationery Item 468,Stationery,WH-Kolkata,1656,336,2917.43,5557.14,Metro Distributors,2025-07-20,213,True
+SKU10468,Stationery Item 469,Stationery,WH-Delhi,3094,280,2759.23,5040.43,Metro Distributors,2025-08-17,426,True
+SKU10469,Home Decor Item 470,Home Decor,WH-Delhi,3943,397,959.98,1656.41,Global Supplies Co,2026-07-25,63,True
+SKU10470,FMCG Item 471,FMCG,WH-Bengaluru,4589,114,2186.96,3940.34,Metro Distributors,2025-09-26,538,False
+SKU10471,Apparel Item 472,Apparel,WH-Delhi,135,421,988.09,1801.1,Global Supplies Co,2025-10-28,314,True
+SKU10472,Home Decor Item 473,Home Decor,WH-Mumbai,1240,313,1826.04,2469.34,Apex Traders,2025-09-30,130,True
+SKU10473,FMCG Item 474,FMCG,WH-Kolkata,4160,106,2047.5,3563.58,Metro Distributors,2025-07-02,587,True
+SKU10474,Apparel Item 475,Apparel,WH-Mumbai,2384,188,470.99,900.81,Global Supplies Co,2026-05-12,615,True
+SKU10475,Electronics Item 476,Electronics,WH-Kolkata,3928,347,1636.77,3359.85,Prime Wholesale,2026-02-18,563,False
+SKU10476,FMCG Item 477,FMCG,WH-Mumbai,4921,266,94.47,131.64,Apex Traders,2025-09-20,288,True
+SKU10477,Electronics Item 478,Electronics,WH-Mumbai,4061,234,2757.34,5648.78,Global Supplies Co,2025-10-25,130,False
+SKU10478,Electronics Item 479,Electronics,WH-Delhi,2239,315,68.91,131.14,Apex Traders,2025-08-05,584,True
+SKU10479,Home Decor Item 480,Home Decor,WH-Kolkata,1633,335,2345.45,4773.82,Unity Vendors,2025-10-10,178,False
+SKU10480,FMCG Item 481,FMCG,WH-Kolkata,2652,111,2142.99,4042.32,Unity Vendors,2025-07-09,453,True
+SKU10481,Electronics Item 482,Electronics,WH-Mumbai,4247,297,605.44,1042.38,Prime Wholesale,2026-05-18,295,True
+SKU10482,Electronics Item 483,Electronics,WH-Kolkata,4533,448,1150.19,2209.74,Unity Vendors,2025-12-07,416,False
+SKU10483,Apparel Item 484,Apparel,WH-Kolkata,4578,345,669.71,840.42,Apex Traders,2025-07-09,169,False
+SKU10484,Home Decor Item 485,Home Decor,WH-Kolkata,1932,265,2931.04,3742.22,Metro Distributors,2026-02-18,764,True
+SKU10485,Apparel Item 486,Apparel,WH-Bengaluru,1141,172,1246.44,1916.43,Global Supplies Co,2025-08-31,533,False
+SKU10486,Electronics Item 487,Electronics,WH-Mumbai,4202,459,2314.7,4817.11,Global Supplies Co,2026-01-19,616,True
+SKU10487,Electronics Item 488,Electronics,WH-Delhi,3597,388,2394.5,4154.53,Unity Vendors,2025-08-15,68,True
+SKU10488,Electronics Item 489,Electronics,WH-Delhi,276,132,,584.82,Apex Traders,2026-02-12,268,False
+SKU10489,Apparel Item 490,Apparel,WH-Mumbai,93,460,868.99,1510.18,Unity Vendors,2025-11-30,134,True
+SKU10490,Stationery Item 491,Stationery,WH-Bengaluru,357,191,2678.87,4051.32,Unity Vendors,2026-03-07,757,True
+SKU10491,Home Decor Item 492,Home Decor,WH-Kolkata,2939,140,328.78,650.29,Unity Vendors,2026-02-23,171,True
+SKU10492,Stationery Item 493,Stationery,WH-Delhi,1301,370,2923.62,3409.78,Metro Distributors,2025-10-13,535,True
+SKU10493,Apparel Item 494,Apparel,WH-Bengaluru,4309,344,2636.43,3885.28,Unity Vendors,2025-06-30,619,True
+SKU10494,Apparel Item 495,Apparel,WH-Delhi,356,140,986.06,1226.49,Prime Wholesale,2026-03-29,728,True
+SKU10495,Stationery Item 496,Stationery,WH-Bengaluru,3330,414,2073.33,2614.67,Metro Distributors,2026-06-13,503,False
+SKU10496,Apparel Item 497,Apparel,WH-Kolkata,1669,477,1325.85,2306.13,Unity Vendors,2025-07-03,375,True
+SKU10497,Apparel Item 498,Apparel,WH-Delhi,4541,61,58.74,101.92,Global Supplies Co,2026-07-01,676,True
+SKU10498,Electronics Item 499,Electronics,WH-Bengaluru,1710,214,1268.56,2122.2,Prime Wholesale,2025-09-28,709,True
+SKU10499,FMCG Item 500,FMCG,WH-Kolkata,2031,161,1569.15,1936.2,Unity Vendors,2026-01-15,77,True

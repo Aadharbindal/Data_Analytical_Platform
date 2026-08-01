@@ -7,21 +7,36 @@ import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { ErrorState } from "@/components/ui/error-state";
 import { StudioPage } from "@/components/analytics/StudioPage";
 import { formatNumber, formatPercent } from "@/lib/utils";
-import { motion, useMotionValue, useTransform, animate } from "framer-motion";
-import { useEffect } from "react";
+import { motion, animate } from "framer-motion";
+import { useCallback, useEffect, useState } from "react";
 
+// Renders through React state rather than a MotionValue. framer-motion paints
+// MotionValue-backed text on the animation-frame loop, so in a backgrounded or
+// throttled tab the element never leaves its starting "0" — this page showed
+// "GROWTH SLOPE 0" and "CONFIDENCE 0.0%" while the API was returning a real
+// slope and r-value, and labelled the same column a "Strong fit". Driving the
+// text from state means the timeout below can always land the true figure.
 function AnimatedNumber({ value, isPercent = false }: { value: number, isPercent?: boolean }) {
-  const count = useMotionValue(0);
-  const rounded = useTransform(count, (latest) => 
-    isPercent ? formatPercent(latest * 100) : formatNumber(latest)
+  const format = useCallback(
+    (v: number) => (isPercent ? formatPercent(v * 100) : formatNumber(v)),
+    [isPercent]
   );
+  const [display, setDisplay] = useState(() => format(0));
 
   useEffect(() => {
-    const controls = animate(count, value, { duration: 1.5, ease: "easeOut" });
-    return controls.stop;
-  }, [count, value]);
+    const controls = animate(0, value, {
+      duration: 1.5,
+      ease: "easeOut",
+      onUpdate: (latest) => setDisplay(format(latest)),
+    });
+    const settle = setTimeout(() => setDisplay(format(value)), 1800);
+    return () => {
+      controls.stop();
+      clearTimeout(settle);
+    };
+  }, [value, format]);
 
-  return <motion.span>{rounded}</motion.span>;
+  return <span>{display}</span>;
 }
 
 export default function TrendAnalysis() {

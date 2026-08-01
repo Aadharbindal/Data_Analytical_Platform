@@ -1,5 +1,8 @@
 import pandas as pd
 import numpy as np
+import csv
+import io
+import logging
 import re
 import threading
 from fastapi import APIRouter, Query, HTTPException, Depends
@@ -7,7 +10,7 @@ from fastapi.responses import PlainTextResponse, HTMLResponse
 from typing import Optional
 from app.services.data_processing import get_active_dataset, get_dataframe
 from app.core.security import get_current_user
-from app.services.stats_service import compute_kpis, compute_executive_kpis, forecast_series, robust_outlier_stats, compute_metric_importance, compute_metric_confidence
+from app.services.stats_service import compute_kpis, compute_executive_kpis, forecast_series, robust_outlier_stats, compute_metric_importance, compute_metric_confidence, to_datetime_safe
 
 router = APIRouter()
 
@@ -144,7 +147,12 @@ async def get_eda_column(column_name: str, current_user: dict = Depends(get_curr
         
         col_data = df[column_name]
         col_type = str(col_data.dtype)
-        is_num = pd.api.types.is_numeric_dtype(col_data)
+        # pandas reports a boolean column as numeric, but a histogram over
+        # True/False is meaningless and numpy raises on the boolean subtraction
+        # its bin-edge maths performs. Booleans are two categories, so route
+        # them down the categorical branch where they render as a value count.
+        is_num = (pd.api.types.is_numeric_dtype(col_data)
+                  and not pd.api.types.is_bool_dtype(col_data))
         
         null_count = int(col_data.isna().sum())
         total_count = len(col_data)
@@ -197,9 +205,16 @@ async def get_eda_column(column_name: str, current_user: dict = Depends(get_curr
                 "frequencies": frequencies,
                 "stats": stats
             }
+    except HTTPException:
+        raise
     except Exception as e:
-        import traceback
-        raise HTTPException(status_code=500, detail={"error": str(e), "traceback": traceback.format_exc()})
+        # Keep the stack trace in the server log; returning it to the caller
+        # exposes file paths and internals without helping the user.
+        logging.exception("EDA column analysis failed for %r", column_name)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Could not analyse column '{column_name}': {type(e).__name__}",
+        )
 
 
 @router.get("/statistics")
@@ -214,7 +229,10 @@ async def get_statistics(current_user: dict = Depends(get_current_user)):
 
     import scipy.stats as st
 
+    from app.services.stats_service import is_identifier_like
+
     stats_list = []
+    total_rows = len(df)
     for col in df.select_dtypes(include=[np.number]).columns:
         clean_col = df[col].dropna()
         if len(clean_col) > 0:
@@ -224,7 +242,13 @@ async def get_statistics(current_user: dict = Depends(get_current_user)):
                 "median": float(clean_col.median()),
                 "std": float(clean_col.std()),
                 "skew": float(st.skew(clean_col)),
-                "kurtosis": float(st.kurtosis(clean_col))
+                "kurtosis": float(st.kurtosis(clean_col)),
+                # Reference numbers, account numbers and row IDs are numeric, so
+                # they land in this list and their descriptive stats are real.
+                # But they are labels, not quantities — anything that picks a
+                # "default metric" off this list needs to be able to skip them,
+                # or the Forecast Center opens on a projection of cheque numbers.
+                "is_identifier": bool(is_identifier_like(clean_col, col, total_rows)),
             })
     return {"stats": stats_list}
 
@@ -250,7 +274,10 @@ async def get_distribution(current_user: dict = Depends(get_current_user)):
     if df is None:
         return []
 
+    from app.services.stats_service import is_identifier_like
+
     res = []
+    total_rows = len(df)
     for col in df.select_dtypes(include=[np.number]).columns:
         clean_col = df[col].dropna()
         if len(clean_col) == 0:
@@ -266,8 +293,13 @@ async def get_distribution(current_user: dict = Depends(get_current_user)):
         res.append({
             "column_name": col,
             "distribution_type": "Numerical",
-            "histogram": bins_res
+            "histogram": bins_res,
+            "is_identifier": bool(is_identifier_like(clean_col, col, total_rows)),
         })
+    # The histogram of a reference-number column is correct but uninformative —
+    # it is a near-uniform spread of arbitrary labels. Keep it available, just
+    # not as the column the explorer opens on.
+    res.sort(key=lambda item: item["is_identifier"])
     return res
 
 @router.get("/outliers")
@@ -318,10 +350,9 @@ async def get_timeseries(metric: str = None, current_user: dict = Depends(get_cu
             from app.services.stats_service import find_column
             metric = find_column(df, r'revenue|sales|amount|\bmrr\b|\barr\b|turnover|income|earnings|\bgmv\b|sales_amount|order_value|net_revenue|total_revenue', numeric_only=True)
             if not metric:
-                num_cols = df.select_dtypes(include=[np.number]).columns
-                if len(num_cols) > 0:
-                    metric = num_cols[0]
-                else:
+                from app.services.stats_service import pick_default_metric
+                metric = pick_default_metric(df)
+                if not metric:
                     raise HTTPException(status_code=400, detail="No metric column found")
     else:
         col_map = {c.lower(): c for c in df.columns}
@@ -343,7 +374,7 @@ async def get_timeseries(metric: str = None, current_user: dict = Depends(get_cu
         raise HTTPException(status_code=400, detail="No date column found")
 
     df_temp = df.copy()
-    df_temp[date_col] = pd.to_datetime(df_temp[date_col], errors='coerce')
+    df_temp[date_col] = to_datetime_safe(df_temp[date_col])
     df_temp = df_temp.dropna(subset=[date_col])
     
     monthly = df_temp.groupby(df_temp[date_col].dt.to_period('M'))[metric].sum().reset_index()
@@ -373,7 +404,7 @@ async def get_trend(current_user: dict = Depends(get_current_user)):
         return {"trends": []}
 
     df_temp = df.copy()
-    df_temp[date_col] = pd.to_datetime(df_temp[date_col], errors='coerce')
+    df_temp[date_col] = to_datetime_safe(df_temp[date_col])
     df_temp = df_temp.dropna(subset=[date_col])
 
     trends_res = []
@@ -462,7 +493,7 @@ async def get_forecast(
     metric: str = None,
     periods: int = 3,
     freq: str = "M",
-    agg: str = "sum",
+    agg: str = None,
     current_user: dict = Depends(get_current_user),
 ):
     # Clamp rather than reject: the horizon comes straight off a UI control,
@@ -471,6 +502,7 @@ async def get_forecast(
     freq = str(freq).upper()
     if freq not in ("D", "W", "M", "Q", "AUTO"):
         freq = "M"
+    explicit_agg = agg is not None
     agg = "mean" if str(agg).lower() == "mean" else "sum"
 
     dataset_info = get_active_dataset(current_user["id"])
@@ -495,13 +527,27 @@ async def get_forecast(
             from app.services.stats_service import find_column
             metric = find_column(df, r'revenue|sales|amount|\bmrr\b|\barr\b|turnover|income|earnings|\bgmv\b|sales_amount|order_value|net_revenue|total_revenue', numeric_only=True)
             if not metric:
-                num_cols = df.select_dtypes(include=[np.number]).columns
-                if len(num_cols) > 0:
-                    metric = num_cols[0]
-                else:
+                from app.services.stats_service import pick_default_metric
+                metric = pick_default_metric(df)
+                if not metric:
                     return {"available": False, "reason": "No numeric metric column found"}
             
-    return forecast_series(df, metric, periods=periods, agg=agg, freq=freq)
+    # A balance, price, rate or score is a level, not a flow — adding up every
+    # reading inside a month produces a number with no meaning (a bank statement
+    # forecast came out as -47 crore, the sum of daily closing balances). Unless
+    # the caller asked for a specific aggregation, average those metrics instead.
+    if not explicit_agg:
+        from app.services.stats_service import is_non_additive
+        if is_non_additive(metric):
+            agg = "mean"
+
+    result = forecast_series(df, metric, periods=periods, agg=agg, freq=freq)
+    # The UI shows the metric name next to the numbers; when it didn't send one
+    # it has no way to know which column the server picked.
+    if isinstance(result, dict):
+        result.setdefault("metric", str(metric))
+        result.setdefault("agg", agg)
+    return result
 
 @router.get("/export/{page}")
 async def export_csv(page: str, current_user: dict = Depends(get_current_user)):
@@ -512,39 +558,73 @@ async def export_csv(page: str, current_user: dict = Depends(get_current_user)):
     if df is None:
         raise HTTPException(status_code=400, detail="Dataset not loaded")
         
-    if page == "eda":
-        res = await get_eda()
-        summary = res.get("summary", [])
-        if not summary:
-            return PlainTextResponse("No data")
-        
-        lines = ["column,type,min,max,mean,nulls,unique"]
-        for s in summary:
-            lines.append(f"{s.get('column','')},{s.get('type','')},{s.get('min','')},{s.get('max','')},{s.get('mean','')},{s.get('nulls','')},{s.get('unique','')}")
-        return PlainTextResponse("\\n".join(lines))
-        
-    elif page == "statistics":
-        res = await get_statistics()
-        stats = res.get("stats", [])
-        if not stats:
-            return PlainTextResponse("No data")
-        lines = ["column,mean,median,std,skew,kurtosis"]
-        for s in stats:
-            lines.append(f"{s.get('column','')},{s.get('mean','')},{s.get('median','')},{s.get('std','')},{s.get('skew','')},{s.get('kurtosis','')}")
-        return PlainTextResponse("\\n".join(lines))
-        
-    elif page == "outliers":
-        res = await get_outliers()
-        outliers = res.get("outliers", [])
-        if not outliers:
-            return PlainTextResponse("No data")
-        lines = ["column,z_score_outliers,iqr_outliers"]
-        for o in outliers:
-            lines.append(f"{o.get('column','')},{o.get('z_score_outliers','')},{o.get('iqr_outliers','')}")
-        return PlainTextResponse("\\n".join(lines))
-        
-    else:
-        raise HTTPException(status_code=400, detail="Invalid page for export")
+    # Each analytics endpoint is a FastAPI route function whose `current_user`
+    # is filled in by dependency injection. Calling one directly, as this does,
+    # bypasses that injection — so the argument has to be passed explicitly or
+    # `current_user` arrives as an unresolved Depends object and every one of
+    # these exports fails with a 500 on `current_user["id"]`.
+    EXPORTS = {
+        "eda": (get_eda, "summary",
+                ["column", "type", "min", "max", "mean", "nulls", "unique"]),
+        "statistics": (get_statistics, "stats",
+                       ["column", "mean", "median", "std", "skew", "kurtosis"]),
+        "outliers": (get_outliers, "outliers",
+                     ["column", "z_score_outliers", "iqr_outliers"]),
+        "correlation": (get_correlation, "correlation", None),
+        "trend": (get_trend, "trends", None),
+    }
+
+    if page not in EXPORTS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid page for export. Supported: {', '.join(sorted(EXPORTS))}",
+        )
+
+    handler, result_key, columns = EXPORTS[page]
+    res = await handler(current_user)
+
+    # Some of these endpoints key their payload differently between the
+    # populated and empty cases (/trend returns "trend" with data but "trends"
+    # when there is none), so falling back to the first list of records in the
+    # response keeps the export working regardless of that drift.
+    rows = (res or {}).get(result_key)
+    if not rows and isinstance(res, dict):
+        rows = next(
+            (v for v in res.values()
+             if isinstance(v, list) and v and isinstance(v[0], dict)),
+            None,
+        )
+    if not rows:
+        return PlainTextResponse("No data")
+
+    # Derive the header from the payload when the shape isn't fixed, so newly
+    # added fields flow through instead of being silently dropped.
+    if not columns:
+        seen = []
+        for row in rows:
+            if isinstance(row, dict):
+                for k in row:
+                    if k not in seen:
+                        seen.append(k)
+        columns = seen
+    if not columns:
+        return PlainTextResponse("No data")
+
+    # csv.writer handles values containing commas, quotes or newlines, which a
+    # manual f-string join would corrupt into extra columns/rows.
+    buf = io.StringIO()
+    writer = csv.writer(buf, lineterminator="\n")
+    writer.writerow(columns)
+    for row in rows:
+        if isinstance(row, dict):
+            writer.writerow(["" if row.get(c) is None else row.get(c) for c in columns])
+
+    filename = f"{page}_export.csv"
+    return PlainTextResponse(
+        buf.getvalue(),
+        media_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
 
 @router.get("/report")
 async def generate_report(current_user: dict = Depends(get_current_user)):
@@ -778,7 +858,7 @@ async def get_metrics_explorer(current_user: dict = Depends(get_current_user)):
         if date_col and n > 10:
             try:
                 df_temp = df[[date_col, col]].copy()
-                df_temp[date_col] = pd.to_datetime(df_temp[date_col], errors='coerce')
+                df_temp[date_col] = to_datetime_safe(df_temp[date_col])
                 df_temp = df_temp.dropna()
                 if len(df_temp) > 10:
                     monthly = df_temp.groupby(df_temp[date_col].dt.to_period('M'))[col].sum()
@@ -849,7 +929,7 @@ async def get_metrics_explorer(current_user: dict = Depends(get_current_user)):
             if date_col and n > 20:
                 try:
                     df_temp2 = df[[date_col, col]].copy()
-                    df_temp2[date_col] = pd.to_datetime(df_temp2[date_col], errors='coerce')
+                    df_temp2[date_col] = to_datetime_safe(df_temp2[date_col])
                     df_temp2 = df_temp2.dropna()
                     monthly_sum = df_temp2.groupby(df_temp2[date_col].dt.to_period('M'))[col].sum()
                     monthly_mean = df_temp2.groupby(df_temp2[date_col].dt.to_period('M'))[col].mean()
@@ -881,7 +961,7 @@ async def get_metrics_explorer(current_user: dict = Depends(get_current_user)):
         if date_col and n > 10:
             try:
                 df_temp = df[[date_col, col]].copy()
-                df_temp[date_col] = pd.to_datetime(df_temp[date_col], errors='coerce')
+                df_temp[date_col] = to_datetime_safe(df_temp[date_col])
                 df_temp = df_temp.dropna()
                 if len(df_temp) > 0:
                     agg_fn = 'sum' if aggregation == 'SUM' else 'mean'
@@ -1021,7 +1101,7 @@ async def get_metric_intelligence(metric: str, current_user: dict = Depends(get_
         if date_col and n > 20:
             try:
                 df_tmp2 = df[[date_col, metric]].copy()
-                df_tmp2[date_col] = pd.to_datetime(df_tmp2[date_col], errors='coerce')
+                df_tmp2[date_col] = to_datetime_safe(df_tmp2[date_col])
                 df_tmp2 = df_tmp2.dropna()
                 mthly_sum   = df_tmp2.groupby(df_tmp2[date_col].dt.to_period('M'))[metric].sum()
                 mthly_mean  = df_tmp2.groupby(df_tmp2[date_col].dt.to_period('M'))[metric].mean()
@@ -1084,7 +1164,7 @@ async def get_metric_intelligence(metric: str, current_user: dict = Depends(get_
     if date_col and n > 10:
         try:
             df_t = df[[date_col, metric]].copy()
-            df_t[date_col] = pd.to_datetime(df_t[date_col], errors='coerce')
+            df_t[date_col] = to_datetime_safe(df_t[date_col])
             df_t = df_t.dropna()
             if len(df_t) > 10:
                 mthly = df_t.groupby(df_t[date_col].dt.to_period('M'))[metric].sum()
@@ -1258,7 +1338,7 @@ async def get_metric_intelligence(metric: str, current_user: dict = Depends(get_
 
     if date_col:
         df_temp = df.copy()
-        df_temp[date_col] = pd.to_datetime(df_temp[date_col], errors='coerce')
+        df_temp[date_col] = to_datetime_safe(df_temp[date_col])
         df_temp = df_temp.dropna(subset=[date_col])
         if len(df_temp) > 0:
             monthly = df_temp.groupby(df_temp[date_col].dt.to_period('M'))[metric].agg('sum' if aggregation == 'SUM' else 'mean').reset_index()
@@ -1384,7 +1464,7 @@ async def get_breakdown(metric: str, period: Optional[str] = None, current_user:
     full_df = df
     if period and date_col:
         df_temp = df.copy()
-        df_temp[date_col] = pd.to_datetime(df_temp[date_col], errors='coerce')
+        df_temp[date_col] = to_datetime_safe(df_temp[date_col])
         df = df_temp[df_temp[date_col].dt.strftime('%Y-%m') == period]
 
     # Get categorical columns (object, string, category)

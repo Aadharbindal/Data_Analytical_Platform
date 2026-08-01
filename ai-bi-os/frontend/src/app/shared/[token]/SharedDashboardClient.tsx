@@ -7,7 +7,7 @@ import { BarChart3, Loader2, ShieldAlert, Lock, ArrowRight, Clock } from "lucide
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { InsightPanel } from "@/components/dashboard/InsightPanel";
 import { BASE_URL } from "@/lib/api";
-import { formatIndianCurrency } from "@/lib/utils";
+import { formatKpiValue } from "@/lib/utils";
 
 interface SharedData {
   dataset_name: string;
@@ -17,18 +17,11 @@ interface SharedData {
   insights: { title: string; description: string; impact: number | null; confidence: number; category: string }[];
 }
 
-function formatKpiValue(value: number, type?: string): string {
-  const isNegative = value < 0;
-  const abs = Math.abs(value);
-  const sign = isNegative ? "-" : "";
-  if (type === "count" || type === "generic") {
-    if (abs >= 1_000_000) return `${sign}${(abs / 1_000_000).toFixed(1)}M`;
-    if (abs >= 1_000) return `${sign}${(abs / 1_000).toFixed(1)}K`;
-    return `${sign}${abs}`;
-  }
-  if (type === "percent") return `${sign}${abs.toFixed(1)}%`;
-  return `${sign}${formatIndianCurrency(abs)}`;
-}
+// This page is the version outsiders see, so its numbers have to be the same
+// ones the owner saw before sharing. It carried a local copy of formatKpiValue
+// that abbreviated counts and used Western millions, so a dashboard reading
+// "1,372" and "₹58.82L" for the owner rendered as "1.4K" and "5.9M" to whoever
+// opened the link — the same figures, apparently disagreeing.
 
 type ViewState =
   | { kind: "loading" }

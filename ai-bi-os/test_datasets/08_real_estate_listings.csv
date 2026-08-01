@@ -1,0 +1,551 @@
+property_id,city,locality,property_type,bhk,area_sqft,price_inr,price_per_sqft,listing_date,status,agent_name,furnishing
+PROP7000,Chennai,OMR,Villa,3,1340,21216066.0,15832.89,2026-01-01,Available,Agent Joshi,Unfurnished
+PROP7001,Delhi NCR,Dwarka,Villa,4,1762,25988408.0,14749.38,2025-10-09,Available,Agent Joshi,Fully Furnished
+PROP7002,Pune,Hinjewadi,Apartment,3,1551,22603617.0,14573.58,2026-06-21,Available,Agent Kapoor,Unfurnished
+PROP7003,Chennai,Anna Nagar,Apartment,2,824,11867823.0,14402.7,2026-01-23,Sold,Agent Singh,Unfurnished
+PROP7004,Hyderabad,Gachibowli,Independent House,4,2138,20178890.0,9438.21,2025-05-23,Sold,Agent Kapoor,Unfurnished
+PROP7005,Chennai,T Nagar,Studio,4,1657,12106823.0,7306.47,2025-05-04,Available,Agent Rao,Fully Furnished
+PROP7006,Delhi NCR,Dwarka,Apartment,2,769,12388089.0,16109.35,2025-11-01,Under Negotiation,Agent Kapoor,Semi-Furnished
+PROP7007,Delhi NCR,Dwarka,Apartment,2,1061,9008763.0,8490.82,2026-03-04,Sold,Agent Verma,Unfurnished
+PROP7008,Pune,Hinjewadi,Penthouse,2,824,13073500.0,15865.9,2025-06-22,Under Negotiation,,Fully Furnished
+PROP7009,Chennai,OMR,Independent House,3,1425,22357244.0,15689.29,2025-11-28,Available,Agent Joshi,Unfurnished
+PROP7010,Delhi NCR,Dwarka,Studio,3,1350,11144048.0,8254.85,2025-06-20,Available,Agent Singh,Semi-Furnished
+PROP7011,Mumbai,Powai,Apartment,5,2619,12511313.0,4777.13,2025-12-29,Available,Agent Rao,Unfurnished
+PROP7012,Pune,Kothrud,Penthouse,3,1198,5789241.0,4832.42,2025-09-25,Sold,Agent Verma,Semi-Furnished
+PROP7013,Bengaluru,HSR Layout,Apartment,3,1427,12527106.0,8778.63,2025-05-04,Available,Agent Joshi,Unfurnished
+PROP7014,Chennai,Anna Nagar,Apartment,2,827,13421561.0,16229.21,2025-06-26,Under Negotiation,Agent Rao,Semi-Furnished
+PROP7015,Bengaluru,Whitefield,Studio,1,428,3154196.0,7369.62,2026-05-29,Available,Agent Joshi,Semi-Furnished
+PROP7016,Bengaluru,Whitefield,Villa,3,1592,27739430.0,17424.26,2025-08-22,Available,Agent Joshi,Unfurnished
+PROP7017,Delhi NCR,Gurugram Sector 50,Apartment,2,840,12543620.0,14932.88,2026-02-06,Available,Agent Singh,Fully Furnished
+PROP7018,Hyderabad,Madhapur,Apartment,3,1188,13273871.0,11173.29,2025-08-19,Available,Agent Joshi,Fully Furnished
+PROP7019,Chennai,T Nagar,Studio,2,872,10111123.0,11595.32,2026-04-25,Sold,Agent Rao,Unfurnished
+PROP7020,Delhi NCR,Faridabad,Studio,3,1234,9114557.0,7386.19,2026-03-16,Sold,Agent Rao,Fully Furnished
+PROP7021,Bengaluru,Whitefield,Penthouse,3,1616,24917604.0,15419.31,2025-07-31,Sold,Agent Verma,Fully Furnished
+PROP7022,Hyderabad,Madhapur,Independent House,2,926,16060330.0,17343.77,2025-06-19,Under Negotiation,Agent Joshi,Unfurnished
+PROP7023,Bengaluru,Koramangala,Independent House,2,910,13368716.0,14690.9,2025-09-02,Available,Agent Rao,Semi-Furnished
+PROP7024,Pune,Baner,Independent House,4,1585,17668352.0,11147.23,2025-08-18,Available,Agent Kapoor,Semi-Furnished
+PROP7025,Mumbai,Andheri,Studio,3,1520,9450122.0,6217.19,2026-02-14,Available,Agent Singh,Unfurnished
+PROP7026,Delhi NCR,Gurugram Sector 50,Apartment,2,853,7147302.0,8379.02,2026-06-17,Available,Agent Kapoor,Semi-Furnished
+PROP7027,Bengaluru,Whitefield,Apartment,3,1455,25117957.0,17263.2,2026-01-09,Available,Agent Kapoor,Semi-Furnished
+PROP7028,Bengaluru,Whitefield,Independent House,3,1521,21024578.0,13822.87,2025-08-09,Available,Agent Rao,Fully Furnished
+PROP7029,Pune,Viman Nagar,Apartment,2,897,4205033.0,4687.89,2025-05-10,Available,Agent Kapoor,Unfurnished
+PROP7030,Chennai,T Nagar,Apartment,3,1527,23358020.0,15296.67,2025-08-09,Available,Agent Kapoor,Unfurnished
+PROP7031,Pune,Viman Nagar,Studio,3,1361,11824876.0,8688.37,2026-03-11,Sold,Agent Kapoor,Semi-Furnished
+PROP7032,Hyderabad,Gachibowli,Independent House,2,781,9293317.0,11899.25,2026-03-11,Available,Agent Kapoor,Fully Furnished
+PROP7033,Bengaluru,Whitefield,Studio,1,386,3975887.0,10300.23,2025-06-09,Available,Agent Singh,Unfurnished
+PROP7034,Bengaluru,Koramangala,Apartment,3,1459,15233744.0,10441.22,2025-06-01,Sold,Agent Singh,Semi-Furnished
+PROP7035,Pune,Hinjewadi,Studio,2,996,13420767.0,13474.67,2026-04-19,Available,Agent Joshi,Unfurnished
+PROP7036,Delhi NCR,Noida Sector 62,Studio,3,1551,26096871.0,16825.84,2025-11-13,Sold,Agent Rao,Semi-Furnished
+PROP7037,Mumbai,Thane,Apartment,2,857,7136621.0,8327.45,2025-07-13,Available,Agent Kapoor,Fully Furnished
+PROP7038,Delhi NCR,Gurugram Sector 50,Villa,2,1051,12781973.0,12161.73,2025-05-26,Available,Agent Kapoor,Unfurnished
+PROP7039,Hyderabad,Gachibowli,Villa,3,1465,14017031.0,9567.94,2026-04-24,Sold,Agent Rao,Fully Furnished
+PROP7040,Pune,Hinjewadi,Apartment,3,1485,20048914.0,13500.95,2026-04-29,Available,Agent Rao,Unfurnished
+PROP7041,Pune,Baner,Apartment,2,1064,8586778.0,8070.28,2026-02-11,Under Negotiation,Agent Rao,Unfurnished
+PROP7042,Hyderabad,Gachibowli,Independent House,4,1581,27827171.0,17600.99,2026-07-14,Available,Agent Joshi,Fully Furnished
+PROP7043,Chennai,T Nagar,Independent House,3,1195,13863573.0,11601.32,2026-02-18,Available,Agent Singh,Fully Furnished
+PROP7044,Pune,Baner,Apartment,3,1472,9100807.0,6182.61,2025-06-09,Sold,Agent Joshi,Fully Furnished
+PROP7045,Mumbai,Thane,Apartment,2,1019,8865889.0,8700.58,2026-02-23,Under Negotiation,Agent Singh,Unfurnished
+PROP7046,Mumbai,Thane,Apartment,2,1031,15252407.0,14793.8,2026-05-05,Available,Agent Verma,Fully Furnished
+PROP7047,Bengaluru,HSR Layout,Independent House,4,1792,14339991.0,8002.23,2025-11-17,Under Negotiation,Agent Rao,Semi-Furnished
+PROP7048,Delhi NCR,Dwarka,Apartment,3,1224,18033709.0,14733.42,2026-07-10,Available,Agent Joshi,Unfurnished
+PROP7049,Mumbai,Bandra,Apartment,3,1430,10564607.0,7387.84,2026-04-17,Available,Agent Verma,Semi-Furnished
+PROP7050,Mumbai,Thane,Apartment,3,1581,11897813.0,7525.5,2026-06-05,Available,Agent Rao,Unfurnished
+PROP7051,Chennai,Anna Nagar,Apartment,4,1671,21369396.0,12788.39,2025-05-01,Available,Agent Singh,Fully Furnished
+PROP7052,Mumbai,Thane,Apartment,3,1269,8144603.0,6418.13,2025-04-13,Sold,Agent Kapoor,Semi-Furnished
+PROP7053,Chennai,Velachery,Apartment,4,1688,25981310.0,15391.77,2026-04-20,Sold,Agent Joshi,Fully Furnished
+PROP7054,Delhi NCR,Noida Sector 62,Apartment,3,1441,13222708.0,9176.06,2025-08-10,Available,Agent Rao,Fully Furnished
+PROP7055,Bengaluru,Koramangala,Studio,5,2593,30820521.0,11886.05,2025-06-06,Available,Agent Rao,Fully Furnished
+PROP7056,Pune,Baner,Villa,3,1578,21896162.0,13875.9,2025-07-04,Sold,Agent Singh,Unfurnished
+PROP7057,Mumbai,Bandra,Penthouse,3,1439,22933955.0,15937.43,2025-12-30,Available,Agent Verma,Fully Furnished
+PROP7058,Hyderabad,Gachibowli,Apartment,3,1618,11101792.0,6861.43,2025-10-27,Sold,Agent Rao,Unfurnished
+PROP7059,Chennai,Velachery,Independent House,3,1388,10045581.0,7237.45,2025-05-17,Sold,Agent Rao,Unfurnished
+PROP7060,Bengaluru,Whitefield,Apartment,3,1342,19062077.0,14204.23,2026-07-01,Available,Agent Verma,Fully Furnished
+PROP7061,Mumbai,Andheri,Apartment,2,906,13262591.0,14638.62,2026-07-19,Available,Agent Rao,Semi-Furnished
+PROP7062,Bengaluru,Whitefield,Independent House,2,975,8943410.0,9172.73,2025-06-18,Available,Agent Kapoor,Unfurnished
+PROP7063,Bengaluru,Koramangala,Apartment,2,1080,11692382.0,10826.28,2026-02-05,Available,Agent Verma,Unfurnished
+PROP7064,Bengaluru,Indiranagar,Apartment,5,2180,16620645.0,7624.15,2026-04-28,Available,Agent Singh,Semi-Furnished
+PROP7065,Chennai,T Nagar,Apartment,2,830,6768931.0,8155.34,2026-05-25,Available,Agent Singh,Unfurnished
+PROP7066,Bengaluru,Whitefield,Apartment,2,814,8048187.0,9887.21,2026-06-15,Available,Agent Kapoor,Fully Furnished
+PROP7067,Chennai,Velachery,Apartment,3,1581,14278334.0,9031.2,2026-04-01,Available,Agent Joshi,Semi-Furnished
+PROP7068,Hyderabad,Gachibowli,Apartment,3,1218,6471599.0,5313.3,2026-03-23,Available,Agent Joshi,Unfurnished
+PROP7069,Pune,Hinjewadi,Apartment,2,938,9722898.0,10365.56,2026-07-10,Sold,Agent Singh,Unfurnished
+PROP7070,Hyderabad,Hitech City,Apartment,1,531,9049907.0,17043.14,2025-06-17,Available,Agent Joshi,Fully Furnished
+PROP7071,Mumbai,Thane,Apartment,3,1565,22906278.0,14636.6,2025-06-25,Under Negotiation,Agent Rao,Semi-Furnished
+PROP7072,Chennai,Anna Nagar,Apartment,2,770,12979700.0,16856.75,2025-04-05,Available,Agent Kapoor,Semi-Furnished
+PROP7073,Delhi NCR,Noida Sector 62,Apartment,3,1203,8349298.0,6940.4,2025-10-13,Available,Agent Kapoor,Unfurnished
+PROP7074,Mumbai,Powai,Independent House,3,1501,9073155.0,6044.74,2026-03-18,Under Negotiation,Agent Rao,Semi-Furnished
+PROP7075,Delhi NCR,Faridabad,Studio,3,1410,10642759.0,7548.06,2025-08-16,Under Negotiation,Agent Kapoor,Semi-Furnished
+PROP7076,Pune,Hinjewadi,Apartment,4,1586,22217568.0,14008.56,2026-04-26,Sold,,Unfurnished
+PROP7077,Hyderabad,Kondapur,Villa,2,970,7437791.0,7667.83,2026-03-14,Available,Agent Singh,Fully Furnished
+PROP7078,Chennai,OMR,Apartment,2,1040,13723535.0,13195.71,2025-05-08,Available,Agent Kapoor,Semi-Furnished
+PROP7079,Hyderabad,Madhapur,Independent House,3,1351,22405884.0,16584.67,2025-06-08,Available,Agent Rao,Unfurnished
+PROP7080,Pune,Viman Nagar,Apartment,4,1782,18866652.0,10587.35,2026-05-02,Sold,Agent Kapoor,Fully Furnished
+PROP7081,Delhi NCR,Noida Sector 62,Independent House,4,1916,17208334.0,8981.39,2025-05-29,Sold,Agent Kapoor,Unfurnished
+PROP7082,Pune,Hinjewadi,Studio,2,987,10701919.0,10842.88,2025-04-14,Available,Agent Joshi,Unfurnished
+PROP7083,Delhi NCR,Gurugram Sector 50,Villa,2,780,12458795.0,15972.81,2026-01-22,Available,Agent Singh,Unfurnished
+PROP7084,Bengaluru,Koramangala,Studio,2,882,4494673.0,5096.0,2026-03-24,Available,Agent Singh,Unfurnished
+PROP7085,Pune,Viman Nagar,Apartment,3,1373,7327879.0,5337.13,2025-11-05,Sold,Agent Rao,Semi-Furnished
+PROP7086,Chennai,OMR,Independent House,3,1238,12282969.0,9921.62,2026-05-18,Available,Agent Joshi,Fully Furnished
+PROP7087,Pune,Viman Nagar,Villa,3,1281,12705453.0,9918.39,2025-09-28,Available,Agent Rao,Unfurnished
+PROP7088,Bengaluru,Koramangala,Villa,5,2304,17056867.0,7403.15,2026-04-11,Available,Agent Joshi,Fully Furnished
+PROP7089,Delhi NCR,Dwarka,Apartment,2,981,16202078.0,16515.88,2026-05-30,Available,Agent Kapoor,Semi-Furnished
+PROP7090,Mumbai,Bandra,Independent House,1,517,9218634.0,17831.01,2026-07-05,Available,Agent Verma,Unfurnished
+PROP7091,Mumbai,Powai,Apartment,3,1580,15020643.0,9506.74,2026-02-18,Sold,Agent Joshi,Fully Furnished
+PROP7092,Mumbai,Powai,Studio,3,1627,26250261.0,16134.15,2026-07-13,Available,Agent Kapoor,Semi-Furnished
+PROP7093,Pune,Baner,Apartment,1,525,7163709.0,13645.16,2025-07-11,Under Negotiation,Agent Kapoor,Semi-Furnished
+PROP7094,Pune,Hinjewadi,Villa,2,1085,12822094.0,11817.6,2026-04-08,Available,Agent Rao,Fully Furnished
+PROP7095,Hyderabad,Gachibowli,Apartment,4,1529,7564176.0,4947.14,2026-04-17,Sold,Agent Rao,Unfurnished
+PROP7096,Mumbai,Andheri,Apartment,1,470,2182142.0,4642.86,2025-12-08,Available,Agent Rao,Fully Furnished
+PROP7097,Mumbai,Andheri,Villa,2,900,7732758.0,8591.95,2025-12-23,Sold,Agent Rao,Semi-Furnished
+PROP7098,Delhi NCR,Gurugram Sector 50,Apartment,2,1038,16185300.0,15592.77,2026-02-11,Available,Agent Joshi,Semi-Furnished
+PROP7099,Chennai,Velachery,Apartment,2,788,10756683.0,13650.61,2026-02-20,Available,Agent Singh,Semi-Furnished
+PROP7100,Bengaluru,Koramangala,Apartment,4,1558,8792920.0,5643.72,2025-06-13,Sold,Agent Verma,Fully Furnished
+PROP7101,Pune,Viman Nagar,Apartment,4,1784,12316433.0,6903.83,2025-10-13,Sold,Agent Rao,Semi-Furnished
+PROP7102,Hyderabad,Hitech City,Independent House,2,767,5154906.0,6720.87,2025-12-31,Available,Agent Singh,Semi-Furnished
+PROP7103,Hyderabad,Kondapur,Apartment,3,1216,21282986.0,17502.46,2025-08-11,Sold,Agent Kapoor,Unfurnished
+PROP7104,Hyderabad,Kondapur,Villa,2,991,15428338.0,15568.45,2026-03-13,Available,Agent Rao,Semi-Furnished
+PROP7105,Delhi NCR,Faridabad,Independent House,4,1575,26183729.0,16624.59,2025-12-08,Available,Agent Verma,Unfurnished
+PROP7106,Pune,Viman Nagar,Apartment,4,1737,10283448.0,5920.24,2025-11-09,Available,Agent Joshi,Fully Furnished
+PROP7107,Chennai,T Nagar,Penthouse,2,1048,7978882.0,7613.44,2026-03-31,Available,Agent Kapoor,Semi-Furnished
+PROP7108,Delhi NCR,Dwarka,Apartment,2,984,16247237.0,16511.42,2025-08-28,Available,Agent Kapoor,Fully Furnished
+PROP7109,Hyderabad,Hitech City,Apartment,3,1380,12481753.0,9044.75,2025-09-20,Sold,Agent Kapoor,Unfurnished
+PROP7110,Pune,Viman Nagar,Villa,3,1264,7581681.0,5998.17,2025-11-10,Under Negotiation,Agent Verma,Semi-Furnished
+PROP7111,Bengaluru,HSR Layout,Villa,2,955,10494771.0,10989.29,2026-01-19,Sold,Agent Rao,Semi-Furnished
+PROP7112,Mumbai,Andheri,Apartment,2,767,8809250.0,11485.33,2025-08-02,Available,Agent Rao,Semi-Furnished
+PROP7113,Mumbai,Thane,Penthouse,3,1346,17677797.0,13133.58,2025-09-18,Under Negotiation,Agent Singh,Semi-Furnished
+PROP7114,Pune,Hinjewadi,Studio,1,429,4948085.0,11534.0,2026-07-15,Available,Agent Joshi,Fully Furnished
+PROP7115,Hyderabad,Kondapur,Independent House,2,774,9284719.0,11995.76,2025-07-11,Available,Agent Verma,Semi-Furnished
+PROP7116,Chennai,Velachery,Independent House,3,1621,15493093.0,9557.74,2026-01-20,Available,Agent Singh,Semi-Furnished
+PROP7117,Delhi NCR,Dwarka,Apartment,2,990,16504941.0,16671.66,2026-05-28,Available,Agent Kapoor,Fully Furnished
+PROP7118,Hyderabad,Kondapur,Independent House,3,1207,12210759.0,10116.62,2025-08-05,Under Negotiation,Agent Joshi,Unfurnished
+PROP7119,Bengaluru,HSR Layout,Apartment,4,1961,30292377.0,15447.41,2025-05-01,Available,,Fully Furnished
+PROP7120,Mumbai,Bandra,Apartment,4,1876,33673941.0,17949.86,2026-03-31,Sold,Agent Singh,Fully Furnished
+PROP7121,Pune,Viman Nagar,Apartment,3,1326,13820438.0,10422.65,2025-11-10,Available,Agent Kapoor,Fully Furnished
+PROP7122,Hyderabad,Madhapur,Apartment,1,402,4101717.0,10203.28,2026-04-13,Available,Agent Joshi,Semi-Furnished
+PROP7123,Bengaluru,Indiranagar,Villa,3,1273,18052123.0,14180.77,2025-06-06,Sold,Agent Joshi,Unfurnished
+PROP7124,Delhi NCR,Noida Sector 62,Apartment,3,1170,16055690.0,13722.81,2026-01-17,Available,Agent Joshi,Unfurnished
+PROP7125,Bengaluru,Koramangala,Studio,3,1617,22535263.0,13936.46,2025-10-13,Available,Agent Singh,Semi-Furnished
+PROP7126,Mumbai,Andheri,Apartment,4,1937,31718890.0,16375.27,2026-06-27,Under Negotiation,Agent Joshi,Semi-Furnished
+PROP7127,Hyderabad,Kondapur,Independent House,3,1483,20568483.0,13869.51,2026-04-21,Under Negotiation,Agent Singh,Semi-Furnished
+PROP7128,Delhi NCR,Noida Sector 62,Apartment,3,1456,18007155.0,12367.55,2026-07-04,Available,Agent Verma,Semi-Furnished
+PROP7129,Hyderabad,Madhapur,Villa,3,1310,17758079.0,13555.79,2025-03-18,Under Negotiation,Agent Singh,Unfurnished
+PROP7130,Mumbai,Andheri,Apartment,4,1552,14627478.0,9424.92,2025-09-05,Under Negotiation,Agent Singh,Unfurnished
+PROP7131,Bengaluru,Koramangala,Villa,2,1053,8723121.0,8284.07,2025-09-04,Available,Agent Verma,Unfurnished
+PROP7132,Bengaluru,Whitefield,Apartment,3,1646,7905908.0,4803.1,2026-02-13,Under Negotiation,Agent Rao,Fully Furnished
+PROP7133,Chennai,Velachery,Villa,2,784,6440165.0,8214.5,2026-02-10,Available,Agent Kapoor,Semi-Furnished
+PROP7134,Pune,Viman Nagar,Apartment,2,921,8393382.0,9113.34,2025-10-13,Available,Agent Verma,Fully Furnished
+PROP7135,Hyderabad,Madhapur,Apartment,3,1291,21267217.0,16473.44,2026-02-08,Sold,Agent Rao,Semi-Furnished
+PROP7136,Pune,Kothrud,Apartment,3,1488,21144537.0,14210.04,2026-01-01,Available,Agent Verma,Fully Furnished
+PROP7137,Chennai,Anna Nagar,Apartment,3,1531,19456710.0,12708.5,2025-06-10,Available,Agent Verma,Fully Furnished
+PROP7138,Chennai,T Nagar,Apartment,5,2532,34851116.0,13764.26,2025-09-25,Available,Agent Singh,Unfurnished
+PROP7139,Hyderabad,Gachibowli,Studio,2,1010,12134997.0,12014.85,2025-06-29,Available,Agent Kapoor,Semi-Furnished
+PROP7140,Mumbai,Thane,Apartment,3,1198,15270076.0,12746.31,2025-10-20,Sold,Agent Singh,Fully Furnished
+PROP7141,Mumbai,Thane,Apartment,2,1069,9078309.0,8492.34,2025-09-14,Available,Agent Singh,Unfurnished
+PROP7142,Chennai,T Nagar,Apartment,2,775,13613732.0,17566.11,2026-01-03,Sold,Agent Kapoor,Semi-Furnished
+PROP7143,Delhi NCR,Gurugram Sector 50,Independent House,3,1552,9302644.0,5993.97,2026-03-19,Available,Agent Verma,Semi-Furnished
+PROP7144,Hyderabad,Kondapur,Apartment,2,968,11743680.0,12131.9,2026-05-04,Available,Agent Rao,Unfurnished
+PROP7145,Pune,Hinjewadi,Villa,2,1007,15036229.0,14931.71,2025-07-12,Available,Agent Kapoor,Semi-Furnished
+PROP7146,Pune,Kothrud,Studio,3,1265,7721691.0,6104.1,2025-06-25,Available,Agent Verma,Unfurnished
+PROP7147,Chennai,Velachery,Studio,4,2056,32057292.0,15592.07,2026-07-01,Sold,Agent Singh,Unfurnished
+PROP7148,Pune,Baner,Villa,3,1472,20816963.0,14141.96,2026-05-21,Sold,Agent Joshi,Unfurnished
+PROP7149,Delhi NCR,Gurugram Sector 50,Apartment,2,1009,16794138.0,16644.34,2026-05-05,Sold,Agent Joshi,Fully Furnished
+PROP7150,Chennai,T Nagar,Apartment,3,1337,11093177.0,8297.07,2025-07-29,Sold,Agent Joshi,Unfurnished
+PROP7151,Delhi NCR,Gurugram Sector 50,Apartment,3,1616,13921123.0,8614.56,2026-02-10,Sold,Agent Joshi,Semi-Furnished
+PROP7152,Chennai,Anna Nagar,Apartment,1,531,7191985.0,13544.23,2026-04-09,Sold,Agent Verma,Semi-Furnished
+PROP7153,Delhi NCR,Gurugram Sector 50,Studio,2,1085,19508357.0,17980.05,2026-07-21,Available,Agent Verma,Fully Furnished
+PROP7154,Pune,Kothrud,Independent House,3,1535,27597191.0,17978.63,2025-04-18,Available,Agent Kapoor,Unfurnished
+PROP7155,Hyderabad,Kondapur,Studio,2,1035,17595842.0,17000.81,2025-09-20,Sold,Agent Singh,Unfurnished
+PROP7156,Chennai,T Nagar,Apartment,3,1170,9597429.0,8202.93,2026-06-03,Available,Agent Rao,Semi-Furnished
+PROP7157,Delhi NCR,Dwarka,Apartment,5,2369,16816686.0,7098.64,2025-12-04,Available,Agent Joshi,Semi-Furnished
+PROP7158,Bengaluru,HSR Layout,Studio,3,1603,21923760.0,13676.71,2025-07-29,Available,Agent Kapoor,Semi-Furnished
+PROP7159,Pune,Baner,Apartment,3,1535,14941238.0,9733.71,2026-04-16,Available,Agent Rao,Semi-Furnished
+PROP7160,Pune,Baner,Apartment,2,1021,10794221.0,10572.2,2026-04-11,Available,Agent Joshi,Semi-Furnished
+PROP7161,Bengaluru,Koramangala,Apartment,3,1241,22066103.0,17780.9,2026-05-12,Sold,Agent Rao,Unfurnished
+PROP7162,Hyderabad,Hitech City,Apartment,3,1156,13167218.0,11390.33,2026-04-10,Under Negotiation,Agent Joshi,Fully Furnished
+PROP7163,Chennai,Velachery,Independent House,3,1210,21737992.0,17965.28,2025-09-03,Under Negotiation,Agent Joshi,Fully Furnished
+PROP7164,Chennai,Velachery,Apartment,2,765,10412924.0,13611.66,2025-07-25,Available,Agent Singh,Unfurnished
+PROP7165,Chennai,OMR,Apartment,2,1064,10816144.0,10165.55,2025-12-20,Available,Agent Singh,Unfurnished
+PROP7166,Delhi NCR,Noida Sector 62,Independent House,2,808,8807823.0,10900.77,2026-05-03,Available,Agent Kapoor,Fully Furnished
+PROP7167,Chennai,Anna Nagar,Apartment,3,1574,18368559.0,11669.99,2026-04-20,Available,Agent Singh,Fully Furnished
+PROP7168,Pune,Hinjewadi,Apartment,2,880,3985502.0,4528.98,2026-05-09,Available,Agent Kapoor,Fully Furnished
+PROP7169,Bengaluru,HSR Layout,Independent House,2,979,15408152.0,15738.66,2025-05-28,Under Negotiation,Agent Singh,Unfurnished
+PROP7170,Bengaluru,Whitefield,Apartment,2,808,7074687.0,8755.8,2025-12-15,Available,Agent Joshi,Unfurnished
+PROP7171,Hyderabad,Madhapur,Penthouse,2,817,13543016.0,16576.52,2026-04-04,Under Negotiation,Agent Verma,Unfurnished
+PROP7172,Hyderabad,Madhapur,Apartment,4,1910,13491925.0,7063.83,2025-06-01,Available,Agent Kapoor,Unfurnished
+PROP7173,Mumbai,Bandra,Independent House,2,1079,13010018.0,12057.48,2026-06-20,Available,Agent Rao,Semi-Furnished
+PROP7174,Mumbai,Andheri,Independent House,2,836,10143517.0,12133.39,2026-04-21,Available,Agent Kapoor,Fully Furnished
+PROP7175,Mumbai,Andheri,Apartment,2,916,12461134.0,13603.86,2025-07-02,Sold,Agent Verma,Unfurnished
+PROP7176,Bengaluru,Koramangala,Villa,4,2175,23524651.0,10815.93,2025-04-26,Available,Agent Singh,Fully Furnished
+PROP7177,Chennai,T Nagar,Apartment,3,1638,18898712.0,11537.68,2025-07-26,Under Negotiation,Agent Singh,Fully Furnished
+PROP7178,Hyderabad,Hitech City,Independent House,3,1526,20432304.0,13389.45,2026-06-28,Available,Agent Joshi,Fully Furnished
+PROP7179,Mumbai,Andheri,Apartment,4,1632,25997023.0,15929.55,2025-09-24,Available,Agent Singh,Fully Furnished
+PROP7180,Chennai,Velachery,Studio,4,1860,20209228.0,10865.18,2025-09-11,Available,Agent Kapoor,Fully Furnished
+PROP7181,Hyderabad,Madhapur,Apartment,4,1854,29426505.0,15871.9,2026-05-31,Sold,Agent Rao,Semi-Furnished
+PROP7182,Mumbai,Andheri,Villa,2,1094,5073634.0,4637.69,2025-10-29,Available,Agent Kapoor,Unfurnished
+PROP7183,Delhi NCR,Gurugram Sector 50,Villa,2,1095,14592995.0,13326.94,2025-04-26,Available,Agent Rao,Unfurnished
+PROP7184,Hyderabad,Gachibowli,Independent House,2,1081,5500471.0,5088.32,2025-05-10,Available,Agent Singh,Unfurnished
+PROP7185,Chennai,Anna Nagar,Studio,4,1918,33393558.0,17410.61,2025-08-19,Sold,Agent Rao,Fully Furnished
+PROP7186,Mumbai,Bandra,Apartment,1,387,4586860.0,11852.35,2025-12-23,Available,Agent Kapoor,Unfurnished
+PROP7187,Delhi NCR,Faridabad,Apartment,2,1064,13694034.0,12870.33,2026-05-26,Available,Agent Rao,Semi-Furnished
+PROP7188,Bengaluru,HSR Layout,Independent House,3,1287,12005720.0,9328.45,2025-11-16,Available,Agent Joshi,Fully Furnished
+PROP7189,Delhi NCR,Faridabad,Apartment,4,2049,32233155.0,15731.16,2025-08-18,Available,Agent Rao,Semi-Furnished
+PROP7190,Hyderabad,Madhapur,Studio,2,963,13873279.0,14406.31,2025-05-27,Sold,Agent Singh,Unfurnished
+PROP7191,Delhi NCR,Noida Sector 62,Independent House,4,2199,24908539.0,11327.21,2025-08-10,Sold,Agent Kapoor,Fully Furnished
+PROP7192,Bengaluru,Koramangala,Studio,5,2462,43530314.0,17680.87,2026-04-10,Sold,Agent Verma,Fully Furnished
+PROP7193,Mumbai,Bandra,Apartment,2,813,7457042.0,9172.25,2025-04-02,Under Negotiation,Agent Rao,Semi-Furnished
+PROP7194,Bengaluru,Indiranagar,Apartment,2,904,12609490.0,13948.55,2025-07-28,Available,Agent Singh,Fully Furnished
+PROP7195,Pune,Kothrud,Studio,4,1701,25713764.0,15116.85,2025-11-15,Available,Agent Kapoor,Unfurnished
+PROP7196,Chennai,T Nagar,Independent House,2,815,5961935.0,7315.26,2026-04-06,Sold,Agent Kapoor,Unfurnished
+PROP7197,Bengaluru,HSR Layout,Apartment,3,1203,9491801.0,7890.11,2025-06-13,Available,Agent Singh,Fully Furnished
+PROP7198,Mumbai,Andheri,Apartment,5,2601,21068693.0,8100.23,2025-07-01,Available,Agent Rao,Semi-Furnished
+PROP7199,Mumbai,Powai,Apartment,3,1227,9481637.0,7727.5,2026-01-13,Sold,Agent Joshi,Unfurnished
+PROP7200,Bengaluru,HSR Layout,Apartment,3,1410,23898665.0,16949.41,2025-03-31,Available,Agent Singh,Fully Furnished
+PROP7201,Pune,Baner,Penthouse,4,1732,20808485.0,12014.14,2025-10-06,Available,Agent Verma,Unfurnished
+PROP7202,Chennai,Anna Nagar,Apartment,3,1639,22765637.0,13889.96,2025-09-07,Available,,Fully Furnished
+PROP7203,Mumbai,Powai,Apartment,3,1600,9515779.0,5947.36,2026-03-26,Available,Agent Joshi,Fully Furnished
+PROP7204,Chennai,OMR,Independent House,1,438,7077574.0,16158.84,2025-09-05,Available,Agent Rao,Semi-Furnished
+PROP7205,Chennai,Velachery,Apartment,4,1546,19769530.0,12787.54,2026-04-03,Under Negotiation,Agent Joshi,Unfurnished
+PROP7206,Hyderabad,Hitech City,Apartment,3,1358,13874446.0,10216.82,2026-06-17,Under Negotiation,Agent Verma,Semi-Furnished
+PROP7207,Bengaluru,HSR Layout,Apartment,2,974,12948214.0,13293.85,2025-09-01,Available,Agent Kapoor,Semi-Furnished
+PROP7208,Delhi NCR,Dwarka,Independent House,2,1016,10970160.0,10797.4,2026-04-13,Available,Agent Verma,Unfurnished
+PROP7209,Bengaluru,HSR Layout,Villa,2,942,13773408.0,14621.45,2025-10-21,Sold,Agent Joshi,Unfurnished
+PROP7210,Chennai,Velachery,Apartment,2,993,9531817.0,9599.01,2026-03-10,Available,Agent Rao,Unfurnished
+PROP7211,Bengaluru,Indiranagar,Apartment,2,771,10629685.0,13786.88,2025-07-11,Sold,Agent Rao,Semi-Furnished
+PROP7212,Delhi NCR,Gurugram Sector 50,Apartment,3,1536,9463404.0,6161.07,2026-07-25,Available,Agent Verma,Fully Furnished
+PROP7213,Chennai,OMR,Apartment,4,1985,13379687.0,6740.4,2025-05-18,Under Negotiation,Agent Kapoor,Unfurnished
+PROP7214,Pune,Viman Nagar,Apartment,2,864,5680851.0,6575.06,2026-02-02,Available,Agent Verma,Unfurnished
+PROP7215,Pune,Hinjewadi,Independent House,2,786,7364086.0,9369.07,2026-04-29,Under Negotiation,Agent Joshi,Semi-Furnished
+PROP7216,Mumbai,Powai,Apartment,2,1041,8209335.0,7886.01,2025-10-28,Sold,,Unfurnished
+PROP7217,Chennai,T Nagar,Apartment,2,1043,5210945.0,4996.11,2026-04-16,Available,Agent Singh,Semi-Furnished
+PROP7218,Delhi NCR,Gurugram Sector 50,Apartment,3,1409,12897665.0,9153.77,2026-01-25,Available,Agent Joshi,Fully Furnished
+PROP7219,Bengaluru,HSR Layout,Apartment,2,1043,5283120.0,5065.31,2025-06-22,Available,Agent Joshi,Fully Furnished
+PROP7220,Bengaluru,Koramangala,Independent House,4,1624,10535934.0,6487.64,2025-04-21,Available,Agent Joshi,Semi-Furnished
+PROP7221,Hyderabad,Kondapur,Apartment,2,785,6565590.0,8363.81,2025-12-03,Available,Agent Singh,Unfurnished
+PROP7222,Delhi NCR,Noida Sector 62,Studio,2,969,8542689.0,8815.98,2026-05-28,Available,Agent Singh,Fully Furnished
+PROP7223,Chennai,Velachery,Independent House,2,817,8322319.0,10186.44,2026-02-18,Sold,Agent Rao,Semi-Furnished
+PROP7224,Mumbai,Andheri,Independent House,3,1468,11846701.0,8069.96,2026-06-10,Available,Agent Singh,Semi-Furnished
+PROP7225,Pune,Kothrud,Penthouse,2,815,10466826.0,12842.73,2026-03-17,Under Negotiation,,Unfurnished
+PROP7226,Mumbai,Thane,Villa,2,883,11272708.0,12766.37,2026-04-09,Available,Agent Verma,Fully Furnished
+PROP7227,Chennai,T Nagar,Apartment,2,831,6187597.0,7445.97,2025-06-06,Sold,Agent Joshi,Fully Furnished
+PROP7228,Bengaluru,HSR Layout,Apartment,3,1512,11979001.0,7922.62,2026-02-12,Sold,Agent Rao,Semi-Furnished
+PROP7229,Bengaluru,Indiranagar,Apartment,2,974,7034815.0,7222.6,2026-03-04,Available,Agent Verma,Semi-Furnished
+PROP7230,Chennai,Velachery,Independent House,3,1229,11838784.0,9632.86,2026-06-17,Sold,Agent Rao,Semi-Furnished
+PROP7231,Hyderabad,Hitech City,Villa,3,1603,25166194.0,15699.43,2025-12-31,Available,Agent Joshi,Semi-Furnished
+PROP7232,Mumbai,Thane,Apartment,3,1226,10235349.0,8348.57,2025-11-17,Available,Agent Singh,Semi-Furnished
+PROP7233,Delhi NCR,Dwarka,Independent House,2,766,4674505.0,6102.49,2025-08-19,Sold,Agent Joshi,Fully Furnished
+PROP7234,Mumbai,Powai,Villa,3,1269,12078284.0,9517.95,2025-04-11,Under Negotiation,Agent Rao,Semi-Furnished
+PROP7235,Pune,Viman Nagar,Apartment,5,2542,24557006.0,9660.51,2025-06-16,Available,Agent Rao,Unfurnished
+PROP7236,Pune,Viman Nagar,Villa,3,1432,8876097.0,6198.39,2026-02-04,Sold,Agent Joshi,Unfurnished
+PROP7237,Delhi NCR,Noida Sector 62,Apartment,3,1491,15828877.0,10616.28,2025-08-20,Sold,Agent Singh,Unfurnished
+PROP7238,Chennai,OMR,Apartment,3,1506,9974103.0,6622.91,2026-02-20,Under Negotiation,Agent Kapoor,Unfurnished
+PROP7239,Mumbai,Andheri,Villa,5,2118,32885218.0,15526.54,2026-01-26,Available,Agent Rao,Fully Furnished
+PROP7240,Mumbai,Bandra,Apartment,2,788,8680979.0,11016.47,2026-02-11,Available,Agent Rao,Fully Furnished
+PROP7241,Hyderabad,Madhapur,Apartment,1,494,2559310.0,5180.79,2025-07-10,Under Negotiation,Agent Verma,Fully Furnished
+PROP7242,Bengaluru,Koramangala,Penthouse,2,975,4388126.0,4500.64,2026-01-24,Available,Agent Verma,Semi-Furnished
+PROP7243,Hyderabad,Hitech City,Independent House,3,1248,22188301.0,17779.09,2026-07-26,Available,Agent Singh,Unfurnished
+PROP7244,Mumbai,Bandra,Apartment,4,1998,15961898.0,7988.94,2026-03-03,Under Negotiation,Agent Joshi,Semi-Furnished
+PROP7245,Bengaluru,Whitefield,Apartment,5,1996,13239306.0,6632.92,2026-07-06,Sold,,Semi-Furnished
+PROP7246,Bengaluru,HSR Layout,Studio,2,927,6103312.0,6583.94,2025-08-10,Sold,Agent Kapoor,Fully Furnished
+PROP7247,Mumbai,Powai,Apartment,2,865,14486992.0,16747.97,2026-02-16,Available,Agent Kapoor,Semi-Furnished
+PROP7248,Mumbai,Andheri,Penthouse,3,1291,16762040.0,12983.76,2025-12-14,Under Negotiation,Agent Joshi,Fully Furnished
+PROP7249,Bengaluru,HSR Layout,Independent House,5,2579,44177541.0,17129.72,2025-12-09,Sold,Agent Singh,Unfurnished
+PROP7250,Delhi NCR,Noida Sector 62,Apartment,3,1227,8836759.0,7201.92,2026-06-28,Sold,Agent Kapoor,Fully Furnished
+PROP7251,Delhi NCR,Dwarka,Apartment,3,1579,13333891.0,8444.52,2026-07-03,Sold,Agent Joshi,Unfurnished
+PROP7252,Chennai,Velachery,Apartment,3,1645,20150533.0,12249.56,2026-02-21,Available,Agent Singh,Fully Furnished
+PROP7253,Delhi NCR,Dwarka,Apartment,2,1033,18486415.0,17895.85,2025-12-08,Available,Agent Rao,Semi-Furnished
+PROP7254,Bengaluru,Koramangala,Studio,3,1514,18949199.0,12515.98,2025-11-17,Under Negotiation,Agent Rao,Unfurnished
+PROP7255,Chennai,OMR,Villa,2,934,11931881.0,12775.03,2025-06-01,Available,,Semi-Furnished
+PROP7256,Hyderabad,Gachibowli,Apartment,3,1236,21789780.0,17629.27,2026-01-05,Sold,Agent Joshi,Fully Furnished
+PROP7257,Chennai,Velachery,Apartment,3,1539,24672826.0,16031.73,2025-04-07,Sold,Agent Kapoor,Unfurnished
+PROP7258,Hyderabad,Madhapur,Apartment,2,813,11870395.0,14600.73,2025-06-09,Sold,Agent Singh,Semi-Furnished
+PROP7259,Bengaluru,Indiranagar,Independent House,2,1032,13041537.0,12637.15,2026-05-01,Sold,Agent Kapoor,Fully Furnished
+PROP7260,Bengaluru,Indiranagar,Apartment,2,1099,12484140.0,11359.55,2025-10-22,Available,Agent Kapoor,Semi-Furnished
+PROP7261,Hyderabad,Gachibowli,Apartment,2,964,6728040.0,6979.29,2025-10-25,Sold,Agent Singh,Fully Furnished
+PROP7262,Pune,Baner,Villa,2,1096,9427802.0,8602.01,2025-04-02,Available,Agent Singh,Fully Furnished
+PROP7263,Hyderabad,Hitech City,Apartment,1,465,5917468.0,12725.74,2026-02-22,Available,Agent Kapoor,Unfurnished
+PROP7264,Bengaluru,Indiranagar,Villa,3,1231,15777848.0,12817.1,2026-02-17,Sold,Agent Singh,Fully Furnished
+PROP7265,Pune,Baner,Apartment,1,536,2955726.0,5514.42,2026-05-11,Under Negotiation,Agent Singh,Unfurnished
+PROP7266,Hyderabad,Hitech City,Studio,5,2628,19691437.0,7492.94,2026-01-01,Available,Agent Rao,Fully Furnished
+PROP7267,Mumbai,Andheri,Studio,3,1556,15948337.0,10249.57,2025-08-21,Available,Agent Joshi,Semi-Furnished
+PROP7268,Bengaluru,Indiranagar,Apartment,2,1004,8926675.0,8891.11,2025-07-01,Sold,Agent Joshi,Unfurnished
+PROP7269,Mumbai,Thane,Villa,2,845,13984800.0,16550.06,2026-04-05,Available,Agent Joshi,Semi-Furnished
+PROP7270,Pune,Kothrud,Apartment,1,436,5761073.0,13213.47,2025-05-21,Sold,Agent Joshi,Unfurnished
+PROP7271,Mumbai,Thane,Apartment,2,950,4665053.0,4910.58,2026-01-24,Sold,Agent Kapoor,Semi-Furnished
+PROP7272,Mumbai,Thane,Apartment,3,1503,13232110.0,8803.8,2025-05-29,Sold,,Semi-Furnished
+PROP7273,Pune,Hinjewadi,Studio,3,1331,22651339.0,17018.29,2025-03-30,Sold,Agent Kapoor,Fully Furnished
+PROP7274,Hyderabad,Kondapur,Independent House,2,1046,18077451.0,17282.46,2026-03-02,Available,Agent Verma,Fully Furnished
+PROP7275,Bengaluru,Koramangala,Apartment,4,1619,17719074.0,10944.46,2026-07-11,Available,Agent Kapoor,Semi-Furnished
+PROP7276,Chennai,OMR,Villa,1,487,5411038.0,11110.96,2026-04-08,Available,Agent Joshi,Semi-Furnished
+PROP7277,Delhi NCR,Dwarka,Villa,3,1218,20464097.0,16801.39,2026-01-04,Sold,Agent Kapoor,Semi-Furnished
+PROP7278,Hyderabad,Hitech City,Apartment,3,1456,14400690.0,9890.58,2026-03-09,Under Negotiation,Agent Verma,Unfurnished
+PROP7279,Bengaluru,Koramangala,Independent House,3,1551,22407501.0,14447.13,2025-12-07,Available,Agent Verma,Semi-Furnished
+PROP7280,Pune,Baner,Apartment,3,1206,21638364.0,17942.26,2025-11-24,Available,Agent Joshi,Unfurnished
+PROP7281,Hyderabad,Madhapur,Apartment,2,763,3808408.0,4991.36,2025-08-16,Available,Agent Verma,Unfurnished
+PROP7282,Pune,Baner,Independent House,3,1310,7757575.0,5921.81,2025-07-08,Available,Agent Verma,Fully Furnished
+PROP7283,Hyderabad,Kondapur,Apartment,4,1989,23587475.0,11858.96,2026-02-28,Under Negotiation,Agent Singh,Semi-Furnished
+PROP7284,Bengaluru,Koramangala,Independent House,2,844,14708322.0,17426.92,2025-05-20,Sold,Agent Verma,Fully Furnished
+PROP7285,Chennai,T Nagar,Villa,1,413,3181092.0,7702.4,2025-03-19,Available,,Semi-Furnished
+PROP7286,Delhi NCR,Gurugram Sector 50,Villa,2,937,12049330.0,12859.48,2025-04-15,Sold,Agent Rao,Fully Furnished
+PROP7287,Chennai,Velachery,Apartment,2,948,15874974.0,16745.75,2026-02-25,Under Negotiation,Agent Kapoor,Fully Furnished
+PROP7288,Delhi NCR,Noida Sector 62,Apartment,2,888,4384555.0,4937.56,2025-11-04,Sold,Agent Joshi,Semi-Furnished
+PROP7289,Bengaluru,Koramangala,Apartment,2,1048,17873124.0,17054.51,2025-04-16,Sold,Agent Joshi,Fully Furnished
+PROP7290,Delhi NCR,Dwarka,Villa,2,1013,8759752.0,8647.34,2025-05-15,Available,,Semi-Furnished
+PROP7291,Mumbai,Powai,Apartment,3,1609,15690249.0,9751.55,2026-07-01,Available,Agent Verma,Semi-Furnished
+PROP7292,Bengaluru,HSR Layout,Apartment,4,2137,10162575.0,4755.53,2025-09-06,Available,Agent Rao,Unfurnished
+PROP7293,Bengaluru,Indiranagar,Apartment,5,2534,19931624.0,7865.68,2026-01-16,Sold,Agent Singh,Fully Furnished
+PROP7294,Mumbai,Andheri,Apartment,2,760,12958847.0,17051.11,2025-07-21,Available,Agent Joshi,Semi-Furnished
+PROP7295,Hyderabad,Gachibowli,Studio,1,393,2127869.0,5414.43,2025-04-01,Sold,Agent Rao,Fully Furnished
+PROP7296,Mumbai,Thane,Independent House,3,1347,16446418.0,12209.66,2025-07-10,Available,Agent Joshi,Unfurnished
+PROP7297,Chennai,Velachery,Studio,3,1476,8294025.0,5619.26,2025-04-25,Available,Agent Singh,Fully Furnished
+PROP7298,Chennai,T Nagar,Studio,3,1476,24864584.0,16845.92,2025-11-07,Available,Agent Joshi,Unfurnished
+PROP7299,Pune,Baner,Apartment,2,764,4553592.0,5960.2,2025-07-29,Available,Agent Verma,Semi-Furnished
+PROP7300,Mumbai,Bandra,Apartment,3,1348,7858346.0,5829.63,2026-06-09,Available,Agent Verma,Semi-Furnished
+PROP7301,Delhi NCR,Gurugram Sector 50,Studio,3,1622,13867036.0,8549.34,2026-03-20,Available,Agent Kapoor,Unfurnished
+PROP7302,Delhi NCR,Faridabad,Apartment,2,796,8850137.0,11118.26,2025-11-01,Sold,Agent Verma,Semi-Furnished
+PROP7303,Chennai,T Nagar,Apartment,3,1232,18903227.0,15343.53,2025-09-03,Available,Agent Joshi,Unfurnished
+PROP7304,Bengaluru,Koramangala,Apartment,2,919,15093538.0,16423.87,2026-02-06,Available,Agent Singh,Fully Furnished
+PROP7305,Delhi NCR,Gurugram Sector 50,Apartment,2,1041,17545883.0,16854.83,2025-11-27,Available,Agent Rao,Unfurnished
+PROP7306,Chennai,OMR,Independent House,1,430,2575168.0,5988.76,2026-03-20,Sold,Agent Kapoor,Unfurnished
+PROP7307,Chennai,T Nagar,Independent House,4,2113,26556360.0,12568.08,2026-03-10,Available,Agent Singh,Unfurnished
+PROP7308,Chennai,OMR,Apartment,4,2002,32177019.0,16072.44,2025-05-13,Available,Agent Singh,Semi-Furnished
+PROP7309,Bengaluru,Whitefield,Penthouse,3,1141,19419957.0,17020.12,2026-03-04,Available,Agent Singh,Unfurnished
+PROP7310,Pune,Baner,Villa,2,854,8044134.0,9419.36,2026-04-29,Sold,Agent Verma,Semi-Furnished
+PROP7311,Mumbai,Thane,Apartment,2,828,11115516.0,13424.54,2025-09-12,Available,Agent Joshi,Fully Furnished
+PROP7312,Pune,Hinjewadi,Apartment,3,1146,7392079.0,6450.33,2025-08-09,Under Negotiation,Agent Singh,Unfurnished
+PROP7313,Hyderabad,Kondapur,Apartment,3,1228,19805466.0,16128.23,2025-12-26,Available,Agent Kapoor,Fully Furnished
+PROP7314,Chennai,T Nagar,Apartment,5,2029,21670729.0,10680.5,2026-05-17,Sold,Agent Joshi,Fully Furnished
+PROP7315,Delhi NCR,Noida Sector 62,Apartment,2,989,11968285.0,12101.4,2025-03-25,Available,Agent Joshi,Fully Furnished
+PROP7316,Mumbai,Bandra,Apartment,4,1967,24340731.0,12374.55,2026-02-22,Under Negotiation,Agent Joshi,Unfurnished
+PROP7317,Bengaluru,HSR Layout,Apartment,2,904,4548142.0,5031.13,2025-04-22,Available,Agent Verma,Semi-Furnished
+PROP7318,Pune,Baner,Independent House,4,2009,14295123.0,7115.54,2026-01-26,Available,Agent Kapoor,Fully Furnished
+PROP7319,Bengaluru,Whitefield,Independent House,2,1016,12994346.0,12789.71,2026-01-22,Available,Agent Joshi,Fully Furnished
+PROP7320,Chennai,T Nagar,Apartment,1,523,2987669.0,5712.56,2025-11-11,Sold,Agent Singh,Fully Furnished
+PROP7321,Mumbai,Bandra,Apartment,2,842,13271905.0,15762.36,2025-08-14,Sold,Agent Verma,Semi-Furnished
+PROP7322,Hyderabad,Hitech City,Villa,5,2436,35485075.0,14566.94,2026-01-10,Available,Agent Kapoor,Unfurnished
+PROP7323,Delhi NCR,Noida Sector 62,Apartment,3,1646,9421146.0,5723.66,2025-12-04,Sold,Agent Kapoor,Fully Furnished
+PROP7324,Chennai,OMR,Villa,1,424,7597434.0,17918.48,2026-03-15,Sold,Agent Rao,Fully Furnished
+PROP7325,Delhi NCR,Faridabad,Villa,3,1431,10255875.0,7166.93,2025-10-11,Available,Agent Kapoor,Fully Furnished
+PROP7326,Hyderabad,Gachibowli,Studio,5,1982,12246228.0,6178.72,2025-04-07,Under Negotiation,Agent Singh,Semi-Furnished
+PROP7327,Bengaluru,Whitefield,Apartment,1,495,5834687.0,11787.25,2026-03-31,Under Negotiation,,Fully Furnished
+PROP7328,Bengaluru,Indiranagar,Apartment,3,1325,18394471.0,13882.62,2026-03-27,Available,Agent Rao,Semi-Furnished
+PROP7329,Delhi NCR,Dwarka,Independent House,3,1464,8532762.0,5828.39,2026-02-16,Sold,Agent Singh,Fully Furnished
+PROP7330,Mumbai,Thane,Apartment,2,797,5632658.0,7067.33,2025-11-21,Available,Agent Rao,Unfurnished
+PROP7331,Chennai,Velachery,Apartment,1,473,6921527.0,14633.25,2025-10-28,Under Negotiation,Agent Joshi,Fully Furnished
+PROP7332,Mumbai,Andheri,Apartment,3,1215,21846713.0,17980.83,2026-02-12,Available,Agent Rao,Unfurnished
+PROP7333,Delhi NCR,Faridabad,Studio,2,1012,5801268.0,5732.48,2026-06-16,Available,Agent Joshi,Fully Furnished
+PROP7334,Chennai,T Nagar,Independent House,3,1638,18289914.0,11166.0,2025-10-01,Available,Agent Kapoor,Semi-Furnished
+PROP7335,Mumbai,Thane,Studio,4,1750,24755600.0,14146.06,2025-04-06,Sold,Agent Verma,Fully Furnished
+PROP7336,Hyderabad,Madhapur,Villa,3,1390,15414617.0,11089.65,2025-06-13,Available,Agent Rao,Unfurnished
+PROP7337,Hyderabad,Kondapur,Independent House,3,1563,15558789.0,9954.44,2026-02-27,Available,Agent Verma,Unfurnished
+PROP7338,Chennai,OMR,Apartment,3,1582,13441751.0,8496.68,2025-08-14,Sold,Agent Rao,Fully Furnished
+PROP7339,Chennai,OMR,Independent House,2,1038,10506174.0,10121.55,2026-07-19,Sold,Agent Kapoor,Unfurnished
+PROP7340,Chennai,T Nagar,Apartment,2,921,10069077.0,10932.77,2025-12-14,Sold,Agent Joshi,Unfurnished
+PROP7341,Bengaluru,HSR Layout,Apartment,2,826,10313913.0,12486.58,2026-04-29,Under Negotiation,Agent Joshi,Unfurnished
+PROP7342,Mumbai,Powai,Penthouse,2,1093,18058607.0,16522.06,2026-01-29,Under Negotiation,Agent Kapoor,Semi-Furnished
+PROP7343,Chennai,OMR,Studio,3,1328,12743042.0,9595.66,2025-09-12,Available,Agent Rao,Fully Furnished
+PROP7344,Delhi NCR,Noida Sector 62,Apartment,3,1255,7140919.0,5689.98,2025-05-04,Under Negotiation,Agent Singh,Fully Furnished
+PROP7345,Hyderabad,Gachibowli,Apartment,3,1524,23707686.0,15556.22,2025-11-09,Sold,Agent Rao,Unfurnished
+PROP7346,Chennai,Velachery,Villa,2,947,13480722.0,14235.19,2026-01-06,Available,Agent Joshi,Semi-Furnished
+PROP7347,Mumbai,Andheri,Studio,1,504,8560657.0,16985.43,2025-05-01,Under Negotiation,Agent Verma,Fully Furnished
+PROP7348,Chennai,OMR,Penthouse,2,925,6826633.0,7380.14,2026-02-18,Sold,Agent Rao,Fully Furnished
+PROP7349,Bengaluru,Whitefield,Apartment,5,2370,26130555.0,11025.55,2025-05-29,Sold,Agent Singh,Fully Furnished
+PROP7350,Hyderabad,Hitech City,Independent House,3,1254,19888925.0,15860.39,2025-11-30,Available,Agent Rao,Fully Furnished
+PROP7351,Delhi NCR,Dwarka,Apartment,2,873,15224512.0,17439.3,2026-03-18,Available,Agent Verma,Fully Furnished
+PROP7352,Chennai,Anna Nagar,Apartment,2,966,13332844.0,13802.12,2026-01-24,Sold,Agent Joshi,Semi-Furnished
+PROP7353,Pune,Kothrud,Penthouse,3,1302,11989109.0,9208.22,2026-07-13,Sold,Agent Joshi,Fully Furnished
+PROP7354,Delhi NCR,Noida Sector 62,Independent House,4,2106,15793532.0,7499.3,2025-05-14,Sold,Agent Kapoor,Semi-Furnished
+PROP7355,Chennai,OMR,Studio,4,1602,22827041.0,14249.09,2025-06-03,Available,Agent Verma,Fully Furnished
+PROP7356,Bengaluru,Whitefield,Independent House,3,1305,18100613.0,13870.2,2025-03-31,Available,Agent Singh,Fully Furnished
+PROP7357,Mumbai,Bandra,Apartment,1,530,8475936.0,15992.33,2025-05-29,Sold,Agent Verma,Semi-Furnished
+PROP7358,Mumbai,Thane,Apartment,2,1073,6081137.0,5667.42,2025-10-07,Available,Agent Joshi,Unfurnished
+PROP7359,Bengaluru,Indiranagar,Apartment,2,1028,6016313.0,5852.44,2026-05-31,Sold,Agent Joshi,Semi-Furnished
+PROP7360,Chennai,OMR,Apartment,3,1517,10559100.0,6960.51,2025-07-15,Sold,Agent Singh,Unfurnished
+PROP7361,Pune,Viman Nagar,Villa,3,1484,14818844.0,9985.74,2026-04-05,Available,Agent Rao,Semi-Furnished
+PROP7362,Hyderabad,Kondapur,Apartment,2,898,9482580.0,10559.67,2025-04-27,Available,Agent Kapoor,Unfurnished
+PROP7363,Mumbai,Andheri,Apartment,5,2650,43488333.0,16410.69,2025-10-12,Available,Agent Rao,Semi-Furnished
+PROP7364,Hyderabad,Kondapur,Studio,2,795,5731886.0,7209.92,2025-09-15,Available,Agent Verma,Fully Furnished
+PROP7365,Pune,Baner,Apartment,4,2151,26032849.0,12102.67,2025-08-15,Under Negotiation,Agent Rao,Fully Furnished
+PROP7366,Chennai,Anna Nagar,Apartment,5,1926,16975900.0,8814.07,2025-12-11,Available,Agent Singh,Unfurnished
+PROP7367,Chennai,Velachery,Apartment,3,1225,6190894.0,5053.79,2025-10-06,Sold,Agent Joshi,Unfurnished
+PROP7368,Delhi NCR,Dwarka,Apartment,2,961,15867301.0,16511.24,2025-08-09,Available,Agent Singh,Semi-Furnished
+PROP7369,Bengaluru,Koramangala,Studio,4,1664,21654996.0,13013.82,2026-04-18,Under Negotiation,Agent Verma,Fully Furnished
+PROP7370,Chennai,T Nagar,Studio,3,1495,12278340.0,8212.94,2026-02-10,Under Negotiation,Agent Verma,Fully Furnished
+PROP7371,Mumbai,Andheri,Apartment,2,808,4625824.0,5725.03,2025-07-14,Under Negotiation,Agent Rao,Unfurnished
+PROP7372,Delhi NCR,Noida Sector 62,Independent House,3,1563,20783922.0,13297.46,2025-07-07,Sold,Agent Singh,Unfurnished
+PROP7373,Mumbai,Bandra,Apartment,2,992,16876173.0,17012.27,2026-03-22,Sold,Agent Kapoor,Semi-Furnished
+PROP7374,Chennai,Velachery,Apartment,3,1225,10645054.0,8689.84,2025-10-30,Sold,Agent Verma,Semi-Furnished
+PROP7375,Bengaluru,Whitefield,Independent House,3,1207,13158774.0,10902.05,2026-03-13,Sold,Agent Singh,Semi-Furnished
+PROP7376,Bengaluru,Indiranagar,Villa,3,1567,23832592.0,15209.06,2026-01-03,Under Negotiation,Agent Verma,Unfurnished
+PROP7377,Chennai,T Nagar,Independent House,2,839,9046953.0,10783.02,2025-04-16,Available,Agent Kapoor,Semi-Furnished
+PROP7378,Chennai,T Nagar,Studio,2,1021,6020821.0,5896.98,2026-01-20,Under Negotiation,Agent Singh,Semi-Furnished
+PROP7379,Bengaluru,Indiranagar,Apartment,5,1917,14390163.0,7506.61,2025-09-30,Available,Agent Kapoor,Unfurnished
+PROP7380,Mumbai,Powai,Villa,4,1941,18349179.0,9453.47,2025-10-20,Under Negotiation,Agent Kapoor,Semi-Furnished
+PROP7381,Bengaluru,HSR Layout,Penthouse,3,1579,24876485.0,15754.58,2025-04-14,Sold,Agent Joshi,Fully Furnished
+PROP7382,Chennai,Anna Nagar,Apartment,4,1942,9956929.0,5127.15,2026-07-11,Available,Agent Singh,Unfurnished
+PROP7383,Pune,Hinjewadi,Apartment,4,2154,35987447.0,16707.26,2026-01-11,Available,Agent Singh,Semi-Furnished
+PROP7384,Hyderabad,Hitech City,Villa,1,457,5940758.0,12999.47,2025-05-24,Available,Agent Joshi,Semi-Furnished
+PROP7385,Mumbai,Thane,Apartment,2,926,15224067.0,16440.68,2026-01-10,Available,Agent Singh,Fully Furnished
+PROP7386,Hyderabad,Gachibowli,Studio,5,2452,32168839.0,13119.43,2025-08-26,Available,Agent Joshi,Fully Furnished
+PROP7387,Hyderabad,Kondapur,Studio,2,802,4010454.0,5000.57,2026-05-13,Available,Agent Kapoor,Semi-Furnished
+PROP7388,Mumbai,Powai,Apartment,4,1935,18389895.0,9503.82,2026-02-09,Sold,Agent Rao,Fully Furnished
+PROP7389,Delhi NCR,Noida Sector 62,Independent House,3,1393,16679473.0,11973.78,2025-09-22,Sold,Agent Kapoor,Unfurnished
+PROP7390,Mumbai,Andheri,Penthouse,2,811,6592701.0,8129.1,2025-04-24,Sold,Agent Singh,Unfurnished
+PROP7391,Pune,Hinjewadi,Apartment,3,1383,22070892.0,15958.71,2025-06-27,Available,Agent Singh,Semi-Furnished
+PROP7392,Bengaluru,Whitefield,Apartment,3,1146,17581841.0,15341.92,2025-05-09,Under Negotiation,Agent Singh,Fully Furnished
+PROP7393,Delhi NCR,Dwarka,Apartment,2,776,7620313.0,9819.99,2026-06-19,Available,Agent Rao,Fully Furnished
+PROP7394,Mumbai,Thane,Apartment,2,857,10890541.0,12707.75,2026-01-15,Under Negotiation,Agent Joshi,Fully Furnished
+PROP7395,Bengaluru,Whitefield,Apartment,3,1148,8690429.0,7570.06,2026-03-08,Available,Agent Singh,Unfurnished
+PROP7396,Bengaluru,HSR Layout,Apartment,2,796,12898292.0,16203.88,2025-05-15,Available,Agent Joshi,Unfurnished
+PROP7397,Delhi NCR,Faridabad,Independent House,3,1402,8733260.0,6229.14,2025-10-09,Sold,Agent Rao,Unfurnished
+PROP7398,Pune,Viman Nagar,Apartment,1,466,6750342.0,14485.71,2026-04-09,Available,Agent Singh,Unfurnished
+PROP7399,Delhi NCR,Faridabad,Independent House,2,1006,7712396.0,7666.4,2025-03-19,Available,Agent Rao,Semi-Furnished
+PROP7400,Chennai,Anna Nagar,Villa,5,2339,35924890.0,15359.08,2026-02-27,Sold,Agent Singh,Fully Furnished
+PROP7401,Pune,Hinjewadi,Apartment,2,1085,7155991.0,6595.38,2026-03-23,Sold,Agent Joshi,Unfurnished
+PROP7402,Pune,Viman Nagar,Apartment,3,1357,24285470.0,17896.44,2025-09-17,Available,Agent Kapoor,Unfurnished
+PROP7403,Bengaluru,Whitefield,Studio,3,1174,15330691.0,13058.51,2025-10-22,Available,Agent Kapoor,Fully Furnished
+PROP7404,Chennai,T Nagar,Studio,4,1984,9799406.0,4939.22,2026-04-07,Under Negotiation,Agent Kapoor,Unfurnished
+PROP7405,Hyderabad,Hitech City,Penthouse,1,477,7517929.0,15760.86,2026-02-19,Available,Agent Rao,Semi-Furnished
+PROP7406,Chennai,Anna Nagar,Apartment,1,469,6026046.0,12848.71,2026-02-25,Sold,Agent Singh,Semi-Furnished
+PROP7407,Delhi NCR,Dwarka,Apartment,3,1560,17630167.0,11301.39,2026-01-08,Available,Agent Joshi,Semi-Furnished
+PROP7408,Mumbai,Bandra,Apartment,1,452,5720294.0,12655.52,2026-01-23,Available,Agent Joshi,Semi-Furnished
+PROP7409,Bengaluru,HSR Layout,Villa,5,2299,16566260.0,7205.85,2025-06-03,Available,Agent Joshi,Semi-Furnished
+PROP7410,Chennai,Velachery,Apartment,3,1226,11926050.0,9727.61,2025-10-05,Sold,Agent Singh,Fully Furnished
+PROP7411,Chennai,T Nagar,Apartment,1,505,2323006.0,4600.01,2025-10-29,Available,Agent Joshi,Unfurnished
+PROP7412,Pune,Viman Nagar,Apartment,2,966,5419213.0,5609.95,2025-04-14,Sold,Agent Joshi,Unfurnished
+PROP7413,Hyderabad,Gachibowli,Apartment,2,969,7557560.0,7799.34,2025-10-27,Sold,Agent Singh,Unfurnished
+PROP7414,Chennai,Velachery,Penthouse,4,1865,26505201.0,14211.9,2025-07-24,Sold,Agent Kapoor,Fully Furnished
+PROP7415,Delhi NCR,Gurugram Sector 50,Independent House,3,1406,13847374.0,9848.77,2025-03-31,Available,Agent Joshi,Fully Furnished
+PROP7416,Hyderabad,Hitech City,Studio,4,1787,29608184.0,16568.65,2025-08-04,Available,Agent Singh,Semi-Furnished
+PROP7417,Delhi NCR,Noida Sector 62,Apartment,3,1422,24062330.0,16921.47,2025-07-20,Available,Agent Kapoor,Unfurnished
+PROP7418,Pune,Kothrud,Apartment,2,902,4767984.0,5286.01,2025-05-17,Under Negotiation,Agent Verma,Unfurnished
+PROP7419,Hyderabad,Madhapur,Apartment,3,1567,17750264.0,11327.55,2026-04-09,Sold,,Semi-Furnished
+PROP7420,Pune,Hinjewadi,Apartment,3,1282,20253448.0,15798.32,2025-07-01,Sold,Agent Singh,Fully Furnished
+PROP7421,Chennai,Anna Nagar,Apartment,3,1298,19413899.0,14956.78,2026-06-26,Available,Agent Singh,Unfurnished
+PROP7422,Pune,Baner,Apartment,3,1583,22801920.0,14404.24,2025-05-08,Under Negotiation,Agent Rao,Fully Furnished
+PROP7423,Bengaluru,Whitefield,Apartment,4,1902,27879659.0,14658.08,2026-07-21,Sold,Agent Kapoor,Semi-Furnished
+PROP7424,Chennai,Anna Nagar,Apartment,3,1312,13498722.0,10288.66,2025-10-20,Available,Agent Rao,Fully Furnished
+PROP7425,Pune,Kothrud,Apartment,2,1092,9158290.0,8386.71,2026-01-03,Available,Agent Rao,Fully Furnished
+PROP7426,Mumbai,Thane,Apartment,4,2102,26224491.0,12475.97,2026-05-31,Available,Agent Rao,Fully Furnished
+PROP7427,Chennai,T Nagar,Apartment,4,1625,9164892.0,5639.93,2025-11-07,Sold,Agent Joshi,Fully Furnished
+PROP7428,Mumbai,Powai,Apartment,3,1606,28156967.0,17532.36,2025-09-01,Sold,Agent Kapoor,Semi-Furnished
+PROP7429,Chennai,T Nagar,Apartment,3,1202,15544627.0,12932.3,2025-04-12,Sold,Agent Verma,Unfurnished
+PROP7430,Pune,Kothrud,Villa,2,1019,7735988.0,7591.75,2025-09-24,Sold,Agent Joshi,Semi-Furnished
+PROP7431,Bengaluru,HSR Layout,Apartment,2,898,10302293.0,11472.49,2026-07-17,Available,Agent Rao,Unfurnished
+PROP7432,Mumbai,Thane,Independent House,3,1509,24775524.0,16418.5,2026-04-03,Available,Agent Verma,Unfurnished
+PROP7433,Chennai,T Nagar,Apartment,3,1374,24400476.0,17758.72,2026-07-01,Available,Agent Verma,Semi-Furnished
+PROP7434,Pune,Baner,Apartment,3,1623,17248247.0,10627.39,2025-12-13,Available,Agent Kapoor,Unfurnished
+PROP7435,Bengaluru,Indiranagar,Apartment,3,1556,23010745.0,14788.4,2025-09-09,Available,Agent Verma,Semi-Furnished
+PROP7436,Chennai,T Nagar,Studio,2,810,5747719.0,7095.95,2025-12-05,Available,Agent Verma,Fully Furnished
+PROP7437,Pune,Kothrud,Independent House,4,1893,20767749.0,10970.81,2025-11-06,Available,Agent Kapoor,Semi-Furnished
+PROP7438,Bengaluru,HSR Layout,Penthouse,5,2713,13220481.0,4873.01,2026-06-14,Available,Agent Verma,Fully Furnished
+PROP7439,Bengaluru,Whitefield,Independent House,1,513,7304017.0,14237.85,2025-08-19,Available,Agent Joshi,Semi-Furnished
+PROP7440,Mumbai,Powai,Apartment,2,762,11818310.0,15509.59,2026-01-06,Sold,Agent Singh,Unfurnished
+PROP7441,Mumbai,Bandra,Studio,3,1557,7072914.0,4542.66,2026-07-21,Available,Agent Verma,Unfurnished
+PROP7442,Hyderabad,Hitech City,Apartment,4,2074,12210055.0,5887.2,2025-12-20,Under Negotiation,Agent Singh,Fully Furnished
+PROP7443,Hyderabad,Gachibowli,Apartment,3,1164,18370467.0,15782.19,2025-04-26,Sold,Agent Kapoor,Fully Furnished
+PROP7444,Delhi NCR,Gurugram Sector 50,Apartment,2,789,3562411.0,4515.1,2025-04-16,Sold,Agent Kapoor,Fully Furnished
+PROP7445,Delhi NCR,Faridabad,Independent House,2,1011,16405384.0,16226.89,2025-11-21,Under Negotiation,Agent Rao,Unfurnished
+PROP7446,Mumbai,Andheri,Independent House,1,492,4875132.0,9908.8,2025-09-29,Available,Agent Rao,Semi-Furnished
+PROP7447,Delhi NCR,Faridabad,Apartment,3,1504,23999730.0,15957.27,2025-05-12,Available,Agent Verma,Fully Furnished
+PROP7448,Hyderabad,Kondapur,Apartment,2,943,12840148.0,13616.28,2025-09-10,Available,Agent Kapoor,Fully Furnished
+PROP7449,Chennai,OMR,Independent House,2,1092,13977699.0,12800.09,2025-12-26,Available,Agent Verma,Semi-Furnished
+PROP7450,Hyderabad,Kondapur,Apartment,3,1538,13750926.0,8940.78,2025-06-05,Available,Agent Kapoor,Semi-Furnished
+PROP7451,Bengaluru,HSR Layout,Apartment,3,1315,14243839.0,10831.82,2025-05-29,Under Negotiation,Agent Rao,Unfurnished
+PROP7452,Pune,Kothrud,Apartment,2,957,16320555.0,17053.87,2025-06-18,Available,Agent Rao,Fully Furnished
+PROP7453,Bengaluru,Koramangala,Apartment,2,762,8070375.0,10591.04,2025-07-18,Sold,Agent Joshi,Unfurnished
+PROP7454,Delhi NCR,Faridabad,Apartment,2,802,12213601.0,15228.93,2025-04-09,Available,Agent Joshi,Semi-Furnished
+PROP7455,Delhi NCR,Dwarka,Apartment,5,2193,29438615.0,13423.9,2025-08-06,Sold,Agent Verma,Unfurnished
+PROP7456,Chennai,OMR,Villa,3,1215,8748827.0,7200.68,2025-07-11,Available,Agent Joshi,Semi-Furnished
+PROP7457,Hyderabad,Hitech City,Apartment,2,775,6022800.0,7771.35,2025-07-01,Sold,Agent Kapoor,Unfurnished
+PROP7458,Hyderabad,Hitech City,Apartment,2,770,6055524.0,7864.32,2026-03-06,Available,Agent Joshi,Fully Furnished
+PROP7459,Bengaluru,HSR Layout,Penthouse,2,775,12488364.0,16114.02,2025-12-23,Sold,Agent Kapoor,Fully Furnished
+PROP7460,Delhi NCR,Faridabad,Apartment,2,948,12430431.0,13112.27,2025-05-19,Sold,Agent Kapoor,Unfurnished
+PROP7461,Chennai,Anna Nagar,Independent House,5,2003,17479145.0,8726.48,2025-07-03,Available,Agent Verma,Fully Furnished
+PROP7462,Pune,Hinjewadi,Independent House,3,1438,21326565.0,14830.71,2025-05-14,Sold,Agent Kapoor,Unfurnished
+PROP7463,Hyderabad,Gachibowli,Studio,3,1395,21053467.0,15092.09,2025-10-25,Under Negotiation,Agent Kapoor,Fully Furnished
+PROP7464,Chennai,T Nagar,Apartment,3,1350,9269372.0,6866.2,2026-01-14,Available,Agent Joshi,Unfurnished
+PROP7465,Bengaluru,HSR Layout,Apartment,2,809,12755857.0,15767.44,2025-05-28,Available,,Semi-Furnished
+PROP7466,Chennai,OMR,Studio,1,533,2842010.0,5332.1,2025-09-15,Available,Agent Singh,Semi-Furnished
+PROP7467,Delhi NCR,Gurugram Sector 50,Villa,2,869,12677432.0,14588.53,2025-03-29,Under Negotiation,Agent Joshi,Fully Furnished
+PROP7468,Pune,Hinjewadi,Villa,3,1350,19725620.0,14611.57,2026-01-31,Sold,Agent Kapoor,Unfurnished
+PROP7469,Delhi NCR,Gurugram Sector 50,Studio,3,1596,10957210.0,6865.42,2025-11-19,Available,Agent Joshi,Unfurnished
+PROP7470,Bengaluru,Indiranagar,Studio,3,1410,11604574.0,8230.19,2025-04-03,Sold,Agent Singh,Unfurnished
+PROP7471,Pune,Kothrud,Apartment,2,800,7015595.0,8769.49,2025-09-23,Sold,Agent Rao,Fully Furnished
+PROP7472,Mumbai,Andheri,Penthouse,2,888,9761983.0,10993.22,2025-07-24,Available,Agent Verma,Fully Furnished
+PROP7473,Delhi NCR,Faridabad,Independent House,2,796,12895651.0,16200.57,2025-07-02,Sold,Agent Rao,Unfurnished
+PROP7474,Mumbai,Thane,Studio,1,400,1826300.0,4565.75,2025-05-20,Available,Agent Verma,Fully Furnished
+PROP7475,Delhi NCR,Gurugram Sector 50,Studio,3,1454,21945030.0,15092.87,2025-08-16,Sold,Agent Rao,Fully Furnished
+PROP7476,Delhi NCR,Faridabad,Villa,1,415,7262147.0,17499.15,2025-08-10,Sold,Agent Singh,Fully Furnished
+PROP7477,Pune,Baner,Apartment,2,1036,7201403.0,6951.16,2026-03-13,Available,Agent Kapoor,Semi-Furnished
+PROP7478,Bengaluru,Koramangala,Apartment,2,942,9805362.0,10409.09,2026-06-27,Available,Agent Kapoor,Semi-Furnished
+PROP7479,Hyderabad,Kondapur,Apartment,1,423,2301291.0,5440.4,2025-10-18,Available,Agent Joshi,Unfurnished
+PROP7480,Chennai,Anna Nagar,Villa,2,807,7733484.0,9583.0,2026-06-11,Available,Agent Joshi,Fully Furnished
+PROP7481,Pune,Kothrud,Apartment,1,395,1970270.0,4988.03,2026-01-09,Available,Agent Singh,Fully Furnished
+PROP7482,Pune,Hinjewadi,Apartment,5,2619,37863430.0,14457.21,2025-09-13,Sold,Agent Joshi,Fully Furnished
+PROP7483,Mumbai,Bandra,Apartment,4,1670,20730835.0,12413.67,2025-07-03,Available,Agent Singh,Semi-Furnished
+PROP7484,Bengaluru,HSR Layout,Apartment,3,1361,22238685.0,16339.96,2025-12-28,Available,Agent Joshi,Unfurnished
+PROP7485,Pune,Viman Nagar,Villa,2,999,4639091.0,4643.73,2026-01-26,Available,,Semi-Furnished
+PROP7486,Pune,Hinjewadi,Apartment,1,442,6394427.0,14467.03,2025-04-03,Sold,Agent Kapoor,Semi-Furnished
+PROP7487,Bengaluru,Whitefield,Apartment,2,854,4639608.0,5432.8,2026-04-09,Available,Agent Rao,Semi-Furnished
+PROP7488,Hyderabad,Hitech City,Apartment,2,877,15725058.0,17930.51,2025-05-17,Sold,Agent Kapoor,Unfurnished
+PROP7489,Pune,Hinjewadi,Apartment,2,786,5602735.0,7128.16,2025-11-11,Available,Agent Kapoor,Fully Furnished
+PROP7490,Delhi NCR,Faridabad,Apartment,2,995,17644091.0,17732.75,2025-06-18,Available,Agent Kapoor,Fully Furnished
+PROP7491,Delhi NCR,Gurugram Sector 50,Apartment,4,1832,12293087.0,6710.2,2025-04-06,Available,Agent Rao,Fully Furnished
+PROP7492,Bengaluru,Whitefield,Apartment,2,1047,12265285.0,11714.69,2025-08-30,Sold,Agent Singh,Fully Furnished
+PROP7493,Pune,Baner,Apartment,4,1636,15468122.0,9454.84,2026-01-07,Available,Agent Joshi,Fully Furnished
+PROP7494,Chennai,OMR,Apartment,3,1396,8643781.0,6191.82,2026-07-27,Available,Agent Verma,Semi-Furnished
+PROP7495,Pune,Viman Nagar,Apartment,1,508,8735853.0,17196.56,2026-06-08,Under Negotiation,Agent Kapoor,Fully Furnished
+PROP7496,Hyderabad,Gachibowli,Apartment,4,1969,13526088.0,6869.52,2025-08-21,Available,Agent Kapoor,Unfurnished
+PROP7497,Chennai,Anna Nagar,Apartment,2,788,12547025.0,15922.62,2025-10-05,Available,Agent Singh,Semi-Furnished
+PROP7498,Mumbai,Thane,Apartment,2,1020,7351196.0,7207.06,2025-09-02,Available,Agent Joshi,Unfurnished
+PROP7499,Bengaluru,Whitefield,Independent House,2,836,8388475.0,10034.06,2025-08-03,Available,Agent Verma,Unfurnished
+PROP7500,Delhi NCR,Gurugram Sector 50,Apartment,3,1377,6475585.0,4702.68,2025-07-07,Available,Agent Joshi,Semi-Furnished
+PROP7501,Pune,Hinjewadi,Apartment,3,1509,10155338.0,6729.85,2025-12-27,Available,Agent Joshi,Unfurnished
+PROP7502,Hyderabad,Hitech City,Penthouse,3,1196,16972351.0,14190.93,2026-06-25,Available,Agent Joshi,Fully Furnished
+PROP7503,Bengaluru,Whitefield,Apartment,4,1971,9699442.0,4921.08,2026-05-09,Available,Agent Joshi,Unfurnished
+PROP7504,Hyderabad,Hitech City,Apartment,3,1392,10891668.0,7824.47,2025-04-13,Under Negotiation,Agent Singh,Semi-Furnished
+PROP7505,Hyderabad,Kondapur,Apartment,3,1358,16129449.0,11877.36,2026-01-03,Sold,Agent Singh,Unfurnished
+PROP7506,Hyderabad,Madhapur,Apartment,4,1978,25791391.0,13039.13,2025-09-06,Available,Agent Singh,Unfurnished
+PROP7507,Bengaluru,Koramangala,Villa,3,1476,16280613.0,11030.23,2025-06-21,Sold,Agent Rao,Unfurnished
+PROP7508,Chennai,T Nagar,Studio,3,1204,13509574.0,11220.58,2025-12-20,Sold,Agent Singh,Unfurnished
+PROP7509,Bengaluru,Indiranagar,Independent House,2,887,4944692.0,5574.62,2025-06-20,Under Negotiation,Agent Singh,Unfurnished
+PROP7510,Bengaluru,Koramangala,Apartment,3,1317,18316098.0,13907.44,2026-03-27,Available,Agent Rao,Semi-Furnished
+PROP7511,Mumbai,Thane,Independent House,3,1586,11637899.0,7337.89,2025-05-19,Under Negotiation,Agent Singh,Unfurnished
+PROP7512,Pune,Hinjewadi,Apartment,4,1652,15394654.0,9318.8,2025-03-18,Available,Agent Kapoor,Unfurnished
+PROP7513,Pune,Viman Nagar,Independent House,2,814,13917222.0,17097.32,2026-02-20,Sold,Agent Singh,Unfurnished
+PROP7514,Pune,Viman Nagar,Apartment,3,1179,14407159.0,12219.81,2026-06-19,Available,Agent Rao,Fully Furnished
+PROP7515,Delhi NCR,Gurugram Sector 50,Apartment,2,1046,8933427.0,8540.56,2026-06-25,Available,Agent Joshi,Fully Furnished
+PROP7516,Hyderabad,Madhapur,Apartment,2,1079,18622831.0,17259.34,2026-03-02,Available,Agent Singh,Fully Furnished
+PROP7517,Chennai,OMR,Apartment,2,1066,11229466.0,10534.21,2026-06-22,Sold,Agent Verma,Fully Furnished
+PROP7518,Pune,Hinjewadi,Penthouse,3,1206,12159085.0,10082.16,2025-08-09,Available,Agent Verma,Semi-Furnished
+PROP7519,Hyderabad,Madhapur,Apartment,1,443,2688579.0,6069.03,2025-08-24,Sold,Agent Singh,Unfurnished
+PROP7520,Pune,Baner,Apartment,3,1228,9607865.0,7823.99,2025-12-22,Sold,Agent Rao,Fully Furnished
+PROP7521,Delhi NCR,Gurugram Sector 50,Apartment,4,1960,21216397.0,10824.69,2025-04-11,Sold,Agent Singh,Unfurnished
+PROP7522,Delhi NCR,Faridabad,Independent House,2,877,9980122.0,11379.84,2026-05-11,Available,Agent Rao,Semi-Furnished
+PROP7523,Hyderabad,Gachibowli,Apartment,2,1034,8922384.0,8629.0,2025-04-15,Available,,Unfurnished
+PROP7524,Delhi NCR,Dwarka,Apartment,4,2150,30227593.0,14059.35,2025-07-08,Available,Agent Verma,Unfurnished
+PROP7525,Chennai,Velachery,Apartment,3,1290,15533135.0,12041.19,2026-05-21,Sold,Agent Kapoor,Semi-Furnished
+PROP7526,Chennai,Anna Nagar,Apartment,2,839,6293487.0,7501.18,2026-02-15,Available,Agent Verma,Fully Furnished
+PROP7527,Hyderabad,Madhapur,Apartment,3,1439,24980456.0,17359.59,2025-12-14,Under Negotiation,Agent Joshi,Semi-Furnished
+PROP7528,Hyderabad,Gachibowli,Apartment,4,1872,24288165.0,12974.45,2025-05-21,Available,Agent Rao,Semi-Furnished
+PROP7529,Hyderabad,Madhapur,Apartment,1,529,2628781.0,4969.34,2026-01-05,Available,Agent Joshi,Unfurnished
+PROP7530,Pune,Hinjewadi,Apartment,3,1412,7536195.0,5337.25,2025-08-25,Available,Agent Joshi,Fully Furnished
+PROP7531,Delhi NCR,Gurugram Sector 50,Studio,2,834,6064405.0,7271.47,2025-05-09,Sold,Agent Singh,Unfurnished
+PROP7532,Pune,Viman Nagar,Studio,3,1382,21684213.0,15690.46,2026-02-13,Available,Agent Singh,Unfurnished
+PROP7533,Delhi NCR,Faridabad,Apartment,3,1555,9115903.0,5862.32,2026-06-10,Available,Agent Joshi,Semi-Furnished
+PROP7534,Bengaluru,Indiranagar,Independent House,5,2031,33494453.0,16491.61,2026-01-11,Sold,Agent Verma,Fully Furnished
+PROP7535,Hyderabad,Madhapur,Apartment,3,1183,18498975.0,15637.34,2025-04-11,Sold,Agent Kapoor,Fully Furnished
+PROP7536,Chennai,OMR,Apartment,2,860,4285765.0,4983.45,2026-06-11,Sold,Agent Singh,Fully Furnished
+PROP7537,Mumbai,Bandra,Apartment,4,2023,30347993.0,15001.48,2026-05-07,Available,Agent Kapoor,Semi-Furnished
+PROP7538,Mumbai,Powai,Studio,3,1432,14716237.0,10276.7,2025-11-16,Available,Agent Verma,Semi-Furnished
+PROP7539,Pune,Hinjewadi,Penthouse,2,1098,18275954.0,16644.77,2025-05-07,Sold,Agent Verma,Semi-Furnished
+PROP7540,Mumbai,Bandra,Apartment,3,1226,14820788.0,12088.73,2025-08-16,Available,Agent Rao,Unfurnished
+PROP7541,Bengaluru,Whitefield,Apartment,2,951,16465049.0,17313.41,2025-05-06,Available,Agent Verma,Fully Furnished
+PROP7542,Mumbai,Bandra,Apartment,4,2198,33560316.0,15268.57,2026-01-14,Sold,Agent Verma,Unfurnished
+PROP7543,Bengaluru,Indiranagar,Apartment,2,783,13100250.0,16730.84,2026-01-26,Available,Agent Verma,Fully Furnished
+PROP7544,Mumbai,Powai,Apartment,3,1552,18547218.0,11950.53,2026-02-01,Available,Agent Singh,Fully Furnished
+PROP7545,Pune,Kothrud,Independent House,5,2583,22620248.0,8757.35,2026-05-30,Available,Agent Rao,Unfurnished
+PROP7546,Delhi NCR,Gurugram Sector 50,Apartment,2,1057,5484304.0,5188.56,2026-07-04,Sold,Agent Kapoor,Semi-Furnished
+PROP7547,Hyderabad,Madhapur,Studio,3,1521,10183128.0,6695.02,2026-02-19,Available,Agent Rao,Semi-Furnished
+PROP7548,Delhi NCR,Noida Sector 62,Villa,4,1899,22673127.0,11939.51,2026-05-10,Available,Agent Joshi,Semi-Furnished
+PROP7549,Hyderabad,Gachibowli,Independent House,1,461,6044870.0,13112.52,2026-06-11,Sold,Agent Singh,Fully Furnished

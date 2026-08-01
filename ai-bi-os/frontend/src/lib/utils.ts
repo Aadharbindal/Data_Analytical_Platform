@@ -41,10 +41,21 @@ export function formatKpiValue(value: number, type?: string): string {
   const absValue = Math.abs(value);
   const sign = isNegative ? "-" : "";
 
-  if (type === "count" || type === "generic") {
-    if (absValue >= 1_000_000) return `${sign}${(absValue / 1_000_000).toFixed(1)}M`;
+  if (type === "count") {
+    // A count is a discrete figure people reconcile against their own records,
+    // so show it exactly. Abbreviating 1,372 transactions to "1.4K" reads as a
+    // different number to anyone checking it against their source.
+    return `${sign}${Math.round(absValue).toLocaleString("en-IN")}`;
+  }
+  if (type === "generic" || type === "numeric") {
+    // Use the same Indian scale as the currency branch below. Falling back to
+    // Western M/K here meant one dashboard could show "₹58.82L" and "17.3M"
+    // side by side for two columns of comparable size, which reads as two
+    // different magnitudes rather than two different formats.
+    if (absValue >= 1_00_00_000) return `${sign}${(absValue / 1_00_00_000).toFixed(2)}Cr`;
+    if (absValue >= 1_00_000) return `${sign}${(absValue / 1_00_000).toFixed(2)}L`;
     if (absValue >= 1_000) return `${sign}${(absValue / 1_000).toFixed(1)}K`;
-    return `${sign}${absValue}`;
+    return `${sign}${absValue.toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
   }
   if (type === "percent") {
     return `${sign}${absValue.toFixed(1)}%`;

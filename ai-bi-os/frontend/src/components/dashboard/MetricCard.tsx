@@ -158,9 +158,18 @@ function CountUpValue({ valueString, delayMs = 0 }: { valueString: string; delay
     timeoutId = setTimeout(() => {
       frameId = requestAnimationFrame(step);
     }, delayMs);
-    
+
+    // The count-up is decoration; the number itself is not. requestAnimationFrame
+    // does not fire while a tab is backgrounded or throttled, and this component
+    // starts from zero — so without a guaranteed settle the card can sit showing
+    // "₹0.00Cr" for a real figure of ₹1.58Cr, which reads as a fact rather than
+    // as a missing animation. Land on the true value regardless of whether a
+    // single frame ever ran.
+    const settleId = setTimeout(() => setDisplay(valueString), delayMs + duration + 250);
+
     return () => {
       clearTimeout(timeoutId);
+      clearTimeout(settleId);
       if (frameId) cancelAnimationFrame(frameId);
     };
   }, [valueString, delayMs]);

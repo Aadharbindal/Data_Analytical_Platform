@@ -47,8 +47,11 @@ class ModelRegistry:
         try:
             return self._call_model(model, messages, tools)
         except ImportError:
+            logger.error("litellm is not installed; AI features are unavailable.")
+
             class MockMessage:
-                content = "[SYSTEM: `litellm` is not installed. Run `pip install litellm` in the backend.]"
+                content = ("AI features are not available on this server right now. "
+                           "Please contact your administrator.")
                 tool_calls = None
             return MockMessage()
         except Exception as e:
@@ -59,8 +62,31 @@ class ModelRegistry:
                 except Exception as e2:
                     e = e2
 
+            # The raw provider exception is useful in the log but must not reach
+            # the end user: it carries internal detail (organisation ids, model
+            # names, litellm stack text) and reads as a crash rather than as
+            # something the person can act on. Map the common, recoverable
+            # causes to plain guidance and keep the specifics server-side.
+            logger.error(f"AI request failed on model '{model}': {e}", exc_info=True)
+            detail = str(e).lower()
+            if "rate limit" in detail or "ratelimit" in detail or "429" in detail:
+                friendly = ("The AI service is rate-limited right now. "
+                            "Please wait a few moments and ask again.")
+            elif "api key" in detail or "authentication" in detail or "401" in detail:
+                friendly = ("The AI service is not configured correctly. "
+                            "Please check the API key in your server settings.")
+            elif "timeout" in detail or "timed out" in detail:
+                friendly = ("The AI service took too long to respond. "
+                            "Please try again.")
+            elif "context" in detail and "length" in detail:
+                friendly = ("That request was too large for the AI model. "
+                            "Try narrowing your question to fewer columns or rows.")
+            else:
+                friendly = ("The AI service is temporarily unavailable. "
+                            "Please try again in a moment.")
+
             class MockMessage:
-                content = f"[SYSTEM ERROR: AI Request failed. Ensure your API key is set in .env. Details: {str(e)}]"
+                content = friendly
                 tool_calls = None
             return MockMessage()
 

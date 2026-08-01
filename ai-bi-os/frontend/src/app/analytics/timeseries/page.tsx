@@ -25,7 +25,10 @@ export default function TimeSeriesPage() {
 
   useEffect(() => {
     if (statsData?.stats?.length > 0 && !metric) {
-      setMetric(statsData.stats[0].column);
+      // Skip reference/account/ID columns: they are numeric, so they show up in
+      // the stats list, but a time series of cheque numbers tells you nothing.
+      const real = statsData.stats.find((s: { is_identifier?: boolean }) => !s.is_identifier);
+      setMetric((real ?? statsData.stats[0]).column);
     }
   }, [statsData, metric]);
 

@@ -11,6 +11,7 @@ from pydantic import BaseModel
 from app.core.database import get_db_connection
 from app.services.data_processing import get_active_dataset, get_dataframe
 from app.core.security import get_current_user
+from app.services.stats_service import is_identifier_like, explain_insufficient_rows
 
 router = APIRouter()
 
@@ -42,7 +43,7 @@ async def get_classification_columns(current_user: dict = Depends(get_current_us
         num_unique = df[col].nunique()
         if num_unique < 2 or num_unique > 20:
             continue
-        if 'id' in col.lower() or num_unique > total_rows * 0.5:
+        if is_identifier_like(df[col], col, total_rows):
             continue
         targets.append(col)
 
@@ -52,7 +53,7 @@ async def get_classification_columns(current_user: dict = Depends(get_current_us
         if _is_date_like(df, col):
             continue
         num_unique = df[col].nunique()
-        if 'id' in col.lower() or num_unique > total_rows * 0.5:
+        if is_identifier_like(df[col], col, total_rows):
             continue
         if not pd.api.types.is_numeric_dtype(df[col]) and num_unique > 20:
             continue
@@ -86,7 +87,7 @@ async def train_classification_model(req: TrainRequest, current_user: dict = Dep
         raise HTTPException(status_code=400, detail="Target column cannot be date-like.")
     if target_unique < 2 or target_unique > 20:
         raise HTTPException(status_code=400, detail=f"Target must have between 2 and 20 distinct classes (has {target_unique}).")
-    if 'id' in req.target.lower() or target_unique > total_rows * 0.5:
+    if is_identifier_like(df[req.target], req.target, total_rows):
         raise HTTPException(status_code=400, detail=f"'{req.target}' looks identifier-like and can't be used as a target.")
 
     for f in req.features:
@@ -95,7 +96,7 @@ async def train_classification_model(req: TrainRequest, current_user: dict = Dep
         if _is_date_like(df, f):
             raise HTTPException(status_code=400, detail=f"'{f}' cannot be used: date-like columns are not supported.")
         num_unique = df[f].nunique()
-        if 'id' in f.lower() or num_unique > total_rows * 0.5:
+        if is_identifier_like(df[f], f, total_rows):
             raise HTTPException(status_code=400, detail=f"'{f}' cannot be used: identifier-like column ({num_unique} distinct values in {total_rows} rows).")
         if not pd.api.types.is_numeric_dtype(df[f]) and num_unique > 20:
             raise HTTPException(status_code=400, detail=f"'{f}' cannot be used: categorical column with >20 distinct values ({num_unique}).")
@@ -104,7 +105,7 @@ async def train_classification_model(req: TrainRequest, current_user: dict = Dep
     df_sub = df[cols].dropna()
 
     if len(df_sub) < 20:
-        raise HTTPException(status_code=400, detail="Not enough data: must have >= 20 rows after dropping nulls")
+        raise HTTPException(status_code=400, detail=explain_insufficient_rows(df, cols))
 
     if df_sub[req.target].nunique() < 2:
         raise HTTPException(status_code=400, detail="Target must have at least 2 classes after dropping missing values.")

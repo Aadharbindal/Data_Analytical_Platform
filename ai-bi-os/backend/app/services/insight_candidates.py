@@ -1,4 +1,5 @@
 import pandas as pd
+from app.services.stats_service import to_datetime_safe
 import numpy as np
 import logging
 
@@ -19,8 +20,10 @@ def generate_candidates(df: pd.DataFrame, sem_dict: dict) -> list[dict]:
         if num_metrics and num_metrics[0] in df.columns and pd.api.types.is_numeric_dtype(df[num_metrics[0]]):
             metric = num_metrics[0]
         else:
-            num_cols = df.select_dtypes(include=[np.number]).columns
-            metric = num_cols[0] if len(num_cols) > 0 else None
+            from app.services.stats_service import pick_default_metric
+            # Generating "insights" about a reference-number column produces
+            # confident-sounding statements about nothing.
+            metric = pick_default_metric(df)
 
     # Auto-detect categorical dimensions
     dims = sem_categories.get("categorical_fields", [])
@@ -70,7 +73,7 @@ def generate_candidates(df: pd.DataFrame, sem_dict: dict) -> list[dict]:
     if metric and date_cols:
         for date_col in date_cols:
             try:
-                df_dt = pd.to_datetime(df[date_col], errors='coerce')
+                df_dt = to_datetime_safe(df[date_col])
                 valid_dt = df_dt.dropna()
                 if not valid_dt.empty:
                     df_trend = df.assign(_ym=valid_dt.dt.strftime('%Y-%m'))

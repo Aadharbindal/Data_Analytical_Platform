@@ -1,25 +1,37 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { analyticsApi } from "@/lib/api";
 import { ErrorState, detectErrorType } from "@/components/ui/error-state";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { StudioPage } from "@/components/analytics/StudioPage";
-import { motion, useMotionValue, useTransform, animate, AnimatePresence } from "framer-motion";
+import { motion, animate, AnimatePresence } from "framer-motion";
 import { AlertTriangle, ChevronDown } from "lucide-react";
 
 // ── Animated Number ────────────────────────────────────────────────────────────
+// Driven by React state, not a MotionValue: framer-motion paints MotionValue
+// text on the animation-frame loop, so a backgrounded or throttled tab leaves
+// the element on its starting "0" — here that reads as a 0% confidence score.
 function AnimatedNumber({ value, isPercent = false }: { value: number; isPercent?: boolean }) {
-  const count = useMotionValue(0);
-  const rounded = useTransform(count, (latest) =>
-    isPercent ? `${Math.round(latest)}%` : Math.round(latest).toString()
+  const format = useCallback(
+    (v: number) => (isPercent ? `${Math.round(v)}%` : Math.round(v).toString()),
+    [isPercent]
   );
+  const [display, setDisplay] = useState(() => format(0));
   useEffect(() => {
-    const controls = animate(count, value, { duration: 1.1, ease: "easeOut" });
-    return controls.stop;
-  }, [count, value]);
-  return <motion.span>{rounded}</motion.span>;
+    const controls = animate(0, value, {
+      duration: 1.1,
+      ease: "easeOut",
+      onUpdate: (latest) => setDisplay(format(latest)),
+    });
+    const settle = setTimeout(() => setDisplay(format(value)), 1400);
+    return () => {
+      controls.stop();
+      clearTimeout(settle);
+    };
+  }, [value, format]);
+  return <span>{display}</span>;
 }
 
 // ── Expandable Audit Row ───────────────────────────────────────────────────────

@@ -1,8 +1,222 @@
 import pandas as pd
 import numpy as np
 import re
+import warnings
 from typing import Optional
 from scipy import stats as scipy_stats
+
+# Matches the identifier-detection convention used in semantic_classification.py's
+# entity_ids regex. A numeric "entity" column (the thing a KPI counts distinct
+# instances of — customer, transaction, reference number...) should be counted
+# via nunique(), not summed — summing a column of reference numbers produces a
+# meaningless total. The bare `id|code|uuid` substring check this used to be
+# missed extremely common reference-number naming like "Ref No" or "Txn Number",
+# since those don't contain "id" as a substring.
+_ENTITY_ID_PATTERN = re.compile(r'\b(id|key|code|uuid|number|num|phone|zip|postal|ref|reference|utr)\b|_id$|id$|^id', re.IGNORECASE)
+
+# Columns that are NOT additive across rows: rates, percentages, per-unit
+# prices, ratings, ages, running balances, stock-on-hand. Adding these up
+# produces a number with no meaning — "total discount_pct = 11,920" for a
+# column of percentages, or "total rating = 4,467" for 1-5 stars. Averaging
+# is the only sensible default for them.
+#
+# Matched with word boundaries against a name whose separators have been
+# normalized to spaces (see is_non_additive), so "discount_pct" -> "discount
+# pct" matches `pct` while "package"/"usage" correctly do NOT match `age`.
+_NON_ADDITIVE_PATTERN = re.compile(
+    r'\b('
+    r'rate|ratio|percent|percentage|pct|score|rating|nps|'
+    r'avg|average|mean|median|price|margin|share|index|'
+    r'utilization|util|probability|prob|age|yield|'
+    r'balance|outstanding|headcount|level|onhand|'
+    # Per-unit quantities: unit_cost, unit_price, price_per_sqft,
+    # revenue_per_user. Adding them across rows produces a number with no
+    # meaning. Singular "unit" only, so units_produced / units_sold — which are
+    # genuine additive totals — keep summing.
+    r'unit|per'
+    r')\b',
+    re.IGNORECASE,
+)
+
+
+def is_non_additive(column_name) -> bool:
+    """True when summing this column across rows would be meaningless."""
+    normalized = str(column_name).replace('_', ' ').replace('-', ' ')
+    return bool(_NON_ADDITIVE_PATTERN.search(normalized))
+
+
+# Column names that denote monetary values. Deliberately excludes bare "rate"
+# and "count" style words, which are ratios and tallies rather than money.
+_MONEY_PATTERN = re.compile(
+    r'\b(amount|amt|revenue|sales|price|cost|salary|wage|payroll|spend|spending|'
+    r'budget|bill|billing|invoice|payment|paid|debit|credit|balance|deposit|'
+    r'withdrawal|fee|fees|charge|charges|profit|margin|income|expense|expenses|'
+    r'value|mrr|arr|gmv|turnover|premium|refund|discount.?amount|tax|total.?due)\b',
+    re.IGNORECASE,
+)
+
+
+def is_money_like(column_name) -> bool:
+    """True when a column's name indicates it holds a monetary value."""
+    normalized = str(column_name).replace('_', ' ').replace('-', ' ')
+    return bool(_MONEY_PATTERN.search(normalized))
+
+
+def to_datetime_safe(series):
+    """Parse a date column without silently mis-reading day-first dates.
+
+    pandas assumes month-first for slash dates, so a statement written
+    "01/04/2024" (1 April, the norm outside the US) is read as 4 January, and
+    "30/04/2025" has no 30th month so it becomes NaT and the row silently
+    vanishes from every date-based figure. Both failures are invisible: the
+    totals still render, they are just attributed to the wrong months and
+    computed over fewer rows.
+
+    Parsing both ways and keeping whichever resolves more values decides this
+    from the data instead of guessing — genuinely month-first data still wins
+    when it is the better fit. Only when the two are indistinguishable (every
+    day ≤ 12) does the tie-break matter, and there day-first matches both this
+    product's audience and the majority of the world's date formats.
+    """
+    if pd.api.types.is_datetime64_any_dtype(series):
+        return series
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        month_first = pd.to_datetime(series, errors="coerce")
+        day_first = pd.to_datetime(series, errors="coerce", dayfirst=True)
+
+    if int(month_first.notna().sum()) > int(day_first.notna().sum()):
+        return month_first
+    return day_first
+
+
+def explain_insufficient_rows(df, columns, min_rows: int = 20) -> str:
+    """Explain *why* dropping nulls left too few rows to model on.
+
+    Selecting several columns and dropping incomplete rows can silently
+    collapse a large dataset to nothing — most commonly when two columns are
+    mutually exclusive by design, as a bank statement's Debit and Credit are
+    (every row populates exactly one of them). A bare "not enough data" leaves
+    the user with no idea which column caused it or what to pick instead, so
+    this reports the per-column coverage and the best workable subset.
+    """
+    present = [c for c in columns if c in df.columns]
+    if not present:
+        return f"Not enough data: need at least {min_rows} complete rows."
+
+    total = len(df)
+    remaining = len(df[present].dropna())
+    counts = {c: int(df[c].notna().sum()) for c in present}
+    worst = sorted(counts, key=lambda c: counts[c])
+
+    # Find the largest subset of the chosen columns that still yields enough
+    # complete rows, dropping the sparsest columns first.
+    usable, trial = None, list(present)
+    while len(trial) > 1:
+        trial = [c for c in trial if c != worst[0]] if len(trial) == len(present) else trial[:-1]
+        trial_sorted = sorted(present, key=lambda c: -counts[c])[:len(trial)]
+        if len(df[trial_sorted].dropna()) >= min_rows:
+            usable = trial_sorted
+            break
+
+    detail = ", ".join(f"'{c}' has {counts[c]} of {total} rows filled" for c in sorted(present, key=lambda c: counts[c]))
+    msg = (f"Only {remaining} rows have a value in every selected column, "
+           f"but at least {min_rows} are needed. Coverage: {detail}.")
+
+    empty_pairs = [
+        (a, b) for i, a in enumerate(present) for b in present[i + 1:]
+        if len(df[[a, b]].dropna()) == 0
+    ]
+    if empty_pairs:
+        pairs = "; ".join(f"'{a}' and '{b}'" for a, b in empty_pairs[:3])
+        msg += (f" {pairs} are never populated on the same row, "
+                f"so they cannot be modelled together.")
+    if usable:
+        msg += " Try " + ", ".join(f"'{c}'" for c in usable) + " instead."
+    return msg
+
+
+def is_identifier_like(series, column_name, total_rows: int) -> bool:
+    """True when a column behaves like a per-row identifier rather than a
+    measurement, and so should not be offered as an ML feature or target.
+
+    Cardinality alone is a poor test. A continuous measurement — an amount, a
+    running balance, a price — is naturally almost entirely distinct, so a
+    "more than half the values are unique, therefore it's an ID" rule discards
+    exactly the columns worth modelling.
+
+    Restricting that rule to integer columns was not enough. Measured across ten
+    varied datasets it caught no real identifier and eight genuine measures:
+    units_produced (91% distinct), stock_qty (96%), impressions (99.6%), clicks,
+    conversions, area_sqft, reorder_level, units_sold_last_month. Every one was
+    then withheld from regression, classification and clustering — the columns
+    those datasets exist to model. The single real numeric identifier in the set,
+    "Ref No", was caught by the name pattern above and needed no help.
+
+    So the cardinality fallback now only fires on a strict key: every non-null
+    value distinct, with no near-miss tolerance. A count that happens to be 99%
+    distinct is a measurement; a column with no repeats at all in a decently
+    sized table is behaving like a key. Sparse and tiny columns are left alone
+    because uniqueness carries no signal there.
+    """
+    if _ENTITY_ID_PATTERN.search(str(column_name)):
+        return True
+    if total_rows <= 0:
+        return False
+    try:
+        if pd.api.types.is_float_dtype(series):
+            return False
+        if is_money_like(column_name):
+            return False
+        # Callers pass the column both raw and already dropna()'d, so normalise
+        # here rather than depending on which one arrived.
+        values = series.dropna()
+        n = len(values)
+        if n < 20 or n < total_rows * 0.5:
+            return False
+        return int(values.nunique()) == n
+    except Exception:
+        return False
+
+
+def pick_default_metric(df: pd.DataFrame):
+    """Choose the numeric column to show when the caller didn't name one.
+
+    Several endpoints used to fall back to the first numeric column, which is
+    whatever the CSV happened to lead with. On a bank statement that is the
+    reference number, so the Forecast Center and Time Series pages opened on a
+    projection of cheque numbers. Skip identifiers, prefer an actual money
+    column, and only fall back to the raw first column when every numeric
+    column looks like an identifier — never return nothing where the old code
+    would have returned something.
+    """
+    num_cols = list(df.select_dtypes(include=[np.number]).columns)
+    if not num_cols:
+        return None
+    total_rows = len(df)
+    candidates = [
+        c for c in num_cols
+        if not is_identifier_like(df[c].dropna(), c, total_rows)
+    ]
+    # Order of preference, tested against ten datasets from different domains:
+    #   1. an additive money total   — net_revenue, mrr, bill_amount, spend
+    #   2. any money column          — price_inr on listings, price on trades,
+    #                                  which are per-unit but still the headline
+    #   3. an additive non-money total — units_produced, stock_qty
+    #   4. whatever is left
+    # Putting plain totals above per-unit money (step 3 over step 2) was tried
+    # and picked area_sqft over price_inr for real estate, so money wins first.
+    for group in (
+        [c for c in candidates if is_money_like(c) and not is_non_additive(c)],
+        [c for c in candidates if is_money_like(c)],
+        [c for c in candidates if not is_non_additive(c)],
+        candidates,
+    ):
+        if group:
+            return group[0]
+    return num_cols[0]
+
 
 def find_column(df: pd.DataFrame, pattern: str, numeric_only: bool = False) -> str:
     cols_to_check = df.select_dtypes(include=[np.number]).columns if numeric_only else df.columns
@@ -77,6 +291,11 @@ def compute_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict:
         bus_term = semantic_dict.get("business_terminology", {})
         validate_and_sanitize_business_terminology(df, domain, bus_term)
         
+    # get_dataframe() hands back the shared cached frame, so writing the parsed
+    # date column straight onto `df` (below) would mutate that cache in place —
+    # every later request, for every other endpoint, would then read a frame
+    # whose date column had already been converted. Work on our own copy.
+    df = df.copy()
     original_df = df.copy()
     kpis = []
     
@@ -111,11 +330,13 @@ def compute_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict:
     def calc_trend(current, previous):
         if previous == 0 or pd.isna(previous):
             return 0.0
-        return round(((current - previous) / previous) * 100, 1)
+        # abs() on the baseline so a negative starting point (an overdrawn
+        # balance, a loss) doesn't invert the sign of the reported change.
+        return round(((current - previous) / abs(previous)) * 100, 1)
     
     if date_col:
         try:
-            df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
+            df[date_col] = to_datetime_safe(df[date_col])
             df = df.dropna(subset=[date_col])
             df = df.sort_values(by=date_col)
         except Exception:
@@ -174,15 +395,29 @@ def compute_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict:
 
     # 2. Entity Count KPI
     if entity_col and entity_col in original_df.columns:
+        # See compute_executive_kpis: a near-unique entity column is a per-row
+        # reference, so the count is a count of rows. Counting distinct values
+        # drops every row with a blank reference — the dashboard reported 1,372
+        # transactions for a 1,411-row bank statement, and 39 of those rows have
+        # no Ref No.
+        try:
+            entity_is_per_row = (
+                original_df[entity_col].nunique(dropna=True) > len(original_df) * 0.9
+            )
+        except Exception:
+            entity_is_per_row = False
+
         def agg_entity(subset_df):
             if subset_df.empty:
                 return 0.0
             col_data = subset_df[entity_col]
-            if pd.api.types.is_numeric_dtype(col_data) and not re.search(r'id|code|uuid', entity_col, re.IGNORECASE):
+            if pd.api.types.is_numeric_dtype(col_data) and not _ENTITY_ID_PATTERN.search(str(entity_col)):
                 try:
                     return float(col_data.sum())
                 except Exception:
                     return float(col_data.nunique())
+            elif entity_is_per_row:
+                return float(len(subset_df))
             else:
                 return float(col_data.nunique())
                 
@@ -288,8 +523,7 @@ def compute_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict:
     ]
     MAX_EXTRA_KPIS = 12
     for col in extra_numeric_cols[:MAX_EXTRA_KPIS]:
-        is_ratio_like = bool(re.search(r'rate|ratio|percent|score|avg|average|price|margin', col, re.IGNORECASE))
-        col_op = "mean" if is_ratio_like else "sum"
+        col_op = "mean" if is_non_additive(col) else "sum"
 
         def agg_extra(subset_df, _col=col, _op=col_op):
             if subset_df.empty:
@@ -313,7 +547,12 @@ def compute_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict:
             "value": round(curr_val, 2),
             "previous_value": round(prev_val, 2),
             "trend": trend,
-            "type": "generic",
+            # Typing every extra column "generic" strips the currency symbol
+            # from columns that plainly hold money (Debit, bill_amount,
+            # salary), so a bank dashboard shows "₹58.82L" for one rupee
+            # column next to a bare number for another. Infer money from the
+            # column name so the unit shown matches what the figure is.
+            "type": "currency" if is_money_like(col) else "generic",
             "history": []
         })
 
@@ -337,9 +576,20 @@ def compute_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict:
             if fc.get("available"):
                 if chart_data:
                     chart_data[-1]["forecast"] = chart_data[-1]["value"]
+                existing_labels = {c["name"] for c in chart_data}
                 for f_point in fc.get("forecast", []):
+                    label = f_point["date"]
+                    # forecast_series() drops a trailing part-month from its
+                    # training data and re-estimates it as the first forecast
+                    # point, so that point can carry the same label as the last
+                    # actual month. Left alone the chart plots two different
+                    # values under one x-axis label; tag it as the revised
+                    # estimate it actually is.
+                    if label in existing_labels:
+                        label = f"{label} (Revised Est.)"
+                    existing_labels.add(label)
                     chart_data.append({
-                        "name": f_point["date"],
+                        "name": label,
                         "value": None,
                         "forecast": round(f_point["forecast"], 2)
                     })
@@ -400,6 +650,11 @@ def compute_executive_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict
         bus_term = semantic_dict.get("business_terminology", {})
         validate_and_sanitize_business_terminology(df, domain, bus_term)
         
+    # get_dataframe() hands back the shared cached frame, so writing the parsed
+    # date column straight onto `df` (below) would mutate that cache in place —
+    # every later request, for every other endpoint, would then read a frame
+    # whose date column had already been converted. Work on our own copy.
+    df = df.copy()
     original_df = df.copy()
     kpis = []
     
@@ -428,7 +683,7 @@ def compute_executive_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict
     
     if date_col:
         try:
-            df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
+            df[date_col] = to_datetime_safe(df[date_col])
             df = df.dropna(subset=[date_col])
             df = df.sort_values(by=date_col)
         except Exception:
@@ -468,13 +723,18 @@ def compute_executive_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict
         if date_col and prior_df is not None:
             diff = curr_val - prev_val
             if prev_val != 0 and not pd.isna(prev_val):
-                perc = (diff / prev_val) * 100
-                if perc > 0: trend_dir = "up"
-                elif perc < 0: trend_dir = "down"
+                # Divide by the magnitude of the baseline, not its signed value.
+                # On an overdrawn account a balance moving from -1.05Cr to
+                # -1.08Cr gave (-3.73L / -1.05Cr) = +3.6%, so the card showed a
+                # green "+3.6%" and an upward arrow next to a delta of -3.73L
+                # for a position that had got worse.
+                perc = (diff / abs(prev_val)) * 100
             else:
                 perc = 0.0
-                if diff > 0: trend_dir = "up"
-                elif diff < 0: trend_dir = "down"
+            # Direction follows the actual movement, which stays correct
+            # whatever the sign of the baseline.
+            if diff > 0: trend_dir = "up"
+            elif diff < 0: trend_dir = "down"
         
         history = {
             "monthly": [],
@@ -539,12 +799,28 @@ def compute_executive_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict
         if k: kpis.append(k)
 
     if entity_col:
+        # Decide once, over the whole dataset, whether the entity column is a
+        # per-row reference or a repeating dimension. A reference number is
+        # near-unique, so the thing being counted is rows: counting distinct
+        # values instead silently drops any row whose reference is blank — one
+        # missing "Ref No" turned 47 June transactions into "46". A repeating
+        # dimension like customer_id genuinely wants distinct values, or an
+        # orders table would report "Total Customers" as its order count.
+        try:
+            entity_is_per_row = (
+                original_df[entity_col].nunique(dropna=True) > len(original_df) * 0.9
+            )
+        except Exception:
+            entity_is_per_row = False
+
         def calc_vol(d):
             if d.empty: return 0.0
             col_data = d[entity_col]
-            if pd.api.types.is_numeric_dtype(col_data) and not re.search(r'id|code|uuid', entity_col, re.IGNORECASE):
+            if pd.api.types.is_numeric_dtype(col_data) and not _ENTITY_ID_PATTERN.search(str(entity_col)):
                 try: return float(col_data.sum())
                 except: return float(col_data.nunique())
+            if entity_is_per_row:
+                return float(len(d))
             return float(col_data.nunique())
         k = build_kpi("Volume", entity_label, entity_col, "count", "count", calc_vol)
         if k: kpis.append(k)
@@ -589,9 +865,20 @@ def compute_executive_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict
             if fc.get("available"):
                 if chart_data:
                     chart_data[-1]["forecast"] = chart_data[-1]["value"]
+                existing_labels = {c["name"] for c in chart_data}
                 for f_point in fc.get("forecast", []):
+                    label = f_point["date"]
+                    # forecast_series() drops a trailing part-month from its
+                    # training data and re-estimates it as the first forecast
+                    # point, so that point can carry the same label as the last
+                    # actual month. Left alone the chart plots two different
+                    # values under one x-axis label; tag it as the revised
+                    # estimate it actually is.
+                    if label in existing_labels:
+                        label = f"{label} (Revised Est.)"
+                    existing_labels.add(label)
                     chart_data.append({
-                        "name": f_point["date"],
+                        "name": label,
                         "value": None,
                         "forecast": round(f_point["forecast"], 2)
                     })
@@ -875,7 +1162,7 @@ def forecast_series(
          return {"available": False, "reason": "No date column found"}
 
     df_temp = df.copy()
-    df_temp[date_col] = pd.to_datetime(df_temp[date_col], errors='coerce')
+    df_temp[date_col] = to_datetime_safe(df_temp[date_col])
     df_temp = df_temp.dropna(subset=[date_col])
 
     if df_temp.empty:

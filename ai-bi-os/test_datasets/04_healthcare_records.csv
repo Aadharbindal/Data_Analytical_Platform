@@ -1,0 +1,1001 @@
+patient_id,age,gender,department,diagnosis,admission_date,discharge_date,length_of_stay_days,bill_amount,insurance_type,doctor,outcome
+PT5000,37,Female,Neurology,Stroke,2024-01-01,2024-01-04,3,6329.44,Ayushman Bharat,Dr. Nair,Discharged
+PT5001,23,Female,Pediatrics,Viral Fever,2024-01-01,2024-01-03,2,6148.58,Ayushman Bharat,Dr. Iyer,Under Treatment
+PT5002,45,Female,Pediatrics,Asthma,2024-01-03,2024-01-05,2,8398.68,Private Insurance,Dr. Khan,Under Treatment
+PT5003,48,Male,Oncology,Chemotherapy Cycle,2024-01-04,2024-01-07,3,20112.29,,Dr. Reddy,Discharged
+PT5004,50,Male,General Medicine,Diabetes Type 2,2024-01-04,2024-01-04,0,7696.69,Corporate,Dr. Khan,Referred
+PT5005,35,Female,Pediatrics,Growth Checkup,2024-01-06,2024-01-06,0,4145.03,Ayushman Bharat,Dr. Iyer,Discharged
+PT5006,34,Female,Neurology,Stroke,2024-01-08,2024-01-09,1,5349.98,Ayushman Bharat,Dr. Iyer,Discharged
+PT5007,90,Male,ENT,Hearing Loss,2024-01-08,2024-01-11,3,13752.53,Self Pay,Dr. Sharma,Discharged
+PT5008,25,Female,Cardiology,Arrhythmia,2024-01-09,2024-01-11,2,12555.26,Ayushman Bharat,Dr. Iyer,Discharged
+PT5009,38,Male,Cardiology,Arrhythmia,2024-01-09,2024-01-14,5,24684.25,Corporate,Dr. Reddy,Discharged
+PT5010,69,Male,Orthopedics,ACL Tear,2024-01-09,2024-01-11,2,5563.84,Ayushman Bharat,Dr. Nair,Discharged
+PT5011,18,Female,General Medicine,Diabetes Type 2,2024-01-09,2024-01-11,2,8611.93,,Dr. Sharma,Under Treatment
+PT5012,20,Female,Orthopedics,Arthritis,2024-01-09,2024-01-11,2,3639.59,Corporate,Dr. Reddy,Discharged
+PT5013,59,Female,Cardiology,Coronary Artery Disease,2024-01-10,2024-01-17,7,,Self Pay,Dr. Sharma,Discharged
+PT5014,33,Female,Pediatrics,Growth Checkup,2024-01-10,2024-01-11,1,7881.35,,Dr. Iyer,Referred
+PT5015,34,Female,General Medicine,Viral Infection,2024-01-11,2024-01-14,3,16110.11,Ayushman Bharat,Dr. Khan,Discharged
+PT5016,57,Female,ENT,Sinusitis,2024-01-11,2024-01-11,0,7368.4,,Dr. Sharma,Discharged
+PT5017,9,Female,Neurology,Migraine,2024-01-12,2024-01-15,3,7254.65,Ayushman Bharat,Dr. Das,Discharged
+PT5018,69,Male,Pediatrics,Viral Fever,2024-01-12,2024-01-15,3,13954.93,Self Pay,Dr. Das,Discharged
+PT5019,44,Female,General Medicine,Viral Infection,2024-01-13,2024-01-14,1,5770.66,Corporate,,Discharged
+PT5020,25,Female,Oncology,Tumor Biopsy,2024-01-13,2024-01-18,5,43313.39,Private Insurance,Dr. Sharma,Discharged
+PT5021,11,Male,Orthopedics,Fracture,2024-01-15,2024-01-29,14,28955.39,Self Pay,Dr. Iyer,Discharged
+PT5022,53,Female,ENT,Tonsillitis,2024-01-15,2024-01-17,2,14259.97,Private Insurance,Dr. Nair,Discharged
+PT5023,33,Male,Oncology,Chemotherapy Cycle,2024-01-16,2024-01-17,1,3575.06,Ayushman Bharat,Dr. Das,Discharged
+PT5024,47,Female,Neurology,Migraine,2024-01-17,2024-01-17,0,3804.64,Self Pay,Dr. Sharma,Discharged
+PT5025,41,Male,Oncology,Chemotherapy Cycle,2024-01-17,2024-01-20,3,,Ayushman Bharat,Dr. Sharma,Discharged
+PT5026,34,Female,Orthopedics,ACL Tear,2024-01-19,2024-01-24,5,23295.36,Ayushman Bharat,Dr. Nair,Under Treatment
+PT5027,28,Female,Pediatrics,Asthma,2024-01-19,2024-01-20,1,6355.75,Corporate,Dr. Reddy,Under Treatment
+PT5028,32,Male,General Medicine,Viral Infection,2024-01-20,2024-01-20,0,815.04,Self Pay,Dr. Das,Discharged
+PT5029,63,Male,Orthopedics,Arthritis,2024-01-20,2024-01-23,3,10337.93,Private Insurance,Dr. Reddy,Discharged
+PT5030,29,Female,Neurology,Migraine,2024-01-20,2024-01-21,1,5042.53,Private Insurance,Dr. Mehta,Under Treatment
+PT5031,25,Female,General Medicine,Anemia,2024-01-22,2024-01-23,1,10839.71,Corporate,Dr. Reddy,Discharged
+PT5032,45,Female,Orthopedics,ACL Tear,2024-01-22,2024-01-22,0,3124.12,Private Insurance,Dr. Iyer,Discharged
+PT5033,63,Male,Neurology,Epilepsy,2024-01-23,2024-01-25,2,14571.37,Ayushman Bharat,Dr. Sharma,Discharged
+PT5034,61,Male,Pediatrics,Viral Fever,2024-01-24,2024-01-26,2,3584.51,Self Pay,Dr. Reddy,Discharged
+PT5035,25,Male,General Medicine,Diabetes Type 2,2024-01-25,2024-01-25,0,3683.33,Self Pay,Dr. Sharma,Discharged
+PT5036,56,Male,ENT,Tonsillitis,2024-01-25,2024-01-25,0,3949.58,Private Insurance,Dr. Khan,Discharged
+PT5037,13,Male,Oncology,Tumor Biopsy,2024-01-30,2024-01-31,1,2022.33,Ayushman Bharat,Dr. Sharma,Referred
+PT5038,61,Male,Neurology,Stroke,2024-02-02,2024-02-16,14,13127.36,Self Pay,Dr. Reddy,Under Treatment
+PT5039,69,Male,Cardiology,Coronary Artery Disease,2024-02-03,2024-02-04,1,12486.59,Ayushman Bharat,Dr. Das,Discharged
+PT5040,39,Female,Orthopedics,Arthritis,2024-02-04,2024-02-05,1,4596.49,Self Pay,Dr. Mehta,Referred
+PT5041,39,Male,ENT,Sinusitis,2024-02-06,2024-02-13,7,29246.02,Corporate,Dr. Iyer,Discharged
+PT5042,54,Female,ENT,Sinusitis,2024-02-06,2024-02-07,1,6768.82,Self Pay,Dr. Mehta,Deceased
+PT5043,31,Male,Neurology,Epilepsy,2024-02-07,2024-02-14,7,58876.69,Self Pay,Dr. Iyer,Under Treatment
+PT5044,67,Female,Oncology,Tumor Biopsy,2024-02-07,2024-02-07,0,4154.58,Ayushman Bharat,Dr. Mehta,Referred
+PT5045,84,Female,Orthopedics,Fracture,2024-02-08,2024-02-13,5,8836.33,Ayushman Bharat,Dr. Das,Under Treatment
+PT5046,31,Female,ENT,Hearing Loss,2024-02-09,2024-02-12,3,12089.74,Self Pay,Dr. Khan,Under Treatment
+PT5047,27,Female,ENT,Hearing Loss,2024-02-11,2024-02-16,5,38420.95,Corporate,Dr. Sharma,Discharged
+PT5048,24,Male,General Medicine,Viral Infection,2024-02-11,2024-02-11,0,4460.94,,Dr. Iyer,Discharged
+PT5049,50,Female,Oncology,Breast Cancer Screening,2024-02-12,2024-02-13,1,6049.16,Private Insurance,Dr. Reddy,Discharged
+PT5050,36,Male,General Medicine,Viral Infection,2024-02-14,2024-02-28,14,119438.84,Private Insurance,Dr. Reddy,Under Treatment
+PT5051,35,Female,ENT,Tonsillitis,2024-02-16,2024-02-21,5,24585.28,Ayushman Bharat,Dr. Khan,Discharged
+PT5052,13,Female,ENT,Tonsillitis,2024-02-16,2024-02-17,1,7877.71,Ayushman Bharat,Dr. Reddy,Under Treatment
+PT5053,87,Female,Oncology,Breast Cancer Screening,2024-02-18,2024-02-18,0,7249.84,Private Insurance,Dr. Khan,Discharged
+PT5054,24,Female,ENT,Sinusitis,2024-02-20,2024-03-05,14,117264.7,Self Pay,Dr. Nair,Discharged
+PT5055,41,Other,General Medicine,Diabetes Type 2,2024-02-22,2024-02-23,1,6168.77,Self Pay,Dr. Mehta,Deceased
+PT5056,17,Male,General Medicine,Viral Infection,2024-02-22,2024-02-29,7,12391.4,Ayushman Bharat,Dr. Khan,Under Treatment
+PT5057,22,Male,Cardiology,Coronary Artery Disease,2024-02-22,2024-02-24,2,4503.42,Private Insurance,Dr. Das,Discharged
+PT5058,46,Female,Pediatrics,Asthma,2024-02-23,2024-02-26,3,17397.7,Self Pay,Dr. Reddy,Discharged
+PT5059,38,Female,Cardiology,Coronary Artery Disease,2024-02-26,2024-02-28,2,9125.93,Ayushman Bharat,Dr. Iyer,Discharged
+PT5060,45,Female,ENT,Tonsillitis,2024-02-27,2024-02-27,0,1232.05,Self Pay,Dr. Nair,Discharged
+PT5061,66,Male,Cardiology,Arrhythmia,2024-02-28,2024-03-01,2,11698.11,Private Insurance,Dr. Nair,Deceased
+PT5062,19,Female,Pediatrics,Asthma,2024-03-02,2024-03-02,0,1886.97,Self Pay,Dr. Sharma,Under Treatment
+PT5063,50,Male,Orthopedics,Fracture,2024-03-05,2024-03-06,1,4700.69,Private Insurance,Dr. Khan,Discharged
+PT5064,36,Female,ENT,Hearing Loss,2024-03-05,2024-03-08,3,3236.35,,Dr. Sharma,Discharged
+PT5065,25,Male,Pediatrics,Growth Checkup,2024-03-05,2024-03-06,1,3429.36,Private Insurance,Dr. Reddy,Under Treatment
+PT5066,56,Female,Pediatrics,Asthma,2024-03-05,2024-03-08,3,17554.11,Private Insurance,Dr. Khan,Discharged
+PT5067,24,Male,ENT,Tonsillitis,2024-03-07,2024-03-07,0,3466.28,Self Pay,Dr. Reddy,Referred
+PT5068,31,Female,Pediatrics,Growth Checkup,2024-03-08,2024-03-13,5,31781.05,Ayushman Bharat,Dr. Nair,Discharged
+PT5069,51,Male,General Medicine,Diabetes Type 2,2024-03-09,2024-03-11,2,22563.74,Corporate,Dr. Mehta,Under Treatment
+PT5070,20,Male,Neurology,Epilepsy,2024-03-09,2024-03-11,2,10541.87,Corporate,Dr. Khan,Discharged
+PT5071,2,Female,Neurology,Stroke,2024-03-10,2024-03-11,1,2324.46,Ayushman Bharat,Dr. Mehta,Deceased
+PT5072,64,Female,ENT,Tonsillitis,2024-03-11,2024-03-12,1,7522.86,Private Insurance,Dr. Das,Discharged
+PT5073,50,Male,Cardiology,Arrhythmia,2024-03-11,2024-03-11,0,3318.27,Private Insurance,Dr. Nair,Discharged
+PT5074,45,Female,Oncology,Breast Cancer Screening,2024-03-14,2024-03-17,3,15662.6,Self Pay,Dr. Mehta,Discharged
+PT5075,35,Male,Orthopedics,ACL Tear,2024-03-15,2024-03-17,2,7616.35,Self Pay,Dr. Mehta,Discharged
+PT5076,38,Female,Neurology,Stroke,2024-03-17,2024-03-19,2,10197.69,,Dr. Reddy,Referred
+PT5077,38,Female,Cardiology,Coronary Artery Disease,2024-03-18,2024-03-18,0,1293.63,Private Insurance,Dr. Reddy,Discharged
+PT5078,4,Male,Neurology,Migraine,2024-03-20,2024-03-22,2,15682.89,Private Insurance,Dr. Iyer,Under Treatment
+PT5079,58,Female,Oncology,Chemotherapy Cycle,2024-03-20,2024-03-21,1,3631.72,Ayushman Bharat,Dr. Das,Discharged
+PT5080,26,Female,General Medicine,Viral Infection,2024-03-22,2024-03-27,5,9528.95,Private Insurance,Dr. Das,Discharged
+PT5081,39,Male,General Medicine,Diabetes Type 2,2024-03-22,2024-03-23,1,6064.93,Ayushman Bharat,Dr. Nair,Referred
+PT5082,95,Male,Pediatrics,Asthma,2024-03-24,2024-03-31,7,16518.31,,Dr. Mehta,Discharged
+PT5083,79,Male,General Medicine,Viral Infection,2024-03-24,2024-03-27,3,6712.22,Ayushman Bharat,Dr. Sharma,Deceased
+PT5084,45,Male,Neurology,Stroke,2024-03-25,2024-04-01,7,18264.71,Private Insurance,Dr. Khan,Deceased
+PT5085,29,Female,Orthopedics,Fracture,2024-03-28,2024-03-30,2,3352.51,Corporate,Dr. Khan,Discharged
+PT5086,47,Female,Oncology,Breast Cancer Screening,2024-03-31,2024-04-02,2,7945.96,Private Insurance,Dr. Iyer,Discharged
+PT5087,57,Male,Pediatrics,Viral Fever,2024-04-01,2024-04-03,2,12288.7,Ayushman Bharat,Dr. Khan,Under Treatment
+PT5088,24,Male,Orthopedics,Arthritis,2024-04-01,2024-04-06,5,42142.14,Corporate,Dr. Khan,Under Treatment
+PT5089,54,Female,General Medicine,Anemia,2024-04-02,2024-04-02,0,3978.46,Private Insurance,Dr. Das,Discharged
+PT5090,42,Other,Cardiology,Coronary Artery Disease,2024-04-03,2024-04-06,3,11466.26,Ayushman Bharat,Dr. Reddy,Discharged
+PT5091,21,Female,Cardiology,Hypertension,2024-04-04,2024-04-05,1,11384.89,Self Pay,Dr. Nair,Under Treatment
+PT5092,53,Female,Neurology,Migraine,2024-04-04,2024-04-05,1,2021.67,Self Pay,Dr. Reddy,Discharged
+PT5093,58,Female,ENT,Sinusitis,2024-04-04,2024-04-05,1,3648.71,Corporate,Dr. Nair,Discharged
+PT5094,48,Male,Orthopedics,ACL Tear,2024-04-04,2024-04-06,2,7185.93,Self Pay,Dr. Nair,Under Treatment
+PT5095,59,Female,Orthopedics,Arthritis,2024-04-05,2024-04-05,0,3798.97,Private Insurance,Dr. Iyer,Discharged
+PT5096,45,Female,Pediatrics,Growth Checkup,2024-04-08,2024-04-13,5,10330.48,Ayushman Bharat,Dr. Khan,Discharged
+PT5097,66,Female,General Medicine,Diabetes Type 2,2024-04-11,2024-04-14,3,6233.69,Private Insurance,Dr. Reddy,Discharged
+PT5098,69,Female,General Medicine,Anemia,2024-04-12,2024-04-15,3,16016.46,Self Pay,Dr. Reddy,Deceased
+PT5099,58,Female,ENT,Tonsillitis,2024-04-12,2024-04-15,3,9585.96,Ayushman Bharat,Dr. Nair,Discharged
+PT5100,76,Female,Oncology,Chemotherapy Cycle,2024-04-12,2024-04-14,2,3353.05,Private Insurance,Dr. Mehta,Discharged
+PT5101,38,Female,Neurology,Stroke,2024-04-13,2024-04-16,3,10554.84,,Dr. Reddy,Discharged
+PT5102,22,Male,Oncology,Tumor Biopsy,2024-04-14,2024-04-17,3,14436.31,Private Insurance,Dr. Iyer,Discharged
+PT5103,70,Other,Oncology,Tumor Biopsy,2024-04-14,2024-04-19,5,14927.88,Corporate,Dr. Sharma,Under Treatment
+PT5104,47,Male,Orthopedics,Fracture,2024-04-14,2024-04-14,0,2608.11,Private Insurance,Dr. Khan,Under Treatment
+PT5105,17,Male,Pediatrics,Growth Checkup,2024-04-15,2024-04-20,5,12198.99,Self Pay,Dr. Sharma,Referred
+PT5106,26,Female,Cardiology,Arrhythmia,2024-04-16,2024-04-16,0,4044.22,Self Pay,Dr. Khan,Referred
+PT5107,46,Female,Neurology,Migraine,2024-04-16,2024-04-18,2,16111.15,Private Insurance,Dr. Nair,Under Treatment
+PT5108,56,Female,Orthopedics,ACL Tear,2024-04-16,2024-04-17,1,5565.73,Private Insurance,Dr. Sharma,Discharged
+PT5109,78,Female,General Medicine,Anemia,2024-04-16,2024-04-16,0,3389.96,Ayushman Bharat,Dr. Nair,Discharged
+PT5110,40,Male,Oncology,Breast Cancer Screening,2024-04-17,2024-04-19,2,13464.38,Corporate,Dr. Das,Discharged
+PT5111,13,Female,Oncology,Chemotherapy Cycle,2024-04-19,2024-04-24,5,39671.31,Private Insurance,Dr. Das,Discharged
+PT5112,21,Female,Orthopedics,Fracture,2024-04-19,2024-04-20,1,16143.1,Corporate,Dr. Iyer,Discharged
+PT5113,52,Male,Neurology,Migraine,2024-04-21,2024-04-24,3,10466.83,Self Pay,Dr. Khan,Discharged
+PT5114,76,Female,Pediatrics,Viral Fever,2024-04-21,2024-05-05,14,34684.78,Ayushman Bharat,Dr. Nair,Referred
+PT5115,39,Male,Pediatrics,Growth Checkup,2024-04-21,2024-04-22,1,11557.45,Self Pay,Dr. Iyer,Discharged
+PT5116,71,Male,General Medicine,Viral Infection,2024-04-22,2024-04-23,1,6464.56,Ayushman Bharat,Dr. Sharma,Under Treatment
+PT5117,76,Male,Oncology,Breast Cancer Screening,2024-04-25,2024-04-26,1,2848.14,Ayushman Bharat,Dr. Sharma,Discharged
+PT5118,45,Female,Pediatrics,Growth Checkup,2024-04-25,2024-04-27,2,8537.38,,Dr. Das,Discharged
+PT5119,41,Male,Neurology,Stroke,2024-04-26,2024-04-28,2,11129.95,Private Insurance,Dr. Reddy,Discharged
+PT5120,83,Male,Cardiology,Coronary Artery Disease,2024-04-26,2024-04-26,0,3279.07,Private Insurance,Dr. Mehta,Discharged
+PT5121,53,Male,Cardiology,Arrhythmia,2024-04-27,2024-04-29,2,6199.0,Corporate,Dr. Khan,Discharged
+PT5122,45,Male,Pediatrics,Growth Checkup,2024-04-27,2024-04-28,1,3833.87,Corporate,Dr. Das,Under Treatment
+PT5123,32,Female,ENT,Tonsillitis,2024-04-28,2024-04-29,1,9905.9,,Dr. Reddy,Discharged
+PT5124,48,Female,Neurology,Stroke,2024-04-28,2024-05-01,3,19540.19,Self Pay,Dr. Reddy,Discharged
+PT5125,23,Female,Cardiology,Hypertension,2024-04-28,2024-05-03,5,17923.51,,Dr. Das,Discharged
+PT5126,60,Female,ENT,Hearing Loss,2024-04-29,2024-05-01,2,12176.09,,Dr. Sharma,Discharged
+PT5127,46,Female,Neurology,Migraine,2024-04-30,2024-05-07,7,60117.52,Ayushman Bharat,Dr. Mehta,Discharged
+PT5128,33,Male,ENT,Sinusitis,2024-05-02,2024-05-03,1,7433.14,Self Pay,Dr. Sharma,Discharged
+PT5129,35,Female,Oncology,Chemotherapy Cycle,2024-05-02,2024-05-02,0,3835.89,Private Insurance,Dr. Das,Discharged
+PT5130,28,Male,Neurology,Epilepsy,2024-05-02,2024-05-02,0,7612.21,Ayushman Bharat,Dr. Khan,Deceased
+PT5131,67,Male,Cardiology,Hypertension,2024-05-02,2024-05-16,14,35135.72,,Dr. Khan,Discharged
+PT5132,55,Female,Orthopedics,Fracture,2024-05-02,2024-05-03,1,7626.77,Self Pay,Dr. Iyer,Discharged
+PT5133,38,Female,ENT,Tonsillitis,2024-05-02,2024-05-03,1,5728.79,,Dr. Sharma,Under Treatment
+PT5134,19,Male,Oncology,Chemotherapy Cycle,2024-05-03,2024-05-05,2,15687.83,Ayushman Bharat,Dr. Mehta,Discharged
+PT5135,11,Female,Cardiology,Coronary Artery Disease,2024-05-04,2024-05-04,0,1047.62,Ayushman Bharat,Dr. Sharma,Discharged
+PT5136,56,Male,Oncology,Breast Cancer Screening,2024-05-04,2024-05-06,2,9331.6,Ayushman Bharat,Dr. Mehta,Deceased
+PT5137,75,Female,Pediatrics,Asthma,2024-05-04,2024-05-05,1,7282.55,Private Insurance,Dr. Mehta,Referred
+PT5138,45,Female,Cardiology,Coronary Artery Disease,2024-05-04,2024-05-04,0,2875.01,,Dr. Reddy,Under Treatment
+PT5139,23,Male,Neurology,Stroke,2024-05-06,2024-05-07,1,3386.86,Self Pay,Dr. Sharma,Discharged
+PT5140,13,Male,Cardiology,Hypertension,2024-05-08,2024-05-15,7,39328.39,Corporate,Dr. Iyer,Discharged
+PT5141,58,Other,Neurology,Stroke,2024-05-08,2024-05-10,2,3240.56,Ayushman Bharat,Dr. Iyer,Discharged
+PT5142,58,Male,Cardiology,Arrhythmia,2024-05-08,2024-05-09,1,5173.54,Ayushman Bharat,Dr. Nair,Discharged
+PT5143,28,Other,Oncology,Chemotherapy Cycle,2024-05-12,2024-05-15,3,15133.03,Self Pay,Dr. Reddy,Discharged
+PT5144,56,Male,ENT,Tonsillitis,2024-05-13,2024-05-16,3,14894.97,Private Insurance,Dr. Sharma,Discharged
+PT5145,40,Male,ENT,Hearing Loss,2024-05-14,2024-05-14,0,3664.32,Self Pay,Dr. Sharma,Discharged
+PT5146,34,Male,Orthopedics,Arthritis,2024-05-15,2024-05-15,0,3754.74,Self Pay,Dr. Iyer,Under Treatment
+PT5147,41,Female,Pediatrics,Growth Checkup,2024-05-15,2024-05-16,1,2740.88,Self Pay,Dr. Sharma,Discharged
+PT5148,61,Male,General Medicine,Anemia,2024-05-16,2024-05-16,0,6162.98,Ayushman Bharat,Dr. Das,Discharged
+PT5149,69,Male,ENT,Hearing Loss,2024-05-17,2024-05-17,0,4974.59,Corporate,Dr. Reddy,Deceased
+PT5150,34,Female,ENT,Hearing Loss,2024-05-17,2024-05-22,5,23944.04,Corporate,Dr. Mehta,Discharged
+PT5151,2,Male,Cardiology,Arrhythmia,2024-05-17,2024-05-24,7,61610.44,Ayushman Bharat,Dr. Sharma,Discharged
+PT5152,0,Female,Orthopedics,ACL Tear,2024-05-17,2024-05-18,1,8382.84,Private Insurance,Dr. Das,Discharged
+PT5153,32,Female,ENT,Tonsillitis,2024-05-18,2024-05-25,7,25858.71,Private Insurance,Dr. Das,Discharged
+PT5154,17,Female,Cardiology,Arrhythmia,2024-05-18,2024-05-19,1,4904.58,Corporate,Dr. Iyer,Discharged
+PT5155,52,Male,Neurology,Stroke,2024-05-18,2024-05-19,1,7992.27,Self Pay,Dr. Reddy,Discharged
+PT5156,67,Male,ENT,Hearing Loss,2024-05-19,2024-05-19,0,2373.84,,Dr. Reddy,Discharged
+PT5157,25,Male,Neurology,Epilepsy,2024-05-24,2024-05-27,3,11632.07,Corporate,Dr. Iyer,Discharged
+PT5158,56,Female,General Medicine,Diabetes Type 2,2024-05-27,2024-05-30,3,6282.55,Ayushman Bharat,Dr. Mehta,Discharged
+PT5159,19,Female,Pediatrics,Asthma,2024-05-28,2024-05-29,1,3789.61,,Dr. Nair,Under Treatment
+PT5160,30,Female,Pediatrics,Asthma,2024-05-29,2024-05-31,2,14831.95,,Dr. Das,Discharged
+PT5161,74,Female,Pediatrics,Growth Checkup,2024-05-30,2024-06-13,14,,Ayushman Bharat,Dr. Mehta,Discharged
+PT5162,54,Male,General Medicine,Viral Infection,2024-05-31,2024-05-31,0,3248.99,Self Pay,Dr. Iyer,Discharged
+PT5163,34,Female,ENT,Hearing Loss,2024-06-01,2024-06-08,7,37107.53,Self Pay,Dr. Khan,Discharged
+PT5164,62,Male,Orthopedics,ACL Tear,2024-06-02,2024-06-02,0,3164.94,Ayushman Bharat,Dr. Khan,Under Treatment
+PT5165,33,Female,Oncology,Chemotherapy Cycle,2024-06-02,2024-06-05,3,11907.04,Self Pay,Dr. Iyer,Discharged
+PT5166,33,Male,Neurology,Migraine,2024-06-05,2024-06-07,2,20117.36,Corporate,Dr. Reddy,Discharged
+PT5167,24,Male,Neurology,Migraine,2024-06-05,2024-06-07,2,7373.52,Private Insurance,Dr. Khan,Under Treatment
+PT5168,40,Male,Cardiology,Hypertension,2024-06-06,2024-06-07,1,4157.33,Private Insurance,,Under Treatment
+PT5169,52,Female,Cardiology,Coronary Artery Disease,2024-06-07,2024-06-10,3,9298.1,Private Insurance,Dr. Iyer,Referred
+PT5170,31,Female,Cardiology,Hypertension,2024-06-10,2024-06-11,1,4532.5,Corporate,Dr. Sharma,Discharged
+PT5171,45,Female,ENT,Sinusitis,2024-06-11,2024-06-11,0,3786.56,,Dr. Khan,Discharged
+PT5172,35,Other,Cardiology,Coronary Artery Disease,2024-06-11,2024-06-13,2,12281.71,Ayushman Bharat,Dr. Reddy,Discharged
+PT5173,14,Female,Pediatrics,Viral Fever,2024-06-11,2024-06-12,1,,Ayushman Bharat,Dr. Nair,Referred
+PT5174,65,Male,Cardiology,Coronary Artery Disease,2024-06-11,2024-06-16,5,22320.01,Ayushman Bharat,Dr. Reddy,Under Treatment
+PT5175,0,Male,Orthopedics,ACL Tear,2024-06-12,2024-06-13,1,3800.95,Self Pay,Dr. Nair,Referred
+PT5176,30,Male,ENT,Hearing Loss,2024-06-12,2024-06-12,0,6020.14,Ayushman Bharat,Dr. Nair,Under Treatment
+PT5177,16,Male,Pediatrics,Viral Fever,2024-06-12,2024-06-17,5,11111.16,,Dr. Sharma,Discharged
+PT5178,22,Female,Pediatrics,Growth Checkup,2024-06-13,2024-06-14,1,8299.94,Ayushman Bharat,Dr. Das,Deceased
+PT5179,21,Female,Cardiology,Arrhythmia,2024-06-15,2024-06-15,0,2260.69,Private Insurance,Dr. Nair,Referred
+PT5180,55,Male,Neurology,Epilepsy,2024-06-16,2024-06-17,1,3488.96,Self Pay,Dr. Reddy,Under Treatment
+PT5181,37,Male,Oncology,Chemotherapy Cycle,2024-06-17,2024-06-17,0,2605.46,Corporate,Dr. Iyer,Discharged
+PT5182,25,Female,Oncology,Breast Cancer Screening,2024-06-17,2024-06-18,1,5547.46,Ayushman Bharat,Dr. Mehta,Referred
+PT5183,58,Male,Orthopedics,Fracture,2024-06-17,2024-06-20,3,9423.9,,Dr. Sharma,Discharged
+PT5184,71,Female,ENT,Tonsillitis,2024-06-18,2024-06-25,7,24045.65,,Dr. Reddy,Discharged
+PT5185,50,Female,ENT,Sinusitis,2024-06-18,2024-06-18,0,3485.84,Private Insurance,Dr. Iyer,Discharged
+PT5186,7,Male,Cardiology,Hypertension,2024-06-19,2024-06-20,1,5048.95,Self Pay,Dr. Khan,Discharged
+PT5187,65,Female,Pediatrics,Viral Fever,2024-06-19,2024-06-22,3,10047.62,Corporate,Dr. Reddy,Discharged
+PT5188,40,Male,Oncology,Tumor Biopsy,2024-06-19,2024-06-26,7,35005.83,Private Insurance,Dr. Reddy,Discharged
+PT5189,33,Female,ENT,Hearing Loss,2024-06-20,2024-06-22,2,5739.34,,Dr. Nair,Under Treatment
+PT5190,49,Male,Oncology,Chemotherapy Cycle,2024-06-20,2024-07-04,14,26653.39,Ayushman Bharat,Dr. Khan,Under Treatment
+PT5191,35,Female,ENT,Sinusitis,2024-06-22,2024-06-24,2,2503.57,Private Insurance,Dr. Mehta,Under Treatment
+PT5192,17,Female,Cardiology,Coronary Artery Disease,2024-06-22,2024-06-23,1,3209.42,Corporate,Dr. Iyer,Discharged
+PT5193,69,Male,Oncology,Breast Cancer Screening,2024-06-23,2024-06-23,0,4021.28,Private Insurance,Dr. Sharma,Under Treatment
+PT5194,82,Male,Oncology,Breast Cancer Screening,2024-06-27,2024-06-27,0,2264.61,Private Insurance,Dr. Khan,Discharged
+PT5195,35,Male,Pediatrics,Viral Fever,2024-06-27,2024-06-28,1,6773.16,Self Pay,Dr. Reddy,Discharged
+PT5196,57,Female,General Medicine,Diabetes Type 2,2024-06-29,2024-07-02,3,14068.51,Self Pay,,Discharged
+PT5197,0,Female,Oncology,Breast Cancer Screening,2024-06-30,2024-07-02,2,5851.09,Ayushman Bharat,Dr. Khan,Discharged
+PT5198,41,Male,Cardiology,Arrhythmia,2024-06-30,2024-06-30,0,2653.6,Self Pay,Dr. Nair,Under Treatment
+PT5199,19,Male,ENT,Sinusitis,2024-07-01,2024-07-06,5,12770.51,,Dr. Nair,Discharged
+PT5200,13,Female,Pediatrics,Growth Checkup,2024-07-01,2024-07-06,5,6292.91,Self Pay,Dr. Sharma,Discharged
+PT5201,48,Other,Cardiology,Hypertension,2024-07-03,2024-07-05,2,14408.37,Private Insurance,Dr. Khan,Discharged
+PT5202,44,Male,Cardiology,Coronary Artery Disease,2024-07-03,2024-07-04,1,6346.65,Private Insurance,Dr. Khan,Discharged
+PT5203,43,Female,Oncology,Tumor Biopsy,2024-07-04,2024-07-07,3,11940.18,Self Pay,Dr. Iyer,Referred
+PT5204,45,Male,Orthopedics,Fracture,2024-07-05,2024-07-05,0,1751.99,Corporate,Dr. Iyer,Discharged
+PT5205,23,Male,General Medicine,Viral Infection,2024-07-05,2024-07-19,14,47583.36,Private Insurance,Dr. Nair,Deceased
+PT5206,52,Female,Cardiology,Hypertension,2024-07-08,2024-07-11,3,14746.91,Corporate,Dr. Reddy,Discharged
+PT5207,39,Other,Oncology,Chemotherapy Cycle,2024-07-10,2024-07-12,2,4890.35,Self Pay,Dr. Nair,Referred
+PT5208,73,Male,ENT,Tonsillitis,2024-07-12,2024-07-12,0,4154.47,,Dr. Sharma,Discharged
+PT5209,46,Male,Oncology,Breast Cancer Screening,2024-07-12,2024-07-17,5,10939.05,Ayushman Bharat,Dr. Nair,Discharged
+PT5210,45,Male,Cardiology,Hypertension,2024-07-14,2024-07-16,2,2591.2,Ayushman Bharat,Dr. Mehta,Discharged
+PT5211,31,Male,Cardiology,Arrhythmia,2024-07-15,2024-07-16,1,7143.89,Private Insurance,Dr. Das,Discharged
+PT5212,33,Male,ENT,Hearing Loss,2024-07-16,2024-07-16,0,1486.69,Private Insurance,Dr. Mehta,Discharged
+PT5213,54,Female,ENT,Sinusitis,2024-07-16,2024-07-21,5,7767.09,Ayushman Bharat,Dr. Sharma,Discharged
+PT5214,12,Female,Pediatrics,Viral Fever,2024-07-17,2024-07-17,0,3710.92,Corporate,Dr. Khan,Discharged
+PT5215,23,Male,Orthopedics,Fracture,2024-07-18,2024-07-21,3,13124.06,Self Pay,Dr. Reddy,Discharged
+PT5216,12,Male,Oncology,Chemotherapy Cycle,2024-07-21,2024-07-22,1,5836.27,,Dr. Mehta,Under Treatment
+PT5217,22,Male,Pediatrics,Asthma,2024-07-22,2024-07-24,2,9513.33,Self Pay,Dr. Khan,Deceased
+PT5218,34,Female,Pediatrics,Growth Checkup,2024-07-26,2024-07-28,2,13444.02,,Dr. Sharma,Referred
+PT5219,21,Other,ENT,Tonsillitis,2024-07-26,2024-08-02,7,17710.54,Corporate,Dr. Mehta,Discharged
+PT5220,55,Male,Cardiology,Hypertension,2024-07-28,2024-07-28,0,948.28,Corporate,Dr. Sharma,Discharged
+PT5221,73,Male,Cardiology,Coronary Artery Disease,2024-07-28,2024-08-04,7,33116.38,Private Insurance,Dr. Mehta,Discharged
+PT5222,44,Female,ENT,Sinusitis,2024-07-30,2024-08-04,5,17696.09,Private Insurance,Dr. Iyer,Discharged
+PT5223,66,Male,Orthopedics,Arthritis,2024-07-31,2024-08-03,3,15541.12,Ayushman Bharat,Dr. Das,Discharged
+PT5224,18,Male,Neurology,Epilepsy,2024-07-31,2024-08-01,1,7846.2,Corporate,Dr. Iyer,Referred
+PT5225,20,Male,Oncology,Chemotherapy Cycle,2024-08-01,2024-08-02,1,5770.95,Ayushman Bharat,Dr. Khan,Under Treatment
+PT5226,49,Female,Oncology,Breast Cancer Screening,2024-08-02,2024-08-05,3,10823.19,Private Insurance,Dr. Iyer,Discharged
+PT5227,38,Male,Orthopedics,ACL Tear,2024-08-02,2024-08-03,1,2140.07,Private Insurance,Dr. Iyer,Referred
+PT5228,77,Female,General Medicine,Viral Infection,2024-08-02,2024-08-07,5,16841.9,Self Pay,Dr. Iyer,Referred
+PT5229,41,Male,ENT,Sinusitis,2024-08-03,2024-08-05,2,6064.16,Corporate,Dr. Reddy,Discharged
+PT5230,18,Female,ENT,Tonsillitis,2024-08-06,2024-08-07,1,3072.4,Private Insurance,Dr. Mehta,Discharged
+PT5231,45,Female,ENT,Tonsillitis,2024-08-06,2024-08-08,2,9268.22,Ayushman Bharat,Dr. Nair,Discharged
+PT5232,55,Female,Orthopedics,Arthritis,2024-08-07,2024-08-12,5,30604.27,,Dr. Sharma,Discharged
+PT5233,37,Male,Pediatrics,Growth Checkup,2024-08-08,2024-08-09,1,7005.38,,Dr. Das,Referred
+PT5234,35,Male,Pediatrics,Asthma,2024-08-09,2024-08-11,2,20367.66,,Dr. Das,Under Treatment
+PT5235,30,Male,Oncology,Chemotherapy Cycle,2024-08-10,2024-08-10,0,3502.52,Private Insurance,Dr. Khan,Discharged
+PT5236,55,Male,Orthopedics,Arthritis,2024-08-10,2024-08-10,0,2068.39,Private Insurance,Dr. Reddy,Discharged
+PT5237,39,Female,General Medicine,Diabetes Type 2,2024-08-10,2024-08-24,14,29427.21,Ayushman Bharat,Dr. Mehta,Referred
+PT5238,92,Male,ENT,Sinusitis,2024-08-11,2024-08-13,2,,Self Pay,Dr. Khan,Discharged
+PT5239,49,Female,Orthopedics,ACL Tear,2024-08-11,2024-08-13,2,3359.46,Self Pay,Dr. Mehta,Discharged
+PT5240,32,Female,ENT,Tonsillitis,2024-08-11,2024-08-13,2,4896.92,Self Pay,Dr. Nair,Discharged
+PT5241,17,Male,Oncology,Tumor Biopsy,2024-08-11,2024-08-11,0,5223.49,Self Pay,Dr. Mehta,Discharged
+PT5242,58,Male,Orthopedics,Arthritis,2024-08-13,2024-08-13,0,2289.45,Corporate,Dr. Das,Under Treatment
+PT5243,10,Female,Pediatrics,Growth Checkup,2024-08-15,2024-08-16,1,4702.97,Corporate,Dr. Reddy,Under Treatment
+PT5244,14,Female,Neurology,Stroke,2024-08-15,2024-08-20,5,42262.78,,Dr. Mehta,Referred
+PT5245,89,Male,ENT,Sinusitis,2024-08-16,2024-08-17,1,4507.81,Self Pay,Dr. Iyer,Under Treatment
+PT5246,34,Male,Neurology,Epilepsy,2024-08-18,2024-08-20,2,3190.37,Private Insurance,Dr. Sharma,Discharged
+PT5247,24,Female,General Medicine,Diabetes Type 2,2024-08-19,2024-08-19,0,2668.95,Corporate,Dr. Reddy,Referred
+PT5248,42,Male,Neurology,Stroke,2024-08-22,2024-08-27,5,20652.79,Corporate,Dr. Nair,Discharged
+PT5249,40,Male,ENT,Sinusitis,2024-08-23,2024-08-23,0,5402.55,Private Insurance,Dr. Khan,Discharged
+PT5250,22,Male,Orthopedics,Fracture,2024-08-23,2024-08-26,3,27136.37,,Dr. Nair,Discharged
+PT5251,11,Male,ENT,Hearing Loss,2024-08-24,2024-08-24,0,4032.95,Corporate,Dr. Mehta,Referred
+PT5252,29,Male,General Medicine,Anemia,2024-08-24,2024-08-27,3,9265.46,,Dr. Nair,Discharged
+PT5253,54,Female,Pediatrics,Viral Fever,2024-08-24,2024-09-07,14,56139.72,Self Pay,Dr. Reddy,Discharged
+PT5254,0,Male,Oncology,Tumor Biopsy,2024-08-25,2024-09-08,14,20937.88,Self Pay,Dr. Das,Discharged
+PT5255,20,Female,Neurology,Stroke,2024-08-26,2024-08-26,0,2102.63,Ayushman Bharat,Dr. Iyer,Under Treatment
+PT5256,0,Female,Cardiology,Arrhythmia,2024-08-26,2024-09-02,7,16154.61,Ayushman Bharat,Dr. Nair,Discharged
+PT5257,46,Male,Neurology,Epilepsy,2024-08-27,2024-08-27,0,2276.97,Corporate,Dr. Nair,Discharged
+PT5258,65,Female,Pediatrics,Viral Fever,2024-08-28,2024-09-04,7,10712.09,Private Insurance,,Discharged
+PT5259,15,Female,Pediatrics,Asthma,2024-08-29,2024-08-29,0,3845.68,,Dr. Nair,Discharged
+PT5260,40,Male,General Medicine,Diabetes Type 2,2024-08-31,2024-09-02,2,6786.64,Ayushman Bharat,Dr. Mehta,Discharged
+PT5261,47,Male,Neurology,Epilepsy,2024-08-31,2024-09-02,2,12093.55,Self Pay,Dr. Nair,Discharged
+PT5262,13,Male,Pediatrics,Growth Checkup,2024-08-31,2024-09-02,2,2632.33,Corporate,Dr. Khan,Under Treatment
+PT5263,49,Male,General Medicine,Viral Infection,2024-09-07,2024-09-07,0,1662.49,Self Pay,Dr. Reddy,Discharged
+PT5264,44,Male,ENT,Hearing Loss,2024-09-09,2024-09-10,1,4004.05,Private Insurance,Dr. Reddy,Discharged
+PT5265,36,Male,Neurology,Stroke,2024-09-09,2024-09-11,2,11958.17,Self Pay,Dr. Mehta,Discharged
+PT5266,26,Male,ENT,Tonsillitis,2024-09-10,2024-09-13,3,3677.95,Corporate,,Referred
+PT5267,70,Male,Pediatrics,Asthma,2024-09-11,2024-09-12,1,15933.76,Self Pay,Dr. Das,Under Treatment
+PT5268,71,Male,ENT,Tonsillitis,2024-09-11,2024-09-13,2,9958.79,Ayushman Bharat,Dr. Nair,Discharged
+PT5269,48,Male,Neurology,Stroke,2024-09-11,2024-09-11,0,3871.47,Private Insurance,Dr. Iyer,Discharged
+PT5270,49,Female,ENT,Sinusitis,2024-09-13,2024-09-14,1,3692.77,Self Pay,Dr. Mehta,Referred
+PT5271,41,Male,ENT,Hearing Loss,2024-09-14,2024-09-17,3,12304.01,,Dr. Reddy,Referred
+PT5272,56,Male,Cardiology,Coronary Artery Disease,2024-09-14,2024-09-19,5,17102.78,Ayushman Bharat,Dr. Khan,Discharged
+PT5273,51,Other,ENT,Hearing Loss,2024-09-15,2024-09-20,5,21450.83,Private Insurance,Dr. Iyer,Under Treatment
+PT5274,66,Female,Oncology,Tumor Biopsy,2024-09-16,2024-09-17,1,4202.64,Corporate,Dr. Iyer,Discharged
+PT5275,47,Female,ENT,Sinusitis,2024-09-16,2024-09-16,0,2658.06,Private Insurance,Dr. Khan,Discharged
+PT5276,58,Female,General Medicine,Anemia,2024-09-18,2024-09-21,3,15314.77,Private Insurance,Dr. Khan,Discharged
+PT5277,32,Female,Cardiology,Hypertension,2024-09-19,2024-09-26,7,13517.22,,Dr. Mehta,Under Treatment
+PT5278,22,Male,Orthopedics,ACL Tear,2024-09-20,2024-09-21,1,7743.64,Private Insurance,Dr. Das,Discharged
+PT5279,40,Female,Oncology,Breast Cancer Screening,2024-09-22,2024-09-22,0,3533.1,Ayushman Bharat,Dr. Sharma,Discharged
+PT5280,62,Male,Pediatrics,Growth Checkup,2024-09-24,2024-09-25,1,9446.2,Ayushman Bharat,Dr. Sharma,Discharged
+PT5281,67,Female,Neurology,Migraine,2024-09-29,2024-09-30,1,8949.46,Corporate,,Discharged
+PT5282,21,Male,Orthopedics,ACL Tear,2024-09-30,2024-09-30,0,4368.26,Ayushman Bharat,Dr. Das,Discharged
+PT5283,13,Female,General Medicine,Anemia,2024-09-30,2024-09-30,0,1027.27,Corporate,Dr. Nair,Discharged
+PT5284,55,Male,Cardiology,Coronary Artery Disease,2024-10-02,2024-10-02,0,,Self Pay,Dr. Khan,Discharged
+PT5285,0,Female,Neurology,Migraine,2024-10-02,2024-10-07,5,11181.23,,Dr. Sharma,Referred
+PT5286,23,Male,General Medicine,Viral Infection,2024-10-02,2024-10-03,1,3755.06,,Dr. Nair,Under Treatment
+PT5287,59,Female,Pediatrics,Asthma,2024-10-03,2024-10-03,0,4099.92,Private Insurance,Dr. Sharma,Discharged
+PT5288,0,Female,Cardiology,Arrhythmia,2024-10-04,2024-10-04,0,4542.37,Ayushman Bharat,Dr. Khan,Referred
+PT5289,50,Female,Pediatrics,Asthma,2024-10-05,2024-10-06,1,12659.33,Private Insurance,Dr. Sharma,Discharged
+PT5290,62,Male,Orthopedics,Fracture,2024-10-07,2024-10-14,7,32647.57,Corporate,Dr. Mehta,Discharged
+PT5291,15,Male,General Medicine,Diabetes Type 2,2024-10-07,2024-10-07,0,2080.27,Self Pay,Dr. Sharma,Under Treatment
+PT5292,49,Male,Cardiology,Hypertension,2024-10-08,2024-10-15,7,17269.01,Ayushman Bharat,Dr. Nair,Referred
+PT5293,26,Female,General Medicine,Viral Infection,2024-10-10,2024-10-10,0,6706.82,Self Pay,Dr. Khan,Discharged
+PT5294,62,Female,General Medicine,Diabetes Type 2,2024-10-14,2024-10-15,1,5026.51,Self Pay,Dr. Das,Under Treatment
+PT5295,19,Female,Orthopedics,Fracture,2024-10-15,2024-10-20,5,25535.28,Self Pay,Dr. Khan,Discharged
+PT5296,89,Female,Neurology,Migraine,2024-10-17,2024-10-17,0,1560.11,Self Pay,Dr. Sharma,Discharged
+PT5297,59,Male,Orthopedics,Arthritis,2024-10-22,2024-10-23,1,9954.06,Ayushman Bharat,Dr. Nair,Discharged
+PT5298,53,Female,Oncology,Chemotherapy Cycle,2024-10-23,2024-10-26,3,11627.88,Self Pay,Dr. Reddy,Referred
+PT5299,53,Female,Oncology,Breast Cancer Screening,2024-10-24,2024-10-26,2,4979.97,Private Insurance,Dr. Mehta,Discharged
+PT5300,41,Female,Cardiology,Coronary Artery Disease,2024-10-27,2024-10-28,1,6353.6,Ayushman Bharat,Dr. Das,Discharged
+PT5301,40,Male,ENT,Tonsillitis,2024-10-29,2024-11-01,3,7401.53,Ayushman Bharat,Dr. Reddy,Under Treatment
+PT5302,36,Male,Oncology,Chemotherapy Cycle,2024-10-29,2024-10-31,2,7027.66,Corporate,Dr. Khan,Discharged
+PT5303,33,Male,Oncology,Tumor Biopsy,2024-10-29,2024-10-31,2,10618.67,Self Pay,Dr. Iyer,Discharged
+PT5304,14,Female,Oncology,Breast Cancer Screening,2024-10-30,2024-11-02,3,10722.15,Corporate,Dr. Mehta,Discharged
+PT5305,67,Female,Neurology,Epilepsy,2024-11-01,2024-11-01,0,2354.52,Self Pay,Dr. Reddy,Discharged
+PT5306,36,Male,General Medicine,Anemia,2024-11-01,2024-11-04,3,17222.65,Self Pay,Dr. Nair,Discharged
+PT5307,39,Other,Neurology,Epilepsy,2024-11-03,2024-11-06,3,17480.27,Self Pay,Dr. Iyer,Discharged
+PT5308,54,Male,Pediatrics,Asthma,2024-11-06,2024-11-06,0,3811.82,Ayushman Bharat,Dr. Nair,Discharged
+PT5309,35,Male,Oncology,Tumor Biopsy,2024-11-06,2024-11-06,0,1294.31,,Dr. Mehta,Referred
+PT5310,12,Female,Oncology,Chemotherapy Cycle,2024-11-06,2024-11-20,14,15315.75,Self Pay,Dr. Nair,Discharged
+PT5311,24,Female,ENT,Tonsillitis,2024-11-07,2024-11-10,3,9353.89,,Dr. Mehta,Discharged
+PT5312,26,Female,Cardiology,Coronary Artery Disease,2024-11-09,2024-11-14,5,17042.82,Private Insurance,Dr. Khan,Discharged
+PT5313,20,Female,Oncology,Tumor Biopsy,2024-11-10,2024-11-11,1,,Self Pay,Dr. Nair,Discharged
+PT5314,26,Female,Cardiology,Arrhythmia,2024-11-12,2024-11-15,3,11146.47,Self Pay,Dr. Das,Discharged
+PT5315,61,Male,Orthopedics,ACL Tear,2024-11-12,2024-11-13,1,4553.91,Self Pay,Dr. Iyer,Discharged
+PT5316,73,Female,Neurology,Epilepsy,2024-11-13,2024-11-13,0,7038.03,Private Insurance,Dr. Das,Under Treatment
+PT5317,30,Male,Cardiology,Arrhythmia,2024-11-13,2024-11-13,0,1865.98,Self Pay,Dr. Mehta,Discharged
+PT5318,0,Male,Oncology,Chemotherapy Cycle,2024-11-15,2024-11-20,5,9167.76,,Dr. Iyer,Under Treatment
+PT5319,9,Female,Cardiology,Hypertension,2024-11-15,2024-11-15,0,2706.19,Private Insurance,Dr. Iyer,Discharged
+PT5320,25,Female,General Medicine,Diabetes Type 2,2024-11-16,2024-11-16,0,6830.5,Private Insurance,Dr. Sharma,Referred
+PT5321,37,Male,ENT,Hearing Loss,2024-11-17,2024-11-17,0,2774.61,Corporate,Dr. Nair,Discharged
+PT5322,0,Female,Cardiology,Hypertension,2024-11-17,2024-11-18,1,5573.31,Self Pay,Dr. Das,Discharged
+PT5323,10,Male,Orthopedics,Arthritis,2024-11-17,2024-11-20,3,6199.25,Corporate,Dr. Mehta,Discharged
+PT5324,14,Male,Orthopedics,Arthritis,2024-11-19,2024-11-21,2,18098.18,Ayushman Bharat,Dr. Mehta,Under Treatment
+PT5325,32,Female,Neurology,Migraine,2024-11-20,2024-11-20,0,1155.66,Self Pay,Dr. Iyer,Discharged
+PT5326,23,Male,General Medicine,Viral Infection,2024-11-22,2024-11-22,0,6636.14,Corporate,Dr. Mehta,Referred
+PT5327,63,Female,General Medicine,Anemia,2024-11-25,2024-11-26,1,2025.51,Ayushman Bharat,Dr. Nair,Deceased
+PT5328,55,Female,Oncology,Breast Cancer Screening,2024-11-27,2024-11-28,1,4416.25,Ayushman Bharat,Dr. Nair,Discharged
+PT5329,35,Female,Cardiology,Arrhythmia,2024-11-27,2024-11-28,1,11138.93,,Dr. Reddy,Discharged
+PT5330,51,Female,Neurology,Stroke,2024-11-29,2024-11-29,0,3571.5,Private Insurance,Dr. Nair,Discharged
+PT5331,43,Male,General Medicine,Diabetes Type 2,2024-11-29,2024-12-01,2,7775.58,Corporate,Dr. Khan,Discharged
+PT5332,52,Female,Orthopedics,Arthritis,2024-11-30,2024-11-30,0,1567.35,Private Insurance,Dr. Mehta,Referred
+PT5333,73,Male,Oncology,Breast Cancer Screening,2024-11-30,2024-12-03,3,,Ayushman Bharat,Dr. Sharma,Discharged
+PT5334,47,Male,Pediatrics,Viral Fever,2024-12-03,2024-12-04,1,16190.26,,Dr. Iyer,Discharged
+PT5335,59,Male,Cardiology,Coronary Artery Disease,2024-12-06,2024-12-07,1,6937.1,Ayushman Bharat,Dr. Mehta,Discharged
+PT5336,40,Male,Pediatrics,Viral Fever,2024-12-07,2024-12-07,0,3836.54,Corporate,Dr. Reddy,Under Treatment
+PT5337,39,Female,Oncology,Tumor Biopsy,2024-12-07,2024-12-12,5,17583.24,Self Pay,Dr. Iyer,Discharged
+PT5338,60,Female,Orthopedics,Fracture,2024-12-08,2024-12-11,3,11431.81,Private Insurance,Dr. Iyer,Under Treatment
+PT5339,47,Male,ENT,Tonsillitis,2024-12-09,2024-12-09,0,1525.27,Self Pay,Dr. Sharma,Referred
+PT5340,65,Female,Cardiology,Hypertension,2024-12-10,2024-12-10,0,2575.38,Corporate,Dr. Mehta,Discharged
+PT5341,84,Male,Orthopedics,ACL Tear,2024-12-10,2024-12-17,7,55701.17,Self Pay,Dr. Das,Discharged
+PT5342,57,Female,Pediatrics,Asthma,2024-12-11,2024-12-12,1,2407.83,Self Pay,Dr. Khan,Deceased
+PT5343,19,Female,Cardiology,Coronary Artery Disease,2024-12-11,2024-12-11,0,8065.99,Ayushman Bharat,Dr. Khan,Discharged
+PT5344,60,Male,ENT,Sinusitis,2024-12-12,2024-12-17,5,8720.64,Private Insurance,Dr. Iyer,Under Treatment
+PT5345,22,Male,General Medicine,Diabetes Type 2,2024-12-12,2024-12-15,3,14420.27,Ayushman Bharat,Dr. Nair,Discharged
+PT5346,57,Male,ENT,Hearing Loss,2024-12-12,2024-12-14,2,5050.93,Private Insurance,Dr. Iyer,Referred
+PT5347,0,Male,Cardiology,Hypertension,2024-12-13,2024-12-16,3,9178.77,Private Insurance,Dr. Reddy,Discharged
+PT5348,22,Female,Oncology,Tumor Biopsy,2024-12-13,2024-12-20,7,7908.01,,Dr. Mehta,Discharged
+PT5349,41,Male,Pediatrics,Asthma,2024-12-13,2024-12-15,2,4732.27,Ayushman Bharat,Dr. Iyer,Discharged
+PT5350,44,Male,Pediatrics,Growth Checkup,2024-12-14,2024-12-17,3,24117.01,Self Pay,Dr. Mehta,Discharged
+PT5351,62,Female,Pediatrics,Viral Fever,2024-12-16,2024-12-30,14,28652.82,Ayushman Bharat,Dr. Mehta,Under Treatment
+PT5352,30,Female,Neurology,Stroke,2024-12-17,2024-12-19,2,8735.59,Self Pay,Dr. Khan,Under Treatment
+PT5353,50,Female,ENT,Sinusitis,2024-12-19,2024-12-20,1,,Corporate,Dr. Khan,Under Treatment
+PT5354,33,Female,Oncology,Chemotherapy Cycle,2024-12-19,2024-12-22,3,14143.56,Self Pay,Dr. Das,Discharged
+PT5355,12,Male,Orthopedics,Fracture,2024-12-19,2024-12-22,3,4104.3,Self Pay,Dr. Das,Discharged
+PT5356,60,Female,Pediatrics,Growth Checkup,2024-12-21,2024-12-21,0,1041.31,Private Insurance,Dr. Sharma,Discharged
+PT5357,73,Female,Cardiology,Hypertension,2024-12-21,2024-12-21,0,3040.12,Private Insurance,Dr. Sharma,Referred
+PT5358,14,Male,General Medicine,Diabetes Type 2,2024-12-22,2024-12-22,0,1431.21,Corporate,Dr. Das,Discharged
+PT5359,16,Female,Neurology,Stroke,2024-12-22,2024-12-22,0,1057.93,Private Insurance,Dr. Khan,Discharged
+PT5360,47,Female,Orthopedics,Arthritis,2024-12-23,2024-12-26,3,13293.65,Self Pay,Dr. Iyer,Under Treatment
+PT5361,76,Female,General Medicine,Viral Infection,2024-12-23,2024-12-24,1,15238.93,Private Insurance,,Under Treatment
+PT5362,38,Male,Cardiology,Hypertension,2024-12-25,2024-12-25,0,4105.1,Self Pay,Dr. Nair,Discharged
+PT5363,51,Male,ENT,Tonsillitis,2024-12-25,2024-12-26,1,8796.56,Self Pay,Dr. Mehta,Discharged
+PT5364,26,Male,General Medicine,Anemia,2024-12-26,2024-12-29,3,12733.49,Corporate,Dr. Das,Discharged
+PT5365,67,Female,Pediatrics,Asthma,2024-12-27,2024-12-29,2,22852.77,,Dr. Mehta,Discharged
+PT5366,32,Male,Neurology,Migraine,2024-12-27,2024-12-28,1,3052.87,,Dr. Reddy,Discharged
+PT5367,60,Male,ENT,Sinusitis,2024-12-28,2024-12-28,0,4956.71,Self Pay,Dr. Iyer,Discharged
+PT5368,18,Male,Cardiology,Hypertension,2024-12-29,2025-01-05,7,12896.82,Private Insurance,Dr. Nair,Under Treatment
+PT5369,26,Female,ENT,Tonsillitis,2024-12-30,2025-01-01,2,11705.28,Ayushman Bharat,Dr. Sharma,Discharged
+PT5370,70,Other,Oncology,Breast Cancer Screening,2024-12-31,2025-01-02,2,12864.74,Private Insurance,Dr. Nair,Under Treatment
+PT5371,44,Male,Neurology,Stroke,2025-01-02,2025-01-04,2,7107.17,Private Insurance,Dr. Nair,Discharged
+PT5372,22,Female,General Medicine,Anemia,2025-01-03,2025-01-06,3,29972.0,Ayushman Bharat,Dr. Das,Discharged
+PT5373,45,Female,ENT,Tonsillitis,2025-01-03,2025-01-03,0,3607.4,Self Pay,Dr. Iyer,Under Treatment
+PT5374,27,Female,ENT,Tonsillitis,2025-01-04,2025-01-11,7,22765.61,Corporate,Dr. Reddy,Discharged
+PT5375,49,Female,Cardiology,Arrhythmia,2025-01-05,2025-01-08,3,16713.28,Ayushman Bharat,Dr. Reddy,Deceased
+PT5376,50,Male,Cardiology,Arrhythmia,2025-01-05,2025-01-12,7,24151.5,Private Insurance,Dr. Mehta,Discharged
+PT5377,47,Male,Pediatrics,Viral Fever,2025-01-06,2025-01-11,5,23577.98,Corporate,Dr. Das,Under Treatment
+PT5378,7,Male,ENT,Tonsillitis,2025-01-08,2025-01-13,5,12254.05,Private Insurance,Dr. Iyer,Under Treatment
+PT5379,61,Male,Neurology,Epilepsy,2025-01-10,2025-01-11,1,6716.05,Self Pay,Dr. Khan,Discharged
+PT5380,31,Female,Cardiology,Arrhythmia,2025-01-10,2025-01-13,3,20042.65,Corporate,Dr. Iyer,Discharged
+PT5381,5,Female,ENT,Sinusitis,2025-01-11,2025-01-12,1,3205.02,Private Insurance,Dr. Mehta,Under Treatment
+PT5382,63,Male,General Medicine,Diabetes Type 2,2025-01-14,2025-01-15,1,4948.44,Ayushman Bharat,Dr. Mehta,Discharged
+PT5383,27,Male,General Medicine,Viral Infection,2025-01-14,2025-01-16,2,23437.87,Ayushman Bharat,Dr. Mehta,Discharged
+PT5384,43,Male,General Medicine,Diabetes Type 2,2025-01-15,2025-01-15,0,3410.7,Ayushman Bharat,Dr. Khan,Discharged
+PT5385,71,Female,Cardiology,Arrhythmia,2025-01-15,2025-01-15,0,2313.09,Ayushman Bharat,Dr. Mehta,Discharged
+PT5386,42,Female,Pediatrics,Growth Checkup,2025-01-16,2025-01-18,2,12909.52,,Dr. Iyer,Discharged
+PT5387,24,Male,Cardiology,Hypertension,2025-01-18,2025-01-18,0,4028.98,Corporate,Dr. Das,Discharged
+PT5388,52,Male,Cardiology,Arrhythmia,2025-01-19,2025-01-20,1,5803.99,Self Pay,Dr. Nair,Discharged
+PT5389,33,Male,ENT,Tonsillitis,2025-01-19,2025-01-20,1,8587.83,Private Insurance,Dr. Iyer,Discharged
+PT5390,65,Male,ENT,Sinusitis,2025-01-21,2025-01-24,3,30052.43,Self Pay,Dr. Khan,Under Treatment
+PT5391,32,Female,Cardiology,Hypertension,2025-01-22,2025-01-24,2,15692.61,Ayushman Bharat,Dr. Iyer,Under Treatment
+PT5392,37,Male,Cardiology,Arrhythmia,2025-01-22,2025-01-22,0,2406.78,Self Pay,Dr. Das,Deceased
+PT5393,82,Female,Pediatrics,Growth Checkup,2025-01-23,2025-01-26,3,31510.4,Corporate,Dr. Nair,Discharged
+PT5394,3,Female,Cardiology,Coronary Artery Disease,2025-01-23,2025-01-24,1,3726.81,Private Insurance,Dr. Das,Discharged
+PT5395,37,Female,ENT,Tonsillitis,2025-01-23,2025-01-23,0,3728.89,,Dr. Reddy,Discharged
+PT5396,41,Female,Oncology,Breast Cancer Screening,2025-01-23,2025-01-24,1,2559.26,Self Pay,Dr. Das,Under Treatment
+PT5397,70,Male,ENT,Hearing Loss,2025-01-23,2025-01-23,0,,Ayushman Bharat,Dr. Sharma,Discharged
+PT5398,36,Female,Orthopedics,ACL Tear,2025-01-24,2025-01-25,1,,Ayushman Bharat,Dr. Sharma,Referred
+PT5399,26,Female,Cardiology,Coronary Artery Disease,2025-01-25,2025-01-26,1,3663.88,Corporate,Dr. Nair,Discharged
+PT5400,55,Female,Oncology,Breast Cancer Screening,2025-01-25,2025-01-28,3,4194.4,Corporate,Dr. Khan,Discharged
+PT5401,24,Other,ENT,Hearing Loss,2025-01-27,2025-01-29,2,15894.91,Corporate,Dr. Mehta,Discharged
+PT5402,54,Female,Oncology,Tumor Biopsy,2025-01-27,2025-01-29,2,11914.81,Private Insurance,Dr. Das,Discharged
+PT5403,34,Male,ENT,Tonsillitis,2025-01-29,2025-01-30,1,8900.1,Private Insurance,Dr. Iyer,Discharged
+PT5404,32,Male,ENT,Hearing Loss,2025-01-30,2025-02-02,3,,Self Pay,Dr. Mehta,Discharged
+PT5405,68,Female,Pediatrics,Asthma,2025-02-01,2025-02-02,1,9733.19,Private Insurance,Dr. Iyer,Discharged
+PT5406,57,Female,Orthopedics,Fracture,2025-02-01,2025-02-03,2,24233.66,,Dr. Mehta,Deceased
+PT5407,35,Male,Orthopedics,Arthritis,2025-02-03,2025-02-06,3,12206.41,Self Pay,,Discharged
+PT5408,39,Female,Orthopedics,Fracture,2025-02-04,2025-02-05,1,13973.55,Ayushman Bharat,Dr. Mehta,Discharged
+PT5409,50,Male,Cardiology,Arrhythmia,2025-02-04,2025-02-07,3,29252.91,Self Pay,Dr. Das,Discharged
+PT5410,41,Female,Cardiology,Arrhythmia,2025-02-04,2025-02-06,2,9803.41,Ayushman Bharat,Dr. Khan,Discharged
+PT5411,84,Male,Oncology,Tumor Biopsy,2025-02-05,2025-02-08,3,10497.65,Private Insurance,Dr. Nair,Discharged
+PT5412,29,Male,Cardiology,Coronary Artery Disease,2025-02-06,2025-02-09,3,10181.87,Self Pay,Dr. Khan,Discharged
+PT5413,62,Male,Pediatrics,Growth Checkup,2025-02-06,2025-02-09,3,5208.88,Self Pay,Dr. Reddy,Discharged
+PT5414,39,Female,Neurology,Stroke,2025-02-06,2025-02-06,0,4296.14,Self Pay,Dr. Reddy,Referred
+PT5415,37,Female,Orthopedics,Arthritis,2025-02-08,2025-02-09,1,9211.12,Ayushman Bharat,Dr. Khan,Under Treatment
+PT5416,40,Female,ENT,Hearing Loss,2025-02-10,2025-02-13,3,6311.11,Self Pay,Dr. Nair,Discharged
+PT5417,39,Male,Cardiology,Hypertension,2025-02-10,2025-02-17,7,10473.15,Ayushman Bharat,Dr. Iyer,Under Treatment
+PT5418,93,Female,Orthopedics,Fracture,2025-02-11,2025-02-13,2,9625.7,Corporate,Dr. Iyer,Referred
+PT5419,39,Female,ENT,Hearing Loss,2025-02-12,2025-02-12,0,4643.47,Private Insurance,Dr. Nair,Discharged
+PT5420,43,Female,Pediatrics,Viral Fever,2025-02-12,2025-02-13,1,8609.31,Private Insurance,Dr. Das,Discharged
+PT5421,46,Female,Neurology,Epilepsy,2025-02-13,2025-02-13,0,2493.28,Ayushman Bharat,Dr. Reddy,Discharged
+PT5422,37,Female,Orthopedics,Arthritis,2025-02-14,2025-02-15,1,3390.3,Private Insurance,Dr. Sharma,Discharged
+PT5423,35,Female,Orthopedics,ACL Tear,2025-02-19,2025-02-20,1,1832.65,Ayushman Bharat,Dr. Mehta,Discharged
+PT5424,53,Female,Orthopedics,Arthritis,2025-02-20,2025-02-21,1,11515.48,Ayushman Bharat,Dr. Reddy,Referred
+PT5425,52,Male,General Medicine,Anemia,2025-02-20,2025-02-20,0,2835.18,,Dr. Nair,Discharged
+PT5426,15,Male,Oncology,Chemotherapy Cycle,2025-02-21,2025-02-26,5,18228.46,Ayushman Bharat,Dr. Nair,Discharged
+PT5427,31,Female,Cardiology,Coronary Artery Disease,2025-02-21,2025-02-22,1,10610.14,Ayushman Bharat,Dr. Sharma,Referred
+PT5428,0,Male,ENT,Sinusitis,2025-02-21,2025-02-22,1,7785.56,Self Pay,Dr. Iyer,Discharged
+PT5429,42,Male,Pediatrics,Viral Fever,2025-02-23,2025-02-25,2,5703.98,Self Pay,Dr. Reddy,Discharged
+PT5430,33,Female,Neurology,Epilepsy,2025-02-25,2025-02-26,1,6917.15,Private Insurance,Dr. Das,Discharged
+PT5431,41,Male,Orthopedics,Fracture,2025-02-26,2025-03-01,3,12098.95,Self Pay,Dr. Mehta,Under Treatment
+PT5432,54,Male,Neurology,Migraine,2025-02-27,2025-03-01,2,11492.69,Private Insurance,Dr. Sharma,Discharged
+PT5433,36,Female,Orthopedics,ACL Tear,2025-02-28,2025-03-01,1,14959.14,Ayushman Bharat,Dr. Reddy,Discharged
+PT5434,31,Female,ENT,Tonsillitis,2025-03-01,2025-03-02,1,11175.56,Ayushman Bharat,Dr. Reddy,Discharged
+PT5435,57,Other,Cardiology,Arrhythmia,2025-03-03,2025-03-05,2,12041.84,Corporate,Dr. Iyer,Under Treatment
+PT5436,62,Male,Neurology,Epilepsy,2025-03-03,2025-03-08,5,11283.1,Ayushman Bharat,Dr. Mehta,Discharged
+PT5437,39,Female,Oncology,Tumor Biopsy,2025-03-04,2025-03-04,0,4293.82,Ayushman Bharat,Dr. Das,Discharged
+PT5438,35,Male,Cardiology,Arrhythmia,2025-03-06,2025-03-06,0,2902.12,Self Pay,Dr. Khan,Discharged
+PT5439,27,Male,Neurology,Stroke,2025-03-07,2025-03-14,7,24825.12,,,Discharged
+PT5440,10,Male,Oncology,Chemotherapy Cycle,2025-03-08,2025-03-09,1,3055.98,Self Pay,Dr. Reddy,Discharged
+PT5441,34,Male,Neurology,Epilepsy,2025-03-10,2025-03-10,0,1373.55,Self Pay,Dr. Nair,Under Treatment
+PT5442,42,Male,Neurology,Migraine,2025-03-14,2025-03-15,1,6005.98,Self Pay,Dr. Reddy,Discharged
+PT5443,33,Female,Orthopedics,ACL Tear,2025-03-16,2025-03-21,5,13839.32,Self Pay,Dr. Nair,Under Treatment
+PT5444,52,Male,Cardiology,Hypertension,2025-03-16,2025-03-23,7,36630.38,Ayushman Bharat,Dr. Das,Discharged
+PT5445,26,Male,ENT,Hearing Loss,2025-03-16,2025-03-17,1,8214.6,Private Insurance,Dr. Sharma,Under Treatment
+PT5446,41,Female,Neurology,Epilepsy,2025-03-19,2025-03-19,0,977.06,Ayushman Bharat,Dr. Nair,Deceased
+PT5447,29,Female,General Medicine,Diabetes Type 2,2025-03-19,2025-03-21,2,3562.28,Private Insurance,Dr. Das,Discharged
+PT5448,55,Female,Pediatrics,Asthma,2025-03-19,2025-03-21,2,4907.37,Self Pay,Dr. Das,Discharged
+PT5449,55,Female,Orthopedics,Fracture,2025-03-21,2025-03-23,2,18032.46,Corporate,Dr. Iyer,Discharged
+PT5450,31,Female,Neurology,Migraine,2025-03-21,2025-04-04,14,26315.44,Self Pay,Dr. Iyer,Referred
+PT5451,22,Female,Cardiology,Coronary Artery Disease,2025-03-22,2025-03-25,3,12217.81,Private Insurance,Dr. Nair,Discharged
+PT5452,59,Female,ENT,Tonsillitis,2025-03-23,2025-03-24,1,4623.85,Corporate,Dr. Reddy,Discharged
+PT5453,31,Male,Pediatrics,Asthma,2025-03-24,2025-03-25,1,8446.2,Self Pay,Dr. Nair,Discharged
+PT5454,62,Female,Pediatrics,Asthma,2025-03-24,2025-03-26,2,6688.55,Self Pay,Dr. Mehta,Under Treatment
+PT5455,38,Female,Orthopedics,Arthritis,2025-03-26,2025-03-27,1,8328.69,Corporate,Dr. Reddy,Discharged
+PT5456,62,Male,Cardiology,Arrhythmia,2025-03-26,2025-03-26,0,1213.38,Self Pay,Dr. Khan,Referred
+PT5457,0,Female,Cardiology,Arrhythmia,2025-03-28,2025-03-30,2,5097.89,Self Pay,Dr. Iyer,Under Treatment
+PT5458,40,Male,General Medicine,Viral Infection,2025-03-29,2025-03-30,1,2270.98,Private Insurance,Dr. Das,Under Treatment
+PT5459,44,Male,Neurology,Epilepsy,2025-03-29,2025-03-29,0,1151.83,Self Pay,Dr. Reddy,Discharged
+PT5460,10,Female,Orthopedics,ACL Tear,2025-03-30,2025-04-01,2,3165.83,Private Insurance,Dr. Das,Under Treatment
+PT5461,44,Female,Pediatrics,Growth Checkup,2025-04-01,2025-04-01,0,5461.12,Ayushman Bharat,Dr. Sharma,Discharged
+PT5462,87,Male,Orthopedics,ACL Tear,2025-04-02,2025-04-07,5,25403.76,Corporate,Dr. Das,Deceased
+PT5463,61,Male,Orthopedics,ACL Tear,2025-04-02,2025-04-05,3,22897.75,Self Pay,Dr. Khan,Under Treatment
+PT5464,16,Male,Cardiology,Hypertension,2025-04-05,2025-04-06,1,5974.98,Private Insurance,Dr. Khan,Discharged
+PT5465,22,Male,Cardiology,Arrhythmia,2025-04-05,2025-04-08,3,12462.34,Corporate,Dr. Mehta,Discharged
+PT5466,38,Female,Pediatrics,Asthma,2025-04-09,2025-04-12,3,9223.41,Ayushman Bharat,Dr. Iyer,Discharged
+PT5467,38,Male,Oncology,Chemotherapy Cycle,2025-04-10,2025-04-12,2,13847.0,Self Pay,Dr. Iyer,Under Treatment
+PT5468,55,Male,Oncology,Chemotherapy Cycle,2025-04-10,2025-04-13,3,5452.83,Corporate,Dr. Sharma,Discharged
+PT5469,20,Male,Cardiology,Coronary Artery Disease,2025-04-11,2025-04-11,0,2121.76,,Dr. Mehta,Referred
+PT5470,41,Female,ENT,Tonsillitis,2025-04-11,2025-04-12,1,7895.75,Ayushman Bharat,Dr. Das,Discharged
+PT5471,42,Female,General Medicine,Diabetes Type 2,2025-04-12,2025-04-12,0,1304.94,Corporate,Dr. Nair,Discharged
+PT5472,27,Female,ENT,Sinusitis,2025-04-12,2025-04-14,2,24012.05,Self Pay,Dr. Sharma,Discharged
+PT5473,71,Female,Orthopedics,ACL Tear,2025-04-13,2025-04-15,2,,Private Insurance,Dr. Khan,Discharged
+PT5474,44,Female,Pediatrics,Asthma,2025-04-14,2025-04-16,2,2491.7,Private Insurance,Dr. Reddy,Discharged
+PT5475,3,Male,Pediatrics,Viral Fever,2025-04-14,2025-04-28,14,38625.25,Self Pay,Dr. Reddy,Under Treatment
+PT5476,29,Female,Cardiology,Coronary Artery Disease,2025-04-14,2025-04-16,2,21296.04,Self Pay,Dr. Das,Discharged
+PT5477,59,Male,Oncology,Breast Cancer Screening,2025-04-15,2025-04-17,2,6891.8,Ayushman Bharat,Dr. Iyer,Referred
+PT5478,63,Male,Oncology,Chemotherapy Cycle,2025-04-15,2025-04-16,1,6746.64,Private Insurance,Dr. Nair,Discharged
+PT5479,9,Male,Neurology,Epilepsy,2025-04-18,2025-04-19,1,2728.74,Self Pay,Dr. Nair,Under Treatment
+PT5480,57,Female,Cardiology,Arrhythmia,2025-04-18,2025-04-20,2,4743.77,Ayushman Bharat,Dr. Nair,Deceased
+PT5481,38,Female,Neurology,Stroke,2025-04-19,2025-04-21,2,12751.5,Self Pay,Dr. Das,Discharged
+PT5482,0,Female,General Medicine,Anemia,2025-04-20,2025-04-23,3,3316.21,Ayushman Bharat,Dr. Das,Discharged
+PT5483,41,Male,ENT,Sinusitis,2025-04-24,2025-04-27,3,,Ayushman Bharat,Dr. Iyer,Discharged
+PT5484,64,Male,Orthopedics,Fracture,2025-04-26,2025-04-26,0,3891.89,,Dr. Khan,Referred
+PT5485,38,Female,Cardiology,Hypertension,2025-04-26,2025-04-27,1,7759.66,Self Pay,Dr. Khan,Referred
+PT5486,38,Female,Oncology,Tumor Biopsy,2025-04-28,2025-04-29,1,3603.41,,Dr. Iyer,Discharged
+PT5487,16,Female,Cardiology,Coronary Artery Disease,2025-04-28,2025-05-01,3,29687.34,Ayushman Bharat,Dr. Sharma,Under Treatment
+PT5488,54,Female,ENT,Sinusitis,2025-04-28,2025-04-30,2,2620.61,Ayushman Bharat,Dr. Nair,Under Treatment
+PT5489,52,Male,Pediatrics,Viral Fever,2025-04-29,2025-05-06,7,35277.68,Self Pay,Dr. Das,Under Treatment
+PT5490,72,Female,Cardiology,Arrhythmia,2025-04-30,2025-05-07,7,32348.15,Corporate,Dr. Nair,Discharged
+PT5491,42,Male,Pediatrics,Growth Checkup,2025-04-30,2025-05-14,14,83099.87,Ayushman Bharat,Dr. Mehta,Under Treatment
+PT5492,33,Male,ENT,Hearing Loss,2025-05-02,2025-05-03,1,5264.3,Ayushman Bharat,Dr. Mehta,Discharged
+PT5493,38,Female,Neurology,Migraine,2025-05-02,2025-05-03,1,7310.75,Ayushman Bharat,Dr. Mehta,Discharged
+PT5494,44,Male,General Medicine,Anemia,2025-05-03,2025-05-10,7,7902.27,Private Insurance,Dr. Das,Discharged
+PT5495,37,Male,Oncology,Chemotherapy Cycle,2025-05-03,2025-05-04,1,1604.4,Ayushman Bharat,Dr. Mehta,Discharged
+PT5496,43,Female,General Medicine,Diabetes Type 2,2025-05-03,2025-05-05,2,3342.6,Self Pay,Dr. Mehta,Under Treatment
+PT5497,36,Male,Pediatrics,Growth Checkup,2025-05-05,2025-05-05,0,3902.23,Private Insurance,Dr. Khan,Discharged
+PT5498,22,Male,Orthopedics,Arthritis,2025-05-07,2025-05-09,2,3308.96,Self Pay,Dr. Iyer,Discharged
+PT5499,50,Male,ENT,Sinusitis,2025-05-07,2025-05-08,1,2261.61,Corporate,Dr. Nair,Under Treatment
+PT5500,52,Male,Pediatrics,Asthma,2025-05-08,2025-05-08,0,5406.25,Corporate,Dr. Reddy,Discharged
+PT5501,32,Female,Oncology,Breast Cancer Screening,2025-05-09,2025-05-12,3,6687.38,Ayushman Bharat,Dr. Khan,Discharged
+PT5502,2,Female,Oncology,Breast Cancer Screening,2025-05-10,2025-05-17,7,23162.76,Corporate,Dr. Mehta,Discharged
+PT5503,57,Male,General Medicine,Viral Infection,2025-05-13,2025-05-14,1,7171.41,Self Pay,Dr. Sharma,Discharged
+PT5504,29,Female,Pediatrics,Growth Checkup,2025-05-14,2025-05-17,3,20225.3,Corporate,Dr. Nair,Discharged
+PT5505,19,Female,General Medicine,Diabetes Type 2,2025-05-15,2025-05-22,7,31300.41,Corporate,Dr. Sharma,Discharged
+PT5506,14,Male,ENT,Tonsillitis,2025-05-15,2025-05-16,1,7215.35,Self Pay,Dr. Reddy,Discharged
+PT5507,5,Female,ENT,Tonsillitis,2025-05-16,2025-05-17,1,3595.57,Self Pay,Dr. Khan,Discharged
+PT5508,87,Female,General Medicine,Diabetes Type 2,2025-05-17,2025-05-20,3,15056.21,Private Insurance,Dr. Sharma,Referred
+PT5509,33,Female,Cardiology,Arrhythmia,2025-05-18,2025-05-20,2,13434.01,Self Pay,Dr. Sharma,Discharged
+PT5510,19,Female,General Medicine,Diabetes Type 2,2025-05-20,2025-05-25,5,17661.66,Corporate,Dr. Reddy,Discharged
+PT5511,41,Female,ENT,Tonsillitis,2025-05-20,2025-05-21,1,1716.9,Self Pay,Dr. Nair,Under Treatment
+PT5512,47,Male,General Medicine,Viral Infection,2025-05-20,2025-05-21,1,7735.83,Private Insurance,Dr. Reddy,Discharged
+PT5513,12,Female,ENT,Sinusitis,2025-05-21,2025-05-22,1,2040.27,Self Pay,Dr. Nair,Discharged
+PT5514,43,Male,Pediatrics,Viral Fever,2025-05-22,2025-05-22,0,6482.15,Ayushman Bharat,Dr. Mehta,Discharged
+PT5515,24,Male,Neurology,Epilepsy,2025-05-23,2025-05-24,1,7426.65,Corporate,Dr. Mehta,Discharged
+PT5516,30,Male,ENT,Hearing Loss,2025-05-24,2025-05-24,0,1096.98,Ayushman Bharat,Dr. Sharma,Discharged
+PT5517,51,Male,Cardiology,Coronary Artery Disease,2025-05-24,2025-06-07,14,71335.3,Corporate,Dr. Khan,Discharged
+PT5518,23,Male,Pediatrics,Growth Checkup,2025-05-25,2025-05-25,0,4447.29,Private Insurance,Dr. Mehta,Discharged
+PT5519,29,Female,Orthopedics,Arthritis,2025-05-26,2025-05-27,1,11889.52,Self Pay,Dr. Das,Under Treatment
+PT5520,50,Female,ENT,Hearing Loss,2025-05-27,2025-05-28,1,8688.5,Private Insurance,Dr. Das,Discharged
+PT5521,45,Male,Neurology,Epilepsy,2025-05-27,2025-05-27,0,2872.61,Corporate,Dr. Nair,Discharged
+PT5522,41,Male,General Medicine,Diabetes Type 2,2025-05-28,2025-06-02,5,27775.17,Private Insurance,Dr. Nair,Discharged
+PT5523,35,Male,ENT,Tonsillitis,2025-05-28,2025-05-31,3,7599.25,Corporate,Dr. Sharma,Discharged
+PT5524,24,Male,Pediatrics,Asthma,2025-05-29,2025-06-05,7,23034.86,Self Pay,Dr. Reddy,Under Treatment
+PT5525,57,Female,Oncology,Breast Cancer Screening,2025-05-29,2025-05-31,2,6918.67,Self Pay,Dr. Sharma,Discharged
+PT5526,66,Male,General Medicine,Viral Infection,2025-05-29,2025-06-01,3,24899.88,,Dr. Reddy,Under Treatment
+PT5527,48,Male,Pediatrics,Viral Fever,2025-05-30,2025-05-31,1,3826.9,,Dr. Reddy,Discharged
+PT5528,32,Female,General Medicine,Diabetes Type 2,2025-05-31,2025-06-01,1,4766.51,Corporate,Dr. Khan,Deceased
+PT5529,80,Female,Oncology,Tumor Biopsy,2025-05-31,2025-06-05,5,26705.3,,Dr. Khan,Discharged
+PT5530,45,Male,Cardiology,Hypertension,2025-06-01,2025-06-02,1,6428.75,Self Pay,Dr. Mehta,Discharged
+PT5531,39,Female,Oncology,Chemotherapy Cycle,2025-06-02,2025-06-04,2,5801.22,Corporate,Dr. Khan,Discharged
+PT5532,38,Male,Neurology,Stroke,2025-06-05,2025-06-12,7,20134.72,,Dr. Das,Discharged
+PT5533,55,Male,Orthopedics,Fracture,2025-06-05,2025-06-07,2,10344.29,Self Pay,Dr. Mehta,Discharged
+PT5534,45,Other,ENT,Tonsillitis,2025-06-05,2025-06-12,7,9738.83,Ayushman Bharat,Dr. Sharma,Discharged
+PT5535,18,Male,Orthopedics,Fracture,2025-06-07,2025-06-08,1,5505.48,Ayushman Bharat,Dr. Das,Discharged
+PT5536,23,Male,Cardiology,Arrhythmia,2025-06-07,2025-06-08,1,5528.6,,Dr. Reddy,Under Treatment
+PT5537,44,Male,Orthopedics,Arthritis,2025-06-08,2025-06-13,5,23472.4,Private Insurance,Dr. Mehta,Under Treatment
+PT5538,51,Male,Cardiology,Arrhythmia,2025-06-11,2025-06-13,2,9083.88,,Dr. Das,Discharged
+PT5539,60,Male,Pediatrics,Viral Fever,2025-06-13,2025-06-20,7,32648.33,Corporate,Dr. Sharma,Discharged
+PT5540,37,Female,Oncology,Tumor Biopsy,2025-06-13,2025-06-13,0,1485.98,Ayushman Bharat,Dr. Sharma,Referred
+PT5541,52,Male,Cardiology,Coronary Artery Disease,2025-06-14,2025-06-16,2,5847.08,Self Pay,Dr. Reddy,Discharged
+PT5542,67,Male,Orthopedics,ACL Tear,2025-06-14,2025-06-17,3,10366.01,Corporate,Dr. Reddy,Discharged
+PT5543,24,Male,Pediatrics,Viral Fever,2025-06-15,2025-06-29,14,24699.78,Corporate,Dr. Mehta,Referred
+PT5544,63,Male,Oncology,Chemotherapy Cycle,2025-06-15,2025-06-16,1,14294.5,Self Pay,Dr. Mehta,Discharged
+PT5545,84,Female,Oncology,Breast Cancer Screening,2025-06-17,2025-06-17,0,3001.2,Private Insurance,Dr. Reddy,Under Treatment
+PT5546,88,Female,Orthopedics,Fracture,2025-06-17,2025-06-20,3,7084.06,Ayushman Bharat,Dr. Reddy,Discharged
+PT5547,32,Female,Cardiology,Arrhythmia,2025-06-18,2025-06-23,5,15786.96,Private Insurance,Dr. Das,Discharged
+PT5548,13,Female,Pediatrics,Growth Checkup,2025-06-18,2025-06-18,0,5325.99,Self Pay,Dr. Nair,Discharged
+PT5549,26,Male,Pediatrics,Viral Fever,2025-06-19,2025-06-20,1,6362.45,Private Insurance,Dr. Iyer,Discharged
+PT5550,37,Male,Pediatrics,Growth Checkup,2025-06-21,2025-06-28,7,15526.86,,Dr. Sharma,Under Treatment
+PT5551,93,Female,Oncology,Tumor Biopsy,2025-06-23,2025-06-23,0,1945.35,Ayushman Bharat,Dr. Mehta,Discharged
+PT5552,29,Male,Orthopedics,Arthritis,2025-06-23,2025-06-28,5,40179.26,Private Insurance,Dr. Iyer,Discharged
+PT5553,48,Female,Orthopedics,Fracture,2025-06-23,2025-06-24,1,2693.7,Ayushman Bharat,Dr. Reddy,Discharged
+PT5554,44,Female,Oncology,Breast Cancer Screening,2025-06-24,2025-07-08,14,15265.18,Corporate,Dr. Reddy,Referred
+PT5555,31,Male,Oncology,Tumor Biopsy,2025-06-24,2025-06-25,1,6729.01,Self Pay,Dr. Mehta,Under Treatment
+PT5556,22,Male,ENT,Sinusitis,2025-06-24,2025-06-26,2,6582.06,Ayushman Bharat,Dr. Mehta,Discharged
+PT5557,28,Female,Neurology,Migraine,2025-06-25,2025-06-25,0,2736.56,,Dr. Nair,Discharged
+PT5558,9,Male,Pediatrics,Asthma,2025-06-26,2025-06-28,2,13060.46,Corporate,Dr. Das,Discharged
+PT5559,40,Male,ENT,Sinusitis,2025-06-27,2025-06-28,1,8501.35,Corporate,Dr. Mehta,Discharged
+PT5560,50,Male,Oncology,Chemotherapy Cycle,2025-06-27,2025-06-30,3,4344.75,Private Insurance,Dr. Reddy,Discharged
+PT5561,38,Male,Neurology,Epilepsy,2025-06-28,2025-06-29,1,5801.37,Ayushman Bharat,Dr. Das,Discharged
+PT5562,38,Male,Oncology,Breast Cancer Screening,2025-06-28,2025-06-29,1,3930.75,Private Insurance,Dr. Nair,Discharged
+PT5563,31,Male,Oncology,Chemotherapy Cycle,2025-06-29,2025-07-13,14,72704.93,Private Insurance,Dr. Mehta,Referred
+PT5564,55,Female,Cardiology,Coronary Artery Disease,2025-07-01,2025-07-01,0,3491.42,Self Pay,Dr. Nair,Discharged
+PT5565,44,Female,Oncology,Tumor Biopsy,2025-07-02,2025-07-03,1,15046.7,Self Pay,Dr. Iyer,Discharged
+PT5566,24,Female,Pediatrics,Asthma,2025-07-02,2025-07-09,7,16569.91,Ayushman Bharat,Dr. Nair,Discharged
+PT5567,37,Male,Neurology,Migraine,2025-07-02,2025-07-02,0,3140.27,Self Pay,Dr. Iyer,Referred
+PT5568,74,Male,Orthopedics,ACL Tear,2025-07-03,2025-07-06,3,10847.25,Private Insurance,Dr. Sharma,Discharged
+PT5569,65,Male,Neurology,Stroke,2025-07-03,2025-07-04,1,8437.82,Corporate,Dr. Khan,Referred
+PT5570,23,Male,General Medicine,Viral Infection,2025-07-04,2025-07-07,3,10215.58,Private Insurance,Dr. Iyer,Referred
+PT5571,29,Male,Pediatrics,Asthma,2025-07-06,2025-07-20,14,38098.05,Ayushman Bharat,Dr. Nair,Under Treatment
+PT5572,42,Male,Oncology,Chemotherapy Cycle,2025-07-07,2025-07-12,5,25924.04,Ayushman Bharat,Dr. Nair,Under Treatment
+PT5573,19,Female,ENT,Tonsillitis,2025-07-10,2025-07-10,0,1027.95,Ayushman Bharat,Dr. Sharma,Referred
+PT5574,21,Female,Neurology,Migraine,2025-07-11,2025-07-11,0,2438.75,Private Insurance,Dr. Das,Under Treatment
+PT5575,25,Male,Neurology,Migraine,2025-07-12,2025-07-17,5,10968.47,Corporate,Dr. Khan,Discharged
+PT5576,45,Female,Oncology,Chemotherapy Cycle,2025-07-15,2025-07-20,5,48001.26,,Dr. Reddy,Discharged
+PT5577,50,Female,General Medicine,Diabetes Type 2,2025-07-15,2025-07-22,7,34024.95,,Dr. Das,Discharged
+PT5578,59,Male,ENT,Tonsillitis,2025-07-16,2025-07-30,14,22301.11,Private Insurance,Dr. Sharma,Discharged
+PT5579,55,Male,Cardiology,Hypertension,2025-07-17,2025-07-17,0,1955.95,Private Insurance,Dr. Nair,Discharged
+PT5580,55,Male,Orthopedics,ACL Tear,2025-07-17,2025-07-20,3,21573.0,Private Insurance,Dr. Iyer,Discharged
+PT5581,29,Female,Orthopedics,ACL Tear,2025-07-18,2025-07-23,5,10491.62,Corporate,Dr. Sharma,Referred
+PT5582,13,Female,Cardiology,Hypertension,2025-07-18,2025-07-21,3,18253.82,Ayushman Bharat,Dr. Mehta,Discharged
+PT5583,56,Male,Oncology,Breast Cancer Screening,2025-07-19,2025-07-20,1,8436.17,Private Insurance,Dr. Das,Discharged
+PT5584,12,Male,Neurology,Stroke,2025-07-19,2025-08-02,14,28009.44,Ayushman Bharat,Dr. Reddy,Under Treatment
+PT5585,53,Female,Cardiology,Arrhythmia,2025-07-20,2025-07-21,1,2412.06,Private Insurance,Dr. Nair,Discharged
+PT5586,48,Male,Pediatrics,Viral Fever,2025-07-22,2025-07-22,0,4157.09,Private Insurance,Dr. Khan,Under Treatment
+PT5587,64,Male,General Medicine,Anemia,2025-07-23,2025-07-24,1,7785.89,Private Insurance,Dr. Khan,Discharged
+PT5588,54,Other,Pediatrics,Growth Checkup,2025-07-24,2025-07-24,0,1315.7,,Dr. Reddy,Discharged
+PT5589,32,Male,Orthopedics,ACL Tear,2025-07-24,2025-07-27,3,11800.17,Private Insurance,Dr. Khan,Discharged
+PT5590,49,Female,General Medicine,Anemia,2025-07-25,2025-08-01,7,22984.38,Ayushman Bharat,Dr. Das,Discharged
+PT5591,54,Female,Pediatrics,Asthma,2025-07-26,2025-07-29,3,6455.16,Ayushman Bharat,Dr. Sharma,Discharged
+PT5592,46,Other,ENT,Hearing Loss,2025-07-26,2025-07-29,3,22433.76,Ayushman Bharat,Dr. Das,Discharged
+PT5593,10,Male,General Medicine,Anemia,2025-07-26,2025-07-26,0,3266.71,Ayushman Bharat,Dr. Khan,Referred
+PT5594,74,Female,ENT,Sinusitis,2025-07-27,2025-07-29,2,6688.66,Self Pay,Dr. Mehta,Discharged
+PT5595,38,Male,Oncology,Chemotherapy Cycle,2025-07-27,2025-07-28,1,1790.6,,Dr. Khan,Discharged
+PT5596,57,Female,Oncology,Tumor Biopsy,2025-07-27,2025-07-29,2,11358.67,Ayushman Bharat,Dr. Reddy,Discharged
+PT5597,56,Male,ENT,Sinusitis,2025-07-28,2025-07-29,1,6322.98,Private Insurance,Dr. Reddy,Under Treatment
+PT5598,40,Male,Neurology,Stroke,2025-07-28,2025-07-28,0,901.38,Corporate,Dr. Nair,Referred
+PT5599,52,Male,General Medicine,Anemia,2025-07-29,2025-07-29,0,3868.46,Ayushman Bharat,Dr. Das,Discharged
+PT5600,49,Female,Neurology,Stroke,2025-07-29,2025-08-03,5,12669.2,Corporate,Dr. Sharma,Discharged
+PT5601,12,Female,Orthopedics,ACL Tear,2025-07-30,2025-07-31,1,5075.25,Private Insurance,Dr. Iyer,Discharged
+PT5602,55,Female,Orthopedics,ACL Tear,2025-08-01,2025-08-01,0,3214.8,Corporate,Dr. Das,Under Treatment
+PT5603,37,Female,Orthopedics,Fracture,2025-08-01,2025-08-06,5,21166.96,Self Pay,Dr. Nair,Under Treatment
+PT5604,56,Male,General Medicine,Viral Infection,2025-08-03,2025-08-08,5,19567.16,Private Insurance,Dr. Nair,Under Treatment
+PT5605,42,Male,Pediatrics,Asthma,2025-08-03,2025-08-06,3,16948.58,,,Under Treatment
+PT5606,46,Female,ENT,Sinusitis,2025-08-06,2025-08-09,3,8382.73,Private Insurance,Dr. Das,Discharged
+PT5607,65,Male,Cardiology,Coronary Artery Disease,2025-08-07,2025-08-21,14,33029.75,Corporate,Dr. Sharma,Discharged
+PT5608,59,Female,ENT,Tonsillitis,2025-08-07,2025-08-12,5,42965.98,Private Insurance,Dr. Das,Discharged
+PT5609,14,Female,ENT,Sinusitis,2025-08-07,2025-08-08,1,4212.77,Self Pay,Dr. Mehta,Discharged
+PT5610,14,Other,Cardiology,Hypertension,2025-08-08,2025-08-11,3,13954.36,Corporate,Dr. Sharma,Discharged
+PT5611,31,Female,Neurology,Stroke,2025-08-08,2025-08-13,5,20354.45,,Dr. Mehta,Discharged
+PT5612,24,Male,ENT,Tonsillitis,2025-08-09,2025-08-10,1,10241.94,Self Pay,Dr. Iyer,Referred
+PT5613,34,Male,Pediatrics,Asthma,2025-08-09,2025-08-10,1,2684.69,Ayushman Bharat,Dr. Iyer,Discharged
+PT5614,42,Male,ENT,Hearing Loss,2025-08-10,2025-08-10,0,1588.94,Corporate,Dr. Sharma,Discharged
+PT5615,6,Male,Cardiology,Hypertension,2025-08-10,2025-08-11,1,9169.82,Ayushman Bharat,Dr. Das,Discharged
+PT5616,68,Male,ENT,Hearing Loss,2025-08-11,2025-08-18,7,15525.14,Self Pay,,Under Treatment
+PT5617,41,Female,Pediatrics,Growth Checkup,2025-08-11,2025-08-13,2,6758.53,,Dr. Khan,Discharged
+PT5618,73,Male,Orthopedics,Arthritis,2025-08-12,2025-08-12,0,3201.14,Corporate,Dr. Mehta,Under Treatment
+PT5619,17,Male,Orthopedics,ACL Tear,2025-08-13,2025-08-14,1,15991.59,,Dr. Nair,Discharged
+PT5620,39,Male,Orthopedics,Fracture,2025-08-13,2025-08-13,0,7396.73,Private Insurance,Dr. Nair,Discharged
+PT5621,20,Male,Pediatrics,Growth Checkup,2025-08-13,2025-08-20,7,53977.6,Self Pay,Dr. Reddy,Under Treatment
+PT5622,64,Female,Cardiology,Arrhythmia,2025-08-14,2025-08-14,0,3073.3,Self Pay,Dr. Sharma,Under Treatment
+PT5623,39,Male,Pediatrics,Viral Fever,2025-08-14,2025-08-15,1,5926.15,Corporate,Dr. Iyer,Discharged
+PT5624,57,Female,Orthopedics,Arthritis,2025-08-15,2025-08-20,5,9908.53,Self Pay,Dr. Das,Discharged
+PT5625,67,Female,ENT,Sinusitis,2025-08-16,2025-08-21,5,46031.15,,Dr. Das,Under Treatment
+PT5626,22,Male,Pediatrics,Viral Fever,2025-08-17,2025-08-31,14,45682.99,,Dr. Iyer,Deceased
+PT5627,44,Female,Pediatrics,Asthma,2025-08-18,2025-08-20,2,10356.54,Self Pay,Dr. Nair,Discharged
+PT5628,15,Female,Cardiology,Arrhythmia,2025-08-18,2025-08-18,0,3999.02,Ayushman Bharat,Dr. Nair,Discharged
+PT5629,34,Male,Oncology,Chemotherapy Cycle,2025-08-19,2025-08-20,1,2012.44,Private Insurance,Dr. Khan,Under Treatment
+PT5630,73,Female,ENT,Tonsillitis,2025-08-20,2025-08-23,3,13370.16,Self Pay,Dr. Nair,Under Treatment
+PT5631,36,Female,General Medicine,Anemia,2025-08-20,2025-08-23,3,11960.88,Private Insurance,Dr. Iyer,Discharged
+PT5632,78,Female,ENT,Hearing Loss,2025-08-21,2025-08-24,3,9314.84,Ayushman Bharat,Dr. Mehta,Discharged
+PT5633,45,Female,Pediatrics,Growth Checkup,2025-08-22,2025-08-23,1,5365.65,Self Pay,Dr. Nair,Discharged
+PT5634,29,Female,Orthopedics,Arthritis,2025-08-22,2025-08-23,1,4406.7,Private Insurance,Dr. Sharma,Discharged
+PT5635,34,Female,Cardiology,Arrhythmia,2025-08-23,2025-08-25,2,8383.59,Ayushman Bharat,Dr. Das,Under Treatment
+PT5636,41,Female,Cardiology,Coronary Artery Disease,2025-08-24,2025-08-25,1,7763.58,Private Insurance,Dr. Khan,Discharged
+PT5637,7,Male,ENT,Sinusitis,2025-08-25,2025-08-28,3,12473.19,Private Insurance,Dr. Khan,Discharged
+PT5638,13,Male,Orthopedics,ACL Tear,2025-08-26,2025-08-29,3,7670.7,Ayushman Bharat,Dr. Sharma,Discharged
+PT5639,35,Female,ENT,Tonsillitis,2025-08-26,2025-08-26,0,5788.6,Private Insurance,Dr. Das,Referred
+PT5640,59,Female,Pediatrics,Viral Fever,2025-08-27,2025-08-29,2,10147.25,Ayushman Bharat,Dr. Reddy,Under Treatment
+PT5641,26,Female,Oncology,Chemotherapy Cycle,2025-08-29,2025-08-30,1,8002.74,,Dr. Nair,Discharged
+PT5642,26,Female,Pediatrics,Viral Fever,2025-08-29,2025-08-29,0,1637.83,Private Insurance,Dr. Nair,Referred
+PT5643,21,Female,Oncology,Tumor Biopsy,2025-08-29,2025-08-29,0,6830.65,Private Insurance,Dr. Reddy,Referred
+PT5644,11,Female,Cardiology,Arrhythmia,2025-08-30,2025-09-01,2,7679.56,Private Insurance,Dr. Sharma,Discharged
+PT5645,42,Female,ENT,Hearing Loss,2025-08-31,2025-08-31,0,3707.67,Ayushman Bharat,Dr. Nair,Discharged
+PT5646,5,Male,Cardiology,Hypertension,2025-09-01,2025-09-06,5,22721.08,,Dr. Reddy,Discharged
+PT5647,22,Female,Orthopedics,Fracture,2025-09-02,2025-09-07,5,33817.75,Ayushman Bharat,Dr. Sharma,Discharged
+PT5648,31,Female,General Medicine,Viral Infection,2025-09-06,2025-09-11,5,10578.42,Ayushman Bharat,Dr. Mehta,Discharged
+PT5649,26,Female,Pediatrics,Viral Fever,2025-09-08,2025-09-10,2,12340.74,Ayushman Bharat,Dr. Nair,Discharged
+PT5650,37,Male,Cardiology,Hypertension,2025-09-08,2025-09-10,2,8198.51,Self Pay,Dr. Reddy,Discharged
+PT5651,40,Male,ENT,Tonsillitis,2025-09-09,2025-09-10,1,11117.79,Private Insurance,Dr. Das,Referred
+PT5652,54,Male,Pediatrics,Viral Fever,2025-09-09,2025-09-09,0,1751.77,Ayushman Bharat,Dr. Das,Referred
+PT5653,37,Female,Oncology,Chemotherapy Cycle,2025-09-10,2025-09-15,5,24890.41,Ayushman Bharat,Dr. Reddy,Discharged
+PT5654,62,Female,Orthopedics,Fracture,2025-09-11,2025-09-11,0,4054.13,Private Insurance,Dr. Reddy,Discharged
+PT5655,50,Female,Cardiology,Coronary Artery Disease,2025-09-12,2025-09-13,1,5120.74,Self Pay,Dr. Iyer,Discharged
+PT5656,33,Male,Neurology,Migraine,2025-09-12,2025-09-13,1,2906.42,Ayushman Bharat,Dr. Khan,Referred
+PT5657,15,Male,Pediatrics,Growth Checkup,2025-09-13,2025-09-13,0,3090.82,Ayushman Bharat,Dr. Khan,Discharged
+PT5658,28,Female,ENT,Hearing Loss,2025-09-14,2025-09-15,1,9041.77,Self Pay,Dr. Khan,Discharged
+PT5659,70,Male,Cardiology,Coronary Artery Disease,2025-09-15,2025-09-17,2,6681.99,Private Insurance,Dr. Das,Under Treatment
+PT5660,56,Male,Oncology,Chemotherapy Cycle,2025-09-15,2025-09-16,1,3259.68,Self Pay,Dr. Sharma,Referred
+PT5661,34,Female,Pediatrics,Asthma,2025-09-17,2025-09-24,7,8203.98,Private Insurance,Dr. Nair,Discharged
+PT5662,26,Female,Oncology,Chemotherapy Cycle,2025-09-17,2025-09-19,2,7975.87,Self Pay,Dr. Khan,Discharged
+PT5663,13,Male,Cardiology,Coronary Artery Disease,2025-09-18,2025-09-19,1,3108.29,,Dr. Das,Discharged
+PT5664,35,Male,Oncology,Chemotherapy Cycle,2025-09-18,2025-09-19,1,7332.65,Ayushman Bharat,Dr. Reddy,Under Treatment
+PT5665,68,Female,Pediatrics,Viral Fever,2025-09-19,2025-09-24,5,7151.92,Corporate,Dr. Das,Referred
+PT5666,68,Male,Oncology,Chemotherapy Cycle,2025-09-21,2025-09-22,1,2074.56,Ayushman Bharat,Dr. Khan,Discharged
+PT5667,25,Female,Cardiology,Hypertension,2025-09-22,2025-09-27,5,9087.49,Corporate,Dr. Khan,Under Treatment
+PT5668,29,Male,Cardiology,Hypertension,2025-09-28,2025-09-29,1,2424.81,Self Pay,,Under Treatment
+PT5669,64,Male,Neurology,Migraine,2025-09-30,2025-10-02,2,6288.69,,Dr. Reddy,Discharged
+PT5670,36,Male,Pediatrics,Asthma,2025-09-30,2025-10-03,3,11615.04,Ayushman Bharat,Dr. Khan,Under Treatment
+PT5671,89,Male,Neurology,Stroke,2025-09-30,2025-10-01,1,2659.67,Ayushman Bharat,Dr. Reddy,Deceased
+PT5672,53,Female,Oncology,Tumor Biopsy,2025-10-04,2025-10-07,3,5437.13,Ayushman Bharat,Dr. Khan,Discharged
+PT5673,38,Female,Neurology,Migraine,2025-10-05,2025-10-08,3,17781.71,Self Pay,Dr. Mehta,Discharged
+PT5674,38,Female,Neurology,Stroke,2025-10-05,2025-10-06,1,5999.95,Corporate,Dr. Das,Under Treatment
+PT5675,8,Male,Neurology,Epilepsy,2025-10-05,2025-10-08,3,12072.28,,Dr. Mehta,Referred
+PT5676,29,Male,Cardiology,Hypertension,2025-10-05,2025-10-10,5,25961.64,Corporate,Dr. Khan,Discharged
+PT5677,38,Male,Orthopedics,Fracture,2025-10-06,2025-10-08,2,8299.25,Corporate,Dr. Iyer,Discharged
+PT5678,46,Female,Neurology,Epilepsy,2025-10-07,2025-10-14,7,8039.03,Private Insurance,Dr. Reddy,Under Treatment
+PT5679,17,Female,General Medicine,Diabetes Type 2,2025-10-07,2025-10-08,1,6560.46,Ayushman Bharat,Dr. Khan,Discharged
+PT5680,55,Male,Oncology,Chemotherapy Cycle,2025-10-08,2025-10-09,1,3392.74,Ayushman Bharat,Dr. Khan,Under Treatment
+PT5681,0,Male,Neurology,Migraine,2025-10-09,2025-10-23,14,36163.83,Ayushman Bharat,Dr. Mehta,Discharged
+PT5682,33,Female,General Medicine,Diabetes Type 2,2025-10-09,2025-10-23,14,54899.2,Private Insurance,Dr. Khan,Discharged
+PT5683,48,Male,General Medicine,Diabetes Type 2,2025-10-12,2025-10-14,2,21162.44,Ayushman Bharat,Dr. Mehta,Under Treatment
+PT5684,77,Female,ENT,Sinusitis,2025-10-13,2025-10-16,3,9568.63,Corporate,Dr. Sharma,Discharged
+PT5685,42,Male,Neurology,Stroke,2025-10-14,2025-10-16,2,11595.66,Ayushman Bharat,Dr. Reddy,Discharged
+PT5686,38,Male,Orthopedics,ACL Tear,2025-10-15,2025-10-15,0,859.12,Self Pay,Dr. Khan,Under Treatment
+PT5687,21,Male,Cardiology,Coronary Artery Disease,2025-10-16,2025-10-16,0,2551.82,Ayushman Bharat,Dr. Khan,Referred
+PT5688,43,Male,General Medicine,Diabetes Type 2,2025-10-17,2025-10-18,1,2897.04,Ayushman Bharat,Dr. Das,Discharged
+PT5689,44,Female,Neurology,Migraine,2025-10-18,2025-10-19,1,13428.16,Private Insurance,Dr. Sharma,Discharged
+PT5690,30,Male,Cardiology,Hypertension,2025-10-18,2025-10-20,2,18786.93,Ayushman Bharat,Dr. Reddy,Discharged
+PT5691,19,Female,Orthopedics,Fracture,2025-10-18,2025-10-18,0,3957.84,Self Pay,Dr. Iyer,Discharged
+PT5692,40,Male,ENT,Tonsillitis,2025-10-19,2025-10-26,7,33512.52,Private Insurance,Dr. Reddy,Discharged
+PT5693,47,Male,General Medicine,Anemia,2025-10-19,2025-10-19,0,5910.72,Self Pay,Dr. Mehta,Discharged
+PT5694,63,Female,Pediatrics,Asthma,2025-10-23,2025-10-26,3,17358.95,Self Pay,Dr. Nair,Referred
+PT5695,22,Male,ENT,Tonsillitis,2025-10-24,2025-10-25,1,7221.98,Corporate,,Referred
+PT5696,56,Female,ENT,Sinusitis,2025-10-24,2025-10-24,0,1393.93,,Dr. Mehta,Discharged
+PT5697,61,Male,Oncology,Chemotherapy Cycle,2025-10-25,2025-10-25,0,4161.47,Private Insurance,Dr. Das,Discharged
+PT5698,16,Male,Cardiology,Hypertension,2025-10-26,2025-11-02,7,20260.41,Self Pay,Dr. Reddy,Referred
+PT5699,57,Female,Neurology,Migraine,2025-10-26,2025-10-27,1,,Self Pay,Dr. Das,Discharged
+PT5700,41,Male,Cardiology,Hypertension,2025-10-30,2025-11-06,7,22027.47,,Dr. Mehta,Referred
+PT5701,36,Male,Pediatrics,Asthma,2025-10-30,2025-10-31,1,7576.02,Self Pay,Dr. Khan,Under Treatment
+PT5702,47,Female,Neurology,Stroke,2025-11-01,2025-11-15,14,35355.9,Private Insurance,Dr. Khan,Discharged
+PT5703,34,Female,Orthopedics,Fracture,2025-11-02,2025-11-02,0,3943.25,,Dr. Reddy,Under Treatment
+PT5704,89,Male,ENT,Hearing Loss,2025-11-02,2025-11-09,7,21566.28,Private Insurance,Dr. Reddy,Referred
+PT5705,41,Male,Cardiology,Arrhythmia,2025-11-03,2025-11-03,0,4513.33,Ayushman Bharat,Dr. Nair,Discharged
+PT5706,10,Female,Neurology,Epilepsy,2025-11-04,2025-11-04,0,1562.42,,Dr. Nair,Discharged
+PT5707,48,Female,Pediatrics,Viral Fever,2025-11-05,2025-11-10,5,24243.36,Corporate,Dr. Iyer,Referred
+PT5708,33,Male,Neurology,Stroke,2025-11-05,2025-11-07,2,4969.77,Ayushman Bharat,Dr. Mehta,Discharged
+PT5709,28,Female,Neurology,Epilepsy,2025-11-05,2025-11-10,5,12071.25,Self Pay,Dr. Reddy,Discharged
+PT5710,56,Female,Oncology,Chemotherapy Cycle,2025-11-06,2025-11-07,1,5019.46,Self Pay,Dr. Khan,Under Treatment
+PT5711,21,Female,General Medicine,Diabetes Type 2,2025-11-06,2025-11-13,7,13487.38,Corporate,Dr. Reddy,Discharged
+PT5712,59,Male,Pediatrics,Growth Checkup,2025-11-08,2025-11-09,1,8164.89,Private Insurance,Dr. Das,Discharged
+PT5713,17,Male,ENT,Hearing Loss,2025-11-08,2025-11-09,1,2256.02,Private Insurance,Dr. Das,Under Treatment
+PT5714,46,Female,Cardiology,Coronary Artery Disease,2025-11-09,2025-11-12,3,,Corporate,Dr. Mehta,Under Treatment
+PT5715,34,Female,Oncology,Breast Cancer Screening,2025-11-10,2025-11-13,3,30929.82,Corporate,Dr. Sharma,Discharged
+PT5716,50,Female,Cardiology,Hypertension,2025-11-12,2025-11-17,5,14272.65,,Dr. Nair,Discharged
+PT5717,65,Male,General Medicine,Diabetes Type 2,2025-11-13,2025-11-13,0,4371.67,Corporate,Dr. Das,Discharged
+PT5718,41,Female,Cardiology,Coronary Artery Disease,2025-11-13,2025-11-14,1,7018.28,,Dr. Iyer,Discharged
+PT5719,44,Male,Cardiology,Coronary Artery Disease,2025-11-13,2025-11-15,2,6403.39,Private Insurance,Dr. Iyer,Discharged
+PT5720,45,Female,Oncology,Breast Cancer Screening,2025-11-18,2025-11-18,0,4403.31,,Dr. Sharma,Discharged
+PT5721,49,Female,Orthopedics,Fracture,2025-11-19,2025-11-20,1,5046.3,Self Pay,Dr. Nair,Discharged
+PT5722,26,Female,Cardiology,Coronary Artery Disease,2025-11-19,2025-11-21,2,16286.49,Corporate,Dr. Das,Discharged
+PT5723,63,Male,Pediatrics,Viral Fever,2025-11-19,2025-11-24,5,16034.6,Private Insurance,Dr. Reddy,Discharged
+PT5724,38,Female,General Medicine,Viral Infection,2025-11-19,2025-11-24,5,26258.46,Self Pay,Dr. Sharma,Discharged
+PT5725,36,Female,Pediatrics,Growth Checkup,2025-11-21,2025-11-22,1,10304.0,Ayushman Bharat,Dr. Khan,Under Treatment
+PT5726,66,Male,Pediatrics,Asthma,2025-11-26,2025-11-29,3,15299.03,Self Pay,Dr. Khan,Discharged
+PT5727,10,Female,Cardiology,Arrhythmia,2025-11-26,2025-11-29,3,,Corporate,Dr. Mehta,Discharged
+PT5728,61,Male,ENT,Hearing Loss,2025-11-27,2025-11-27,0,2153.43,Ayushman Bharat,Dr. Khan,Discharged
+PT5729,35,Male,General Medicine,Viral Infection,2025-11-27,2025-11-27,0,4131.19,Ayushman Bharat,Dr. Sharma,Referred
+PT5730,42,Male,Orthopedics,Fracture,2025-11-27,2025-11-29,2,9390.8,,Dr. Sharma,Under Treatment
+PT5731,55,Female,Neurology,Migraine,2025-11-27,2025-12-04,7,,Self Pay,Dr. Sharma,Discharged
+PT5732,37,Male,Pediatrics,Growth Checkup,2025-11-28,2025-11-29,1,12731.56,Self Pay,Dr. Sharma,Discharged
+PT5733,26,Male,Cardiology,Arrhythmia,2025-11-28,2025-12-01,3,16149.0,Self Pay,Dr. Khan,Discharged
+PT5734,6,Male,Cardiology,Arrhythmia,2025-11-28,2025-12-03,5,24288.75,Corporate,Dr. Das,Discharged
+PT5735,19,Female,Cardiology,Hypertension,2025-11-28,2025-12-05,7,54016.34,Ayushman Bharat,Dr. Khan,Discharged
+PT5736,54,Male,Cardiology,Coronary Artery Disease,2025-11-28,2025-12-01,3,3669.62,,Dr. Reddy,Under Treatment
+PT5737,40,Male,Cardiology,Arrhythmia,2025-11-29,2025-11-30,1,4811.85,Private Insurance,Dr. Sharma,Discharged
+PT5738,52,Male,Oncology,Breast Cancer Screening,2025-11-29,2025-11-30,1,8227.93,Self Pay,Dr. Khan,Discharged
+PT5739,57,Male,Cardiology,Arrhythmia,2025-11-29,2025-12-01,2,18072.44,Corporate,Dr. Sharma,Discharged
+PT5740,65,Male,Pediatrics,Viral Fever,2025-12-01,2025-12-06,5,17120.27,Self Pay,Dr. Mehta,Discharged
+PT5741,75,Female,Pediatrics,Asthma,2025-12-02,2025-12-02,0,1195.29,Corporate,Dr. Das,Deceased
+PT5742,0,Male,Orthopedics,ACL Tear,2025-12-02,2025-12-03,1,6998.26,Ayushman Bharat,Dr. Sharma,Discharged
+PT5743,25,Female,Orthopedics,Fracture,2025-12-03,2025-12-10,7,18859.28,,Dr. Reddy,Discharged
+PT5744,11,Male,ENT,Sinusitis,2025-12-03,2025-12-04,1,3148.03,Private Insurance,Dr. Das,Discharged
+PT5745,77,Male,Orthopedics,Arthritis,2025-12-04,2025-12-07,3,14942.76,Ayushman Bharat,Dr. Nair,Discharged
+PT5746,25,Female,Cardiology,Coronary Artery Disease,2025-12-04,2025-12-06,2,18672.38,Corporate,Dr. Reddy,Discharged
+PT5747,57,Male,Pediatrics,Growth Checkup,2025-12-05,2025-12-07,2,20500.34,Private Insurance,Dr. Mehta,Discharged
+PT5748,14,Male,Neurology,Migraine,2025-12-05,2025-12-08,3,17970.52,Self Pay,Dr. Khan,Discharged
+PT5749,16,Male,Neurology,Epilepsy,2025-12-06,2025-12-06,0,907.85,Private Insurance,Dr. Iyer,Discharged
+PT5750,30,Male,Oncology,Tumor Biopsy,2025-12-07,2025-12-09,2,7008.73,Ayushman Bharat,Dr. Khan,Referred
+PT5751,40,Male,Pediatrics,Viral Fever,2025-12-07,2025-12-08,1,8654.8,Ayushman Bharat,Dr. Mehta,Discharged
+PT5752,57,Male,Cardiology,Coronary Artery Disease,2025-12-09,2025-12-10,1,7348.78,Ayushman Bharat,Dr. Sharma,Under Treatment
+PT5753,19,Male,Pediatrics,Growth Checkup,2025-12-11,2025-12-13,2,3832.28,Self Pay,Dr. Nair,Discharged
+PT5754,46,Male,Neurology,Stroke,2025-12-11,2025-12-12,1,3371.01,Ayushman Bharat,Dr. Nair,Discharged
+PT5755,54,Male,Pediatrics,Growth Checkup,2025-12-11,2025-12-12,1,8374.86,Ayushman Bharat,Dr. Mehta,Referred
+PT5756,50,Female,General Medicine,Diabetes Type 2,2025-12-11,2025-12-12,1,8609.18,Self Pay,Dr. Iyer,Referred
+PT5757,74,Male,General Medicine,Diabetes Type 2,2025-12-12,2025-12-26,14,34784.26,Ayushman Bharat,Dr. Iyer,Discharged
+PT5758,59,Male,Pediatrics,Growth Checkup,2025-12-14,2025-12-14,0,1268.79,Ayushman Bharat,Dr. Das,Referred
+PT5759,48,Female,Orthopedics,Fracture,2025-12-14,2025-12-28,14,61774.5,Self Pay,Dr. Sharma,Discharged
+PT5760,60,Male,Pediatrics,Growth Checkup,2025-12-14,2025-12-14,0,5061.18,Ayushman Bharat,,Discharged
+PT5761,27,Male,Oncology,Breast Cancer Screening,2025-12-14,2025-12-14,0,1663.35,Ayushman Bharat,Dr. Das,Discharged
+PT5762,42,Female,Neurology,Migraine,2025-12-20,2025-12-22,2,8116.88,Private Insurance,Dr. Reddy,Discharged
+PT5763,68,Female,Neurology,Migraine,2025-12-21,2025-12-21,0,5361.32,Ayushman Bharat,Dr. Iyer,Discharged
+PT5764,43,Male,General Medicine,Anemia,2025-12-22,2025-12-22,0,1416.75,,Dr. Nair,Discharged
+PT5765,74,Male,Pediatrics,Viral Fever,2025-12-22,2025-12-23,1,6027.11,Self Pay,Dr. Nair,Under Treatment
+PT5766,89,Female,Orthopedics,ACL Tear,2025-12-24,2025-12-27,3,27493.84,Self Pay,Dr. Sharma,Discharged
+PT5767,61,Female,Neurology,Stroke,2025-12-25,2025-12-30,5,34931.59,,Dr. Iyer,Under Treatment
+PT5768,36,Female,Pediatrics,Asthma,2025-12-26,2025-12-31,5,14143.21,Corporate,Dr. Das,Discharged
+PT5769,1,Female,Cardiology,Hypertension,2025-12-26,2025-12-27,1,1810.63,Private Insurance,Dr. Reddy,Under Treatment
+PT5770,50,Female,Pediatrics,Asthma,2025-12-27,2026-01-01,5,21019.58,Private Insurance,Dr. Das,Discharged
+PT5771,29,Female,ENT,Sinusitis,2025-12-27,2025-12-28,1,15297.22,Ayushman Bharat,Dr. Nair,Under Treatment
+PT5772,19,Male,General Medicine,Viral Infection,2025-12-28,2025-12-28,0,3583.92,Ayushman Bharat,Dr. Iyer,Discharged
+PT5773,29,Male,Neurology,Migraine,2025-12-29,2025-12-30,1,1613.72,Ayushman Bharat,Dr. Das,Discharged
+PT5774,32,Male,Orthopedics,ACL Tear,2025-12-31,2026-01-03,3,13786.64,Self Pay,Dr. Sharma,Referred
+PT5775,67,Male,Cardiology,Hypertension,2026-01-03,2026-01-03,0,3207.66,,Dr. Reddy,Discharged
+PT5776,19,Male,Orthopedics,Fracture,2026-01-05,2026-01-08,3,11838.14,Ayushman Bharat,Dr. Das,Discharged
+PT5777,87,Male,Neurology,Epilepsy,2026-01-05,2026-01-06,1,15173.0,Ayushman Bharat,Dr. Das,Discharged
+PT5778,49,Male,Neurology,Stroke,2026-01-06,2026-01-07,1,3461.76,Ayushman Bharat,Dr. Reddy,Discharged
+PT5779,44,Male,Orthopedics,Fracture,2026-01-06,2026-01-06,0,7543.46,,Dr. Mehta,Discharged
+PT5780,35,Male,General Medicine,Anemia,2026-01-06,2026-01-09,3,10301.85,,Dr. Iyer,Under Treatment
+PT5781,20,Male,Neurology,Stroke,2026-01-07,2026-01-09,2,10644.42,Corporate,Dr. Das,Under Treatment
+PT5782,54,Male,General Medicine,Diabetes Type 2,2026-01-08,2026-01-22,14,62713.71,Private Insurance,Dr. Das,Under Treatment
+PT5783,35,Male,Oncology,Chemotherapy Cycle,2026-01-09,2026-01-10,1,6333.0,,Dr. Das,Under Treatment
+PT5784,75,Female,Cardiology,Arrhythmia,2026-01-09,2026-01-09,0,3916.28,Corporate,Dr. Mehta,Discharged
+PT5785,25,Female,ENT,Sinusitis,2026-01-10,2026-01-11,1,6246.44,Ayushman Bharat,Dr. Mehta,Deceased
+PT5786,25,Male,General Medicine,Diabetes Type 2,2026-01-12,2026-01-13,1,7356.31,,Dr. Sharma,Discharged
+PT5787,57,Male,Orthopedics,Arthritis,2026-01-13,2026-01-13,0,3659.84,Corporate,Dr. Sharma,Deceased
+PT5788,44,Male,ENT,Tonsillitis,2026-01-16,2026-01-18,2,13386.05,Ayushman Bharat,,Discharged
+PT5789,26,Female,Pediatrics,Asthma,2026-01-16,2026-01-16,0,2029.93,Self Pay,Dr. Khan,Discharged
+PT5790,38,Female,Orthopedics,Fracture,2026-01-17,2026-01-19,2,6494.49,Private Insurance,Dr. Reddy,Referred
+PT5791,57,Male,ENT,Tonsillitis,2026-01-17,2026-01-22,5,47213.49,Self Pay,Dr. Sharma,Discharged
+PT5792,47,Other,Orthopedics,Fracture,2026-01-17,2026-01-18,1,6023.79,Corporate,Dr. Das,Discharged
+PT5793,45,Male,ENT,Hearing Loss,2026-01-17,2026-01-17,0,3042.26,Ayushman Bharat,Dr. Nair,Discharged
+PT5794,54,Male,Cardiology,Hypertension,2026-01-20,2026-01-22,2,20730.35,,Dr. Iyer,Discharged
+PT5795,40,Female,Neurology,Stroke,2026-01-20,2026-01-27,7,12061.79,Corporate,Dr. Nair,Referred
+PT5796,35,Male,General Medicine,Diabetes Type 2,2026-01-21,2026-01-28,7,27792.06,Private Insurance,Dr. Iyer,Under Treatment
+PT5797,42,Male,Oncology,Breast Cancer Screening,2026-01-22,2026-01-25,3,8556.58,Corporate,Dr. Reddy,Discharged
+PT5798,49,Female,ENT,Tonsillitis,2026-01-23,2026-01-24,1,3551.5,Self Pay,Dr. Nair,Discharged
+PT5799,6,Female,ENT,Sinusitis,2026-01-26,2026-02-02,7,25440.02,Private Insurance,Dr. Nair,Discharged
+PT5800,54,Male,Cardiology,Arrhythmia,2026-01-26,2026-01-31,5,13128.62,,Dr. Iyer,Discharged
+PT5801,40,Male,Neurology,Epilepsy,2026-01-26,2026-01-27,1,7527.22,,Dr. Reddy,Discharged
+PT5802,34,Female,Orthopedics,ACL Tear,2026-01-26,2026-01-29,3,17347.05,Self Pay,Dr. Iyer,Discharged
+PT5803,37,Female,ENT,Hearing Loss,2026-01-26,2026-01-26,0,2892.06,Self Pay,Dr. Das,Under Treatment
+PT5804,94,Female,Orthopedics,ACL Tear,2026-01-27,2026-01-30,3,8483.01,Private Insurance,Dr. Sharma,Discharged
+PT5805,79,Male,Pediatrics,Growth Checkup,2026-01-28,2026-01-29,1,8635.78,Ayushman Bharat,Dr. Mehta,Discharged
+PT5806,26,Female,Oncology,Breast Cancer Screening,2026-01-28,2026-01-30,2,6037.17,Self Pay,Dr. Nair,Under Treatment
+PT5807,46,Male,Cardiology,Hypertension,2026-01-29,2026-01-31,2,3767.19,Private Insurance,Dr. Sharma,Discharged
+PT5808,31,Male,Pediatrics,Viral Fever,2026-01-31,2026-02-02,2,11205.35,Self Pay,Dr. Sharma,Discharged
+PT5809,47,Male,Pediatrics,Asthma,2026-02-01,2026-02-02,1,7523.43,Private Insurance,Dr. Khan,Discharged
+PT5810,74,Male,Oncology,Breast Cancer Screening,2026-02-03,2026-02-04,1,2105.79,Ayushman Bharat,Dr. Reddy,Discharged
+PT5811,58,Male,Oncology,Tumor Biopsy,2026-02-04,2026-02-04,0,4148.8,Private Insurance,Dr. Das,Discharged
+PT5812,62,Male,ENT,Sinusitis,2026-02-05,2026-02-07,2,6259.62,Ayushman Bharat,Dr. Iyer,Discharged
+PT5813,39,Female,Cardiology,Hypertension,2026-02-08,2026-02-22,14,34316.12,Private Insurance,Dr. Khan,Discharged
+PT5814,28,Male,Cardiology,Hypertension,2026-02-09,2026-02-11,2,19985.2,Corporate,Dr. Khan,Discharged
+PT5815,42,Male,General Medicine,Diabetes Type 2,2026-02-11,2026-02-11,0,6781.12,Private Insurance,Dr. Khan,Under Treatment
+PT5816,30,Female,Oncology,Tumor Biopsy,2026-02-11,2026-02-13,2,9540.32,Corporate,Dr. Nair,Under Treatment
+PT5817,44,Male,Orthopedics,ACL Tear,2026-02-11,2026-02-14,3,6305.98,Corporate,Dr. Mehta,Discharged
+PT5818,55,Male,Cardiology,Hypertension,2026-02-13,2026-02-15,2,4682.12,Self Pay,Dr. Reddy,Under Treatment
+PT5819,19,Male,General Medicine,Diabetes Type 2,2026-02-13,2026-02-13,0,4211.26,Self Pay,Dr. Mehta,Under Treatment
+PT5820,63,Female,Orthopedics,ACL Tear,2026-02-13,2026-02-15,2,19934.22,Self Pay,Dr. Nair,Under Treatment
+PT5821,48,Male,Neurology,Stroke,2026-02-15,2026-02-15,0,4085.57,Self Pay,Dr. Mehta,Discharged
+PT5822,49,Female,Neurology,Epilepsy,2026-02-15,2026-02-22,7,9540.04,Self Pay,Dr. Das,Discharged
+PT5823,49,Female,Neurology,Stroke,2026-02-16,2026-02-17,1,7458.18,Self Pay,Dr. Iyer,Discharged
+PT5824,39,Female,Pediatrics,Asthma,2026-02-16,2026-02-16,0,5282.34,,Dr. Das,Discharged
+PT5825,15,Other,Neurology,Migraine,2026-02-18,2026-03-04,14,52396.69,Self Pay,Dr. Mehta,Under Treatment
+PT5826,0,Other,Neurology,Migraine,2026-02-20,2026-02-23,3,7941.6,Private Insurance,Dr. Iyer,Discharged
+PT5827,36,Female,ENT,Sinusitis,2026-02-22,2026-02-23,1,15283.28,Corporate,Dr. Sharma,Under Treatment
+PT5828,68,Female,Neurology,Epilepsy,2026-02-23,2026-02-26,3,,,Dr. Das,Discharged
+PT5829,29,Female,Cardiology,Hypertension,2026-02-24,2026-03-10,14,79706.11,Corporate,Dr. Sharma,Discharged
+PT5830,62,Male,Orthopedics,ACL Tear,2026-03-03,2026-03-03,0,2797.78,Corporate,Dr. Sharma,Under Treatment
+PT5831,30,Female,Orthopedics,Fracture,2026-03-03,2026-03-03,0,4384.81,Ayushman Bharat,Dr. Sharma,Under Treatment
+PT5832,43,Female,Neurology,Epilepsy,2026-03-04,2026-03-18,14,21649.56,Private Insurance,Dr. Das,Under Treatment
+PT5833,22,Female,ENT,Tonsillitis,2026-03-05,2026-03-08,3,8669.65,Self Pay,,Discharged
+PT5834,34,Male,ENT,Hearing Loss,2026-03-06,2026-03-06,0,4315.65,Corporate,Dr. Iyer,Discharged
+PT5835,39,Male,ENT,Hearing Loss,2026-03-07,2026-03-08,1,4224.39,,Dr. Iyer,Discharged
+PT5836,29,Male,Oncology,Chemotherapy Cycle,2026-03-08,2026-03-09,1,6017.87,Ayushman Bharat,Dr. Iyer,Under Treatment
+PT5837,51,Male,Oncology,Chemotherapy Cycle,2026-03-08,2026-03-11,3,15524.18,Self Pay,Dr. Das,Under Treatment
+PT5838,38,Female,Orthopedics,ACL Tear,2026-03-08,2026-03-08,0,2148.54,Self Pay,Dr. Nair,Under Treatment
+PT5839,63,Male,Neurology,Epilepsy,2026-03-09,2026-03-09,0,3010.64,Ayushman Bharat,Dr. Das,Discharged
+PT5840,56,Male,Pediatrics,Viral Fever,2026-03-09,2026-03-14,5,17722.64,Ayushman Bharat,Dr. Reddy,Discharged
+PT5841,48,Male,Cardiology,Coronary Artery Disease,2026-03-09,2026-03-09,0,2836.77,Self Pay,Dr. Das,Discharged
+PT5842,25,Male,ENT,Hearing Loss,2026-03-09,2026-03-11,2,21387.43,Private Insurance,Dr. Nair,Under Treatment
+PT5843,13,Female,Cardiology,Hypertension,2026-03-10,2026-03-24,14,30438.49,Corporate,Dr. Reddy,Referred
+PT5844,14,Female,Orthopedics,Arthritis,2026-03-10,2026-03-11,1,7909.78,Self Pay,Dr. Iyer,Referred
+PT5845,58,Male,Orthopedics,Fracture,2026-03-11,2026-03-13,2,8979.39,Corporate,Dr. Reddy,Under Treatment
+PT5846,0,Female,Cardiology,Arrhythmia,2026-03-11,2026-03-12,1,14655.9,,Dr. Khan,Referred
+PT5847,47,Male,Cardiology,Coronary Artery Disease,2026-03-12,2026-03-14,2,2729.66,Corporate,Dr. Iyer,Discharged
+PT5848,27,Female,ENT,Tonsillitis,2026-03-13,2026-03-15,2,12484.07,Corporate,Dr. Nair,Discharged
+PT5849,18,Male,Pediatrics,Viral Fever,2026-03-14,2026-03-16,2,7466.17,Ayushman Bharat,Dr. Iyer,Under Treatment
+PT5850,28,Female,Pediatrics,Asthma,2026-03-14,2026-03-17,3,16702.52,Corporate,Dr. Nair,Discharged
+PT5851,45,Female,Orthopedics,Fracture,2026-03-15,2026-03-22,7,51061.45,Self Pay,Dr. Nair,Under Treatment
+PT5852,52,Male,Cardiology,Coronary Artery Disease,2026-03-16,2026-03-16,0,3433.9,Private Insurance,Dr. Sharma,Discharged
+PT5853,22,Female,Oncology,Breast Cancer Screening,2026-03-17,2026-03-22,5,12032.84,Self Pay,Dr. Iyer,Discharged
+PT5854,53,Male,Pediatrics,Asthma,2026-03-18,2026-03-18,0,7265.51,Private Insurance,Dr. Das,Discharged
+PT5855,35,Female,Oncology,Breast Cancer Screening,2026-03-18,2026-03-19,1,4788.48,Private Insurance,Dr. Mehta,Discharged
+PT5856,56,Female,Cardiology,Coronary Artery Disease,2026-03-18,2026-03-19,1,7004.43,Self Pay,Dr. Reddy,Referred
+PT5857,46,Male,Neurology,Epilepsy,2026-03-18,2026-03-20,2,8011.18,Self Pay,Dr. Mehta,Discharged
+PT5858,26,Female,Oncology,Chemotherapy Cycle,2026-03-20,2026-03-23,3,30054.16,Corporate,Dr. Sharma,Discharged
+PT5859,6,Male,ENT,Tonsillitis,2026-03-21,2026-03-23,2,13597.95,Ayushman Bharat,Dr. Das,Discharged
+PT5860,61,Female,Cardiology,Arrhythmia,2026-03-21,2026-03-24,3,10525.89,Self Pay,Dr. Iyer,Deceased
+PT5861,60,Male,Neurology,Migraine,2026-03-22,2026-03-22,0,2630.6,Corporate,Dr. Nair,Discharged
+PT5862,53,Female,ENT,Sinusitis,2026-03-24,2026-03-27,3,,Private Insurance,Dr. Reddy,Referred
+PT5863,24,Female,Cardiology,Hypertension,2026-03-24,2026-03-25,1,3662.18,Private Insurance,Dr. Das,Discharged
+PT5864,51,Male,General Medicine,Anemia,2026-03-24,2026-03-29,5,42367.15,Ayushman Bharat,Dr. Iyer,Under Treatment
+PT5865,32,Male,Orthopedics,Fracture,2026-03-24,2026-04-07,14,117342.02,Private Insurance,Dr. Das,Discharged
+PT5866,22,Female,Oncology,Breast Cancer Screening,2026-03-25,2026-03-27,2,5120.31,Private Insurance,Dr. Das,Discharged
+PT5867,50,Male,General Medicine,Viral Infection,2026-03-26,2026-03-29,3,12584.94,Private Insurance,Dr. Iyer,Discharged
+PT5868,46,Male,Pediatrics,Viral Fever,2026-03-27,2026-03-27,0,2257.86,Ayushman Bharat,Dr. Das,Discharged
+PT5869,37,Female,ENT,Sinusitis,2026-03-28,2026-03-30,2,5178.43,Ayushman Bharat,Dr. Das,Discharged
+PT5870,34,Female,Neurology,Epilepsy,2026-03-28,2026-03-28,0,4275.83,,Dr. Nair,Discharged
+PT5871,33,Male,General Medicine,Diabetes Type 2,2026-03-30,2026-03-31,1,3734.5,,Dr. Das,Discharged
+PT5872,29,Male,General Medicine,Diabetes Type 2,2026-03-31,2026-04-01,1,6778.65,Self Pay,Dr. Das,Under Treatment
+PT5873,50,Male,Neurology,Stroke,2026-03-31,2026-04-02,2,9090.26,Private Insurance,Dr. Khan,Discharged
+PT5874,6,Female,Cardiology,Coronary Artery Disease,2026-04-01,2026-04-03,2,3121.53,Ayushman Bharat,Dr. Sharma,Discharged
+PT5875,10,Female,ENT,Sinusitis,2026-04-02,2026-04-09,7,8600.25,,Dr. Sharma,Discharged
+PT5876,26,Male,Orthopedics,Fracture,2026-04-03,2026-04-03,0,3680.26,Private Insurance,Dr. Mehta,Discharged
+PT5877,68,Male,Orthopedics,Arthritis,2026-04-04,2026-04-06,2,8593.79,Ayushman Bharat,Dr. Iyer,Discharged
+PT5878,3,Male,Cardiology,Hypertension,2026-04-06,2026-04-07,1,1887.21,Private Insurance,,Under Treatment
+PT5879,32,Female,Neurology,Migraine,2026-04-06,2026-04-09,3,5617.33,,Dr. Reddy,Referred
+PT5880,35,Female,General Medicine,Anemia,2026-04-07,2026-04-07,0,1958.96,Self Pay,Dr. Das,Referred
+PT5881,2,Male,ENT,Hearing Loss,2026-04-07,2026-04-08,1,10136.89,Self Pay,Dr. Das,Discharged
+PT5882,38,Male,Orthopedics,Arthritis,2026-04-07,2026-04-09,2,13308.59,Corporate,Dr. Das,Under Treatment
+PT5883,39,Male,ENT,Sinusitis,2026-04-07,2026-04-09,2,18731.11,Ayushman Bharat,Dr. Khan,Discharged
+PT5884,45,Male,Pediatrics,Asthma,2026-04-09,2026-04-11,2,3255.56,Self Pay,Dr. Das,Under Treatment
+PT5885,43,Female,Pediatrics,Asthma,2026-04-10,2026-04-11,1,2275.08,Corporate,Dr. Reddy,Under Treatment
+PT5886,44,Female,Cardiology,Coronary Artery Disease,2026-04-10,2026-04-11,1,11196.33,Self Pay,Dr. Mehta,Discharged
+PT5887,22,Male,Neurology,Stroke,2026-04-11,2026-04-16,5,48550.35,Self Pay,Dr. Mehta,Referred
+PT5888,64,Male,Cardiology,Arrhythmia,2026-04-11,2026-04-16,5,26319.07,Ayushman Bharat,Dr. Mehta,Discharged
+PT5889,29,Female,Pediatrics,Growth Checkup,2026-04-11,2026-04-14,3,3955.0,Ayushman Bharat,Dr. Sharma,Discharged
+PT5890,69,Male,Neurology,Stroke,2026-04-12,2026-04-13,1,2994.58,Private Insurance,Dr. Das,Discharged
+PT5891,29,Male,Oncology,Tumor Biopsy,2026-04-12,2026-04-17,5,6615.06,Private Insurance,Dr. Iyer,Referred
+PT5892,40,Male,General Medicine,Viral Infection,2026-04-12,2026-04-15,3,8024.97,Private Insurance,Dr. Das,Discharged
+PT5893,12,Female,Pediatrics,Asthma,2026-04-13,2026-04-18,5,22618.53,Ayushman Bharat,Dr. Khan,Discharged
+PT5894,34,Female,Neurology,Epilepsy,2026-04-14,2026-04-19,5,26421.89,Ayushman Bharat,Dr. Nair,Discharged
+PT5895,55,Female,General Medicine,Diabetes Type 2,2026-04-15,2026-04-16,1,3852.3,Ayushman Bharat,Dr. Nair,Deceased
+PT5896,38,Female,Neurology,Stroke,2026-04-15,2026-04-16,1,6821.66,Corporate,Dr. Reddy,Under Treatment
+PT5897,17,Female,Oncology,Chemotherapy Cycle,2026-04-15,2026-04-15,0,1337.61,Self Pay,Dr. Sharma,Referred
+PT5898,12,Female,General Medicine,Viral Infection,2026-04-15,2026-04-20,5,6549.63,Private Insurance,Dr. Das,Discharged
+PT5899,33,Male,Oncology,Tumor Biopsy,2026-04-17,2026-04-20,3,15341.2,Corporate,Dr. Nair,Discharged
+PT5900,0,Male,Pediatrics,Viral Fever,2026-04-17,2026-05-01,14,33677.55,Self Pay,Dr. Khan,Under Treatment
+PT5901,44,Female,General Medicine,Viral Infection,2026-04-20,2026-04-22,2,12216.36,,Dr. Mehta,Discharged
+PT5902,1,Male,General Medicine,Viral Infection,2026-04-21,2026-04-26,5,11261.16,Private Insurance,Dr. Khan,Under Treatment
+PT5903,8,Female,Pediatrics,Viral Fever,2026-04-21,2026-04-21,0,7660.12,Corporate,Dr. Mehta,Discharged
+PT5904,74,Male,Neurology,Migraine,2026-04-22,2026-04-23,1,7641.8,Ayushman Bharat,Dr. Nair,Referred
+PT5905,65,Female,Oncology,Tumor Biopsy,2026-04-23,2026-04-25,2,18149.52,Self Pay,Dr. Iyer,Discharged
+PT5906,42,Male,Oncology,Tumor Biopsy,2026-04-23,2026-04-25,2,5568.48,Ayushman Bharat,Dr. Khan,Discharged
+PT5907,46,Female,Cardiology,Coronary Artery Disease,2026-04-23,2026-04-23,0,2042.19,Private Insurance,Dr. Iyer,Discharged
+PT5908,22,Male,Oncology,Tumor Biopsy,2026-04-23,2026-04-23,0,2840.63,Self Pay,Dr. Reddy,Discharged
+PT5909,35,Male,General Medicine,Anemia,2026-04-25,2026-04-28,3,7125.95,Private Insurance,Dr. Iyer,Discharged
+PT5910,64,Female,Pediatrics,Growth Checkup,2026-04-26,2026-04-29,3,31483.39,Corporate,Dr. Iyer,Under Treatment
+PT5911,24,Female,Pediatrics,Asthma,2026-04-27,2026-04-27,0,1229.53,Private Insurance,Dr. Sharma,Deceased
+PT5912,10,Male,Pediatrics,Growth Checkup,2026-04-28,2026-04-28,0,3806.16,Corporate,Dr. Khan,Discharged
+PT5913,38,Female,Orthopedics,Fracture,2026-04-28,2026-04-28,0,5433.56,Ayushman Bharat,Dr. Reddy,Discharged
+PT5914,53,Male,Neurology,Epilepsy,2026-04-28,2026-04-29,1,5674.88,Self Pay,Dr. Reddy,Discharged
+PT5915,17,Male,Orthopedics,Arthritis,2026-04-29,2026-05-02,3,7216.96,Ayushman Bharat,Dr. Iyer,Discharged
+PT5916,36,Male,Orthopedics,Arthritis,2026-04-29,2026-05-02,3,29313.63,,Dr. Reddy,Under Treatment
+PT5917,40,Male,Oncology,Tumor Biopsy,2026-05-02,2026-05-07,5,22031.72,Self Pay,Dr. Sharma,Referred
+PT5918,46,Other,Neurology,Migraine,2026-05-02,2026-05-05,3,24848.21,Self Pay,Dr. Das,Discharged
+PT5919,63,Female,Neurology,Stroke,2026-05-04,2026-05-06,2,8174.01,Ayushman Bharat,Dr. Iyer,Under Treatment
+PT5920,24,Male,General Medicine,Viral Infection,2026-05-05,2026-05-08,3,15002.29,Ayushman Bharat,Dr. Nair,Under Treatment
+PT5921,41,Male,Pediatrics,Asthma,2026-05-08,2026-05-13,5,5713.56,Private Insurance,Dr. Iyer,Referred
+PT5922,10,Female,Cardiology,Coronary Artery Disease,2026-05-09,2026-05-09,0,3321.61,Private Insurance,Dr. Nair,Discharged
+PT5923,18,Female,Cardiology,Coronary Artery Disease,2026-05-10,2026-05-17,7,15962.96,Ayushman Bharat,Dr. Das,Under Treatment
+PT5924,19,Male,General Medicine,Viral Infection,2026-05-10,2026-05-13,3,9690.64,Private Insurance,Dr. Nair,Under Treatment
+PT5925,26,Male,Pediatrics,Growth Checkup,2026-05-10,2026-05-10,0,4192.44,Self Pay,Dr. Sharma,Discharged
+PT5926,64,Other,Oncology,Breast Cancer Screening,2026-05-10,2026-05-13,3,6798.06,Self Pay,Dr. Nair,Discharged
+PT5927,24,Male,Orthopedics,Arthritis,2026-05-11,2026-05-16,5,13665.05,Ayushman Bharat,Dr. Sharma,Discharged
+PT5928,64,Male,Cardiology,Coronary Artery Disease,2026-05-12,2026-05-13,1,3693.27,Private Insurance,Dr. Das,Discharged
+PT5929,49,Male,ENT,Tonsillitis,2026-05-15,2026-05-20,5,25965.64,Ayushman Bharat,Dr. Das,Under Treatment
+PT5930,88,Male,ENT,Hearing Loss,2026-05-15,2026-05-16,1,5674.71,Self Pay,Dr. Reddy,Referred
+PT5931,39,Male,Pediatrics,Growth Checkup,2026-05-15,2026-05-17,2,12956.8,Ayushman Bharat,Dr. Khan,Referred
+PT5932,50,Female,Pediatrics,Asthma,2026-05-16,2026-05-16,0,3342.05,Private Insurance,Dr. Das,Under Treatment
+PT5933,60,Female,Oncology,Chemotherapy Cycle,2026-05-18,2026-05-20,2,18096.01,Self Pay,Dr. Mehta,Discharged
+PT5934,60,Male,Cardiology,Arrhythmia,2026-05-18,2026-05-18,0,6913.93,Ayushman Bharat,Dr. Nair,Discharged
+PT5935,50,Male,Cardiology,Arrhythmia,2026-05-20,2026-05-25,5,31308.23,Private Insurance,Dr. Nair,Under Treatment
+PT5936,49,Male,General Medicine,Anemia,2026-05-20,2026-05-21,1,7675.46,Self Pay,Dr. Mehta,Under Treatment
+PT5937,39,Female,Pediatrics,Viral Fever,2026-05-20,2026-05-20,0,4053.34,Private Insurance,Dr. Reddy,Discharged
+PT5938,53,Male,General Medicine,Anemia,2026-05-22,2026-05-23,1,2800.5,Corporate,Dr. Das,Under Treatment
+PT5939,53,Male,ENT,Sinusitis,2026-05-23,2026-05-28,5,33507.23,Corporate,Dr. Nair,Under Treatment
+PT5940,25,Male,General Medicine,Viral Infection,2026-05-24,2026-05-25,1,5679.68,Self Pay,Dr. Nair,Discharged
+PT5941,13,Male,ENT,Sinusitis,2026-05-25,2026-06-08,14,94746.85,Private Insurance,Dr. Mehta,Discharged
+PT5942,31,Male,Oncology,Chemotherapy Cycle,2026-05-27,2026-05-30,3,19085.94,Corporate,Dr. Das,Discharged
+PT5943,86,Female,General Medicine,Diabetes Type 2,2026-05-27,2026-05-28,1,8037.81,Self Pay,Dr. Iyer,Discharged
+PT5944,42,Female,Pediatrics,Viral Fever,2026-05-29,2026-05-30,1,4442.23,Ayushman Bharat,Dr. Khan,Under Treatment
+PT5945,25,Female,General Medicine,Anemia,2026-05-29,2026-06-01,3,8118.17,Private Insurance,Dr. Das,Discharged
+PT5946,17,Male,Oncology,Breast Cancer Screening,2026-05-31,2026-06-01,1,4712.32,Self Pay,,Discharged
+PT5947,19,Male,Pediatrics,Growth Checkup,2026-05-31,2026-06-01,1,13846.56,Corporate,Dr. Sharma,Discharged
+PT5948,76,Male,Orthopedics,ACL Tear,2026-06-01,2026-06-03,2,5035.36,Private Insurance,Dr. Khan,Deceased
+PT5949,26,Female,Neurology,Epilepsy,2026-06-01,2026-06-03,2,7685.25,Self Pay,Dr. Das,Discharged
+PT5950,38,Female,ENT,Hearing Loss,2026-06-02,2026-06-04,2,20008.93,Self Pay,Dr. Nair,Referred
+PT5951,26,Male,Cardiology,Arrhythmia,2026-06-02,2026-06-09,7,31714.98,Corporate,Dr. Mehta,Discharged
+PT5952,44,Male,Cardiology,Hypertension,2026-06-04,2026-06-04,0,3729.89,Private Insurance,Dr. Iyer,Referred
+PT5953,41,Female,Cardiology,Arrhythmia,2026-06-04,2026-06-07,3,4895.81,Ayushman Bharat,Dr. Sharma,Discharged
+PT5954,64,Female,Cardiology,Arrhythmia,2026-06-05,2026-06-06,1,15843.76,Self Pay,Dr. Nair,Discharged
+PT5955,12,Other,Orthopedics,Arthritis,2026-06-05,2026-06-12,7,8173.26,Ayushman Bharat,Dr. Nair,Discharged
+PT5956,31,Male,Oncology,Breast Cancer Screening,2026-06-06,2026-06-06,0,1271.01,,Dr. Reddy,Discharged
+PT5957,21,Male,Cardiology,Arrhythmia,2026-06-06,2026-06-06,0,5563.99,Ayushman Bharat,Dr. Khan,Discharged
+PT5958,18,Female,Cardiology,Hypertension,2026-06-06,2026-06-07,1,5034.97,Ayushman Bharat,Dr. Khan,Discharged
+PT5959,50,Female,Neurology,Migraine,2026-06-06,2026-06-11,5,19270.52,Private Insurance,Dr. Das,Discharged
+PT5960,33,Male,Pediatrics,Asthma,2026-06-07,2026-06-21,14,45190.2,Corporate,Dr. Nair,Under Treatment
+PT5961,36,Female,Pediatrics,Growth Checkup,2026-06-07,2026-06-07,0,1653.29,Self Pay,Dr. Sharma,Discharged
+PT5962,25,Female,Neurology,Stroke,2026-06-07,2026-06-08,1,11872.73,Ayushman Bharat,Dr. Nair,Under Treatment
+PT5963,9,Male,Oncology,Breast Cancer Screening,2026-06-08,2026-06-08,0,2446.56,Ayushman Bharat,,Discharged
+PT5964,0,Male,Pediatrics,Viral Fever,2026-06-08,2026-06-10,2,13721.29,,Dr. Iyer,Discharged
+PT5965,43,Female,Cardiology,Arrhythmia,2026-06-09,2026-06-09,0,3498.95,Private Insurance,Dr. Mehta,Discharged
+PT5966,39,Male,ENT,Hearing Loss,2026-06-09,2026-06-11,2,15882.8,Self Pay,Dr. Das,Referred
+PT5967,44,Male,General Medicine,Anemia,2026-06-09,2026-06-10,1,2774.02,Ayushman Bharat,Dr. Iyer,Discharged
+PT5968,47,Female,Pediatrics,Viral Fever,2026-06-11,2026-06-16,5,8005.01,Corporate,Dr. Das,Discharged
+PT5969,50,Male,General Medicine,Diabetes Type 2,2026-06-11,2026-06-13,2,3607.03,Corporate,Dr. Reddy,Discharged
+PT5970,34,Male,Oncology,Tumor Biopsy,2026-06-12,2026-06-13,1,2542.49,Self Pay,Dr. Sharma,Deceased
+PT5971,28,Female,Pediatrics,Growth Checkup,2026-06-13,2026-06-14,1,9831.67,Self Pay,Dr. Khan,Discharged
+PT5972,52,Male,Cardiology,Coronary Artery Disease,2026-06-14,2026-06-17,3,17963.48,,Dr. Sharma,Referred
+PT5973,27,Female,Cardiology,Hypertension,2026-06-15,2026-06-15,0,6969.95,Private Insurance,Dr. Nair,Under Treatment
+PT5974,25,Female,Neurology,Migraine,2026-06-15,2026-06-20,5,21874.82,Corporate,Dr. Sharma,Referred
+PT5975,30,Female,ENT,Tonsillitis,2026-06-15,2026-06-22,7,30181.63,Private Insurance,Dr. Nair,Discharged
+PT5976,17,Male,Orthopedics,ACL Tear,2026-06-16,2026-06-18,2,11710.75,Ayushman Bharat,Dr. Das,Discharged
+PT5977,40,Male,Neurology,Epilepsy,2026-06-17,2026-06-19,2,22399.69,Private Insurance,Dr. Reddy,Deceased
+PT5978,34,Female,Neurology,Stroke,2026-06-18,2026-06-19,1,5504.6,Ayushman Bharat,Dr. Iyer,Under Treatment
+PT5979,58,Female,Cardiology,Arrhythmia,2026-06-18,2026-06-18,0,2310.56,Corporate,Dr. Nair,Discharged
+PT5980,26,Female,Pediatrics,Viral Fever,2026-06-19,2026-06-26,7,24218.93,Ayushman Bharat,Dr. Iyer,Discharged
+PT5981,61,Female,Orthopedics,ACL Tear,2026-06-20,2026-06-21,1,1901.26,Self Pay,Dr. Nair,Discharged
+PT5982,36,Female,Oncology,Breast Cancer Screening,2026-06-22,2026-06-23,1,8180.94,Private Insurance,Dr. Sharma,Discharged
+PT5983,33,Male,Pediatrics,Growth Checkup,2026-06-23,2026-06-26,3,14739.18,Private Insurance,Dr. Iyer,Under Treatment
+PT5984,25,Female,General Medicine,Diabetes Type 2,2026-06-24,2026-06-24,0,2507.75,Ayushman Bharat,Dr. Sharma,Discharged
+PT5985,51,Male,ENT,Tonsillitis,2026-06-24,2026-06-24,0,1827.99,Private Insurance,Dr. Nair,Discharged
+PT5986,63,Female,Cardiology,Hypertension,2026-06-24,2026-06-27,3,16627.5,Private Insurance,Dr. Khan,Discharged
+PT5987,76,Male,Orthopedics,ACL Tear,2026-06-25,2026-06-28,3,13648.06,Self Pay,Dr. Iyer,Discharged
+PT5988,86,Female,Oncology,Breast Cancer Screening,2026-06-25,2026-06-26,1,14359.6,Private Insurance,Dr. Sharma,Discharged
+PT5989,30,Male,ENT,Tonsillitis,2026-06-27,2026-06-30,3,5887.15,Self Pay,Dr. Sharma,Discharged
+PT5990,27,Female,Pediatrics,Growth Checkup,2026-07-01,2026-07-02,1,7724.41,Self Pay,Dr. Reddy,Discharged
+PT5991,79,Male,General Medicine,Anemia,2026-07-02,2026-07-02,0,2671.87,Corporate,Dr. Das,Discharged
+PT5992,13,Male,Pediatrics,Viral Fever,2026-07-02,2026-07-02,0,4406.1,Self Pay,Dr. Das,Deceased
+PT5993,72,Female,Orthopedics,Arthritis,2026-07-02,2026-07-04,2,4425.25,Private Insurance,,Under Treatment
+PT5994,59,Female,Cardiology,Coronary Artery Disease,2026-07-05,2026-07-07,2,9261.54,Private Insurance,Dr. Reddy,Discharged
+PT5995,50,Male,Orthopedics,Arthritis,2026-07-07,2026-07-08,1,2742.6,Private Insurance,Dr. Das,Discharged
+PT5996,45,Male,ENT,Hearing Loss,2026-07-10,2026-07-13,3,9336.95,,Dr. Iyer,Deceased
+PT5997,59,Female,ENT,Hearing Loss,2026-07-11,2026-07-11,0,1648.82,Private Insurance,Dr. Reddy,Discharged
+PT5998,46,Female,Orthopedics,Arthritis,2026-07-12,2026-07-13,1,2390.55,Ayushman Bharat,Dr. Iyer,Discharged
+PT5999,83,Female,Neurology,Stroke,2026-07-16,2026-07-16,0,1119.07,Ayushman Bharat,Dr. Khan,Under Treatment

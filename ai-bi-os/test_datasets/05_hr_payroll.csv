@@ -1,0 +1,601 @@
+employee_id,department,designation,join_date,monthly_salary,bonus_pct,attendance_pct,performance_rating,gender,location,exit_date,employment_status
+EMP3000,Customer Support,Support Lead,2020-01-05,83010.04,13.9,75.8,3.0,Male,Hyderabad,,Active
+EMP3001,Sales,Sales Executive,2020-01-08,50634.63,12.2,84.8,4.0,Female,Bengaluru,,Active
+EMP3002,Marketing,Growth Manager,2020-01-12,100466.83,4.4,89.9,4.0,Female,Pune,2024-07-17,Exited
+EMP3003,Sales,Account Manager,2020-01-15,92892.53,17.3,97.0,2.0,Male,Bengaluru,,Active
+EMP3004,HR,HRBP,2020-01-18,162402.11,17.5,81.1,3.0,Female,Bengaluru,,Active
+EMP3005,Engineering,SDE-1,2020-01-18,109222.16,9.4,76.7,4.0,Female,Gurugram,,Active
+EMP3006,Finance,Financial Analyst,2020-01-18,108574.96,11.8,79.4,5.0,Female,Bengaluru,,Active
+EMP3007,Finance,Finance Manager,2020-01-21,182395.1,0.4,72.2,4.0,Male,Pune,,Active
+EMP3008,Operations,Ops Associate,2020-01-22,52444.52,2.6,88.8,4.0,Female,Mumbai,,Active
+EMP3009,Marketing,Growth Manager,2020-01-26,123032.23,10.2,91.7,2.0,Female,Mumbai,,Active
+EMP3010,Operations,Ops Associate,2020-02-04,44797.61,17.9,81.5,3.0,Female,Remote,,Active
+EMP3011,Engineering,SDE-1,2020-02-07,95446.74,14.5,81.0,3.0,Female,Remote,2022-02-23,Exited
+EMP3012,Customer Support,Support Lead,2020-02-11,92183.63,1.9,93.1,3.0,Female,Remote,,Active
+EMP3013,HR,Talent Acquisition,2020-02-11,79733.7,4.3,97.4,3.0,Male,Bengaluru,,Active
+EMP3014,Sales,Sales Executive,2020-02-14,41281.45,14.9,96.1,4.0,Female,Remote,,Active
+EMP3015,Customer Support,Support Lead,2020-02-18,76865.18,7.0,89.3,3.0,Female,Pune,,Active
+EMP3016,Operations,Ops Manager,2020-02-20,115303.11,14.6,82.7,4.0,Male,Pune,2020-09-15,Exited
+EMP3017,HR,HRBP,2020-02-22,152195.44,1.4,75.0,5.0,Female,Gurugram,,Active
+EMP3018,HR,HR Executive,2020-02-23,61876.37,4.4,96.4,3.0,Female,Pune,,Active
+EMP3019,Operations,Ops Associate,2020-03-06,51188.63,6.4,78.4,5.0,Female,Gurugram,,Active
+EMP3020,Engineering,SDE-2,2020-03-08,134485.18,9.0,93.2,4.0,Male,Pune,,Active
+EMP3021,HR,Talent Acquisition,2020-03-08,83707.64,13.5,76.9,5.0,Male,Bengaluru,2022-12-07,Exited
+EMP3022,Operations,Ops Manager,2020-03-11,125281.27,11.4,86.8,3.0,Female,Pune,,Active
+EMP3023,Marketing,Growth Manager,2020-03-17,127402.31,14.4,96.8,5.0,Male,Pune,,Active
+EMP3024,Finance,Accountant,2020-03-17,56477.28,13.1,92.4,4.0,Male,Pune,,Active
+EMP3025,Marketing,Growth Manager,2020-03-22,118320.51,19.4,98.2,5.0,Male,Remote,,Active
+EMP3026,Marketing,Brand Manager,2020-03-27,174637.49,15.8,95.0,5.0,Female,Hyderabad,,Active
+EMP3027,Finance,Accountant,2020-03-28,67109.67,13.4,73.4,3.0,Male,Bengaluru,,Active
+EMP3028,Finance,Accountant,2020-04-08,73485.66,18.7,94.6,2.0,Male,Bengaluru,,Active
+EMP3029,Operations,Ops Manager,2020-04-10,141513.36,16.7,88.0,4.0,Male,Mumbai,,Active
+EMP3030,Finance,Accountant,2020-04-12,54681.79,3.8,92.8,4.0,Male,Bengaluru,,Active
+EMP3031,Sales,Sales Head,2020-04-17,284531.81,6.6,95.6,4.0,Male,Remote,,Active
+EMP3032,Operations,Ops Associate,2020-05-04,51974.36,4.7,99.2,3.0,Female,Bengaluru,,Active
+EMP3033,Sales,Sales Executive,2020-05-09,55809.29,8.2,89.2,5.0,Male,Hyderabad,,Active
+EMP3034,Finance,Accountant,2020-05-09,70931.39,3.8,80.5,3.0,Male,Hyderabad,,Active
+EMP3035,Sales,Account Manager,2020-05-13,90346.57,1.8,81.6,4.0,Female,Pune,,Active
+EMP3036,Marketing,Brand Manager,2020-05-21,170583.51,18.2,71.0,4.0,Male,Gurugram,,Active
+EMP3037,Customer Support,Support Executive,2020-05-31,38882.62,18.0,99.4,5.0,Male,Hyderabad,,Active
+EMP3038,Operations,Ops Manager,2020-06-01,117461.46,13.2,81.9,4.0,Male,Pune,,Active
+EMP3039,Operations,Ops Manager,2020-06-05,139456.14,14.1,81.1,4.0,Male,Hyderabad,,Active
+EMP3040,Finance,Accountant,2020-06-14,73213.22,18.7,73.5,3.0,Female,Gurugram,2020-12-19,Exited
+EMP3041,Operations,Ops Associate,2020-06-14,37848.94,16.7,89.9,5.0,Male,Hyderabad,,Active
+EMP3042,Marketing,Marketing Associate,2020-06-15,52435.9,9.2,78.2,4.0,Female,Pune,,Active
+EMP3043,Customer Support,Support Executive,2020-06-15,41672.2,10.6,80.8,3.0,Male,Hyderabad,,Active
+EMP3044,Finance,Finance Manager,2020-06-21,207122.63,0.2,95.5,5.0,Male,Gurugram,,Active
+EMP3045,Engineering,Senior SDE,2020-06-23,250733.74,5.7,73.1,3.0,Male,Remote,,Active
+EMP3046,Engineering,SDE-2,2020-06-23,149512.09,11.2,80.3,4.0,Female,Remote,,Active
+EMP3047,Sales,Sales Head,2020-06-24,245963.1,12.9,85.6,3.0,Female,Bengaluru,2022-04-14,Exited
+EMP3048,HR,Talent Acquisition,2020-06-25,77048.86,11.5,82.8,3.0,Male,Bengaluru,,Active
+EMP3049,Marketing,Growth Manager,2020-06-27,137179.27,2.5,97.3,3.0,Male,Gurugram,,Active
+EMP3050,Finance,Accountant,2020-06-28,58967.85,18.2,99.4,2.0,Male,Bengaluru,,Active
+EMP3051,HR,HR Executive,2020-06-29,62168.73,9.4,75.5,4.0,Male,Remote,,Active
+EMP3052,Finance,Finance Manager,2020-07-01,181456.96,13.7,82.8,3.0,Male,Mumbai,2025-06-01,Exited
+EMP3053,HR,Talent Acquisition,2020-07-07,68597.1,15.8,72.1,4.0,Male,Remote,,Active
+EMP3054,Finance,Accountant,2020-07-08,72389.4,8.9,84.6,4.0,Male,Gurugram,,Active
+EMP3055,HR,Talent Acquisition,2020-07-11,84689.6,4.5,87.4,4.0,Male,Mumbai,,Active
+EMP3056,HR,HR Executive,2020-07-19,56018.34,10.3,99.9,3.0,Male,Pune,,Active
+EMP3057,Operations,Ops Manager,2020-07-30,116449.51,2.6,91.7,3.0,Female,Gurugram,,Active
+EMP3058,HR,HRBP,2020-08-03,135953.89,17.9,95.1,4.0,Male,Gurugram,2021-04-02,Exited
+EMP3059,Customer Support,Support Lead,2020-08-05,81638.62,0.4,92.0,3.0,Female,Remote,,Active
+EMP3060,Customer Support,Support Lead,2020-08-05,74736.87,18.6,92.6,2.0,Male,Hyderabad,,Active
+EMP3061,Sales,Sales Executive,2020-08-07,48796.19,4.2,73.9,4.0,Male,Bengaluru,,Active
+EMP3062,Operations,Ops Associate,2020-08-11,39751.54,18.9,70.6,3.0,Female,Hyderabad,,Active
+EMP3063,Marketing,Marketing Associate,2020-08-16,50161.59,15.1,88.2,4.0,Female,Mumbai,2024-04-20,Exited
+EMP3064,Marketing,Marketing Associate,2020-08-17,52336.11,18.4,98.9,4.0,Female,Bengaluru,2024-12-19,Exited
+EMP3065,Marketing,Growth Manager,2020-08-22,106732.32,4.0,86.8,4.0,Female,Remote,,Active
+EMP3066,Customer Support,Support Lead,2020-08-30,86633.56,8.7,79.4,4.0,Female,Mumbai,,Active
+EMP3067,Customer Support,Support Lead,2020-09-01,92656.87,12.6,90.6,3.0,Female,Hyderabad,,Active
+EMP3068,Sales,Sales Head,2020-09-06,241600.43,13.9,87.5,5.0,Male,Pune,,Active
+EMP3069,HR,HRBP,2020-09-11,141499.1,14.4,88.6,3.0,Male,Bengaluru,,Active
+EMP3070,Marketing,Growth Manager,2020-09-12,100012.11,9.8,89.5,3.0,Male,Pune,,Active
+EMP3071,Marketing,Growth Manager,2020-09-14,119943.96,16.2,77.3,5.0,Male,Gurugram,,Active
+EMP3072,Operations,Ops Associate,2020-09-16,50363.11,9.0,70.8,,Male,Hyderabad,,Active
+EMP3073,Operations,Ops Manager,2020-09-21,140822.92,5.8,93.3,3.0,Female,Remote,,Active
+EMP3074,HR,HRBP,2020-09-23,131939.0,1.2,94.6,3.0,Female,Bengaluru,,Active
+EMP3075,Operations,Ops Associate,2020-09-25,47199.94,15.9,96.5,2.0,Female,Mumbai,,Active
+EMP3076,Engineering,SDE-1,2020-10-08,88484.45,19.3,72.8,4.0,Male,Mumbai,,Active
+EMP3077,Engineering,SDE-2,2020-10-14,171369.99,13.0,84.9,3.0,Male,Pune,,Active
+EMP3078,Operations,Ops Associate,2020-10-18,46681.61,1.6,91.4,3.0,Female,Hyderabad,,Active
+EMP3079,Sales,Sales Executive,2020-10-19,46577.77,3.0,97.1,3.0,Male,Remote,,Active
+EMP3080,Marketing,Growth Manager,2020-10-27,121555.0,19.8,88.2,4.0,Male,Remote,2024-03-01,Exited
+EMP3081,Operations,Ops Associate,2020-10-27,47720.02,17.4,82.8,5.0,Male,Mumbai,,Active
+EMP3082,Operations,Ops Associate,2020-10-27,44695.88,0.2,72.0,4.0,Male,Pune,,Active
+EMP3083,Customer Support,Support Executive,2020-11-07,45422.57,18.6,87.6,3.0,Male,Gurugram,,Active
+EMP3084,Engineering,SDE-2,2020-11-11,165651.5,18.6,86.2,3.0,Male,Bengaluru,2024-04-11,Exited
+EMP3085,Sales,Sales Executive,2020-11-11,43923.55,15.5,78.1,4.0,Male,Remote,,Active
+EMP3086,Finance,Financial Analyst,2020-11-19,114535.07,0.2,75.6,5.0,Female,Bengaluru,,Active
+EMP3087,Marketing,Brand Manager,2020-11-20,171854.93,19.6,76.2,3.0,Male,Remote,,Active
+EMP3088,Marketing,Brand Manager,2020-11-23,187377.98,17.2,83.2,1.0,Male,Bengaluru,,Active
+EMP3089,Marketing,Marketing Associate,2020-12-08,67907.08,15.5,91.8,5.0,Female,Pune,,Active
+EMP3090,Marketing,Brand Manager,2020-12-11,149652.86,18.5,87.5,3.0,Female,Bengaluru,,Active
+EMP3091,Finance,Accountant,2020-12-11,62274.93,4.5,71.9,3.0,Female,Hyderabad,2022-01-12,Exited
+EMP3092,Customer Support,Support Lead,2020-12-11,74719.38,15.9,78.9,3.0,Male,Mumbai,2022-11-20,Exited
+EMP3093,Finance,Accountant,2020-12-14,59433.89,14.0,77.4,4.0,Male,Gurugram,,Active
+EMP3094,Marketing,Growth Manager,2020-12-14,122202.34,16.0,92.1,4.0,Male,Hyderabad,2023-11-29,Exited
+EMP3095,Sales,Account Manager,2020-12-25,79802.43,0.0,92.8,4.0,Male,Mumbai,2023-05-06,Exited
+EMP3096,Customer Support,Support Lead,2020-12-25,69197.22,12.9,88.3,3.0,Male,Remote,,Active
+EMP3097,HR,Talent Acquisition,2020-12-30,70935.96,4.9,95.2,3.0,Male,Remote,2023-11-19,Exited
+EMP3098,Engineering,SDE-2,2021-01-02,152878.01,9.2,70.1,3.0,Female,Mumbai,,Active
+EMP3099,Sales,Sales Executive,2021-01-03,40599.6,1.9,73.5,3.0,Male,Remote,,Active
+EMP3100,Sales,Sales Executive,2021-01-04,46373.93,3.0,97.0,3.0,Female,Hyderabad,2021-08-20,Exited
+EMP3101,Sales,Sales Head,2021-01-05,225720.97,17.5,99.9,2.0,Male,Bengaluru,2023-05-26,Exited
+EMP3102,Engineering,Senior SDE,2021-01-08,238847.74,3.1,71.9,3.0,Male,Pune,2021-09-10,Exited
+EMP3103,Customer Support,Support Executive,2021-01-15,40606.16,12.3,86.7,3.0,Female,Pune,,Active
+EMP3104,Finance,Finance Manager,2021-01-18,221241.39,7.8,86.4,3.0,Male,Bengaluru,,Active
+EMP3105,Engineering,Senior SDE,2021-01-26,222898.35,3.6,80.7,5.0,Male,Hyderabad,,Active
+EMP3106,Engineering,SDE-2,2021-01-28,151981.27,13.2,79.5,3.0,Male,Hyderabad,,Active
+EMP3107,Operations,Ops Manager,2021-02-02,129549.39,10.3,77.3,5.0,Male,Pune,2021-11-25,Exited
+EMP3108,Engineering,Engineering Manager,2021-02-05,370275.98,10.9,86.0,4.0,Female,Pune,2025-09-02,Exited
+EMP3109,Operations,Ops Associate,2021-02-06,43721.59,1.5,87.6,4.0,Male,Pune,,Active
+EMP3110,Sales,Sales Executive,2021-02-09,55322.95,18.9,98.8,4.0,Female,Bengaluru,,Active
+EMP3111,HR,HR Executive,2021-02-19,58076.08,11.4,93.8,4.0,Male,Remote,,Active
+EMP3112,Customer Support,Support Executive,2021-02-19,36304.61,10.5,73.4,4.0,Male,Pune,,Active
+EMP3113,Marketing,Brand Manager,2021-02-24,157852.95,8.3,82.4,3.0,Female,Mumbai,,Active
+EMP3114,HR,Talent Acquisition,2021-03-08,64327.86,0.8,82.5,1.0,Male,Hyderabad,,Active
+EMP3115,Customer Support,Support Lead,2021-03-09,86552.96,5.6,87.0,3.0,Male,Remote,2024-09-10,Exited
+EMP3116,Finance,Financial Analyst,2021-03-20,95995.25,16.7,74.1,4.0,Female,Bengaluru,,Active
+EMP3117,Sales,Sales Head,2021-03-22,282827.4,1.2,80.9,4.0,Male,Hyderabad,,Active
+EMP3118,Customer Support,Support Lead,2021-03-23,77713.72,19.5,94.6,4.0,Male,Remote,,Active
+EMP3119,Finance,Accountant,2021-03-24,66582.02,16.3,77.3,3.0,Female,Mumbai,,Active
+EMP3120,Finance,Accountant,2021-03-25,71994.74,17.3,92.6,5.0,Male,Bengaluru,2025-11-13,Exited
+EMP3121,Sales,Sales Head,2021-03-25,236079.0,7.9,83.1,5.0,Male,Bengaluru,,Active
+EMP3122,Finance,Accountant,2021-03-28,64463.3,8.7,77.6,5.0,Male,Remote,,Active
+EMP3123,Operations,Ops Manager,2021-03-28,127342.02,5.7,91.9,4.0,Female,Pune,,Active
+EMP3124,Sales,Sales Head,2021-04-05,234222.19,5.3,86.1,2.0,Female,Pune,,Active
+EMP3125,Engineering,Engineering Manager,2021-04-13,300693.63,15.3,83.3,3.0,Male,Hyderabad,,Active
+EMP3126,Operations,Ops Manager,2021-04-17,132400.48,5.0,75.8,4.0,Female,Remote,,Active
+EMP3127,Sales,Sales Head,2021-04-19,307590.44,16.8,84.0,4.0,Male,Gurugram,,Active
+EMP3128,Customer Support,Support Executive,2021-04-23,43586.98,2.2,75.0,5.0,Male,Bengaluru,,Active
+EMP3129,Operations,Ops Associate,2021-04-24,51743.76,17.0,97.8,3.0,Male,Bengaluru,,Active
+EMP3130,Marketing,Marketing Associate,2021-04-29,57222.44,14.9,87.8,5.0,Female,Mumbai,,Active
+EMP3131,Engineering,Senior SDE,2021-05-06,239678.27,13.9,86.5,4.0,Male,Hyderabad,,Active
+EMP3132,Customer Support,Support Executive,2021-05-06,41325.3,13.9,99.3,4.0,Female,Mumbai,,Active
+EMP3133,Sales,Sales Executive,2021-05-06,46825.41,9.6,79.2,3.0,Female,Mumbai,,Active
+EMP3134,Engineering,Engineering Manager,2021-05-13,324434.77,7.6,81.3,4.0,Male,Bengaluru,,Active
+EMP3135,Engineering,SDE-2,2021-05-17,142467.58,7.2,86.0,4.0,Male,Hyderabad,2024-07-31,Exited
+EMP3136,Operations,Ops Associate,2021-05-18,42318.4,2.7,73.7,5.0,Male,Bengaluru,,Active
+EMP3137,HR,HRBP,2021-05-21,156271.83,14.5,90.8,4.0,Male,Hyderabad,,Active
+EMP3138,HR,HRBP,2021-05-25,146009.19,8.0,74.8,2.0,Female,Bengaluru,,Active
+EMP3139,HR,Talent Acquisition,2021-05-29,78768.69,3.8,90.3,3.0,Female,Mumbai,,Active
+EMP3140,HR,HR Executive,2021-06-01,45344.75,7.6,95.1,2.0,Female,Gurugram,2025-07-31,Exited
+EMP3141,Marketing,Marketing Associate,2021-06-10,67548.29,10.4,97.0,3.0,Female,Bengaluru,2023-04-11,Exited
+EMP3142,Marketing,Brand Manager,2021-06-11,163085.54,13.9,86.9,3.0,Female,Pune,,Active
+EMP3143,Marketing,Marketing Associate,2021-06-12,51193.11,1.6,93.4,3.0,Female,Hyderabad,2023-05-15,Exited
+EMP3144,Engineering,Senior SDE,2021-06-15,257691.16,5.6,71.0,4.0,Male,Remote,,Active
+EMP3145,Engineering,Engineering Manager,2021-06-19,329377.22,15.6,87.0,4.0,Male,Mumbai,,Active
+EMP3146,Operations,Ops Manager,2021-06-20,137622.49,10.8,93.4,2.0,Male,Bengaluru,,Active
+EMP3147,HR,HRBP,2021-06-20,141895.62,4.1,81.5,,Male,Bengaluru,2024-08-05,Exited
+EMP3148,Engineering,SDE-1,2021-06-27,109693.44,10.3,97.9,3.0,Female,Hyderabad,2022-06-19,Exited
+EMP3149,HR,HR Executive,2021-07-08,56127.31,9.6,97.0,,Female,Bengaluru,2022-02-10,Exited
+EMP3150,Customer Support,Support Lead,2021-07-12,83304.24,2.6,98.9,2.0,Female,Gurugram,2025-05-19,Exited
+EMP3151,Engineering,SDE-2,2021-07-16,172113.93,17.0,98.0,5.0,Male,Mumbai,,Active
+EMP3152,Operations,Ops Associate,2021-07-16,46079.25,13.7,71.9,2.0,Male,Hyderabad,,Active
+EMP3153,HR,HRBP,2021-07-23,160134.99,13.1,70.2,4.0,Female,Bengaluru,,Active
+EMP3154,Marketing,Marketing Associate,2021-07-25,65833.15,5.6,76.2,3.0,Male,Bengaluru,,Active
+EMP3155,Sales,Account Manager,2021-07-25,93401.37,7.5,89.0,4.0,Female,Mumbai,,Active
+EMP3156,Sales,Sales Executive,2021-08-03,54591.76,9.6,78.1,,Male,Gurugram,2023-02-26,Exited
+EMP3157,Customer Support,Support Lead,2021-08-09,70467.51,3.3,86.1,4.0,Male,Mumbai,2022-06-15,Exited
+EMP3158,Engineering,Senior SDE,2021-08-14,196232.3,14.2,96.8,,Male,Gurugram,2022-12-09,Exited
+EMP3159,Sales,Account Manager,2021-08-21,86825.09,12.3,70.6,4.0,Female,Gurugram,,Active
+EMP3160,Marketing,Marketing Associate,2021-08-21,56830.7,12.0,72.6,3.0,Female,Remote,2025-05-23,Exited
+EMP3161,Finance,Accountant,2021-08-22,73515.11,0.5,94.8,4.0,Male,Bengaluru,,Active
+EMP3162,Engineering,Senior SDE,2021-08-24,255032.39,0.1,96.4,3.0,Male,Gurugram,,Active
+EMP3163,Finance,Financial Analyst,2021-08-26,118194.01,14.5,70.8,4.0,Female,Bengaluru,,Active
+EMP3164,HR,HRBP,2021-08-28,120916.23,2.4,70.5,4.0,Male,Hyderabad,,Active
+EMP3165,HR,Talent Acquisition,2021-09-01,72825.18,3.9,99.3,4.0,Male,Mumbai,2023-01-13,Exited
+EMP3166,Engineering,Engineering Manager,2021-09-09,366037.87,6.3,86.0,3.0,Female,Remote,,Active
+EMP3167,Operations,Ops Associate,2021-09-10,46257.82,14.9,79.1,3.0,Female,Bengaluru,,Active
+EMP3168,Customer Support,Support Lead,2021-09-13,88733.66,3.3,81.5,4.0,Male,Remote,,Active
+EMP3169,Marketing,Marketing Associate,2021-09-22,62541.67,11.2,78.4,,Female,Hyderabad,,Active
+EMP3170,Sales,Sales Head,2021-09-23,288336.83,6.9,94.5,3.0,Female,Mumbai,2024-07-04,Exited
+EMP3171,Operations,Ops Manager,2021-09-24,120343.2,12.8,99.5,4.0,Male,Remote,2024-11-04,Exited
+EMP3172,Customer Support,Support Lead,2021-09-25,84046.54,8.6,98.6,4.0,Male,Gurugram,,Active
+EMP3173,Finance,Financial Analyst,2021-09-25,94300.67,13.8,82.2,3.0,Male,Mumbai,2025-12-11,Exited
+EMP3174,Finance,Accountant,2021-09-28,57116.7,16.7,73.4,2.0,Female,Gurugram,,Active
+EMP3175,Finance,Accountant,2021-09-30,68383.41,14.5,82.1,5.0,Female,Gurugram,,Active
+EMP3176,Finance,Finance Manager,2021-10-05,182412.48,7.6,98.5,3.0,Female,Mumbai,,Active
+EMP3177,HR,HR Executive,2021-10-06,52052.31,9.6,83.9,5.0,Male,Remote,,Active
+EMP3178,Operations,Ops Associate,2021-10-14,41939.84,3.0,90.1,1.0,Male,Bengaluru,,Active
+EMP3179,Engineering,SDE-2,2021-10-27,139832.59,3.2,97.9,3.0,Female,Hyderabad,,Active
+EMP3180,Marketing,Brand Manager,2021-11-01,156658.4,11.8,92.2,5.0,Female,Bengaluru,,Active
+EMP3181,Operations,Ops Manager,2021-11-02,132994.74,4.4,90.1,3.0,Male,Bengaluru,,Active
+EMP3182,Marketing,Growth Manager,2021-11-10,126761.63,11.8,87.1,5.0,Male,Gurugram,,Active
+EMP3183,Operations,Ops Associate,2021-11-12,44368.81,12.9,91.9,1.0,Female,Pune,,Active
+EMP3184,HR,HRBP,2021-11-20,146624.17,5.7,95.4,4.0,Male,Pune,2022-04-14,Exited
+EMP3185,HR,HR Executive,2021-11-22,60329.23,11.8,87.1,,Male,Hyderabad,2023-11-27,Exited
+EMP3186,Finance,Accountant,2021-11-23,60055.82,8.3,72.0,3.0,Male,Gurugram,,Active
+EMP3187,Finance,Financial Analyst,2021-11-26,86485.07,2.3,74.7,3.0,Female,Gurugram,,Active
+EMP3188,Operations,Ops Associate,2021-12-01,49276.78,9.8,78.5,4.0,Male,Hyderabad,,Active
+EMP3189,Operations,Ops Manager,2021-12-12,130882.99,0.7,100.0,4.0,Male,Remote,,Active
+EMP3190,Sales,Sales Head,2021-12-15,253279.79,9.7,91.6,,Male,Gurugram,,Active
+EMP3191,Marketing,Growth Manager,2021-12-16,127235.0,13.6,95.3,,Male,Mumbai,2022-09-25,Exited
+EMP3192,Operations,Ops Associate,2021-12-19,39500.36,5.2,98.9,5.0,Female,Gurugram,,Active
+EMP3193,Customer Support,Support Lead,2021-12-25,70259.5,15.5,74.2,5.0,Male,Pune,,Active
+EMP3194,HR,HRBP,2021-12-28,149838.28,17.7,75.5,4.0,Male,Bengaluru,,Active
+EMP3195,Engineering,Senior SDE,2021-12-29,209208.0,7.6,87.1,4.0,Female,Pune,,Active
+EMP3196,Marketing,Brand Manager,2022-01-03,199093.28,19.6,89.0,3.0,Male,Pune,,Active
+EMP3197,Sales,Sales Head,2022-01-05,281571.89,15.4,98.2,4.0,Male,Mumbai,,Active
+EMP3198,Operations,Ops Associate,2022-01-09,38218.32,18.6,89.0,4.0,Female,Gurugram,,Active
+EMP3199,Sales,Account Manager,2022-01-15,98279.98,4.3,96.8,4.0,Male,Gurugram,,Active
+EMP3200,Marketing,Brand Manager,2022-01-19,156501.17,10.5,76.1,5.0,Male,Gurugram,,Active
+EMP3201,Engineering,Senior SDE,2022-01-19,248046.68,5.6,79.4,2.0,Male,Gurugram,,Active
+EMP3202,Operations,Ops Associate,2022-01-19,38068.47,8.2,80.8,1.0,Male,Gurugram,2025-09-09,Exited
+EMP3203,Marketing,Brand Manager,2022-02-02,197329.04,8.3,88.9,3.0,Male,Remote,,Active
+EMP3204,Marketing,Growth Manager,2022-02-06,119137.71,19.2,82.4,2.0,Female,Mumbai,,Active
+EMP3205,Marketing,Brand Manager,2022-02-06,179730.92,16.3,88.7,5.0,Male,Bengaluru,,Active
+EMP3206,Sales,Account Manager,2022-02-15,84639.07,12.8,74.7,1.0,Female,Hyderabad,,Active
+EMP3207,Marketing,Brand Manager,2022-02-17,156720.32,12.2,73.7,2.0,Male,Pune,,Active
+EMP3208,Operations,Ops Manager,2022-02-18,139882.57,7.7,94.7,4.0,Male,Pune,,Active
+EMP3209,Customer Support,Support Lead,2022-02-21,78067.65,13.4,89.1,3.0,Male,Hyderabad,,Active
+EMP3210,Sales,Account Manager,2022-02-27,75103.43,11.0,86.7,4.0,Female,Hyderabad,,Active
+EMP3211,Marketing,Growth Manager,2022-03-01,101023.25,5.1,77.2,4.0,Male,Bengaluru,,Active
+EMP3212,Marketing,Marketing Associate,2022-03-02,61875.31,13.1,98.6,5.0,Female,Gurugram,2022-09-04,Exited
+EMP3213,HR,HR Executive,2022-03-08,48306.84,4.0,70.2,,Male,Bengaluru,,Active
+EMP3214,Finance,Accountant,2022-03-10,71164.99,11.3,75.6,3.0,Female,Remote,,Active
+EMP3215,Customer Support,Support Lead,2022-03-18,92613.85,13.0,93.7,5.0,Male,Bengaluru,2026-04-01,Exited
+EMP3216,Marketing,Growth Manager,2022-03-24,131515.96,17.0,91.9,5.0,Male,Hyderabad,,Active
+EMP3217,Sales,Sales Head,2022-03-28,306046.02,3.8,72.6,4.0,Female,Mumbai,,Active
+EMP3218,Marketing,Growth Manager,2022-03-29,104504.78,16.3,98.1,4.0,Male,Bengaluru,,Active
+EMP3219,Operations,Ops Manager,2022-03-31,112434.33,15.5,89.1,4.0,Male,Pune,,Active
+EMP3220,Marketing,Growth Manager,2022-04-11,133496.82,8.5,86.6,3.0,Male,Hyderabad,,Active
+EMP3221,Engineering,Engineering Manager,2022-04-22,341677.66,17.3,96.8,4.0,Male,Bengaluru,2023-02-28,Exited
+EMP3222,HR,HR Executive,2022-04-23,59124.66,2.2,73.0,3.0,Male,Gurugram,,Active
+EMP3223,Engineering,Senior SDE,2022-04-25,244552.56,2.8,85.1,4.0,Male,Remote,,Active
+EMP3224,Sales,Sales Head,2022-04-26,251848.06,10.1,74.2,3.0,Male,Mumbai,,Active
+EMP3225,Marketing,Marketing Associate,2022-04-28,67854.56,12.3,84.3,3.0,Female,Gurugram,,Active
+EMP3226,Operations,Ops Associate,2022-04-28,45432.2,12.3,96.7,4.0,Female,Pune,,Active
+EMP3227,Finance,Accountant,2022-05-06,62999.37,13.6,84.7,4.0,Male,Pune,,Active
+EMP3228,Finance,Financial Analyst,2022-05-07,114224.76,12.5,78.2,5.0,Male,Remote,,Active
+EMP3229,Marketing,Brand Manager,2022-05-12,168571.01,16.9,93.4,5.0,Male,Bengaluru,,Active
+EMP3230,Operations,Ops Associate,2022-05-16,40854.97,5.1,70.4,5.0,Male,Mumbai,,Active
+EMP3231,Marketing,Growth Manager,2022-05-27,109690.75,13.1,90.6,4.0,Male,Mumbai,,Active
+EMP3232,Engineering,Engineering Manager,2022-05-28,300506.21,3.4,71.4,3.0,Male,Remote,2026-06-28,Exited
+EMP3233,Customer Support,Support Lead,2022-06-01,79139.1,18.6,76.8,3.0,Male,Remote,,Active
+EMP3234,Marketing,Brand Manager,2022-06-10,158874.43,8.3,93.2,4.0,Male,Mumbai,,Active
+EMP3235,Sales,Account Manager,2022-06-12,96327.3,14.3,78.1,4.0,Male,Bengaluru,,Active
+EMP3236,Engineering,SDE-1,2022-06-18,81846.82,9.2,85.2,5.0,Male,Gurugram,,Active
+EMP3237,Operations,Ops Associate,2022-06-21,45063.73,9.0,87.4,4.0,Female,Mumbai,2023-03-11,Exited
+EMP3238,HR,Talent Acquisition,2022-06-23,77146.61,0.9,70.3,4.0,Female,Gurugram,,Active
+EMP3239,Customer Support,Support Lead,2022-06-27,90208.13,6.0,78.8,2.0,Male,Bengaluru,,Active
+EMP3240,Operations,Ops Manager,2022-06-29,119450.28,10.2,85.3,3.0,Male,Hyderabad,2024-06-30,Exited
+EMP3241,Operations,Ops Manager,2022-07-02,147607.68,16.2,88.9,5.0,Male,Mumbai,,Active
+EMP3242,Finance,Financial Analyst,2022-07-03,89951.04,8.1,98.7,5.0,Male,Bengaluru,,Active
+EMP3243,Engineering,Senior SDE,2022-07-10,258531.46,2.2,97.4,3.0,Male,Pune,2022-10-26,Exited
+EMP3244,Operations,Ops Manager,2022-07-10,143643.19,15.3,95.6,4.0,Male,Remote,,Active
+EMP3245,Engineering,SDE-2,2022-07-16,127777.38,15.8,91.5,3.0,Female,Hyderabad,2025-12-16,Exited
+EMP3246,Finance,Financial Analyst,2022-07-17,116027.37,3.2,72.7,4.0,Female,Bengaluru,,Active
+EMP3247,Operations,Ops Manager,2022-07-21,116145.1,6.2,74.9,4.0,Male,Hyderabad,,Active
+EMP3248,Finance,Financial Analyst,2022-07-23,108361.14,11.5,76.8,4.0,Male,Mumbai,2024-12-24,Exited
+EMP3249,Engineering,Senior SDE,2022-07-25,247107.43,15.4,78.6,4.0,Female,Remote,,Active
+EMP3250,Marketing,Growth Manager,2022-07-26,119187.42,15.9,85.6,4.0,Female,Mumbai,,Active
+EMP3251,Finance,Accountant,2022-08-01,58647.94,18.2,92.8,1.0,Male,Gurugram,,Active
+EMP3252,HR,Talent Acquisition,2022-08-06,64564.26,7.8,95.7,4.0,Male,Bengaluru,,Active
+EMP3253,Operations,Ops Manager,2022-08-07,133831.46,9.6,70.7,5.0,Male,Pune,,Active
+EMP3254,Marketing,Growth Manager,2022-08-07,126721.29,16.0,91.4,4.0,Female,Pune,2022-12-20,Exited
+EMP3255,Customer Support,Support Lead,2022-08-09,83181.26,8.2,82.5,3.0,Male,Pune,,Active
+EMP3256,Finance,Financial Analyst,2022-08-13,95237.9,18.9,98.3,3.0,Male,Remote,2022-12-01,Exited
+EMP3257,Operations,Ops Associate,2022-08-14,50134.13,3.7,89.7,5.0,Male,Remote,,Active
+EMP3258,HR,Talent Acquisition,2022-08-15,81118.62,3.0,98.2,4.0,Male,Remote,2023-08-18,Exited
+EMP3259,Customer Support,Support Executive,2022-08-17,40444.39,5.4,80.3,3.0,Male,Pune,,Active
+EMP3260,Operations,Ops Manager,2022-08-22,141302.23,7.4,71.4,3.0,Male,Remote,,Active
+EMP3261,Customer Support,Support Executive,2022-08-23,34318.01,17.5,84.1,5.0,Female,Remote,2023-07-03,Exited
+EMP3262,Marketing,Marketing Associate,2022-09-06,59707.28,19.1,84.6,3.0,Male,Pune,,Active
+EMP3263,Engineering,SDE-2,2022-09-07,163180.04,10.6,93.8,5.0,Female,Hyderabad,,Active
+EMP3264,Finance,Accountant,2022-09-07,66672.59,13.5,94.3,4.0,Male,Bengaluru,,Active
+EMP3265,Finance,Financial Analyst,2022-09-08,98674.07,18.8,83.3,4.0,Male,Mumbai,,Active
+EMP3266,Marketing,Brand Manager,2022-09-10,146988.49,17.7,87.9,3.0,Female,Gurugram,,Active
+EMP3267,Engineering,Senior SDE,2022-09-17,228754.9,5.9,84.0,4.0,Female,Pune,,Active
+EMP3268,HR,Talent Acquisition,2022-09-21,78121.88,19.3,79.7,3.0,Female,Gurugram,,Active
+EMP3269,Sales,Sales Executive,2022-09-23,44081.05,14.6,79.6,3.0,Male,Hyderabad,,Active
+EMP3270,Engineering,Engineering Manager,2022-10-02,283455.78,18.4,86.8,5.0,Male,Mumbai,,Active
+EMP3271,Sales,Account Manager,2022-10-03,80235.01,15.2,73.0,4.0,Female,Remote,2024-08-15,Exited
+EMP3272,HR,Talent Acquisition,2022-10-10,74698.0,1.8,89.6,4.0,Male,Remote,,Active
+EMP3273,Sales,Sales Head,2022-10-25,248218.57,5.1,93.3,3.0,Male,Remote,,Active
+EMP3274,Sales,Account Manager,2022-10-29,72593.15,10.8,78.2,4.0,Male,Gurugram,,Active
+EMP3275,HR,HR Executive,2022-10-31,60489.45,10.8,70.1,3.0,Male,Remote,,Active
+EMP3276,Operations,Ops Manager,2022-11-07,145507.48,7.4,72.5,4.0,Female,Remote,,Active
+EMP3277,Finance,Accountant,2022-11-10,67356.98,13.8,93.5,4.0,Female,Mumbai,,Active
+EMP3278,Customer Support,Support Executive,2022-11-10,35758.18,6.0,86.9,4.0,Male,Mumbai,2025-05-13,Exited
+EMP3279,Engineering,SDE-1,2022-11-11,99765.57,8.8,72.4,3.0,Male,Mumbai,,Active
+EMP3280,Operations,Ops Associate,2022-11-14,48636.92,10.6,85.4,5.0,Male,Mumbai,,Active
+EMP3281,HR,Talent Acquisition,2022-11-17,82926.43,5.9,76.5,5.0,Male,Mumbai,2023-10-23,Exited
+EMP3282,Customer Support,Support Executive,2022-11-17,34415.52,19.8,89.6,2.0,Male,Pune,,Active
+EMP3283,Finance,Accountant,2022-11-20,63081.38,11.8,85.3,3.0,Female,Bengaluru,,Active
+EMP3284,Customer Support,Support Lead,2022-11-21,76650.45,12.9,97.6,4.0,Female,Remote,2025-01-15,Exited
+EMP3285,HR,Talent Acquisition,2022-11-25,82621.13,9.4,76.0,4.0,Female,Gurugram,,Active
+EMP3286,Marketing,Brand Manager,2022-11-29,199608.31,11.0,90.8,3.0,Male,Pune,,Active
+EMP3287,Finance,Accountant,2022-12-02,70504.8,5.1,80.9,5.0,Male,Pune,,Active
+EMP3288,Customer Support,Support Lead,2022-12-02,77447.61,2.0,84.5,3.0,Male,Pune,2024-11-30,Exited
+EMP3289,Customer Support,Support Lead,2022-12-11,70511.75,12.4,78.7,3.0,Male,Remote,,Active
+EMP3290,Sales,Sales Executive,2022-12-16,46420.18,10.3,74.4,4.0,Female,Bengaluru,,Active
+EMP3291,Marketing,Marketing Associate,2022-12-16,52112.2,7.8,92.8,4.0,Male,Remote,,Active
+EMP3292,HR,HR Executive,2022-12-23,51926.75,17.0,93.5,,Male,Gurugram,,Active
+EMP3293,Marketing,Brand Manager,2022-12-24,182020.5,9.8,84.7,4.0,Female,Gurugram,,Active
+EMP3294,Engineering,Engineering Manager,2022-12-29,325647.95,9.6,89.3,4.0,Male,Pune,2024-10-25,Exited
+EMP3295,Customer Support,Support Lead,2023-01-01,75820.4,17.7,74.3,4.0,Male,Mumbai,,Active
+EMP3296,Marketing,Growth Manager,2023-01-19,111369.6,2.0,97.4,4.0,Female,Remote,,Active
+EMP3297,Marketing,Brand Manager,2023-01-19,179490.44,16.7,71.2,4.0,Female,Gurugram,,Active
+EMP3298,Sales,Account Manager,2023-02-02,94177.89,15.3,87.1,5.0,Female,Pune,,Active
+EMP3299,Operations,Ops Manager,2023-02-11,146976.92,15.2,73.8,5.0,Male,Remote,,Active
+EMP3300,HR,HRBP,2023-02-12,121705.07,15.8,78.5,4.0,Female,Remote,,Active
+EMP3301,Customer Support,Support Executive,2023-02-15,36002.61,9.8,83.8,3.0,Female,Bengaluru,2024-12-31,Exited
+EMP3302,HR,Talent Acquisition,2023-02-17,85527.36,4.9,75.0,4.0,Female,Pune,,Active
+EMP3303,HR,HR Executive,2023-02-18,50428.67,12.2,78.1,3.0,Female,Remote,,Active
+EMP3304,Engineering,SDE-1,2023-02-25,91913.95,9.3,83.8,4.0,Male,Mumbai,,Active
+EMP3305,Marketing,Growth Manager,2023-03-05,131973.76,11.6,90.9,3.0,Female,Gurugram,,Active
+EMP3306,HR,HR Executive,2023-03-16,56582.89,2.5,86.3,5.0,Male,Bengaluru,,Active
+EMP3307,Finance,Accountant,2023-03-19,61807.5,1.4,84.6,3.0,Male,Remote,,Active
+EMP3308,Finance,Finance Manager,2023-03-20,171620.17,7.7,76.0,4.0,Male,Bengaluru,,Active
+EMP3309,Finance,Finance Manager,2023-03-22,200316.82,6.8,84.2,4.0,Female,Remote,,Active
+EMP3310,Operations,Ops Manager,2023-03-30,148990.29,3.8,75.4,4.0,Male,Bengaluru,,Active
+EMP3311,Engineering,Senior SDE,2023-03-30,202407.57,6.6,94.1,4.0,Female,Remote,2025-08-18,Exited
+EMP3312,Marketing,Growth Manager,2023-03-31,126036.86,16.4,82.2,4.0,Male,Gurugram,2024-12-28,Exited
+EMP3313,HR,HR Executive,2023-04-02,59031.21,1.0,86.9,2.0,Female,Mumbai,,Active
+EMP3314,HR,HRBP,2023-04-05,138343.66,18.3,96.2,2.0,Male,Pune,,Active
+EMP3315,Operations,Ops Manager,2023-04-18,120303.36,14.9,90.6,3.0,Male,Mumbai,,Active
+EMP3316,Finance,Finance Manager,2023-04-24,215676.56,11.6,73.8,4.0,Male,Mumbai,,Active
+EMP3317,Customer Support,Support Lead,2023-04-25,84219.85,14.5,86.2,,Male,Pune,,Active
+EMP3318,Operations,Ops Manager,2023-04-26,135583.06,7.6,82.1,4.0,Male,Pune,,Active
+EMP3319,Operations,Ops Manager,2023-04-29,113591.19,1.1,89.0,3.0,Male,Mumbai,,Active
+EMP3320,Marketing,Brand Manager,2023-04-30,186682.1,5.0,73.0,4.0,Male,Remote,,Active
+EMP3321,Operations,Ops Manager,2023-05-09,130405.39,10.5,92.0,4.0,Male,Mumbai,,Active
+EMP3322,Finance,Financial Analyst,2023-05-10,86849.27,10.2,75.7,3.0,Male,Hyderabad,,Active
+EMP3323,Customer Support,Support Lead,2023-05-16,77107.8,14.8,91.2,4.0,Female,Remote,,Active
+EMP3324,Engineering,SDE-1,2023-05-17,89665.36,17.3,82.2,1.0,Female,Bengaluru,,Active
+EMP3325,Operations,Ops Associate,2023-05-17,46201.26,13.0,92.9,4.0,Female,Bengaluru,,Active
+EMP3326,Finance,Finance Manager,2023-05-21,210192.38,0.0,84.8,3.0,Female,Hyderabad,,Active
+EMP3327,Marketing,Brand Manager,2023-05-23,149366.94,18.7,70.4,3.0,Male,Bengaluru,,Active
+EMP3328,Operations,Ops Associate,2023-05-25,50587.65,17.0,82.0,5.0,Female,Remote,,Active
+EMP3329,Customer Support,Support Lead,2023-05-29,83019.33,1.2,87.7,3.0,Male,Gurugram,,Active
+EMP3330,Operations,Ops Associate,2023-06-02,44128.0,10.6,77.1,4.0,Female,Gurugram,,Active
+EMP3331,Finance,Financial Analyst,2023-06-03,108953.01,14.8,90.1,4.0,Female,Remote,,Active
+EMP3332,Engineering,Senior SDE,2023-06-07,199832.18,6.3,73.6,,Male,Hyderabad,,Active
+EMP3333,Sales,Sales Executive,2023-06-07,45272.17,9.6,74.7,3.0,Female,Remote,,Active
+EMP3334,Customer Support,Support Executive,2023-06-12,37017.07,10.2,94.4,1.0,Female,Remote,,Active
+EMP3335,Customer Support,Support Lead,2023-06-13,92945.65,8.7,90.4,5.0,Male,Bengaluru,,Active
+EMP3336,Marketing,Brand Manager,2023-06-14,169728.56,1.9,99.4,5.0,Male,Mumbai,,Active
+EMP3337,Sales,Sales Executive,2023-06-19,51081.4,14.7,95.0,5.0,Male,Bengaluru,,Active
+EMP3338,HR,HR Executive,2023-07-09,59634.32,7.3,78.1,3.0,Male,Remote,,Active
+EMP3339,Engineering,SDE-2,2023-07-10,172252.81,14.5,82.3,3.0,Female,Pune,,Active
+EMP3340,Operations,Ops Manager,2023-07-12,108768.91,9.5,72.3,3.0,Male,Pune,,Active
+EMP3341,Engineering,SDE-2,2023-07-13,168840.95,10.1,94.0,3.0,Female,Mumbai,2026-05-11,Exited
+EMP3342,Customer Support,Support Lead,2023-07-16,76335.12,19.2,95.3,4.0,Female,Remote,,Active
+EMP3343,Sales,Sales Executive,2023-08-07,51205.63,0.0,77.2,4.0,Male,Bengaluru,,Active
+EMP3344,Customer Support,Support Lead,2023-08-08,78575.17,1.8,76.2,4.0,Male,Gurugram,,Active
+EMP3345,Sales,Account Manager,2023-08-09,73172.54,15.2,90.0,2.0,Male,Pune,,Active
+EMP3346,Sales,Sales Head,2023-08-18,252932.0,13.3,76.3,4.0,Male,Mumbai,,Active
+EMP3347,Engineering,SDE-1,2023-08-19,106417.76,7.0,86.8,3.0,Female,Bengaluru,2025-08-09,Exited
+EMP3348,HR,HRBP,2023-08-21,154170.81,2.6,95.8,4.0,Male,Pune,,Active
+EMP3349,HR,Talent Acquisition,2023-08-25,64127.34,11.2,90.8,3.0,Female,Remote,,Active
+EMP3350,Finance,Accountant,2023-08-25,56184.22,4.1,83.6,3.0,Female,Hyderabad,,Active
+EMP3351,Customer Support,Support Executive,2023-08-27,44137.75,3.2,86.0,4.0,Female,Pune,,Active
+EMP3352,HR,Talent Acquisition,2023-08-27,82901.09,19.4,75.2,3.0,Male,Pune,,Active
+EMP3353,Engineering,SDE-1,2023-08-28,100623.98,4.3,90.1,2.0,Male,Remote,,Active
+EMP3354,Engineering,SDE-2,2023-09-09,149650.1,17.5,72.1,3.0,Female,Hyderabad,2025-11-10,Exited
+EMP3355,Marketing,Brand Manager,2023-09-10,151795.71,9.8,74.9,5.0,Female,Remote,,Active
+EMP3356,Customer Support,Support Executive,2023-09-15,37559.7,1.0,92.5,4.0,Male,Pune,2025-10-09,Exited
+EMP3357,Sales,Sales Head,2023-09-16,236922.61,3.5,71.6,4.0,Male,Pune,,Active
+EMP3358,HR,HR Executive,2023-09-16,56095.26,0.3,85.8,3.0,Female,Remote,,Active
+EMP3359,Customer Support,Support Executive,2023-09-17,35468.54,1.9,96.0,2.0,Female,Remote,,Active
+EMP3360,Customer Support,Support Lead,2023-09-20,75163.82,13.1,84.6,3.0,Male,Mumbai,,Active
+EMP3361,Engineering,Senior SDE,2023-09-23,250810.11,19.7,81.5,3.0,Female,Gurugram,,Active
+EMP3362,Engineering,SDE-1,2023-09-24,93864.56,18.4,83.1,3.0,Female,Gurugram,,Active
+EMP3363,Engineering,SDE-1,2023-10-04,100074.01,18.5,94.7,4.0,Male,Gurugram,,Active
+EMP3364,Marketing,Growth Manager,2023-10-06,110324.36,18.1,94.0,3.0,Male,Remote,,Active
+EMP3365,Sales,Sales Head,2023-10-13,227493.14,9.3,79.2,4.0,Female,Gurugram,,Active
+EMP3366,Marketing,Marketing Associate,2023-10-14,53630.94,6.6,99.6,2.0,Male,Bengaluru,,Active
+EMP3367,Operations,Ops Manager,2023-10-16,126497.25,3.2,75.5,5.0,Female,Mumbai,,Active
+EMP3368,Engineering,Senior SDE,2023-10-16,193652.0,14.0,75.7,4.0,Female,Pune,,Active
+EMP3369,Customer Support,Support Lead,2023-10-22,87380.53,7.2,75.2,4.0,Male,Hyderabad,,Active
+EMP3370,HR,HR Executive,2023-10-23,54297.44,7.0,88.0,3.0,Female,Bengaluru,,Active
+EMP3371,Sales,Sales Head,2023-10-24,245700.01,1.8,74.5,1.0,Female,Mumbai,,Active
+EMP3372,Finance,Accountant,2023-10-25,59105.44,10.5,97.7,4.0,Male,Bengaluru,,Active
+EMP3373,Marketing,Marketing Associate,2023-10-28,62803.22,2.9,92.5,3.0,Male,Gurugram,,Active
+EMP3374,Finance,Finance Manager,2023-11-02,197821.71,5.1,98.8,5.0,Male,Remote,,Active
+EMP3375,Finance,Financial Analyst,2023-11-13,113770.77,10.4,95.2,4.0,Male,Remote,,Active
+EMP3376,Sales,Sales Executive,2023-11-14,41068.15,12.8,91.1,,Male,Hyderabad,,Active
+EMP3377,HR,HR Executive,2023-11-14,49611.51,15.1,84.6,4.0,Male,Mumbai,,Active
+EMP3378,Sales,Sales Head,2023-11-16,240300.69,3.8,76.8,5.0,Male,Bengaluru,,Active
+EMP3379,Customer Support,Support Executive,2023-11-18,42175.98,5.9,77.1,,Female,Hyderabad,,Active
+EMP3380,Operations,Ops Associate,2023-11-18,41451.28,14.7,74.5,3.0,Male,Gurugram,,Active
+EMP3381,Customer Support,Support Executive,2023-11-22,43519.83,0.4,91.9,5.0,Male,Hyderabad,,Active
+EMP3382,Marketing,Brand Manager,2023-11-22,159986.94,1.0,96.3,4.0,Male,Mumbai,,Active
+EMP3383,Operations,Ops Associate,2023-11-28,41899.07,13.7,79.8,3.0,Female,Gurugram,,Active
+EMP3384,Operations,Ops Associate,2023-11-28,43863.91,17.8,93.0,3.0,Female,Gurugram,2025-08-01,Exited
+EMP3385,Engineering,SDE-1,2023-12-01,99028.15,16.4,80.3,5.0,Female,Gurugram,,Active
+EMP3386,Marketing,Brand Manager,2023-12-01,190350.88,6.1,98.2,4.0,Female,Bengaluru,,Active
+EMP3387,Operations,Ops Manager,2023-12-03,143792.19,13.5,71.7,4.0,Male,Bengaluru,2025-12-23,Exited
+EMP3388,Sales,Sales Head,2023-12-06,304360.66,15.0,77.3,5.0,Male,Hyderabad,,Active
+EMP3389,Finance,Financial Analyst,2023-12-10,94978.41,10.8,91.8,5.0,Female,Bengaluru,,Active
+EMP3390,Engineering,SDE-2,2023-12-11,169027.74,12.4,94.9,4.0,Male,Mumbai,,Active
+EMP3391,Finance,Financial Analyst,2024-01-15,103892.8,12.0,83.2,4.0,Male,Remote,,Active
+EMP3392,Marketing,Growth Manager,2024-01-17,106716.77,9.8,92.9,4.0,Female,Mumbai,,Active
+EMP3393,Finance,Finance Manager,2024-01-26,214303.29,5.7,83.0,4.0,Female,Remote,,Active
+EMP3394,Sales,Sales Head,2024-01-26,261982.61,12.6,76.2,4.0,Male,Remote,,Active
+EMP3395,Sales,Account Manager,2024-02-03,88350.96,8.8,95.3,4.0,Female,Bengaluru,,Active
+EMP3396,Sales,Sales Head,2024-02-04,310610.66,3.3,94.5,4.0,Male,Pune,,Active
+EMP3397,Marketing,Growth Manager,2024-02-05,123861.46,14.8,81.7,4.0,Male,Bengaluru,,Active
+EMP3398,Sales,Sales Executive,2024-02-08,52158.75,8.4,70.5,2.0,Male,Hyderabad,,Active
+EMP3399,Sales,Sales Head,2024-02-09,284192.57,17.7,99.3,3.0,Male,Mumbai,,Active
+EMP3400,Finance,Financial Analyst,2024-02-11,109484.62,17.5,92.6,4.0,Female,Gurugram,,Active
+EMP3401,HR,Talent Acquisition,2024-02-11,78872.74,0.6,90.9,2.0,Male,Mumbai,,Active
+EMP3402,Customer Support,Support Lead,2024-02-19,72722.82,6.0,87.3,4.0,Female,Bengaluru,,Active
+EMP3403,Engineering,Senior SDE,2024-02-19,234830.3,6.4,70.8,5.0,Male,Gurugram,,Active
+EMP3404,Sales,Account Manager,2024-02-24,76428.58,6.6,92.7,2.0,Male,Pune,,Active
+EMP3405,Sales,Sales Executive,2024-02-25,52814.83,3.2,79.2,3.0,Male,Bengaluru,2026-05-18,Exited
+EMP3406,Sales,Sales Executive,2024-02-29,50958.12,11.5,72.9,3.0,Female,Pune,,Active
+EMP3407,Customer Support,Support Executive,2024-03-13,47284.96,8.1,84.0,4.0,Male,Remote,,Active
+EMP3408,Customer Support,Support Lead,2024-03-14,81042.24,11.5,99.1,1.0,Female,Pune,,Active
+EMP3409,HR,HR Executive,2024-03-14,58160.15,2.1,72.7,5.0,Male,Remote,,Active
+EMP3410,Finance,Financial Analyst,2024-03-22,87611.73,8.4,78.2,4.0,Female,Bengaluru,,Active
+EMP3411,Sales,Sales Executive,2024-03-26,40852.11,3.4,78.6,4.0,Male,Mumbai,,Active
+EMP3412,Finance,Accountant,2024-03-29,55699.86,1.1,90.9,5.0,Female,Mumbai,,Active
+EMP3413,Engineering,SDE-1,2024-03-31,100765.39,10.0,99.0,4.0,Female,Pune,2025-01-06,Exited
+EMP3414,Sales,Sales Head,2024-04-03,295350.06,6.5,82.9,3.0,Male,Gurugram,2024-12-04,Exited
+EMP3415,HR,HRBP,2024-04-03,133524.75,9.7,71.1,4.0,Male,Bengaluru,,Active
+EMP3416,HR,Talent Acquisition,2024-04-05,72966.47,16.1,73.7,4.0,Female,Hyderabad,,Active
+EMP3417,Operations,Ops Manager,2024-04-10,138102.77,0.9,99.9,4.0,Male,Mumbai,,Active
+EMP3418,Operations,Ops Manager,2024-04-17,109877.75,17.3,87.8,3.0,Male,Remote,,Active
+EMP3419,HR,Talent Acquisition,2024-04-21,71817.21,5.3,91.0,5.0,Male,Bengaluru,,Active
+EMP3420,Finance,Financial Analyst,2024-04-25,116478.17,6.4,77.3,3.0,Male,Remote,,Active
+EMP3421,Operations,Ops Associate,2024-05-03,46300.59,3.5,73.0,4.0,Male,Hyderabad,,Active
+EMP3422,Engineering,Engineering Manager,2024-05-04,299684.69,11.5,72.3,4.0,Male,Hyderabad,,Active
+EMP3423,Finance,Finance Manager,2024-05-08,199778.3,18.4,81.6,4.0,Male,Hyderabad,,Active
+EMP3424,Customer Support,Support Executive,2024-05-11,37044.49,18.1,83.9,3.0,Female,Bengaluru,,Active
+EMP3425,Customer Support,Support Executive,2024-05-13,44943.99,12.1,98.1,4.0,Male,Mumbai,,Active
+EMP3426,Customer Support,Support Lead,2024-05-21,86371.44,14.5,89.4,5.0,Male,Bengaluru,,Active
+EMP3427,Finance,Financial Analyst,2024-05-28,100388.96,4.8,98.6,4.0,Male,Gurugram,,Active
+EMP3428,Operations,Ops Manager,2024-05-30,117010.51,14.3,94.6,3.0,Female,Pune,,Active
+EMP3429,Marketing,Marketing Associate,2024-06-01,58633.82,17.2,75.1,2.0,Male,Remote,,Active
+EMP3430,Operations,Ops Manager,2024-06-14,119325.34,3.2,80.3,3.0,Male,Hyderabad,,Active
+EMP3431,Engineering,SDE-1,2024-06-21,84209.24,0.9,70.5,4.0,Female,Gurugram,,Active
+EMP3432,Engineering,Engineering Manager,2024-06-21,343247.22,16.5,75.0,4.0,Male,Mumbai,,Active
+EMP3433,Marketing,Growth Manager,2024-06-22,124795.39,4.8,90.4,,Male,Remote,,Active
+EMP3434,HR,HRBP,2024-06-22,148719.83,10.7,73.8,3.0,Male,Hyderabad,,Active
+EMP3435,Sales,Sales Executive,2024-06-23,45739.62,10.7,86.7,4.0,Female,Mumbai,,Active
+EMP3436,Marketing,Marketing Associate,2024-06-25,51849.69,2.4,91.9,,Male,Hyderabad,,Active
+EMP3437,HR,Talent Acquisition,2024-07-05,71693.94,1.0,92.4,2.0,Female,Hyderabad,,Active
+EMP3438,HR,HRBP,2024-07-06,152690.57,12.6,91.4,3.0,Male,Mumbai,,Active
+EMP3439,Sales,Sales Executive,2024-07-11,44759.38,17.4,75.7,2.0,Male,Remote,,Active
+EMP3440,Operations,Ops Associate,2024-07-12,43082.92,9.6,74.3,4.0,Male,Mumbai,,Active
+EMP3441,Customer Support,Support Executive,2024-07-18,47164.75,12.7,74.2,5.0,Male,Hyderabad,,Active
+EMP3442,HR,HRBP,2024-07-22,119014.64,8.3,82.9,4.0,Male,Hyderabad,2026-04-11,Exited
+EMP3443,HR,HR Executive,2024-07-25,60153.74,2.4,80.4,1.0,Female,Bengaluru,,Active
+EMP3444,Finance,Finance Manager,2024-08-04,189639.46,2.1,72.2,2.0,Male,Bengaluru,,Active
+EMP3445,Engineering,SDE-1,2024-08-06,86132.34,7.3,91.8,5.0,Male,Hyderabad,,Active
+EMP3446,Sales,Sales Executive,2024-08-07,45131.01,5.6,95.3,4.0,Female,Bengaluru,,Active
+EMP3447,Engineering,Senior SDE,2024-08-08,210631.43,0.4,88.2,4.0,Female,Bengaluru,,Active
+EMP3448,Marketing,Growth Manager,2024-08-09,100557.45,5.4,95.9,3.0,Male,Remote,,Active
+EMP3449,Operations,Ops Manager,2024-08-12,122869.92,6.5,92.1,3.0,Male,Mumbai,,Active
+EMP3450,Sales,Sales Executive,2024-09-02,46689.68,19.7,75.1,3.0,Female,Remote,,Active
+EMP3451,Sales,Account Manager,2024-09-02,88671.35,3.0,95.0,1.0,Male,Bengaluru,,Active
+EMP3452,HR,Talent Acquisition,2024-09-02,75178.53,12.0,77.6,4.0,Male,Hyderabad,,Active
+EMP3453,Marketing,Brand Manager,2024-09-04,170209.84,17.5,79.7,4.0,Female,Mumbai,,Active
+EMP3454,Engineering,Senior SDE,2024-09-15,238137.08,1.1,70.1,2.0,Female,Remote,,Active
+EMP3455,Sales,Sales Executive,2024-09-27,53890.52,7.8,79.4,3.0,Male,Hyderabad,,Active
+EMP3456,Operations,Ops Associate,2024-09-29,47506.48,0.4,96.6,,Female,Mumbai,,Active
+EMP3457,Engineering,Engineering Manager,2024-10-03,307425.87,11.7,78.8,5.0,Female,Remote,,Active
+EMP3458,Engineering,Senior SDE,2024-10-05,236775.7,3.1,73.8,4.0,Female,Mumbai,,Active
+EMP3459,Customer Support,Support Executive,2024-10-06,37132.9,5.8,77.0,4.0,Male,Pune,,Active
+EMP3460,HR,HR Executive,2024-10-10,54319.26,11.4,72.5,3.0,Male,Remote,,Active
+EMP3461,Finance,Financial Analyst,2024-10-14,86375.64,4.7,84.5,4.0,Male,Bengaluru,,Active
+EMP3462,Customer Support,Support Lead,2024-10-22,73635.32,14.9,71.3,2.0,Male,Mumbai,2026-06-24,Exited
+EMP3463,Engineering,SDE-1,2024-10-26,88726.47,6.3,91.9,4.0,Male,Remote,,Active
+EMP3464,Customer Support,Support Executive,2024-10-28,45789.15,17.6,77.1,3.0,Male,Bengaluru,2026-07-01,Exited
+EMP3465,Finance,Financial Analyst,2024-11-01,91936.66,19.4,85.8,4.0,Female,Mumbai,,Active
+EMP3466,Finance,Financial Analyst,2024-11-03,104967.69,12.5,92.7,3.0,Male,Pune,,Active
+EMP3467,Operations,Ops Associate,2024-11-07,45018.81,3.1,75.3,2.0,Male,Gurugram,,Active
+EMP3468,Operations,Ops Associate,2024-11-18,51629.36,2.7,86.2,3.0,Female,Gurugram,2026-04-14,Exited
+EMP3469,HR,HRBP,2024-11-18,158257.72,3.9,92.1,2.0,Female,Remote,,Active
+EMP3470,Customer Support,Support Lead,2024-11-28,71772.9,18.6,77.0,2.0,Female,Remote,,Active
+EMP3471,Engineering,SDE-1,2024-11-28,100316.52,0.7,92.2,4.0,Female,Gurugram,,Active
+EMP3472,Sales,Sales Head,2024-12-03,308737.39,17.0,87.6,3.0,Female,Hyderabad,,Active
+EMP3473,Operations,Ops Associate,2024-12-13,41050.02,6.3,97.8,3.0,Female,Remote,,Active
+EMP3474,Sales,Sales Head,2024-12-16,289988.24,5.3,85.1,,Male,Hyderabad,,Active
+EMP3475,Operations,Ops Manager,2024-12-22,115130.74,6.3,72.5,3.0,Female,Gurugram,,Active
+EMP3476,Customer Support,Support Executive,2024-12-24,34461.0,19.3,79.1,3.0,Male,Bengaluru,,Active
+EMP3477,HR,Talent Acquisition,2025-01-11,77948.06,18.2,94.9,4.0,Female,Mumbai,,Active
+EMP3478,HR,HR Executive,2025-01-22,62034.35,7.4,83.3,4.0,Male,Remote,,Active
+EMP3479,Customer Support,Support Lead,2025-01-22,89439.03,14.4,72.6,4.0,Female,Gurugram,,Active
+EMP3480,Customer Support,Support Lead,2025-02-10,92013.94,1.4,98.1,3.0,Female,Hyderabad,,Active
+EMP3481,Finance,Financial Analyst,2025-02-13,107886.6,8.5,86.4,3.0,Female,Bengaluru,,Active
+EMP3482,Operations,Ops Manager,2025-02-18,132658.3,8.1,98.5,4.0,Male,Bengaluru,,Active
+EMP3483,Finance,Financial Analyst,2025-02-22,112115.95,8.3,83.6,3.0,Male,Hyderabad,,Active
+EMP3484,Finance,Financial Analyst,2025-03-08,95260.35,5.5,92.9,5.0,Male,Pune,2025-12-17,Exited
+EMP3485,Finance,Finance Manager,2025-03-15,169117.4,9.6,72.8,1.0,Male,Gurugram,,Active
+EMP3486,Finance,Finance Manager,2025-03-21,190045.54,4.0,72.7,4.0,Male,Remote,,Active
+EMP3487,Engineering,SDE-2,2025-03-24,147189.06,11.7,90.0,5.0,Female,Pune,,Active
+EMP3488,Engineering,SDE-1,2025-04-05,93983.61,15.1,95.5,3.0,Male,Mumbai,2025-06-19,Exited
+EMP3489,Operations,Ops Manager,2025-04-08,123910.83,19.7,73.2,3.0,Female,Gurugram,,Active
+EMP3490,Marketing,Growth Manager,2025-04-17,108890.96,2.4,95.9,4.0,Male,Mumbai,,Active
+EMP3491,Engineering,Engineering Manager,2025-04-17,367396.08,8.1,71.6,3.0,Male,Mumbai,,Active
+EMP3492,Finance,Financial Analyst,2025-04-22,97008.75,13.2,86.3,3.0,Male,Hyderabad,,Active
+EMP3493,Sales,Sales Head,2025-04-24,252832.91,4.9,82.4,4.0,Male,Mumbai,2026-07-16,Exited
+EMP3494,Finance,Financial Analyst,2025-04-27,109901.61,3.2,78.6,5.0,Male,Remote,,Active
+EMP3495,Sales,Sales Head,2025-04-28,303930.91,19.8,79.0,3.0,Male,Hyderabad,,Active
+EMP3496,HR,HR Executive,2025-05-01,60549.22,12.8,74.9,2.0,Male,Bengaluru,,Active
+EMP3497,Sales,Sales Executive,2025-05-02,47634.97,7.7,80.1,3.0,Male,Mumbai,,Active
+EMP3498,Engineering,Engineering Manager,2025-05-06,281367.14,13.4,82.0,5.0,Male,Remote,,Active
+EMP3499,Sales,Sales Head,2025-05-08,304917.49,18.6,80.8,3.0,Male,Pune,,Active
+EMP3500,Finance,Finance Manager,2025-05-11,222990.93,4.3,83.9,5.0,Female,Pune,,Active
+EMP3501,Sales,Sales Head,2025-05-14,255778.79,15.5,83.4,2.0,Female,Gurugram,,Active
+EMP3502,Engineering,SDE-2,2025-05-14,168770.75,16.4,71.0,4.0,Female,Hyderabad,,Active
+EMP3503,Customer Support,Support Executive,2025-05-15,43237.09,15.8,82.6,3.0,Female,Bengaluru,,Active
+EMP3504,Sales,Account Manager,2025-05-17,84727.89,17.6,79.3,4.0,Male,Mumbai,,Active
+EMP3505,Operations,Ops Associate,2025-05-20,48270.96,2.0,80.6,2.0,Female,Remote,,Active
+EMP3506,Finance,Financial Analyst,2025-05-22,99787.86,4.4,76.4,3.0,Female,Gurugram,,Active
+EMP3507,Finance,Accountant,2025-05-23,70042.51,16.7,86.9,3.0,Female,Remote,2025-10-28,Exited
+EMP3508,Customer Support,Support Executive,2025-05-29,40535.37,5.1,81.6,4.0,Female,Mumbai,,Active
+EMP3509,Sales,Account Manager,2025-05-30,79085.05,1.0,84.5,,Male,Mumbai,,Active
+EMP3510,Engineering,Engineering Manager,2025-06-02,318015.4,19.5,72.2,3.0,Male,Bengaluru,,Active
+EMP3511,Operations,Ops Associate,2025-06-03,45926.97,11.4,89.4,3.0,Female,Remote,,Active
+EMP3512,Sales,Account Manager,2025-06-04,95300.85,16.3,74.9,3.0,Male,Hyderabad,,Active
+EMP3513,HR,HRBP,2025-06-05,155485.49,0.4,94.5,5.0,Female,Hyderabad,,Active
+EMP3514,Marketing,Brand Manager,2025-06-06,170696.63,7.5,89.5,4.0,Male,Hyderabad,,Active
+EMP3515,Finance,Finance Manager,2025-06-11,211153.13,14.5,83.2,4.0,Male,Bengaluru,2026-06-05,Exited
+EMP3516,Marketing,Growth Manager,2025-06-19,129616.71,5.5,89.3,4.0,Female,Pune,,Active
+EMP3517,Finance,Finance Manager,2025-06-26,220051.97,4.0,84.3,3.0,Female,Hyderabad,,Active
+EMP3518,Operations,Ops Manager,2025-06-29,125726.22,13.2,93.2,5.0,Male,Pune,,Active
+EMP3519,Sales,Sales Head,2025-07-01,302074.81,17.0,99.6,4.0,Male,Pune,,Active
+EMP3520,Finance,Accountant,2025-07-02,59403.65,13.3,97.9,4.0,Male,Pune,,Active
+EMP3521,Marketing,Growth Manager,2025-07-05,101890.88,13.4,99.1,5.0,Male,Gurugram,,Active
+EMP3522,Customer Support,Support Executive,2025-07-08,41989.97,6.7,91.8,3.0,Male,Hyderabad,,Active
+EMP3523,Finance,Finance Manager,2025-07-09,172735.48,17.8,70.5,5.0,Female,Remote,,Active
+EMP3524,Customer Support,Support Lead,2025-07-09,93515.5,1.9,95.6,3.0,Male,Mumbai,,Active
+EMP3525,Customer Support,Support Lead,2025-07-09,70504.35,1.0,80.0,3.0,Male,Mumbai,,Active
+EMP3526,Operations,Ops Manager,2025-07-18,121206.05,19.1,86.0,4.0,Male,Bengaluru,,Active
+EMP3527,HR,HRBP,2025-07-28,149034.63,8.2,72.9,3.0,Female,Gurugram,,Active
+EMP3528,Marketing,Marketing Associate,2025-07-29,63818.43,11.6,89.1,4.0,Female,Remote,,Active
+EMP3529,Operations,Ops Associate,2025-07-31,44051.49,10.9,85.4,2.0,Male,Hyderabad,,Active
+EMP3530,Marketing,Marketing Associate,2025-08-14,65304.97,10.0,97.7,3.0,Male,Pune,,Active
+EMP3531,Operations,Ops Manager,2025-08-25,140098.86,13.4,89.2,4.0,Female,Mumbai,,Active
+EMP3532,Operations,Ops Manager,2025-09-06,119786.74,12.7,85.6,5.0,Male,Hyderabad,,Active
+EMP3533,Engineering,SDE-2,2025-09-15,142684.16,0.5,85.9,3.0,Male,Gurugram,,Active
+EMP3534,Engineering,SDE-2,2025-09-25,139130.44,16.1,86.2,3.0,Female,Gurugram,,Active
+EMP3535,Operations,Ops Associate,2025-10-01,45414.7,16.3,95.6,4.0,Female,Mumbai,,Active
+EMP3536,Finance,Accountant,2025-10-09,65827.66,16.7,74.0,5.0,Male,Mumbai,,Active
+EMP3537,Customer Support,Support Lead,2025-10-10,93611.51,0.5,77.5,3.0,Male,Hyderabad,,Active
+EMP3538,Finance,Accountant,2025-10-10,68987.87,10.1,73.9,3.0,Male,Mumbai,,Active
+EMP3539,Marketing,Brand Manager,2025-10-12,174619.15,0.0,80.9,4.0,Female,Mumbai,,Active
+EMP3540,Customer Support,Support Executive,2025-10-16,35046.87,12.1,90.0,4.0,Male,Bengaluru,,Active
+EMP3541,Finance,Accountant,2025-10-16,72900.17,15.8,84.4,4.0,Male,Mumbai,,Active
+EMP3542,HR,HRBP,2025-10-23,134200.36,8.2,70.1,3.0,Male,Pune,,Active
+EMP3543,Sales,Sales Executive,2025-11-01,50975.97,5.0,73.1,4.0,Male,Bengaluru,,Active
+EMP3544,Marketing,Brand Manager,2025-11-02,145308.71,16.1,89.8,5.0,Female,Gurugram,,Active
+EMP3545,Customer Support,Support Executive,2025-11-03,36815.42,16.6,87.3,3.0,Female,Bengaluru,,Active
+EMP3546,HR,HRBP,2025-11-04,131797.74,3.4,81.7,4.0,Female,Mumbai,,Active
+EMP3547,Finance,Finance Manager,2025-11-07,205225.52,18.4,81.8,1.0,Female,Gurugram,,Active
+EMP3548,Finance,Finance Manager,2025-11-12,185421.71,16.1,81.2,5.0,Male,Bengaluru,,Active
+EMP3549,Customer Support,Support Executive,2025-11-19,36877.9,13.0,70.4,4.0,Female,Gurugram,,Active
+EMP3550,Engineering,SDE-1,2025-11-19,111176.11,11.3,88.3,4.0,Male,Pune,,Active
+EMP3551,Finance,Finance Manager,2025-11-21,206105.57,2.2,93.9,,Male,Hyderabad,,Active
+EMP3552,HR,Talent Acquisition,2025-11-21,67832.63,5.5,98.3,4.0,Female,Remote,,Active
+EMP3553,HR,HR Executive,2025-11-30,53010.27,19.9,77.4,4.0,Female,Gurugram,,Active
+EMP3554,Customer Support,Support Lead,2025-12-03,80822.62,15.3,86.6,3.0,Male,Bengaluru,,Active
+EMP3555,Operations,Ops Manager,2025-12-07,132993.86,11.4,79.2,5.0,Female,Gurugram,,Active
+EMP3556,HR,HRBP,2025-12-09,155037.87,14.4,82.9,1.0,Male,Pune,,Active
+EMP3557,Engineering,SDE-2,2025-12-12,140230.07,19.6,90.1,5.0,Female,Mumbai,,Active
+EMP3558,Marketing,Marketing Associate,2025-12-12,53329.2,15.0,95.2,3.0,Female,Remote,,Active
+EMP3559,Finance,Finance Manager,2025-12-17,193394.92,4.4,91.2,4.0,Female,Mumbai,,Active
+EMP3560,Finance,Financial Analyst,2025-12-17,86591.02,15.0,94.9,4.0,Male,Remote,,Active
+EMP3561,Finance,Financial Analyst,2025-12-22,96004.9,10.1,85.1,3.0,Female,Gurugram,,Active
+EMP3562,HR,HR Executive,2025-12-23,60177.28,17.7,72.7,4.0,Male,Bengaluru,,Active
+EMP3563,Operations,Ops Manager,2026-01-03,108671.66,2.9,74.3,3.0,Male,Mumbai,,Active
+EMP3564,HR,Talent Acquisition,2026-01-05,64652.88,18.5,83.1,,Male,Pune,,Active
+EMP3565,Operations,Ops Associate,2026-01-15,43550.49,7.0,73.7,4.0,Female,Mumbai,,Active
+EMP3566,Operations,Ops Manager,2026-01-16,108404.05,1.4,85.5,3.0,Male,Pune,,Active
+EMP3567,Finance,Finance Manager,2026-01-19,189155.43,18.0,89.6,5.0,Female,Remote,,Active
+EMP3568,Operations,Ops Manager,2026-01-22,124559.05,0.2,96.9,4.0,Female,Hyderabad,,Active
+EMP3569,Customer Support,Support Lead,2026-01-25,68484.63,7.5,91.0,4.0,Male,Mumbai,,Active
+EMP3570,Finance,Finance Manager,2026-02-02,200236.19,16.6,70.4,,Male,Bengaluru,,Active
+EMP3571,Sales,Account Manager,2026-02-03,73441.43,10.0,81.0,3.0,Male,Mumbai,,Active
+EMP3572,Sales,Sales Head,2026-02-03,281734.2,18.9,77.9,4.0,Male,Gurugram,,Active
+EMP3573,HR,HR Executive,2026-02-07,45725.18,2.9,94.2,5.0,Male,Bengaluru,,Active
+EMP3574,Engineering,SDE-1,2026-02-08,81120.13,5.9,92.8,4.0,Female,Remote,,Active
+EMP3575,Operations,Ops Associate,2026-02-14,45475.76,4.8,82.4,5.0,Male,Pune,,Active
+EMP3576,HR,HRBP,2026-02-16,136027.78,0.2,81.0,5.0,Female,Mumbai,,Active
+EMP3577,Engineering,SDE-2,2026-02-16,146885.92,17.4,82.9,3.0,Male,Remote,,Active
+EMP3578,Finance,Financial Analyst,2026-02-19,110596.65,13.9,96.6,4.0,Male,Mumbai,,Active
+EMP3579,Sales,Sales Executive,2026-02-24,45868.77,10.0,95.2,3.0,Male,Gurugram,,Active
+EMP3580,Engineering,SDE-1,2026-03-04,109185.5,19.5,94.8,4.0,Female,Mumbai,,Active
+EMP3581,Marketing,Growth Manager,2026-03-17,116474.75,12.7,88.8,,Male,Pune,,Active
+EMP3582,Operations,Ops Associate,2026-03-18,43201.69,19.0,84.0,3.0,Female,Bengaluru,,Active
+EMP3583,Marketing,Growth Manager,2026-03-18,115467.59,13.9,99.3,3.0,Male,Hyderabad,,Active
+EMP3584,Marketing,Growth Manager,2026-03-19,125861.4,2.1,91.9,4.0,Male,Gurugram,,Active
+EMP3585,Customer Support,Support Lead,2026-03-23,72968.25,15.5,76.6,4.0,Female,Gurugram,,Active
+EMP3586,Customer Support,Support Executive,2026-04-02,41663.32,15.4,85.8,3.0,Female,Remote,,Active
+EMP3587,HR,HR Executive,2026-04-05,61191.22,12.4,89.3,3.0,Female,Gurugram,,Active
+EMP3588,Operations,Ops Associate,2026-04-07,43041.86,12.2,99.5,3.0,Female,Bengaluru,,Active
+EMP3589,Finance,Finance Manager,2026-04-10,220075.88,0.8,89.3,3.0,Male,Bengaluru,,Active
+EMP3590,Operations,Ops Associate,2026-04-11,42957.37,10.2,78.3,3.0,Female,Hyderabad,,Active
+EMP3591,Sales,Sales Executive,2026-04-30,41089.79,10.7,84.7,3.0,Female,Pune,,Active
+EMP3592,Finance,Accountant,2026-04-30,54970.03,11.5,70.5,4.0,Female,Hyderabad,,Active
+EMP3593,Sales,Account Manager,2026-05-01,79900.94,10.3,74.9,5.0,Male,Gurugram,,Active
+EMP3594,Marketing,Marketing Associate,2026-05-01,67933.02,9.1,97.1,4.0,Male,Pune,,Active
+EMP3595,Marketing,Brand Manager,2026-05-03,177968.5,10.7,79.3,2.0,Female,Pune,,Active
+EMP3596,Engineering,SDE-2,2026-05-10,132151.46,1.3,83.2,3.0,Female,Mumbai,,Active
+EMP3597,Operations,Ops Associate,2026-05-14,39099.55,3.0,98.1,4.0,Male,Pune,,Active
+EMP3598,Marketing,Growth Manager,2026-05-26,113716.91,8.5,92.8,5.0,Female,Gurugram,,Active
+EMP3599,Marketing,Brand Manager,2026-05-29,173265.18,9.2,96.1,2.0,Female,Mumbai,,Active

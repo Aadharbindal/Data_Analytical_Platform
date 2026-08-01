@@ -1,4 +1,5 @@
 import os
+import re
 import uuid
 import logging
 from app.ai.registry import ModelRegistry
@@ -9,6 +10,42 @@ import json
 from app.ai.mcp_tools import MCPToolAbstraction, register_duckdb_tools, register_rag_tools
 from app.ai.telemetry import TelemetryLogger
 from app.ai.cost_tracker import CostTracker
+
+
+def _extract_leaked_tool_call(text):
+    """Some models emit a tool call as plain text instead of populating the
+    structured tool_calls field the API expects, in several different
+    malformed shapes seen in practice: "<function=name>{...}",
+    "<function=name({...})</function>", "<function=name{...}" with no
+    closing tag at all. A single regex expecting one exact shape (or a
+    paired opening/closing tag) misses the others — and when the JSON
+    payload has no literal '>' of its own, a lazy "<function.*?>...*?</function>"
+    match ends up consuming the closing tag's own '>' as the "opening tag",
+    leaving nothing for the rest of the pattern to match, so the strip
+    silently no-ops. Finding the function name and then walking forward to
+    the first *balanced* {...} block is robust to all of the above regardless
+    of exact wrapper syntax.
+    Returns (func_name, args_dict_or_None, match_start_index) or (None, None, None).
+    """
+    m = re.search(r'<function=([\w_]+)', text or "")
+    if not m:
+        return None, None, None
+    brace_start = text.find('{', m.end())
+    if brace_start == -1:
+        return m.group(1), None, m.start()
+    depth = 0
+    for i in range(brace_start, len(text)):
+        if text[i] == '{':
+            depth += 1
+        elif text[i] == '}':
+            depth -= 1
+            if depth == 0:
+                try:
+                    return m.group(1), json.loads(text[brace_start:i + 1]), m.start()
+                except Exception:
+                    return m.group(1), None, m.start()
+    return m.group(1), None, m.start()
+
 
 class AgentOrchestrator:
     """Core conversational agent orchestrator."""
@@ -93,11 +130,39 @@ class AgentOrchestrator:
 
             if not msg.tool_calls:
                 final_text = msg.content or ""
-                final_text = __import__('re').sub(r'<function.*?>.*?</function>', '', final_text, flags=__import__('re').DOTALL).strip()
-                if not final_text:
+
+                # Some models occasionally emit a tool call as plain text
+                # instead of populating the structured tool_calls field —
+                # detect it, actually run the call, and loop back for a real
+                # answer instead of returning the leaked call syntax.
+                func_name, args, match_start = _extract_leaked_tool_call(final_text)
+                if func_name and args is not None:
+                    if func_name == "query_duckdb" and "sql_query" in args:
+                        executed_sql.append(args["sql_query"])
+                    try:
+                        tool_result = mcp.execute_tool(func_name, **args)
+                    except Exception as e:
+                        tool_result = f"SQL Error: {str(e)}"
+                    if "SQL Error:" in tool_result or "Error:" in tool_result:
+                        tool_result = f"Query failed: {tool_result}. Fix the query using only the schema provided and try again."
+                    messages.append({"role": "assistant", "content": final_text})
+                    messages.append({"role": "user", "content": f"Tool result for {func_name}: {tool_result}\n\nAnswer the original question using this result, in plain text — do not attempt another tool call unless this result is insufficient."})
+                    continue
+                elif func_name:
+                    # Recognized an attempted tool call but couldn't parse a
+                    # balanced JSON payload after it. Retrying via the loop
+                    # (rather than finalizing on whatever text-fragment is
+                    # left over, which is often meaningless punctuation) gives
+                    # the model another chance to either call the tool
+                    # correctly or just answer in plain text.
+                    messages.append({"role": "assistant", "content": final_text})
+                    messages.append({"role": "user", "content": "Your last response contained a malformed tool call that could not be parsed. Either retry the tool call with valid JSON arguments, or answer directly in plain text without any function-call syntax."})
+                    continue
+
+                final_text = re.sub(r'<function.*?>.*?</function>', '', final_text, flags=re.DOTALL).strip()
+                if not final_text or not re.search(r'[A-Za-z0-9]', final_text):
                     final_text = "I have processed your request."
-                    
-                import re
+
                 if len(executed_sql) == 0 and re.search(r'\d', final_text):
                     final_text = "**Note: this answer was not computed from your data**\n\n" + final_text
 
@@ -155,12 +220,16 @@ class AgentOrchestrator:
         est_cost = self.cost_tracker.calculate_cost(query_prompt_tokens, query_completion_tokens)
 
         final_text = final_msg.content or "Exceeded max loops trying to query data."
-        final_text = __import__('re').sub(r'<function.*?>.*?</function>', '', final_text, flags=__import__('re').DOTALL).strip()
-        
-        import re
+        _leaked_name, _leaked_args, _leaked_start = _extract_leaked_tool_call(final_text)
+        if _leaked_name:
+            final_text = final_text[:_leaked_start].strip()
+        final_text = re.sub(r'<function.*?>.*?</function>', '', final_text, flags=re.DOTALL).strip()
+        if not final_text or not re.search(r'[A-Za-z0-9]', final_text):
+            final_text = "Exceeded max loops trying to query data."
+
         if len(executed_sql) == 0 and re.search(r'\d', final_text):
             final_text = "**Note: this answer was not computed from your data**\n\n" + final_text
-        
+
         self.telemetry.end_span(span_id, {"status": "timeout_fallback", "cost": est_cost})
 
         trace_id = str(uuid.uuid4())

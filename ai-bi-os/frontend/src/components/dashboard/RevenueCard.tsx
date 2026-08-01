@@ -106,6 +106,10 @@ export function RevenueCard({ data, semanticDict }: RevenueCardProps) {
   const formatBigNumber = (val: number) => {
     if (metricType === "currency") return formatIndianCurrency(val);
     if (metricType === "percent") return `${val.toFixed(1)}%`;
+    // Counts are reconciled against source records, so they are shown in full
+    // here for the same reason as on the metric cards — "1.4K" and "1,372" read
+    // as different numbers to anyone checking.
+    if (metricType === "count") return Math.round(val).toLocaleString("en-IN");
     return formatIndianNumber(val);
   };
 

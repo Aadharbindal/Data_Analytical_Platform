@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 from litellm import completion
 from app.core.config import LLM_MODEL
+from app.services.stats_service import is_non_additive
 
 def validate_and_sanitize_business_terminology(df: pd.DataFrame, domain: str, bus_term: dict):
     entity_col = bus_term.get("entity_col")
@@ -61,7 +62,108 @@ def validate_and_sanitize_business_terminology(df: pd.DataFrame, domain: str, bu
                 bus_term["entity_count_label"] = entity_label
     else:
         bus_term["entity_count_label"] = "Total Records"
-        
+
+    # Some columns simply aren't additive across rows — a running account
+    # balance, stock on hand, a discount percentage, a 1-5 star rating, an age.
+    # Summing them yields a number with no real meaning ("Total Balance" over
+    # 1,000 statement rows, or a "Total Net Profit" of 11,920 that is really
+    # just every discount percentage added together). Averaging is the only
+    # sensible read, so override the aggregation whenever the LLM or the
+    # fallback classifier picked "sum" for such a column, and correct the
+    # label and unit type to match what is actually being computed.
+    for metric_key, op_key, label_key, type_key in (
+        ("primary_metric", "primary_metric_op", "primary_metric_label", "primary_metric_type"),
+        ("secondary_metric", "secondary_metric_op", "secondary_metric_label", "secondary_metric_type"),
+    ):
+        metric_col = bus_term.get(metric_key)
+        if not metric_col or not is_non_additive(metric_col):
+            continue
+
+        if bus_term.get(op_key) == "sum":
+            bus_term[op_key] = "mean"
+
+        # Whatever the aggregation ended up being, the label has to describe it.
+        # A mean shown as "Total Balance" or "Ending Balance" tells the reader
+        # they are looking at a figure the number simply is not — the ending
+        # balance is the last row's value, not the average of every row.
+        if bus_term.get(op_key) == "mean":
+            label = bus_term.get(label_key)
+            if label and not re.search(r'\b(average|avg|mean|median|typical|per)\b', label, re.IGNORECASE):
+                # Swap a leading aggregate-implying word rather than stacking
+                # onto it, so "Total Bank Balance" reads "Average Bank Balance"
+                # instead of "Average Total Bank Balance".
+                swapped = re.sub(r'^\s*(total|ending|closing|opening|current|net|gross|overall)\b\s*',
+                                 '', label, flags=re.IGNORECASE).strip()
+                bus_term[label_key] = f"Average {swapped or str(metric_col).replace('_', ' ').title()}"
+
+        # A percentage/rating column is never money, whatever the LLM guessed —
+        # rendering it as currency puts a rupee sign on a star rating.
+        if bus_term.get(type_key) == "currency" and re.search(
+            r'\b(percent|percentage|pct|rate|ratio|score|rating|nps|share|age|index)\b',
+            str(metric_col).replace('_', ' ').replace('-', ' '), re.IGNORECASE
+        ):
+            bus_term[type_key] = "percent" if re.search(
+                r'\b(percent|percentage|pct|rate|ratio|share)\b',
+                str(metric_col).replace('_', ' ').replace('-', ' '), re.IGNORECASE
+            ) else "generic"
+
+    # A generated label that shares no vocabulary with the column it describes
+    # is actively misleading — "Average Customer Ratings" sitting on top of a
+    # discount_pct column tells the user they are looking at satisfaction
+    # scores when the number is really an average discount. When there is no
+    # overlap at all, fall back to a plain label derived from the column name.
+    STOPWORDS = {"total", "average", "avg", "net", "gross", "the", "of", "per",
+                 "count", "number", "no", "all", "and", "amount", "value", "rate"}
+
+    # Legitimate domain synonyms — a bank statement's "Credit" column really is
+    # "Total Deposits", and rewriting that to "Total Credit" would make a good
+    # label worse. Only labels with no defensible connection to their column
+    # (e.g. "Customer Ratings" on discount_pct) should be replaced.
+    SYNONYMS = [
+        {"credit", "deposit", "deposits", "inflow", "inflows", "receipt", "receipts", "income"},
+        {"debit", "debits", "withdrawal", "withdrawals", "outflow", "outflows", "spend", "spending", "expense", "expenses"},
+        {"revenue", "sales", "turnover", "gmv", "billing", "bookings"},
+        {"qty", "quantity", "units", "volume"},
+        {"headcount", "employees", "staff", "workforce", "employee"},
+        {"patient", "patients", "admission", "admissions"},
+        {"customer", "customers", "client", "clients", "account", "accounts", "subscriber", "subscribers"},
+        {"txn", "transaction", "transactions", "order", "orders"},
+        {"churn", "cancellation", "cancellations", "attrition"},
+        {"mrr", "subscription", "subscriptions", "recurring"},
+        {"stock", "inventory", "onhand"},
+        {"defect", "defects", "reject", "rejects", "scrap"},
+        {"price", "pricing", "cost", "fare", "tariff"},
+        {"profit", "margin", "earnings"},
+    ]
+
+    def _tokens(text):
+        return {t for t in re.split(r'[^a-z0-9]+', str(text).lower())
+                if t and t not in STOPWORDS and len(t) > 2}
+
+    def _synonymous(a, b):
+        return any(a in group and b in group for group in SYNONYMS)
+
+    for metric_key, label_key in (
+        ("primary_metric", "primary_metric_label"),
+        ("secondary_metric", "secondary_metric_label"),
+    ):
+        col = bus_term.get(metric_key)
+        label = bus_term.get(label_key)
+        if not col or not label:
+            continue
+        col_tokens, label_tokens = _tokens(col), _tokens(label)
+        if not col_tokens or not label_tokens:
+            continue
+        # Substring matching either way catches "revenue"/"net_revenue" and
+        # "customer"/"customers" without needing a stemmer; the synonym table
+        # covers domain equivalences that share no letters at all.
+        related = any(c in l or l in c or _synonymous(c, l)
+                      for c in col_tokens for l in label_tokens)
+        if not related:
+            pretty = str(col).replace('_', ' ').replace('-', ' ').strip().title()
+            prefix = "Average" if bus_term.get(f"{metric_key}_op") == "mean" else "Total"
+            bus_term[label_key] = f"{prefix} {pretty}"
+
     healthy_regex = bus_term.get("status_healthy_regex", "")
     if healthy_regex:
         # Strip empty clauses that would match everything (e.g. "Success||Active")
@@ -72,6 +174,85 @@ def validate_and_sanitize_business_terminology(df: pd.DataFrame, domain: str, bu
         if not filtered_regex:
             filtered_regex = "won|active|discharged|completed|approved|paid|success"
         bus_term["status_healthy_regex"] = filtered_regex
+
+    # The healthy/unhealthy regexes are generated from column names and a few
+    # sample rows, so they routinely name states the column never actually
+    # contains ("Completed|Processing" for a column of Delivered/Shipped/
+    # Cancelled/Returned/Processing). The resulting rate is then computed over
+    # whatever happens to match — which both understates the true figure and
+    # swings wildly between uploads of the *same* file as the wording varies.
+    # Anchor both regexes to the values really present in the column, and if
+    # the healthy one matches nothing, rebuild it from a positive-state
+    # vocabulary tested against those real values.
+    status_col = bus_term.get("status_col")
+    if status_col and status_col in df.columns:
+        try:
+            distinct = [str(v) for v in df[status_col].dropna().unique()]
+        except Exception:
+            distinct = []
+
+        def matches(pattern):
+            if not pattern:
+                return []
+            try:
+                rx = re.compile(pattern, re.IGNORECASE)
+            except re.error:
+                return []
+            return [v for v in distinct if rx.search(v)]
+
+        if distinct:
+            # Terminal *successful* states only. In-flight states (pending,
+            # processing, open) are deliberately excluded: an order still being
+            # processed has not been fulfilled, and counting it as a success
+            # inflates the rate.
+            POSITIVE_STATES = [
+                "delivered", "shipped", "completed", "complete", "closed won", "won",
+                "active", "approved", "paid", "settled", "success", "successful",
+                "fulfilled", "discharged", "resolved", "confirmed", "recovered",
+                "available", "in stock", "renewed", "retained", "passed", "cleared",
+            ]
+            NEGATIVE_STATES = [
+                "cancel", "return", "fail", "lost", "reject", "declin", "churn",
+                "terminat", "inactive", "overdue", "suspend", "void", "unpaid",
+                "expired", "deceased", "defect", "error", "closed lost", "refund",
+            ]
+
+            vocab_hits = [v for v in distinct
+                          if any(p in v.lower() for p in POSITIVE_STATES)
+                          and not any(n in v.lower() for n in NEGATIVE_STATES)]
+
+            if vocab_hits:
+                # Prefer states recognised from the actual column values. This
+                # is fully deterministic, so the same file always yields the
+                # same rate — unlike the generated regex, which varied between
+                # uploads and swung this KPI by 4x on identical data.
+                bus_term["status_healthy_regex"] = "|".join(re.escape(v) for v in vocab_hits)
+            else:
+                # Domain vocabulary we don't recognise — fall back to whatever
+                # the generated regex actually matches in this column, minus
+                # anything clearly negative.
+                llm_hits = [v for v in matches(bus_term.get("status_healthy_regex"))
+                            if not any(n in v.lower() for n in NEGATIVE_STATES)]
+                if llm_hits:
+                    bus_term["status_healthy_regex"] = "|".join(re.escape(v) for v in llm_hits)
+                else:
+                    # Nothing recognisably positive — a "success rate" here would
+                    # be invented, so drop the KPI rather than publish a number
+                    # derived from an arbitrary match.
+                    bus_term["status_col"] = None
+                    bus_term["status_metric_label"] = None
+
+            # Keep the two sets disjoint; a state counted as both makes the
+            # healthy and unhealthy rates sum past 100%.
+            healthy_hits = set(matches(bus_term.get("status_healthy_regex")))
+            unhealthy = bus_term.get("status_unhealthy_regex")
+            if unhealthy and healthy_hits:
+                overlap = healthy_hits & set(matches(unhealthy))
+                if overlap:
+                    remaining = [v for v in matches(unhealthy) if v not in overlap]
+                    bus_term["status_unhealthy_regex"] = (
+                        "|".join(re.escape(v) for v in remaining) if remaining else None
+                    )
 
 def fallback_classify(df: pd.DataFrame, filename: str) -> tuple[str, dict]:
     """

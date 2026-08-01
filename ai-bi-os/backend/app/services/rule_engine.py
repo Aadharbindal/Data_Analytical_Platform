@@ -63,14 +63,14 @@ def evaluate_rule_condition(df: pd.DataFrame, rule: dict) -> Tuple[str, Optional
     window = rule.get("window") or "latest"
 
     if window.lower() == "mom":
-        from app.services.stats_service import find_column
+        from app.services.stats_service import find_column, to_datetime_safe
 
         date_col = find_column(df, r"date|month|year|time")
         if not date_col:
             return "ERROR (No Date Column)", None
 
         df_temp = df.copy()
-        df_temp[date_col] = pd.to_datetime(df_temp[date_col], errors="coerce")
+        df_temp[date_col] = to_datetime_safe(df_temp[date_col])
         df_temp = df_temp.dropna(subset=[date_col])
         if df_temp.empty:
             return "PENDING (Insufficient Data)", None
@@ -110,7 +110,7 @@ def get_metric_series(user_id: str, dataset_id: str, metric: Optional[str], peri
         return []
 
     df_temp = df.copy()
-    df_temp[date_col] = pd.to_datetime(df_temp[date_col], errors="coerce")
+    df_temp[date_col] = to_datetime_safe(df_temp[date_col])
     df_temp = df_temp.dropna(subset=[date_col])
     if df_temp.empty:
         return []

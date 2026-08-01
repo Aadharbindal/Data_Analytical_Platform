@@ -1,0 +1,1610 @@
+order_id,order_date,category,product_name,unit_price,quantity,discount_pct,net_revenue,payment_method,order_status,region,customer_id,rating
+ORD100000,2025-01-01 06:30,Grocery,Basmati Rice 5kg,2383.8,5,0,0.0,Credit Card,Cancelled,South,CUST0227,
+ORD100001,2025-01-01 16:09,Fashion,Cotton Kurta,3405.32,3,15,8683.57,UPI,Processing,Central,CUST0282,3.0
+ORD100002,2025-01-01 16:19,Home & Kitchen,Non-stick Pan,1714.82,5,0,8574.1,Credit Card,Processing,West,CUST0120,4.0
+ORD100003,2025-01-01 16:36,Electronics,Wireless Earbuds,2360.14,4,5,8968.53,Credit Card,Delivered,West,CUST0327,
+ORD100004,2025-01-01 20:04,Home & Kitchen,Bedsheet Set,7376.2,1,10,6638.58,Cash on Delivery,Shipped,North,CUST0352,
+ORD100005,2025-01-02 02:37,Beauty,Sunscreen SPF50,3259.56,5,0,16297.8,Cash on Delivery,Returned,West,CUST0060,
+ORD100006,2025-01-02 12:27,Beauty,Face Serum,1759.99,2,0,3519.98,Cash on Delivery,Delivered,Central,CUST0366,
+ORD100007,2025-01-02 14:38,Grocery,Cooking Oil 1L,4899.27,2,15,8328.76,Net Banking,Delivered,North,CUST0320,1.0
+ORD100008,2025-01-03 08:46,Electronics,USB-C Cable,5439.44,5,0,27197.2,Wallet,Processing,West,CUST0277,
+ORD100009,2025-01-04 03:02,Fashion,Leather Wallet,3546.73,5,5,16846.97,Wallet,Returned,South,CUST0182,
+ORD100010,2025-01-04 04:40,Books,Self-Help Book,6220.82,5,10,27993.69,Cash on Delivery,Shipped,East,CUST0311,
+ORD100011,2025-01-04 08:11,Electronics,Bluetooth Speaker,7986.41,1,5,0.0,Credit Card,Cancelled,Central,CUST0492,4.0
+ORD100012,2025-01-04 11:26,Electronics,Bluetooth Speaker,6303.71,5,15,26790.77,Net Banking,Processing,East,CUST0358,4.0
+ORD100013,2025-01-04 12:01,Books,Self-Help Book,4100.16,3,0,12300.48,Net Banking,Delivered,Central,CUST0262,3.0
+ORD100014,2025-01-04 20:31,Sports,Yoga Mat,3378.88,5,0,16894.4,UPI,Processing,Central,CUST0392,
+ORD100015,2025-01-05 00:48,Fashion,Leather Wallet,4536.72,5,15,0.0,Wallet,Cancelled,North,CUST0239,2.0
+ORD100016,2025-01-06 01:00,Books,Business Biography,4337.25,3,5,12361.16,Cash on Delivery,Processing,North,CUST0416,1.0
+ORD100017,2025-01-06 04:30,Grocery,Basmati Rice 5kg,4729.61,3,10,12769.95,UPI,Delivered,North,CUST0166,5.0
+ORD100018,2025-01-06 12:39,Books,Kids Storybook,498.56,2,10,897.41,Cash on Delivery,Processing,Central,CUST0016,4.0
+ORD100019,2025-01-06 14:39,Beauty,Lipstick Combo,5980.91,3,0,17942.73,UPI,Returned,North,CUST0453,5.0
+ORD100020,2025-01-06 21:12,Home & Kitchen,LED Bulb Pack,7926.43,4,0,31705.72,Debit Card,Delivered,North,CUST0075,4.0
+ORD100021,2025-01-07 17:00,Electronics,Wireless Earbuds,5629.11,5,0,28145.55,Credit Card,Delivered,South,CUST0262,4.0
+ORD100022,2025-01-08 05:16,Electronics,Smartwatch,5286.99,2,5,10045.28,Net Banking,Delivered,Central,CUST0139,
+ORD100023,2025-01-08 08:40,Beauty,Sunscreen SPF50,4931.29,3,0,14793.87,UPI,Delivered,North,CUST0491,5.0
+ORD100024,2025-01-08 09:15,Grocery,Green Tea Pack,5594.08,2,10,10069.34,Debit Card,Returned,Central,CUST0217,
+ORD100025,2025-01-08 10:46,Electronics,Bluetooth Speaker,6162.77,4,15,0.0,Debit Card,Cancelled,East,CUST0356,
+ORD100026,2025-01-08 13:00,Beauty,Lipstick Combo,3691.67,2,5,7014.17,Wallet,Delivered,East,CUST0391,
+ORD100027,2025-01-09 03:02,Sports,Football,935.14,2,15,1589.74,Credit Card,Delivered,North,CUST0433,2.0
+ORD100028,2025-01-09 16:40,Grocery,Almonds 500g,4099.1,5,10,18445.95,Credit Card,Returned,West,CUST0034,2.0
+ORD100029,2025-01-10 01:15,Electronics,USB-C Cable,7080.97,1,5,6726.92,Wallet,Shipped,West,CUST0402,4.0
+ORD100030,2025-01-10 03:10,Beauty,Lipstick Combo,4823.68,2,0,9647.36,Wallet,Delivered,South,CUST0254,3.0
+ORD100031,2025-01-10 07:21,Grocery,Green Tea Pack,2532.35,5,10,11395.58,Debit Card,Returned,Central,CUST0035,4.0
+ORD100032,2025-01-10 07:37,Sports,Dumbbell Set,7080.02,2,0,14160.04,Cash on Delivery,Processing,North,CUST0390,3.0
+ORD100033,2025-01-10 15:42,Books,Self-Help Book,3956.77,4,0,15827.08,Net Banking,Returned,West,CUST0054,4.0
+ORD100034,2025-01-10 20:11,Fashion,Denim Jacket,598.86,5,10,2694.87,Debit Card,Returned,West,CUST0058,4.0
+ORD100035,2025-01-10 21:44,Grocery,Basmati Rice 5kg,5191.11,2,5,9863.11,UPI,Processing,North,CUST0136,5.0
+ORD100036,2025-01-11 00:59,Fashion,Running Shoes,6200.22,5,10,27900.99,Debit Card,Processing,South,CUST0014,5.0
+ORD100037,2025-01-11 03:34,Fashion,Sunglasses,7855.63,1,20,6284.5,UPI,Delivered,Central,CUST0012,5.0
+ORD100038,2025-01-11 07:05,Fashion,Denim Jacket,1042.16,1,15,885.84,Net Banking,Delivered,South,CUST0499,4.0
+ORD100039,2025-01-11 08:48,Grocery,Basmati Rice 5kg,3344.86,5,30,0.0,Wallet,Cancelled,Central,CUST0336,3.0
+ORD100040,2025-01-11 20:13,Fashion,Running Shoes,1397.88,5,5,6639.93,Credit Card,Delivered,North,CUST0166,2.0
+ORD100041,2025-01-12 23:08,Grocery,Almonds 500g,3937.41,2,10,7087.34,Net Banking,Delivered,West,CUST0224,
+ORD100042,2025-01-13 00:54,Sports,Football,6231.58,4,0,24926.32,Credit Card,Delivered,Central,CUST0146,
+ORD100043,2025-01-13 19:41,Grocery,Green Tea Pack,7836.35,4,0,31345.4,Net Banking,Returned,North,CUST0089,5.0
+ORD100044,2025-01-14 01:43,Sports,Football,4907.61,4,0,19630.44,Net Banking,Delivered,East,CUST0164,3.0
+ORD100045,2025-01-14 07:15,Electronics,USB-C Cable,1545.36,1,0,0.0,Debit Card,Cancelled,West,CUST0395,5.0
+ORD100046,2025-01-14 10:12,Fashion,Sunglasses,6477.51,2,0,12955.02,Credit Card,Shipped,South,CUST0276,5.0
+ORD100047,2025-01-15 03:34,Books,Fiction Novel,7942.89,2,0,15885.78,Cash on Delivery,Shipped,Central,CUST0416,5.0
+ORD100048,2025-01-15 08:01,Home & Kitchen,LED Bulb Pack,5014.36,5,5,23818.21,Credit Card,Shipped,East,CUST0042,5.0
+ORD100049,2025-01-15 21:21,Books,Business Biography,7155.03,3,5,20391.84,UPI,Delivered,Central,CUST0121,
+ORD100050,2025-01-16 10:30,Electronics,Power Bank 20000mAh,2281.54,3,5,6502.39,Net Banking,Processing,North,CUST0093,4.0
+ORD100051,2025-01-16 17:44,Fashion,Denim Jacket,6296.46,3,20,15111.5,Debit Card,Delivered,West,CUST0047,3.0
+ORD100052,2025-01-16 22:18,Beauty,Hair Dryer,6730.3,1,0,6730.3,Wallet,Returned,East,CUST0156,5.0
+ORD100053,2025-01-18 07:28,Books,Self-Help Book,3258.01,3,15,8307.93,Wallet,Delivered,North,CUST0156,
+ORD100054,2025-01-18 10:01,Beauty,Face Serum,7715.58,2,10,0.0,Debit Card,Cancelled,East,CUST0395,4.0
+ORD100055,2025-01-18 10:17,Books,Business Biography,5949.56,5,20,23798.24,UPI,Processing,North,CUST0440,2.0
+ORD100056,2025-01-18 13:06,Books,Cookbook,7170.12,2,0,14340.24,Cash on Delivery,Shipped,Central,CUST0180,
+ORD100057,2025-01-18 17:08,Sports,Cricket Bat,7917.95,4,0,31671.8,Net Banking,Delivered,North,CUST0404,
+ORD100058,2025-01-19 03:28,Sports,Dumbbell Set,3559.56,2,0,0.0,UPI,Cancelled,East,CUST0111,4.0
+ORD100059,2025-01-19 05:04,Fashion,Cotton Kurta,2418.52,4,0,9674.08,Wallet,Delivered,East,CUST0281,3.0
+ORD100060,2025-01-19 20:01,Electronics,Bluetooth Speaker,3052.04,4,20,9766.53,UPI,Delivered,West,CUST0391,4.0
+ORD100061,2025-01-20 02:20,Beauty,Face Serum,2324.37,2,10,0.0,UPI,Cancelled,North,CUST0006,4.0
+ORD100062,2025-01-20 04:01,Books,Fiction Novel,410.1,1,5,0.0,Cash on Delivery,Cancelled,South,CUST0038,
+ORD100063,2025-01-20 08:00,Beauty,Lipstick Combo,1263.8,5,15,5371.15,Credit Card,Processing,East,CUST0147,4.0
+ORD100064,2025-01-20 09:50,Electronics,Smartwatch,3985.85,5,0,19929.25,Wallet,Returned,North,CUST0108,5.0
+ORD100065,2025-01-20 15:30,Fashion,Cotton Kurta,2654.9,4,5,10088.62,UPI,Shipped,North,CUST0456,5.0
+ORD100066,2025-01-20 19:08,Electronics,Smartwatch,5847.19,5,0,29235.95,Net Banking,Delivered,East,CUST0466,5.0
+ORD100067,2025-01-20 19:27,Books,Business Biography,468.08,1,5,444.68,Net Banking,Delivered,South,CUST0323,
+ORD100068,2025-01-21 23:22,Home & Kitchen,Non-stick Pan,5702.26,1,10,5132.03,Debit Card,Delivered,East,CUST0305,
+ORD100069,2025-01-22 00:57,Beauty,Perfume 100ml,5110.33,1,15,0.0,Credit Card,Cancelled,South,CUST0175,
+ORD100070,2025-01-22 03:46,Home & Kitchen,Air Fryer,6447.44,5,5,30625.34,Debit Card,Delivered,North,CUST0258,5.0
+ORD100071,2025-01-22 04:01,Fashion,Leather Wallet,2116.98,2,0,4233.96,Debit Card,Returned,North,CUST0202,5.0
+ORD100072,2025-01-22 12:44,Books,Kids Storybook,2878.38,4,5,10937.84,Credit Card,Delivered,South,CUST0230,4.0
+ORD100073,2025-01-23 09:33,Fashion,Sunglasses,870.89,4,10,3135.2,Cash on Delivery,Shipped,West,CUST0420,5.0
+ORD100074,2025-01-23 12:19,Books,Fiction Novel,471.82,5,10,2123.19,UPI,Delivered,East,CUST0284,5.0
+ORD100075,2025-01-23 14:50,Electronics,Bluetooth Speaker,5612.21,4,10,0.0,UPI,Cancelled,South,CUST0374,5.0
+ORD100076,2025-01-24 11:34,Home & Kitchen,Air Fryer,238.08,3,10,642.82,UPI,Delivered,South,CUST0374,
+ORD100077,2025-01-24 12:03,Grocery,Cooking Oil 1L,6951.36,1,0,0.0,Cash on Delivery,Cancelled,West,CUST0284,5.0
+ORD100078,2025-01-24 16:26,Grocery,Almonds 500g,2456.35,5,10,11053.58,Credit Card,Processing,North,CUST0465,5.0
+ORD100079,2025-01-24 16:55,Sports,Football,4572.52,2,10,8230.54,Credit Card,Processing,North,CUST0226,5.0
+ORD100080,2025-01-24 22:06,Books,Cookbook,3191.72,5,0,15958.6,UPI,Delivered,South,CUST0249,
+ORD100081,2025-01-24 22:27,Books,Self-Help Book,206.32,1,0,206.32,Debit Card,Delivered,East,CUST0457,4.0
+ORD100082,2025-01-25 01:17,Grocery,Basmati Rice 5kg,6050.3,5,15,25713.78,Net Banking,Processing,Central,CUST0309,3.0
+ORD100083,2025-01-25 05:51,Grocery,Basmati Rice 5kg,1993.5,3,10,5382.45,Credit Card,Returned,North,CUST0093,4.0
+ORD100084,2025-01-25 09:15,Beauty,Face Serum,4534.0,3,0,13602.0,UPI,Delivered,North,CUST0268,3.0
+ORD100085,2025-01-25 11:08,Books,Cookbook,597.04,1,15,0.0,Credit Card,Cancelled,East,CUST0009,5.0
+ORD100086,2025-01-25 14:29,Home & Kitchen,Mixer Grinder,6807.54,3,15,0.0,Cash on Delivery,Cancelled,South,CUST0063,
+ORD100087,2025-01-25 16:19,Beauty,Hair Dryer,6341.88,4,0,25367.52,Wallet,Delivered,West,CUST0389,4.0
+ORD100088,2025-01-25 20:01,Books,Self-Help Book,3413.94,5,10,15362.73,Cash on Delivery,Shipped,East,CUST0385,4.0
+ORD100089,2025-01-26 18:35,Electronics,Smartwatch,2053.01,2,5,0.0,UPI,Cancelled,East,CUST0463,
+ORD100090,2025-01-27 00:43,Electronics,Bluetooth Speaker,6467.19,5,0,0.0,Cash on Delivery,Cancelled,Central,CUST0389,1.0
+ORD100091,2025-01-27 09:51,Fashion,Sunglasses,1614.2,1,0,1614.2,Credit Card,Returned,West,CUST0195,1.0
+ORD100092,2025-01-27 10:26,Home & Kitchen,Mixer Grinder,5915.08,5,5,0.0,Credit Card,Cancelled,North,CUST0332,3.0
+ORD100093,2025-01-28 23:15,Electronics,Bluetooth Speaker,6387.82,3,0,19163.46,Wallet,Delivered,North,CUST0229,4.0
+ORD100094,2025-01-29 11:08,Sports,Football,4104.98,2,5,7799.46,Credit Card,Delivered,West,CUST0251,
+ORD100095,2025-01-29 14:12,Books,Fiction Novel,178.31,1,0,178.31,Cash on Delivery,Delivered,North,CUST0001,4.0
+ORD100096,2025-01-29 20:07,Home & Kitchen,Air Fryer,3779.34,3,30,7936.61,Net Banking,Delivered,South,CUST0312,4.0
+ORD100097,2025-01-31 05:48,Fashion,Sunglasses,5495.68,4,10,19784.45,Credit Card,Delivered,North,CUST0477,5.0
+ORD100098,2025-01-31 21:24,Electronics,Bluetooth Speaker,4438.53,5,5,21083.02,Debit Card,Delivered,North,CUST0186,
+ORD100099,2025-02-01 13:16,Fashion,Denim Jacket,3998.31,3,5,11395.18,Net Banking,Shipped,East,CUST0378,5.0
+ORD100100,2025-02-01 21:29,Beauty,Perfume 100ml,3512.55,1,0,3512.55,Net Banking,Delivered,Central,CUST0270,5.0
+ORD100101,2025-02-01 23:24,Beauty,Hair Dryer,5122.43,3,15,13062.2,Cash on Delivery,Processing,West,CUST0425,
+ORD100102,2025-02-02 05:30,Grocery,Honey Jar,4393.84,3,15,11204.29,Wallet,Delivered,East,CUST0053,
+ORD100103,2025-02-02 09:41,Home & Kitchen,Non-stick Pan,2010.78,3,10,5429.11,UPI,Delivered,Central,CUST0247,5.0
+ORD100104,2025-02-02 11:31,Sports,Yoga Mat,3104.51,5,0,15522.55,Credit Card,Returned,North,CUST0176,5.0
+ORD100105,2025-02-02 18:01,Grocery,Cooking Oil 1L,5034.99,3,20,12083.98,Debit Card,Shipped,North,CUST0054,4.0
+ORD100106,2025-02-02 22:32,Electronics,Wireless Earbuds,3089.43,3,0,9268.29,Credit Card,Returned,South,CUST0373,
+ORD100107,2025-02-03 03:54,Home & Kitchen,LED Bulb Pack,178.63,5,20,714.52,Debit Card,Delivered,North,CUST0337,4.0
+ORD100108,2025-02-03 23:05,Beauty,Sunscreen SPF50,2389.32,3,10,6451.16,Debit Card,Delivered,North,CUST0277,
+ORD100109,2025-02-04 08:45,Fashion,Cotton Kurta,7518.88,2,5,14285.87,Wallet,Delivered,East,CUST0342,4.0
+ORD100110,2025-02-04 15:06,Home & Kitchen,Mixer Grinder,1976.76,5,15,8401.23,Cash on Delivery,Shipped,Central,CUST0017,5.0
+ORD100111,2025-02-04 23:34,Fashion,Denim Jacket,5532.96,3,15,14109.05,Wallet,Delivered,East,CUST0105,
+ORD100112,2025-02-05 04:43,Beauty,Face Serum,4660.35,4,15,15845.19,Wallet,Delivered,East,CUST0394,4.0
+ORD100113,2025-02-05 17:19,Grocery,Honey Jar,2168.09,2,15,3685.75,Net Banking,Delivered,South,CUST0222,5.0
+ORD100114,2025-02-06 03:39,Grocery,Honey Jar,1297.92,1,0,1297.92,UPI,Delivered,North,CUST0144,5.0
+ORD100115,2025-02-06 04:09,Electronics,Power Bank 20000mAh,7707.48,1,15,6551.36,Cash on Delivery,Delivered,West,CUST0267,
+ORD100116,2025-02-06 13:16,Grocery,Basmati Rice 5kg,2446.88,1,0,2446.88,Wallet,Returned,East,CUST0012,4.0
+ORD100117,2025-02-06 19:50,Sports,Football,805.1,2,0,1610.2,UPI,Delivered,North,CUST0131,5.0
+ORD100118,2025-02-07 04:26,Grocery,Honey Jar,926.78,2,0,1853.56,Debit Card,Delivered,West,CUST0137,
+ORD100119,2025-02-07 08:45,Fashion,Running Shoes,7680.69,2,5,14593.31,Credit Card,Shipped,East,CUST0377,
+ORD100120,2025-02-07 12:14,Home & Kitchen,LED Bulb Pack,6982.32,3,0,20946.96,Net Banking,Shipped,North,CUST0330,5.0
+ORD100121,2025-02-07 20:28,Books,Kids Storybook,3564.43,4,30,9980.4,Wallet,Delivered,East,CUST0088,
+ORD100122,2025-02-07 21:27,Fashion,Sunglasses,4925.14,4,20,15760.45,Wallet,Delivered,South,CUST0054,5.0
+ORD100123,2025-02-07 22:51,Home & Kitchen,Air Fryer,1659.49,1,15,1410.57,Cash on Delivery,Returned,Central,CUST0236,
+ORD100124,2025-02-08 11:06,Books,Cookbook,6121.09,5,0,30605.45,Credit Card,Shipped,West,CUST0321,
+ORD100125,2025-02-09 23:21,Grocery,Honey Jar,7151.22,3,0,21453.66,Net Banking,Processing,East,CUST0179,4.0
+ORD100126,2025-02-10 06:40,Sports,Resistance Bands,2686.25,5,0,13431.25,Debit Card,Delivered,East,CUST0138,
+ORD100127,2025-02-10 17:24,Beauty,Sunscreen SPF50,4517.52,1,10,4065.77,UPI,Processing,West,CUST0482,
+ORD100128,2025-02-10 20:44,Sports,Yoga Mat,3748.97,4,0,14995.88,Credit Card,Delivered,East,CUST0298,3.0
+ORD100129,2025-02-10 20:52,Electronics,Bluetooth Speaker,1581.16,4,15,5375.94,Net Banking,Processing,South,CUST0224,2.0
+ORD100130,2025-02-11 11:58,Books,Cookbook,1431.29,2,0,2862.58,Cash on Delivery,Delivered,South,CUST0136,
+ORD100131,2025-02-11 14:49,Sports,Football,411.29,1,5,390.73,Debit Card,Delivered,West,CUST0157,2.0
+ORD100132,2025-02-11 20:29,Sports,Resistance Bands,3420.29,1,20,2736.23,Debit Card,Processing,Central,CUST0133,
+ORD100133,2025-02-11 22:07,Fashion,Denim Jacket,1126.86,4,0,4507.44,Debit Card,Delivered,West,CUST0362,
+ORD100134,2025-02-12 07:33,Beauty,Sunscreen SPF50,3997.51,5,0,19987.55,Credit Card,Delivered,North,CUST0476,
+ORD100135,2025-02-12 15:31,Beauty,Hair Dryer,380.99,4,0,1523.96,Cash on Delivery,Returned,East,CUST0262,
+ORD100136,2025-02-14 00:42,Grocery,Honey Jar,5010.41,5,20,20041.64,Wallet,Shipped,Central,CUST0063,
+ORD100137,2025-02-14 02:47,Sports,Yoga Mat,6912.58,1,5,6566.95,Cash on Delivery,Delivered,West,CUST0362,
+ORD100138,2025-02-14 08:20,Electronics,Wireless Earbuds,2162.05,2,5,4107.9,UPI,Shipped,North,CUST0226,5.0
+ORD100139,2025-02-14 11:14,Home & Kitchen,Mixer Grinder,4776.31,2,0,9552.62,Wallet,Delivered,South,CUST0230,4.0
+ORD100140,2025-02-14 15:19,Beauty,Perfume 100ml,6210.11,5,0,0.0,Debit Card,Cancelled,North,CUST0412,
+ORD100141,2025-02-15 08:47,Fashion,Denim Jacket,6115.05,2,0,12230.1,Cash on Delivery,Shipped,North,CUST0218,4.0
+ORD100142,2025-02-15 10:40,Fashion,Denim Jacket,1642.9,5,10,0.0,Cash on Delivery,Cancelled,North,CUST0380,1.0
+ORD100143,2025-02-15 11:42,Home & Kitchen,Air Fryer,4736.12,2,20,0.0,Cash on Delivery,Cancelled,South,CUST0037,
+ORD100144,2025-02-15 16:14,Sports,Football,667.64,1,10,0.0,UPI,Cancelled,Central,CUST0177,4.0
+ORD100145,2025-02-15 23:11,Grocery,Honey Jar,5991.86,3,0,0.0,Credit Card,Cancelled,West,CUST0426,
+ORD100146,2025-02-16 11:38,Grocery,Green Tea Pack,4611.53,1,10,4150.38,Cash on Delivery,Delivered,North,CUST0323,
+ORD100147,2025-02-16 12:46,Grocery,Cooking Oil 1L,379.96,5,0,1899.8,Debit Card,Processing,South,CUST0350,
+ORD100148,2025-02-16 14:51,Books,Fiction Novel,3222.77,5,5,15308.16,UPI,Delivered,Central,CUST0105,5.0
+ORD100149,2025-02-18 11:13,Sports,Resistance Bands,7751.14,2,10,13952.05,Wallet,Delivered,North,CUST0067,4.0
+ORD100150,2025-02-18 14:17,Books,Kids Storybook,2139.73,5,0,10698.65,Cash on Delivery,Delivered,West,CUST0304,4.0
+ORD100151,2025-02-18 22:58,Beauty,Sunscreen SPF50,4738.09,4,0,18952.36,UPI,Delivered,Central,CUST0255,
+ORD100152,2025-02-19 13:32,Sports,Yoga Mat,442.28,3,10,1194.16,Cash on Delivery,Delivered,West,CUST0338,5.0
+ORD100153,2025-02-20 01:20,Books,Fiction Novel,5054.2,1,0,5054.2,Debit Card,Delivered,Central,CUST0381,
+ORD100154,2025-02-20 05:12,Home & Kitchen,Air Fryer,2982.95,4,5,11335.21,Credit Card,Delivered,South,CUST0042,3.0
+ORD100155,2025-02-21 04:07,Electronics,Wireless Earbuds,5084.82,2,0,10169.64,Cash on Delivery,Processing,East,CUST0412,
+ORD100156,2025-02-21 15:42,Beauty,Sunscreen SPF50,5022.58,3,15,12807.58,Debit Card,Delivered,North,CUST0363,5.0
+ORD100157,2025-02-21 16:02,Beauty,Face Serum,1131.33,3,0,3393.99,Net Banking,Delivered,Central,CUST0485,4.0
+ORD100158,2025-02-22 04:54,Sports,Resistance Bands,4957.36,4,0,19829.44,Wallet,Processing,East,CUST0154,5.0
+ORD100159,2025-02-22 11:27,Home & Kitchen,Non-stick Pan,4026.09,3,0,12078.27,Cash on Delivery,Delivered,Central,CUST0463,
+ORD100160,2025-02-22 12:17,Grocery,Basmati Rice 5kg,1472.05,5,0,7360.25,Credit Card,Returned,East,CUST0051,
+ORD100161,2025-02-22 12:27,Beauty,Sunscreen SPF50,1954.91,4,10,7037.68,UPI,Shipped,West,CUST0445,3.0
+ORD100162,2025-02-22 19:28,Sports,Resistance Bands,2108.19,1,0,2108.19,UPI,Shipped,North,CUST0223,
+ORD100163,2025-02-23 07:55,Beauty,Hair Dryer,4491.62,1,5,0.0,Credit Card,Cancelled,South,CUST0247,4.0
+ORD100164,2025-02-23 11:00,Home & Kitchen,Non-stick Pan,7274.47,5,5,34553.73,Debit Card,Delivered,South,CUST0159,4.0
+ORD100165,2025-02-23 13:15,Electronics,Power Bank 20000mAh,3697.09,1,0,3697.09,Credit Card,Delivered,South,CUST0064,5.0
+ORD100166,2025-02-23 17:45,Electronics,Power Bank 20000mAh,7116.15,1,0,7116.15,Credit Card,Returned,Central,CUST0082,4.0
+ORD100167,2025-02-24 14:59,Grocery,Green Tea Pack,3238.92,5,0,16194.6,Credit Card,Processing,North,CUST0366,4.0
+ORD100168,2025-02-24 17:41,Grocery,Almonds 500g,3197.22,2,15,5435.27,Credit Card,Delivered,Central,CUST0155,3.0
+ORD100169,2025-02-24 22:54,Fashion,Sunglasses,2506.26,1,0,0.0,UPI,Cancelled,West,CUST0006,4.0
+ORD100170,2025-02-24 23:56,Beauty,Hair Dryer,4575.97,1,0,4575.97,Cash on Delivery,Delivered,South,CUST0204,5.0
+ORD100171,2025-02-25 07:00,Beauty,Face Serum,5535.41,5,0,27677.05,UPI,Delivered,South,CUST0043,
+ORD100172,2025-02-25 10:11,Books,Business Biography,7921.07,4,20,25347.42,Net Banking,Delivered,North,CUST0492,
+ORD100173,2025-02-25 23:47,Books,Kids Storybook,4732.36,2,0,9464.72,Cash on Delivery,Returned,North,CUST0303,
+ORD100174,2025-02-26 01:36,Sports,Dumbbell Set,2422.18,4,5,9204.28,Net Banking,Delivered,West,CUST0057,
+ORD100175,2025-02-26 05:32,Home & Kitchen,Bedsheet Set,459.82,4,0,1839.28,Wallet,Returned,North,CUST0343,4.0
+ORD100176,2025-02-26 09:02,Books,Fiction Novel,2700.36,5,20,10801.44,Credit Card,Delivered,East,CUST0026,
+ORD100177,2025-02-26 11:19,Fashion,Leather Wallet,1342.91,4,10,4834.48,Cash on Delivery,Processing,North,CUST0308,
+ORD100178,2025-02-26 18:43,Books,Self-Help Book,5165.8,4,10,18596.88,Credit Card,Delivered,North,CUST0353,
+ORD100179,2025-02-26 19:07,Books,Cookbook,1483.57,3,10,4005.64,Credit Card,Processing,West,CUST0187,3.0
+ORD100180,2025-02-26 19:42,Fashion,Cotton Kurta,2001.82,1,10,1801.64,UPI,Processing,Central,CUST0040,1.0
+ORD100181,2025-02-27 02:26,Electronics,Power Bank 20000mAh,2619.27,4,10,9429.37,Credit Card,Processing,East,CUST0030,4.0
+ORD100182,2025-02-27 17:55,Home & Kitchen,Mixer Grinder,2799.18,2,10,5038.52,Debit Card,Delivered,Central,CUST0319,5.0
+ORD100183,2025-02-27 22:28,Fashion,Denim Jacket,1813.88,3,20,4353.31,Net Banking,Returned,West,CUST0483,5.0
+ORD100184,2025-02-27 23:56,Sports,Dumbbell Set,5118.96,1,30,3583.27,Cash on Delivery,Delivered,East,CUST0201,
+ORD100185,2025-02-28 20:20,Fashion,Denim Jacket,5927.56,4,0,23710.24,Cash on Delivery,Delivered,South,CUST0033,5.0
+ORD100186,2025-03-01 00:23,Home & Kitchen,Non-stick Pan,5300.68,3,10,0.0,Cash on Delivery,Cancelled,North,CUST0300,5.0
+ORD100187,2025-03-01 05:40,Grocery,Cooking Oil 1L,1322.39,2,5,2512.54,Cash on Delivery,Processing,East,CUST0369,4.0
+ORD100188,2025-03-03 06:41,Books,Business Biography,2677.57,2,10,4819.63,Debit Card,Delivered,West,CUST0036,5.0
+ORD100189,2025-03-03 07:24,Home & Kitchen,Bedsheet Set,2407.44,2,5,4574.14,Debit Card,Returned,West,CUST0110,4.0
+ORD100190,2025-03-03 15:24,Electronics,Smartwatch,2460.96,2,10,4429.73,Net Banking,Shipped,North,CUST0447,5.0
+ORD100191,2025-03-03 15:57,Fashion,Sunglasses,3052.17,3,10,8240.86,Wallet,Shipped,South,CUST0337,3.0
+ORD100192,2025-03-03 20:12,Sports,Football,1542.69,2,0,3085.38,UPI,Delivered,Central,CUST0163,5.0
+ORD100193,2025-03-03 22:30,Books,Cookbook,7340.98,2,10,13213.76,Wallet,Delivered,West,CUST0113,
+ORD100194,2025-03-04 01:55,Electronics,Smartwatch,282.14,2,5,536.07,Credit Card,Delivered,East,CUST0052,
+ORD100195,2025-03-04 03:50,Beauty,Lipstick Combo,3394.5,5,0,16972.5,UPI,Returned,East,CUST0437,5.0
+ORD100196,2025-03-05 00:44,Fashion,Sunglasses,3517.61,2,10,6331.7,Net Banking,Returned,East,CUST0184,5.0
+ORD100197,2025-03-05 01:12,Fashion,Leather Wallet,470.07,4,5,1786.27,Debit Card,Delivered,South,CUST0031,5.0
+ORD100198,2025-03-05 09:24,Books,Fiction Novel,1424.6,4,5,5413.48,Wallet,Shipped,Central,CUST0256,
+ORD100199,2025-03-05 13:04,Fashion,Leather Wallet,227.58,4,5,864.8,Debit Card,Delivered,Central,CUST0018,
+ORD100200,2025-03-05 15:51,Electronics,Wireless Earbuds,2680.49,5,0,13402.45,Debit Card,Delivered,Central,CUST0097,4.0
+ORD100201,2025-03-06 09:56,Books,Fiction Novel,7656.73,4,10,27564.23,Wallet,Delivered,North,CUST0497,3.0
+ORD100202,2025-03-06 10:57,Books,Cookbook,5513.72,3,0,0.0,Debit Card,Cancelled,North,CUST0428,3.0
+ORD100203,2025-03-06 20:09,Sports,Dumbbell Set,6476.55,4,10,0.0,Debit Card,Cancelled,South,CUST0170,4.0
+ORD100204,2025-03-07 00:29,Beauty,Perfume 100ml,3249.6,4,5,12348.48,UPI,Delivered,Central,CUST0120,
+ORD100205,2025-03-07 13:21,Grocery,Almonds 500g,3662.88,4,20,11721.22,Wallet,Delivered,North,CUST0130,4.0
+ORD100206,2025-03-07 14:39,Beauty,Perfume 100ml,737.15,2,20,1179.44,Credit Card,Shipped,West,CUST0030,4.0
+ORD100207,2025-03-07 16:26,Beauty,Perfume 100ml,6726.93,5,5,31952.92,Wallet,Shipped,East,CUST0456,3.0
+ORD100208,2025-03-07 16:46,Beauty,Lipstick Combo,6559.12,4,5,24924.66,Wallet,Processing,South,CUST0088,
+ORD100209,2025-03-07 21:42,Home & Kitchen,Bedsheet Set,6769.93,1,0,6769.93,Credit Card,Delivered,South,CUST0108,5.0
+ORD100210,2025-03-07 23:27,Home & Kitchen,Bedsheet Set,3539.38,2,5,6724.82,Credit Card,Delivered,West,CUST0187,5.0
+ORD100211,2025-03-08 15:07,Home & Kitchen,Mixer Grinder,4997.0,2,5,9494.3,UPI,Processing,North,CUST0426,3.0
+ORD100212,2025-03-08 20:31,Home & Kitchen,Mixer Grinder,1112.56,2,20,1780.1,Debit Card,Delivered,West,CUST0117,3.0
+ORD100213,2025-03-09 06:51,Sports,Football,3046.77,4,20,9749.66,Cash on Delivery,Delivered,South,CUST0167,4.0
+ORD100214,2025-03-09 22:16,Books,Cookbook,5057.89,3,10,13656.3,Wallet,Processing,North,CUST0250,
+ORD100215,2025-03-10 01:25,Sports,Resistance Bands,6711.43,4,10,0.0,Wallet,Cancelled,West,CUST0272,4.0
+ORD100216,2025-03-10 17:51,Home & Kitchen,LED Bulb Pack,7090.28,4,10,25525.01,Wallet,Delivered,South,CUST0337,4.0
+ORD100217,2025-03-11 12:04,Books,Cookbook,7793.65,2,10,14028.57,Cash on Delivery,Processing,Central,CUST0167,
+ORD100218,2025-03-12 01:08,Books,Cookbook,5264.09,5,15,22372.38,Net Banking,Processing,South,CUST0297,4.0
+ORD100219,2025-03-12 07:31,Grocery,Basmati Rice 5kg,1170.55,2,30,0.0,Debit Card,Cancelled,South,CUST0392,3.0
+ORD100220,2025-03-12 21:32,Home & Kitchen,Bedsheet Set,5075.45,3,15,12942.4,Credit Card,Shipped,East,CUST0143,5.0
+ORD100221,2025-03-13 01:11,Books,Self-Help Book,4262.71,3,5,0.0,Wallet,Cancelled,North,CUST0302,
+ORD100222,2025-03-13 04:14,Electronics,Wireless Earbuds,7856.87,5,15,33391.7,Wallet,Delivered,East,CUST0240,4.0
+ORD100223,2025-03-14 12:04,Grocery,Cooking Oil 1L,1901.45,1,5,1806.38,Wallet,Delivered,West,CUST0027,
+ORD100224,2025-03-15 20:24,Books,Fiction Novel,5171.66,4,15,0.0,Debit Card,Cancelled,North,CUST0284,4.0
+ORD100225,2025-03-16 07:45,Beauty,Lipstick Combo,7901.53,5,10,35556.88,UPI,Delivered,East,CUST0483,
+ORD100226,2025-03-16 14:08,Home & Kitchen,Non-stick Pan,4873.85,5,0,24369.25,Wallet,Delivered,North,CUST0465,
+ORD100227,2025-03-17 07:22,Beauty,Lipstick Combo,4644.64,4,0,18578.56,UPI,Shipped,South,CUST0395,5.0
+ORD100228,2025-03-17 17:11,Grocery,Honey Jar,6545.93,3,0,19637.79,Wallet,Delivered,North,CUST0473,4.0
+ORD100229,2025-03-17 21:40,Books,Cookbook,2451.15,4,0,9804.6,Wallet,Delivered,South,CUST0227,5.0
+ORD100230,2025-03-18 11:02,Beauty,Hair Dryer,6342.63,1,0,6342.63,Wallet,Processing,East,CUST0089,5.0
+ORD100231,2025-03-18 19:23,Beauty,Perfume 100ml,3890.38,1,5,3695.86,Wallet,Delivered,West,CUST0180,2.0
+ORD100232,2025-03-18 20:50,Sports,Resistance Bands,2706.48,5,0,0.0,Debit Card,Cancelled,Central,CUST0066,4.0
+ORD100233,2025-03-19 02:16,Grocery,Cooking Oil 1L,5538.33,3,0,16614.99,Debit Card,Delivered,East,CUST0250,5.0
+ORD100234,2025-03-20 04:15,Home & Kitchen,LED Bulb Pack,4253.24,2,10,7655.83,Credit Card,Delivered,West,CUST0384,4.0
+ORD100235,2025-03-20 06:52,Fashion,Cotton Kurta,6028.39,3,15,15372.39,Wallet,Processing,South,CUST0098,5.0
+ORD100236,2025-03-20 09:52,Books,Fiction Novel,4479.96,4,10,16127.86,UPI,Shipped,Central,CUST0383,4.0
+ORD100237,2025-03-20 13:30,Home & Kitchen,Bedsheet Set,5875.36,1,10,5287.82,Credit Card,Shipped,West,CUST0432,2.0
+ORD100238,2025-03-20 14:34,Home & Kitchen,Non-stick Pan,606.85,1,0,606.85,Cash on Delivery,Delivered,West,CUST0105,4.0
+ORD100239,2025-03-20 19:29,Electronics,Power Bank 20000mAh,748.57,4,10,2694.85,Net Banking,Returned,East,CUST0492,4.0
+ORD100240,2025-03-20 20:59,Books,Kids Storybook,7425.32,3,0,22275.96,Debit Card,Returned,North,CUST0352,3.0
+ORD100241,2025-03-21 06:12,Books,Cookbook,3087.57,2,15,5248.87,Net Banking,Processing,Central,CUST0438,
+ORD100242,2025-03-22 12:31,Electronics,Bluetooth Speaker,6346.66,1,10,0.0,Cash on Delivery,Cancelled,Central,CUST0109,4.0
+ORD100243,2025-03-22 14:30,Grocery,Basmati Rice 5kg,7348.32,5,15,31230.36,Credit Card,Delivered,South,CUST0258,5.0
+ORD100244,2025-03-23 02:13,Sports,Cricket Bat,879.88,1,5,835.89,Cash on Delivery,Delivered,Central,CUST0137,5.0
+ORD100245,2025-03-23 07:54,Sports,Cricket Bat,3076.11,3,5,8766.91,Net Banking,Processing,Central,CUST0162,5.0
+ORD100246,2025-03-23 10:42,Sports,Cricket Bat,4121.06,5,5,19575.04,UPI,Processing,South,CUST0412,5.0
+ORD100247,2025-03-23 23:26,Fashion,Cotton Kurta,4684.7,3,15,11945.98,Debit Card,Shipped,East,CUST0425,4.0
+ORD100248,2025-03-24 08:29,Fashion,Running Shoes,5237.73,2,5,9951.69,Cash on Delivery,Returned,North,CUST0107,2.0
+ORD100249,2025-03-24 14:49,Electronics,Smartwatch,4062.77,4,0,16251.08,Net Banking,Returned,North,CUST0374,5.0
+ORD100250,2025-03-25 00:28,Beauty,Hair Dryer,4731.36,4,0,18925.44,Credit Card,Delivered,Central,CUST0487,
+ORD100251,2025-03-26 07:52,Grocery,Almonds 500g,2585.37,2,10,4653.67,UPI,Delivered,West,CUST0100,3.0
+ORD100252,2025-03-26 11:11,Electronics,USB-C Cable,6687.45,1,0,6687.45,Wallet,Delivered,East,CUST0116,4.0
+ORD100253,2025-03-26 19:25,Books,Business Biography,3077.52,1,10,2769.77,UPI,Delivered,West,CUST0416,4.0
+ORD100254,2025-03-26 21:25,Electronics,USB-C Cable,6341.37,2,5,0.0,Cash on Delivery,Cancelled,South,CUST0052,
+ORD100255,2025-03-26 22:55,Fashion,Leather Wallet,7206.2,3,15,18375.81,UPI,Shipped,North,CUST0099,4.0
+ORD100256,2025-03-27 01:10,Sports,Football,2582.73,3,20,6198.55,Net Banking,Shipped,South,CUST0028,3.0
+ORD100257,2025-03-27 01:32,Books,Business Biography,6480.2,1,5,6156.19,UPI,Delivered,North,CUST0058,4.0
+ORD100258,2025-03-27 03:18,Electronics,Wireless Earbuds,5693.89,1,0,5693.89,Debit Card,Delivered,South,CUST0326,3.0
+ORD100259,2025-03-27 17:47,Books,Business Biography,2258.15,2,5,4290.48,UPI,Processing,East,CUST0058,
+ORD100260,2025-03-28 05:30,Grocery,Honey Jar,5385.13,4,0,21540.52,Credit Card,Delivered,East,CUST0435,4.0
+ORD100261,2025-03-29 02:46,Electronics,Smartwatch,3203.32,1,0,3203.32,Debit Card,Shipped,West,CUST0413,4.0
+ORD100262,2025-03-29 16:13,Home & Kitchen,Mixer Grinder,2376.28,2,0,4752.56,Credit Card,Shipped,Central,CUST0047,4.0
+ORD100263,2025-03-30 01:58,Fashion,Cotton Kurta,5677.36,3,10,15328.87,UPI,Delivered,Central,CUST0028,
+ORD100264,2025-03-30 18:19,Sports,Cricket Bat,3675.34,2,30,5145.48,Wallet,Delivered,Central,CUST0445,5.0
+ORD100265,2025-03-30 18:29,Sports,Resistance Bands,6592.4,5,20,26369.6,Debit Card,Delivered,South,CUST0075,
+ORD100266,2025-03-31 00:47,Grocery,Honey Jar,7667.6,3,10,20702.52,Credit Card,Delivered,North,CUST0138,4.0
+ORD100267,2025-03-31 04:56,Home & Kitchen,Air Fryer,2248.6,4,0,8994.4,Credit Card,Returned,East,CUST0401,
+ORD100268,2025-03-31 08:16,Books,Self-Help Book,3094.07,1,0,3094.07,Credit Card,Delivered,Central,CUST0418,4.0
+ORD100269,2025-03-31 13:42,Grocery,Almonds 500g,3629.76,4,0,14519.04,Debit Card,Delivered,North,CUST0061,2.0
+ORD100270,2025-03-31 23:30,Grocery,Cooking Oil 1L,802.82,5,10,3612.69,UPI,Shipped,South,CUST0236,3.0
+ORD100271,2025-04-01 22:46,Books,Kids Storybook,4054.21,4,15,13784.31,Debit Card,Processing,Central,CUST0074,5.0
+ORD100272,2025-04-02 03:42,Beauty,Hair Dryer,4341.92,4,10,15630.91,Debit Card,Delivered,Central,CUST0003,5.0
+ORD100273,2025-04-02 09:00,Fashion,Sunglasses,1448.72,3,15,3694.24,Wallet,Processing,East,CUST0139,4.0
+ORD100274,2025-04-02 09:48,Fashion,Leather Wallet,2936.11,2,0,5872.22,Net Banking,Returned,West,CUST0274,
+ORD100275,2025-04-02 11:20,Grocery,Honey Jar,7136.22,1,0,7136.22,Debit Card,Delivered,West,CUST0114,
+ORD100276,2025-04-02 15:39,Electronics,Bluetooth Speaker,6788.3,2,10,12218.94,Credit Card,Shipped,East,CUST0050,4.0
+ORD100277,2025-04-02 20:25,Electronics,Bluetooth Speaker,6946.33,2,5,13198.03,Credit Card,Delivered,West,CUST0459,5.0
+ORD100278,2025-04-03 03:27,Home & Kitchen,Non-stick Pan,4932.98,4,5,18745.32,Credit Card,Returned,West,CUST0004,4.0
+ORD100279,2025-04-03 20:21,Beauty,Lipstick Combo,2390.84,1,15,2032.21,Wallet,Shipped,North,CUST0264,4.0
+ORD100280,2025-04-04 03:56,Sports,Football,4945.08,2,5,9395.65,Cash on Delivery,Processing,North,CUST0028,5.0
+ORD100281,2025-04-04 04:49,Grocery,Basmati Rice 5kg,6686.88,2,5,12705.07,Debit Card,Returned,Central,CUST0122,4.0
+ORD100282,2025-04-04 05:43,Sports,Cricket Bat,6116.28,4,10,0.0,UPI,Cancelled,North,CUST0182,
+ORD100283,2025-04-04 18:22,Beauty,Sunscreen SPF50,4646.11,4,0,18584.44,Credit Card,Delivered,Central,CUST0225,
+ORD100284,2025-04-04 21:28,Fashion,Sunglasses,1910.05,1,5,1814.55,Credit Card,Shipped,East,CUST0185,4.0
+ORD100285,2025-04-05 14:16,Home & Kitchen,Non-stick Pan,7668.83,4,0,30675.32,Cash on Delivery,Delivered,North,CUST0062,1.0
+ORD100286,2025-04-05 19:52,Sports,Resistance Bands,2007.74,5,15,8532.9,Cash on Delivery,Delivered,Central,CUST0444,3.0
+ORD100287,2025-04-06 08:55,Books,Fiction Novel,7567.53,2,20,12108.05,Cash on Delivery,Returned,Central,CUST0448,5.0
+ORD100288,2025-04-06 11:02,Books,Fiction Novel,4304.02,5,0,0.0,Debit Card,Cancelled,West,CUST0339,1.0
+ORD100289,2025-04-07 05:59,Fashion,Cotton Kurta,7479.21,2,10,13462.58,Credit Card,Delivered,Central,CUST0066,
+ORD100290,2025-04-07 18:18,Electronics,USB-C Cable,5116.78,3,0,15350.34,Cash on Delivery,Processing,East,CUST0240,5.0
+ORD100291,2025-04-07 23:25,Fashion,Denim Jacket,6005.74,3,5,17116.36,Debit Card,Delivered,North,CUST0147,3.0
+ORD100292,2025-04-08 13:54,Fashion,Denim Jacket,4418.25,3,0,0.0,Net Banking,Cancelled,West,CUST0129,
+ORD100293,2025-04-08 15:56,Books,Self-Help Book,5684.6,3,0,17053.8,Net Banking,Shipped,North,CUST0368,5.0
+ORD100294,2025-04-08 18:16,Electronics,Bluetooth Speaker,4571.63,1,0,0.0,Net Banking,Cancelled,East,CUST0102,5.0
+ORD100295,2025-04-08 19:18,Beauty,Hair Dryer,5408.64,5,0,0.0,Wallet,Cancelled,East,CUST0287,1.0
+ORD100296,2025-04-09 00:32,Home & Kitchen,Air Fryer,5761.52,3,0,17284.56,Debit Card,Returned,West,CUST0239,
+ORD100297,2025-04-09 08:02,Electronics,Smartwatch,3501.59,2,10,6302.86,Wallet,Returned,North,CUST0344,5.0
+ORD100298,2025-04-09 20:46,Fashion,Running Shoes,6684.95,3,5,19052.11,Wallet,Delivered,Central,CUST0432,4.0
+ORD100299,2025-04-10 02:01,Home & Kitchen,LED Bulb Pack,2603.71,2,5,4947.05,Credit Card,Returned,East,CUST0154,4.0
+ORD100300,2025-04-10 19:35,Grocery,Almonds 500g,1821.47,1,30,1275.03,Debit Card,Delivered,East,CUST0472,
+ORD100301,2025-04-11 03:40,Electronics,Power Bank 20000mAh,2449.35,5,0,0.0,Wallet,Cancelled,South,CUST0436,
+ORD100302,2025-04-11 06:06,Grocery,Cooking Oil 1L,4597.82,4,0,0.0,Cash on Delivery,Cancelled,West,CUST0419,5.0
+ORD100303,2025-04-11 06:34,Electronics,USB-C Cable,3824.6,4,5,14533.48,Net Banking,Delivered,North,CUST0204,
+ORD100304,2025-04-11 14:13,Grocery,Green Tea Pack,2021.63,2,0,4043.26,Wallet,Shipped,South,CUST0451,2.0
+ORD100305,2025-04-12 07:59,Beauty,Hair Dryer,4367.89,2,0,0.0,Debit Card,Cancelled,South,CUST0359,5.0
+ORD100306,2025-04-12 11:00,Grocery,Cooking Oil 1L,864.87,5,10,3891.92,UPI,Processing,East,CUST0272,4.0
+ORD100307,2025-04-12 13:36,Grocery,Almonds 500g,6242.62,2,5,11860.98,Net Banking,Returned,North,CUST0494,
+ORD100308,2025-04-13 00:54,Fashion,Running Shoes,4907.8,3,10,13251.06,Debit Card,Shipped,North,CUST0418,
+ORD100309,2025-04-13 14:25,Fashion,Denim Jacket,5902.01,5,0,29510.05,Debit Card,Delivered,South,CUST0447,5.0
+ORD100310,2025-04-14 03:28,Beauty,Hair Dryer,6050.22,3,10,0.0,Debit Card,Cancelled,North,CUST0022,1.0
+ORD100311,2025-04-14 05:46,Home & Kitchen,Bedsheet Set,4257.06,2,5,8088.41,Wallet,Processing,East,CUST0015,5.0
+ORD100312,2025-04-14 18:17,Electronics,Smartwatch,6032.66,1,5,5731.03,Cash on Delivery,Processing,West,CUST0054,3.0
+ORD100313,2025-04-14 21:44,Beauty,Lipstick Combo,4043.42,2,10,7278.16,Credit Card,Delivered,South,CUST0016,
+ORD100314,2025-04-15 00:02,Beauty,Perfume 100ml,7019.21,2,10,0.0,UPI,Cancelled,South,CUST0461,4.0
+ORD100315,2025-04-15 02:12,Grocery,Cooking Oil 1L,855.38,2,0,1710.76,Debit Card,Delivered,South,CUST0459,5.0
+ORD100316,2025-04-16 04:04,Books,Business Biography,4824.28,4,10,17367.41,Cash on Delivery,Delivered,North,CUST0062,4.0
+ORD100317,2025-04-16 08:19,Fashion,Leather Wallet,1302.54,3,0,0.0,Debit Card,Cancelled,East,CUST0235,
+ORD100318,2025-04-18 04:54,Fashion,Cotton Kurta,2266.64,3,0,6799.92,Cash on Delivery,Delivered,West,CUST0023,
+ORD100319,2025-04-18 10:24,Beauty,Perfume 100ml,2218.34,2,0,4436.68,UPI,Returned,Central,CUST0099,4.0
+ORD100320,2025-04-18 23:00,Grocery,Basmati Rice 5kg,5545.9,5,10,24956.55,Cash on Delivery,Shipped,North,CUST0227,4.0
+ORD100321,2025-04-19 00:29,Grocery,Cooking Oil 1L,6281.19,4,5,23868.52,Debit Card,Shipped,North,CUST0013,3.0
+ORD100322,2025-04-19 05:29,Fashion,Sunglasses,1938.31,3,10,5233.44,Credit Card,Returned,Central,CUST0481,5.0
+ORD100323,2025-04-19 10:12,Fashion,Cotton Kurta,6390.36,4,0,0.0,UPI,Cancelled,West,CUST0290,4.0
+ORD100324,2025-04-19 13:26,Electronics,Bluetooth Speaker,3044.61,3,0,9133.83,Wallet,Processing,South,CUST0290,2.0
+ORD100325,2025-04-20 04:22,Books,Business Biography,7730.66,4,10,27830.38,Wallet,Returned,North,CUST0042,
+ORD100326,2025-04-20 13:36,Sports,Yoga Mat,1862.67,4,5,7078.15,Debit Card,Delivered,West,CUST0265,4.0
+ORD100327,2025-04-20 15:25,Fashion,Sunglasses,4037.67,3,5,11507.36,UPI,Returned,South,CUST0145,4.0
+ORD100328,2025-04-21 02:55,Beauty,Hair Dryer,5676.29,2,0,11352.58,Credit Card,Delivered,North,CUST0189,
+ORD100329,2025-04-21 04:15,Electronics,Bluetooth Speaker,3369.79,4,5,12805.2,Credit Card,Delivered,East,CUST0475,4.0
+ORD100330,2025-04-21 06:49,Beauty,Lipstick Combo,4313.72,5,5,20490.17,Cash on Delivery,Shipped,South,CUST0074,
+ORD100331,2025-04-21 08:40,Beauty,Lipstick Combo,5886.27,2,0,11772.54,Net Banking,Shipped,South,CUST0275,5.0
+ORD100332,2025-04-21 11:32,Fashion,Cotton Kurta,4858.75,3,0,14576.25,Wallet,Shipped,East,CUST0032,3.0
+ORD100333,2025-04-22 14:14,Electronics,Smartwatch,3914.36,2,15,6654.41,Wallet,Shipped,North,CUST0024,5.0
+ORD100334,2025-04-22 22:07,Sports,Football,4395.37,2,0,8790.74,UPI,Delivered,Central,CUST0153,3.0
+ORD100335,2025-04-22 23:13,Sports,Dumbbell Set,1294.07,1,5,1229.37,Cash on Delivery,Delivered,West,CUST0251,4.0
+ORD100336,2025-04-23 05:25,Home & Kitchen,Mixer Grinder,300.14,3,30,630.29,Net Banking,Returned,South,CUST0174,5.0
+ORD100337,2025-04-23 12:43,Home & Kitchen,Non-stick Pan,1214.85,4,5,0.0,Wallet,Cancelled,West,CUST0349,
+ORD100338,2025-04-24 06:49,Grocery,Green Tea Pack,7154.01,4,5,27185.24,UPI,Delivered,North,CUST0259,2.0
+ORD100339,2025-04-24 08:52,Books,Fiction Novel,6826.48,4,0,27305.92,Cash on Delivery,Processing,West,CUST0003,3.0
+ORD100340,2025-04-24 14:16,Grocery,Basmati Rice 5kg,4896.97,3,5,0.0,UPI,Cancelled,South,CUST0442,5.0
+ORD100341,2025-04-24 17:40,Books,Fiction Novel,4935.05,2,5,9376.59,Cash on Delivery,Shipped,North,CUST0162,
+ORD100342,2025-04-25 03:26,Sports,Resistance Bands,4429.91,5,20,0.0,Debit Card,Cancelled,Central,CUST0483,5.0
+ORD100343,2025-04-25 22:59,Fashion,Leather Wallet,5642.54,2,5,10720.83,Cash on Delivery,Delivered,South,CUST0463,4.0
+ORD100344,2025-04-26 05:43,Fashion,Running Shoes,7088.76,2,15,12050.89,Debit Card,Delivered,West,CUST0369,4.0
+ORD100345,2025-04-26 08:45,Books,Cookbook,7179.0,1,20,5743.2,UPI,Processing,Central,CUST0208,4.0
+ORD100346,2025-04-26 13:12,Books,Kids Storybook,847.48,2,10,0.0,Net Banking,Cancelled,North,CUST0097,2.0
+ORD100347,2025-04-27 22:30,Sports,Dumbbell Set,4302.82,2,10,7745.08,Net Banking,Delivered,West,CUST0267,2.0
+ORD100348,2025-04-28 09:18,Fashion,Running Shoes,4293.38,1,15,3649.37,Debit Card,Returned,West,CUST0436,4.0
+ORD100349,2025-04-28 10:49,Grocery,Almonds 500g,7205.67,1,15,6124.82,Cash on Delivery,Delivered,North,CUST0481,4.0
+ORD100350,2025-04-29 14:10,Home & Kitchen,LED Bulb Pack,765.98,2,0,1531.96,Credit Card,Delivered,North,CUST0222,4.0
+ORD100351,2025-04-29 15:29,Fashion,Running Shoes,6769.17,5,10,0.0,Net Banking,Cancelled,West,CUST0455,4.0
+ORD100352,2025-04-29 21:14,Home & Kitchen,Non-stick Pan,5185.68,5,0,25928.4,Net Banking,Shipped,South,CUST0073,4.0
+ORD100353,2025-04-30 13:56,Electronics,Bluetooth Speaker,382.23,4,0,1528.92,Cash on Delivery,Returned,South,CUST0439,
+ORD100354,2025-04-30 16:12,Electronics,USB-C Cable,4130.32,2,0,8260.64,UPI,Delivered,North,CUST0215,5.0
+ORD100355,2025-04-30 16:28,Home & Kitchen,Mixer Grinder,5115.75,1,5,4859.96,UPI,Delivered,Central,CUST0458,4.0
+ORD100356,2025-05-02 01:52,Home & Kitchen,Mixer Grinder,3472.43,3,20,8333.83,Net Banking,Delivered,South,CUST0454,5.0
+ORD100357,2025-05-02 22:41,Sports,Cricket Bat,3824.44,4,20,12238.21,Cash on Delivery,Processing,South,CUST0293,
+ORD100358,2025-05-03 10:38,Sports,Resistance Bands,3775.64,5,5,17934.29,Debit Card,Delivered,West,CUST0386,
+ORD100359,2025-05-03 19:57,Beauty,Sunscreen SPF50,1759.89,5,5,8359.48,Net Banking,Returned,Central,CUST0162,
+ORD100360,2025-05-04 03:49,Electronics,Power Bank 20000mAh,7035.7,3,0,21107.1,Debit Card,Processing,Central,CUST0199,
+ORD100361,2025-05-05 02:26,Books,Self-Help Book,2012.66,2,30,2817.72,Wallet,Returned,West,CUST0364,
+ORD100362,2025-05-05 07:18,Fashion,Running Shoes,7273.65,1,30,5091.55,UPI,Processing,Central,CUST0212,5.0
+ORD100363,2025-05-06 03:49,Home & Kitchen,Mixer Grinder,6131.99,1,5,5825.39,Net Banking,Delivered,North,CUST0436,4.0
+ORD100364,2025-05-06 14:06,Beauty,Perfume 100ml,5507.24,3,0,16521.72,Net Banking,Delivered,East,CUST0186,3.0
+ORD100365,2025-05-06 16:48,Sports,Resistance Bands,2905.95,2,20,4649.52,Cash on Delivery,Shipped,North,CUST0253,
+ORD100366,2025-05-07 01:01,Sports,Dumbbell Set,619.17,2,20,990.67,Wallet,Processing,West,CUST0154,5.0
+ORD100367,2025-05-07 04:11,Books,Kids Storybook,5292.61,4,5,20111.92,Credit Card,Shipped,Central,CUST0031,2.0
+ORD100368,2025-05-07 05:59,Home & Kitchen,Mixer Grinder,7057.89,2,0,14115.78,UPI,Processing,East,CUST0414,3.0
+ORD100369,2025-05-07 13:45,Beauty,Hair Dryer,2465.45,5,0,12327.25,Credit Card,Delivered,South,CUST0156,
+ORD100370,2025-05-07 22:34,Beauty,Sunscreen SPF50,3571.24,5,10,16070.58,Net Banking,Processing,West,CUST0294,
+ORD100371,2025-05-08 04:13,Sports,Cricket Bat,4973.3,1,5,4724.64,Debit Card,Delivered,South,CUST0399,3.0
+ORD100372,2025-05-08 04:52,Sports,Football,5483.66,4,15,18644.44,Wallet,Shipped,North,CUST0412,4.0
+ORD100373,2025-05-08 06:07,Books,Kids Storybook,2933.82,4,20,9388.22,Cash on Delivery,Returned,North,CUST0488,
+ORD100374,2025-05-08 13:01,Beauty,Hair Dryer,7939.08,5,10,35725.86,Net Banking,Returned,North,CUST0315,4.0
+ORD100375,2025-05-08 20:03,Books,Business Biography,1090.26,4,10,0.0,Debit Card,Cancelled,West,CUST0420,4.0
+ORD100376,2025-05-08 21:06,Beauty,Lipstick Combo,4015.3,4,15,13652.02,Wallet,Processing,East,CUST0429,4.0
+ORD100377,2025-05-09 03:25,Electronics,USB-C Cable,2392.42,4,30,6698.78,Wallet,Processing,North,CUST0419,2.0
+ORD100378,2025-05-09 06:25,Sports,Yoga Mat,762.17,1,5,724.06,Credit Card,Delivered,East,CUST0309,5.0
+ORD100379,2025-05-09 07:56,Beauty,Lipstick Combo,2052.82,5,5,9750.9,Wallet,Returned,Central,CUST0292,4.0
+ORD100380,2025-05-10 01:19,Books,Kids Storybook,346.54,4,10,1247.54,Credit Card,Delivered,East,CUST0304,4.0
+ORD100381,2025-05-11 03:34,Home & Kitchen,Air Fryer,5104.42,2,20,8167.07,Wallet,Delivered,South,CUST0493,
+ORD100382,2025-05-11 09:05,Books,Cookbook,7278.38,1,0,0.0,Debit Card,Cancelled,Central,CUST0367,
+ORD100383,2025-05-11 18:12,Electronics,Wireless Earbuds,5074.6,4,15,17253.64,UPI,Delivered,East,CUST0269,4.0
+ORD100384,2025-05-12 02:21,Beauty,Sunscreen SPF50,2301.06,1,10,2070.95,Cash on Delivery,Returned,North,CUST0359,2.0
+ORD100385,2025-05-12 08:53,Sports,Cricket Bat,3731.87,5,5,17726.38,Wallet,Delivered,North,CUST0150,
+ORD100386,2025-05-12 09:54,Sports,Football,6907.24,2,10,12433.03,Credit Card,Returned,East,CUST0477,
+ORD100387,2025-05-12 12:45,Home & Kitchen,Bedsheet Set,4939.12,1,5,4692.16,Cash on Delivery,Delivered,South,CUST0086,5.0
+ORD100388,2025-05-12 16:45,Sports,Football,2009.78,1,5,1909.29,Credit Card,Shipped,South,CUST0499,5.0
+ORD100389,2025-05-12 20:19,Beauty,Lipstick Combo,5599.03,2,0,0.0,Net Banking,Cancelled,East,CUST0490,3.0
+ORD100390,2025-05-13 05:32,Sports,Yoga Mat,3891.46,2,0,7782.92,Debit Card,Returned,East,CUST0318,
+ORD100391,2025-05-14 14:03,Electronics,Bluetooth Speaker,4005.55,5,15,17023.59,Wallet,Returned,North,CUST0107,
+ORD100392,2025-05-15 17:07,Beauty,Hair Dryer,6237.5,1,5,5925.62,Cash on Delivery,Delivered,South,CUST0161,4.0
+ORD100393,2025-05-16 05:10,Grocery,Honey Jar,6996.07,4,20,22387.42,Wallet,Delivered,West,CUST0252,4.0
+ORD100394,2025-05-16 11:14,Home & Kitchen,Air Fryer,2794.35,5,5,13273.16,Credit Card,Returned,Central,CUST0257,3.0
+ORD100395,2025-05-16 13:32,Sports,Resistance Bands,4937.02,5,0,24685.1,UPI,Shipped,South,CUST0284,4.0
+ORD100396,2025-05-17 00:46,Home & Kitchen,Non-stick Pan,6837.66,1,10,6153.89,UPI,Delivered,North,CUST0050,
+ORD100397,2025-05-17 04:56,Grocery,Basmati Rice 5kg,6851.51,2,15,0.0,Credit Card,Cancelled,South,CUST0019,
+ORD100398,2025-05-17 16:50,Home & Kitchen,Non-stick Pan,5449.18,4,30,0.0,Debit Card,Cancelled,North,CUST0445,
+ORD100399,2025-05-17 23:04,Home & Kitchen,Bedsheet Set,3244.8,1,15,0.0,Debit Card,Cancelled,North,CUST0002,5.0
+ORD100400,2025-05-18 00:20,Sports,Yoga Mat,6534.04,4,5,24829.35,UPI,Delivered,North,CUST0213,1.0
+ORD100401,2025-05-18 02:06,Beauty,Perfume 100ml,751.33,2,0,1502.66,Cash on Delivery,Processing,West,CUST0417,2.0
+ORD100402,2025-05-19 05:17,Beauty,Hair Dryer,6404.67,1,0,6404.67,Cash on Delivery,Shipped,Central,CUST0458,
+ORD100403,2025-05-19 09:36,Home & Kitchen,Non-stick Pan,5910.57,5,5,28075.21,UPI,Processing,North,CUST0035,3.0
+ORD100404,2025-05-19 10:58,Fashion,Denim Jacket,1317.29,5,0,6586.45,Debit Card,Processing,North,CUST0411,
+ORD100405,2025-05-19 11:17,Sports,Football,854.91,3,0,2564.73,Debit Card,Delivered,East,CUST0202,4.0
+ORD100406,2025-05-21 00:31,Sports,Yoga Mat,2012.76,5,10,9057.42,Cash on Delivery,Delivered,Central,CUST0127,3.0
+ORD100407,2025-05-21 00:38,Electronics,Bluetooth Speaker,7029.0,2,0,14058.0,UPI,Returned,South,CUST0063,
+ORD100408,2025-05-21 08:09,Books,Kids Storybook,7927.48,3,5,22593.32,Wallet,Shipped,North,CUST0229,4.0
+ORD100409,2025-05-21 17:50,Electronics,Bluetooth Speaker,2739.15,4,0,10956.6,Debit Card,Delivered,East,CUST0186,5.0
+ORD100410,2025-05-21 20:49,Home & Kitchen,LED Bulb Pack,7463.7,5,15,31720.72,Debit Card,Returned,East,CUST0142,4.0
+ORD100411,2025-05-22 05:19,Beauty,Face Serum,3353.78,3,15,8552.14,Wallet,Returned,West,CUST0440,4.0
+ORD100412,2025-05-22 14:14,Fashion,Cotton Kurta,6385.6,4,20,0.0,Wallet,Cancelled,South,CUST0360,
+ORD100413,2025-05-23 03:09,Beauty,Hair Dryer,391.41,5,10,1761.35,Cash on Delivery,Returned,Central,CUST0422,
+ORD100414,2025-05-23 23:56,Sports,Dumbbell Set,1230.71,4,20,3938.27,Credit Card,Delivered,West,CUST0085,4.0
+ORD100415,2025-05-24 01:05,Sports,Cricket Bat,6172.4,1,15,5246.54,Cash on Delivery,Processing,West,CUST0195,5.0
+ORD100416,2025-05-24 10:42,Home & Kitchen,Air Fryer,2232.56,3,5,6362.8,Net Banking,Delivered,North,CUST0113,1.0
+ORD100417,2025-05-24 12:23,Beauty,Face Serum,7307.43,4,5,27768.23,UPI,Delivered,West,CUST0443,3.0
+ORD100418,2025-05-24 18:31,Sports,Resistance Bands,4655.25,4,5,17689.95,UPI,Processing,North,CUST0421,3.0
+ORD100419,2025-05-25 07:10,Electronics,Power Bank 20000mAh,277.05,3,0,831.15,Cash on Delivery,Delivered,Central,CUST0316,5.0
+ORD100420,2025-05-25 19:27,Sports,Dumbbell Set,4120.57,1,5,3914.54,UPI,Delivered,Central,CUST0315,
+ORD100421,2025-05-25 21:25,Home & Kitchen,Air Fryer,3766.5,3,5,10734.52,Debit Card,Returned,North,CUST0488,5.0
+ORD100422,2025-05-26 15:01,Books,Business Biography,6141.49,2,30,8598.09,Cash on Delivery,Processing,West,CUST0281,
+ORD100423,2025-05-26 15:55,Sports,Football,6513.37,2,5,12375.4,Debit Card,Processing,North,CUST0063,2.0
+ORD100424,2025-05-27 05:25,Grocery,Basmati Rice 5kg,7013.04,4,20,22441.73,Wallet,Returned,East,CUST0194,2.0
+ORD100425,2025-05-27 06:07,Books,Cookbook,6698.7,5,0,0.0,UPI,Cancelled,West,CUST0066,
+ORD100426,2025-05-27 15:40,Books,Business Biography,7276.5,5,5,34563.38,UPI,Delivered,East,CUST0410,4.0
+ORD100427,2025-05-27 20:48,Books,Business Biography,5894.16,5,10,26523.72,UPI,Shipped,West,CUST0077,4.0
+ORD100428,2025-05-28 02:42,Beauty,Lipstick Combo,2448.58,1,20,1958.86,Wallet,Shipped,West,CUST0070,5.0
+ORD100429,2025-05-28 04:00,Electronics,Power Bank 20000mAh,2739.95,2,20,4383.92,UPI,Delivered,East,CUST0464,4.0
+ORD100430,2025-05-28 05:42,Sports,Cricket Bat,4589.07,4,20,14685.02,Cash on Delivery,Processing,South,CUST0481,4.0
+ORD100431,2025-05-28 20:31,Grocery,Green Tea Pack,4551.05,1,5,4323.5,Cash on Delivery,Delivered,East,CUST0314,5.0
+ORD100432,2025-05-29 13:51,Beauty,Lipstick Combo,7923.06,5,5,37634.54,Debit Card,Delivered,Central,CUST0105,2.0
+ORD100433,2025-05-29 23:51,Home & Kitchen,Bedsheet Set,3015.92,4,0,12063.68,Cash on Delivery,Delivered,South,CUST0210,4.0
+ORD100434,2025-05-30 15:18,Electronics,Power Bank 20000mAh,2710.28,1,0,2710.28,Cash on Delivery,Processing,Central,CUST0358,
+ORD100435,2025-05-30 17:05,Home & Kitchen,Bedsheet Set,3162.26,4,15,10751.68,Debit Card,Delivered,Central,CUST0306,2.0
+ORD100436,2025-05-30 19:48,Electronics,Bluetooth Speaker,1941.11,4,10,6988.0,UPI,Processing,West,CUST0387,4.0
+ORD100437,2025-06-01 00:31,Beauty,Face Serum,7065.93,2,0,0.0,UPI,Cancelled,Central,CUST0438,5.0
+ORD100438,2025-06-01 05:53,Fashion,Denim Jacket,923.34,4,0,3693.36,Debit Card,Returned,North,CUST0476,
+ORD100439,2025-06-01 11:46,Electronics,Power Bank 20000mAh,3787.72,2,15,6439.12,Cash on Delivery,Delivered,North,CUST0235,1.0
+ORD100440,2025-06-01 17:56,Grocery,Honey Jar,2517.59,1,0,0.0,Wallet,Cancelled,Central,CUST0395,4.0
+ORD100441,2025-06-02 18:24,Beauty,Sunscreen SPF50,853.97,2,0,0.0,Wallet,Cancelled,Central,CUST0246,
+ORD100442,2025-06-04 03:52,Home & Kitchen,LED Bulb Pack,1319.98,3,0,3959.94,Credit Card,Delivered,South,CUST0404,
+ORD100443,2025-06-04 19:43,Sports,Cricket Bat,1772.29,1,10,0.0,Debit Card,Cancelled,Central,CUST0150,
+ORD100444,2025-06-04 20:23,Books,Fiction Novel,4494.18,1,5,4269.47,Net Banking,Processing,South,CUST0007,4.0
+ORD100445,2025-06-05 13:22,Grocery,Green Tea Pack,5094.78,1,10,4585.3,Cash on Delivery,Returned,East,CUST0219,5.0
+ORD100446,2025-06-05 19:14,Sports,Yoga Mat,4346.71,2,10,7824.08,Cash on Delivery,Returned,South,CUST0327,3.0
+ORD100447,2025-06-05 20:14,Home & Kitchen,Mixer Grinder,1007.74,4,20,3224.77,Cash on Delivery,Delivered,North,CUST0469,4.0
+ORD100448,2025-06-06 03:45,Fashion,Sunglasses,2011.77,5,0,0.0,Net Banking,Cancelled,Central,CUST0497,4.0
+ORD100449,2025-06-06 18:24,Grocery,Almonds 500g,819.14,4,10,0.0,Cash on Delivery,Cancelled,East,CUST0497,4.0
+ORD100450,2025-06-06 20:41,Electronics,Power Bank 20000mAh,7997.6,3,15,20393.88,Credit Card,Processing,East,CUST0450,4.0
+ORD100451,2025-06-07 04:55,Sports,Yoga Mat,6175.71,3,0,0.0,Wallet,Cancelled,Central,CUST0473,5.0
+ORD100452,2025-06-07 16:03,Books,Kids Storybook,3574.24,2,0,7148.48,Net Banking,Processing,South,CUST0070,4.0
+ORD100453,2025-06-09 04:48,Beauty,Lipstick Combo,7586.66,5,0,0.0,UPI,Cancelled,Central,CUST0040,4.0
+ORD100454,2025-06-09 22:19,Beauty,Face Serum,975.73,1,0,975.73,Debit Card,Returned,North,CUST0223,2.0
+ORD100455,2025-06-09 22:49,Electronics,Wireless Earbuds,5724.85,2,0,11449.7,UPI,Shipped,East,CUST0239,5.0
+ORD100456,2025-06-10 02:32,Grocery,Cooking Oil 1L,5906.1,3,10,15946.47,Cash on Delivery,Shipped,North,CUST0422,5.0
+ORD100457,2025-06-10 21:11,Fashion,Denim Jacket,3120.08,4,0,0.0,Debit Card,Cancelled,South,CUST0257,5.0
+ORD100458,2025-06-11 01:40,Beauty,Hair Dryer,466.64,1,0,466.64,Credit Card,Shipped,South,CUST0238,3.0
+ORD100459,2025-06-11 08:57,Beauty,Lipstick Combo,1433.99,1,10,1290.59,Cash on Delivery,Delivered,East,CUST0397,5.0
+ORD100460,2025-06-11 11:19,Beauty,Lipstick Combo,5001.56,4,10,18005.62,Cash on Delivery,Delivered,North,CUST0388,3.0
+ORD100461,2025-06-11 23:04,Electronics,Wireless Earbuds,249.07,5,15,1058.55,Wallet,Returned,North,CUST0273,4.0
+ORD100462,2025-06-12 01:12,Sports,Football,1879.52,3,10,5074.7,Cash on Delivery,Delivered,West,CUST0145,
+ORD100463,2025-06-12 08:18,Fashion,Leather Wallet,6041.38,4,15,20540.69,UPI,Delivered,Central,CUST0129,3.0
+ORD100464,2025-06-12 18:13,Home & Kitchen,Non-stick Pan,7814.86,4,20,25007.55,Debit Card,Shipped,East,CUST0023,3.0
+ORD100465,2025-06-13 00:21,Sports,Football,3682.18,4,10,13255.85,Wallet,Processing,Central,CUST0156,5.0
+ORD100466,2025-06-13 00:32,Home & Kitchen,Mixer Grinder,3829.7,2,10,6893.46,Cash on Delivery,Shipped,West,CUST0092,5.0
+ORD100467,2025-06-13 15:49,Home & Kitchen,Mixer Grinder,2627.57,5,10,11824.06,UPI,Shipped,North,CUST0290,
+ORD100468,2025-06-13 17:20,Fashion,Running Shoes,4865.6,1,5,4622.32,UPI,Delivered,East,CUST0224,4.0
+ORD100469,2025-06-14 10:08,Beauty,Face Serum,3825.22,3,30,8032.96,Net Banking,Delivered,West,CUST0259,
+ORD100470,2025-06-15 10:15,Sports,Dumbbell Set,2504.81,5,15,10645.44,Cash on Delivery,Returned,Central,CUST0301,
+ORD100471,2025-06-15 20:26,Sports,Football,5228.68,2,20,8365.89,Wallet,Delivered,West,CUST0354,5.0
+ORD100472,2025-06-16 08:55,Grocery,Green Tea Pack,6566.29,5,5,31189.88,UPI,Delivered,North,CUST0191,5.0
+ORD100473,2025-06-16 19:10,Books,Business Biography,5420.89,4,5,20599.38,Wallet,Delivered,South,CUST0043,5.0
+ORD100474,2025-06-16 23:41,Beauty,Lipstick Combo,7994.92,5,5,37975.87,Net Banking,Shipped,North,CUST0094,
+ORD100475,2025-06-17 02:35,Grocery,Almonds 500g,4816.64,1,0,4816.64,Debit Card,Delivered,Central,CUST0106,4.0
+ORD100476,2025-06-17 14:56,Home & Kitchen,Non-stick Pan,7841.5,1,5,7449.42,Net Banking,Delivered,West,CUST0416,4.0
+ORD100477,2025-06-17 16:05,Beauty,Lipstick Combo,7171.55,2,15,12191.64,UPI,Returned,South,CUST0184,4.0
+ORD100478,2025-06-17 16:17,Fashion,Leather Wallet,5473.71,5,0,27368.55,Debit Card,Processing,North,CUST0010,4.0
+ORD100479,2025-06-17 22:03,Books,Kids Storybook,7304.36,3,0,21913.08,UPI,Delivered,East,CUST0088,5.0
+ORD100480,2025-06-18 01:48,Home & Kitchen,Bedsheet Set,3083.81,1,15,2621.24,Net Banking,Processing,West,CUST0096,3.0
+ORD100481,2025-06-18 08:33,Fashion,Running Shoes,1327.27,5,10,5972.72,Net Banking,Returned,West,CUST0181,4.0
+ORD100482,2025-06-18 10:10,Home & Kitchen,Non-stick Pan,5098.91,5,0,0.0,Debit Card,Cancelled,South,CUST0465,
+ORD100483,2025-06-18 11:08,Sports,Football,6123.91,2,0,12247.82,Cash on Delivery,Delivered,West,CUST0139,
+ORD100484,2025-06-19 05:53,Beauty,Lipstick Combo,2006.4,5,15,8527.2,Cash on Delivery,Delivered,North,CUST0189,
+ORD100485,2025-06-19 08:07,Home & Kitchen,Bedsheet Set,2342.41,5,0,11712.05,Wallet,Delivered,West,CUST0401,1.0
+ORD100486,2025-06-19 12:15,Sports,Yoga Mat,220.68,1,5,209.65,Debit Card,Delivered,South,CUST0383,4.0
+ORD100487,2025-06-19 18:13,Fashion,Sunglasses,6227.64,5,10,28024.38,Debit Card,Shipped,South,CUST0342,
+ORD100488,2025-06-19 20:27,Grocery,Almonds 500g,5048.62,3,5,14388.57,Cash on Delivery,Delivered,East,CUST0081,
+ORD100489,2025-06-20 09:02,Grocery,Cooking Oil 1L,7333.1,1,0,7333.1,Wallet,Returned,South,CUST0371,4.0
+ORD100490,2025-06-20 11:41,Home & Kitchen,Bedsheet Set,3926.88,2,15,6675.7,Wallet,Delivered,East,CUST0170,4.0
+ORD100491,2025-06-21 05:26,Beauty,Hair Dryer,383.21,3,0,1149.63,UPI,Processing,Central,CUST0477,4.0
+ORD100492,2025-06-21 09:35,Home & Kitchen,Mixer Grinder,5046.22,4,0,0.0,Debit Card,Cancelled,East,CUST0350,4.0
+ORD100493,2025-06-21 17:39,Fashion,Denim Jacket,382.81,1,5,363.67,UPI,Delivered,East,CUST0370,5.0
+ORD100494,2025-06-21 18:07,Sports,Yoga Mat,7931.44,4,10,28553.18,UPI,Returned,East,CUST0134,
+ORD100495,2025-06-21 20:36,Grocery,Green Tea Pack,5517.32,5,10,24827.94,Wallet,Delivered,East,CUST0499,
+ORD100496,2025-06-21 23:19,Books,Business Biography,6172.55,5,10,0.0,UPI,Cancelled,East,CUST0191,
+ORD100497,2025-06-21 23:44,Grocery,Honey Jar,6844.31,1,0,6844.31,Cash on Delivery,Shipped,East,CUST0130,4.0
+ORD100498,2025-06-22 07:57,Fashion,Leather Wallet,5660.27,2,0,11320.54,Cash on Delivery,Delivered,North,CUST0445,5.0
+ORD100499,2025-06-22 09:18,Books,Kids Storybook,6624.96,2,0,0.0,Net Banking,Cancelled,North,CUST0403,
+ORD100500,2025-06-22 18:30,Grocery,Honey Jar,2920.68,5,20,11682.72,Wallet,Processing,Central,CUST0366,4.0
+ORD100501,2025-06-22 21:34,Fashion,Cotton Kurta,1685.83,1,0,1685.83,Wallet,Delivered,North,CUST0359,5.0
+ORD100502,2025-06-23 00:07,Home & Kitchen,Air Fryer,3642.76,1,5,3460.62,Wallet,Shipped,East,CUST0374,
+ORD100503,2025-06-23 14:17,Grocery,Honey Jar,3195.29,2,15,5431.99,Cash on Delivery,Shipped,North,CUST0468,1.0
+ORD100504,2025-06-24 04:41,Electronics,Power Bank 20000mAh,7306.09,5,10,32877.4,UPI,Delivered,South,CUST0280,
+ORD100505,2025-06-24 07:02,Fashion,Running Shoes,4958.45,4,15,16858.73,Cash on Delivery,Returned,South,CUST0471,
+ORD100506,2025-06-24 15:52,Home & Kitchen,Non-stick Pan,5328.38,5,0,26641.9,Credit Card,Delivered,East,CUST0017,5.0
+ORD100507,2025-06-25 08:09,Sports,Yoga Mat,5700.36,1,10,5130.32,UPI,Delivered,Central,CUST0304,4.0
+ORD100508,2025-06-25 18:57,Books,Business Biography,6004.39,3,15,15311.19,Cash on Delivery,Processing,South,CUST0359,
+ORD100509,2025-06-25 23:58,Electronics,Wireless Earbuds,376.46,3,20,903.5,UPI,Delivered,West,CUST0035,
+ORD100510,2025-06-26 05:53,Beauty,Sunscreen SPF50,7083.66,1,5,6729.48,Credit Card,Returned,West,CUST0136,
+ORD100511,2025-06-26 08:51,Fashion,Denim Jacket,1648.17,4,30,4614.88,Credit Card,Delivered,East,CUST0398,
+ORD100512,2025-06-26 11:02,Books,Self-Help Book,5084.55,3,0,15253.65,Debit Card,Returned,Central,CUST0386,3.0
+ORD100513,2025-06-26 16:28,Sports,Football,7074.43,1,5,6720.71,Wallet,Returned,Central,CUST0457,
+ORD100514,2025-06-27 03:45,Electronics,Wireless Earbuds,3634.6,3,0,10903.8,Net Banking,Processing,North,CUST0073,5.0
+ORD100515,2025-06-27 08:55,Grocery,Cooking Oil 1L,5194.72,4,0,20778.88,Debit Card,Returned,Central,CUST0281,2.0
+ORD100516,2025-06-27 23:04,Books,Fiction Novel,2180.6,5,5,10357.85,Credit Card,Processing,East,CUST0440,
+ORD100517,2025-06-28 02:15,Grocery,Honey Jar,2965.2,1,15,2520.42,Net Banking,Delivered,West,CUST0157,5.0
+ORD100518,2025-06-28 18:18,Beauty,Lipstick Combo,5449.92,2,5,10354.85,Debit Card,Delivered,Central,CUST0147,5.0
+ORD100519,2025-06-29 02:35,Fashion,Leather Wallet,4375.03,5,10,19687.63,Wallet,Delivered,North,CUST0304,1.0
+ORD100520,2025-06-29 03:24,Fashion,Leather Wallet,6374.91,1,0,6374.91,Credit Card,Returned,North,CUST0070,
+ORD100521,2025-06-29 06:22,Beauty,Perfume 100ml,7289.57,3,10,19681.84,Credit Card,Delivered,South,CUST0171,
+ORD100522,2025-06-29 19:48,Grocery,Honey Jar,2757.61,2,15,4687.94,Credit Card,Returned,Central,CUST0494,
+ORD100523,2025-06-30 08:22,Books,Self-Help Book,3371.13,2,5,6405.15,Credit Card,Delivered,North,CUST0129,3.0
+ORD100524,2025-06-30 13:20,Grocery,Almonds 500g,3539.49,4,0,14157.96,Wallet,Processing,West,CUST0467,3.0
+ORD100525,2025-06-30 17:22,Grocery,Honey Jar,3922.17,1,0,3922.17,Cash on Delivery,Delivered,South,CUST0486,
+ORD100526,2025-06-30 18:27,Fashion,Cotton Kurta,7998.99,5,5,37995.2,Debit Card,Delivered,South,CUST0461,3.0
+ORD100527,2025-06-30 21:03,Books,Kids Storybook,2566.73,2,0,5133.46,UPI,Delivered,Central,CUST0263,4.0
+ORD100528,2025-07-01 07:28,Electronics,Smartwatch,374.87,1,10,337.38,Net Banking,Processing,West,CUST0306,
+ORD100529,2025-07-01 23:43,Grocery,Cooking Oil 1L,6797.16,3,5,19371.91,Wallet,Returned,North,CUST0484,3.0
+ORD100530,2025-07-02 15:24,Beauty,Hair Dryer,7405.31,1,0,7405.31,Debit Card,Shipped,South,CUST0138,3.0
+ORD100531,2025-07-02 18:51,Grocery,Honey Jar,4742.2,4,0,18968.8,UPI,Shipped,South,CUST0050,5.0
+ORD100532,2025-07-02 21:42,Sports,Cricket Bat,6872.25,5,0,34361.25,Net Banking,Returned,Central,CUST0142,
+ORD100533,2025-07-04 07:30,Sports,Football,3930.25,3,15,10022.14,Debit Card,Shipped,East,CUST0409,
+ORD100534,2025-07-04 12:11,Books,Kids Storybook,4074.84,2,0,8149.68,Cash on Delivery,Delivered,South,CUST0187,
+ORD100535,2025-07-05 12:17,Beauty,Face Serum,5331.24,2,30,7463.74,UPI,Processing,South,CUST0239,5.0
+ORD100536,2025-07-05 23:02,Fashion,Sunglasses,5599.12,5,15,0.0,Cash on Delivery,Cancelled,East,CUST0334,3.0
+ORD100537,2025-07-06 02:13,Fashion,Denim Jacket,660.17,1,15,561.14,Cash on Delivery,Delivered,West,CUST0109,1.0
+ORD100538,2025-07-06 08:19,Grocery,Green Tea Pack,6079.43,1,5,5775.46,Wallet,Processing,Central,CUST0194,
+ORD100539,2025-07-06 08:56,Fashion,Running Shoes,1956.07,3,0,5868.21,Net Banking,Delivered,West,CUST0289,
+ORD100540,2025-07-06 13:02,Fashion,Leather Wallet,267.93,4,10,964.55,UPI,Delivered,West,CUST0190,5.0
+ORD100541,2025-07-06 13:13,Home & Kitchen,LED Bulb Pack,6032.94,5,5,28656.46,Net Banking,Shipped,South,CUST0485,5.0
+ORD100542,2025-07-06 13:37,Sports,Dumbbell Set,6222.0,3,0,18666.0,Net Banking,Shipped,North,CUST0430,5.0
+ORD100543,2025-07-06 14:52,Sports,Resistance Bands,2642.83,5,0,13214.15,Wallet,Delivered,South,CUST0494,3.0
+ORD100544,2025-07-06 15:31,Beauty,Face Serum,5438.19,1,0,5438.19,Debit Card,Processing,West,CUST0492,
+ORD100545,2025-07-07 21:26,Grocery,Honey Jar,3666.34,4,0,14665.36,UPI,Delivered,South,CUST0380,3.0
+ORD100546,2025-07-08 04:53,Home & Kitchen,Air Fryer,5508.19,3,20,13219.66,Credit Card,Delivered,South,CUST0332,3.0
+ORD100547,2025-07-10 04:11,Beauty,Lipstick Combo,1446.35,3,0,4339.05,Wallet,Delivered,South,CUST0061,4.0
+ORD100548,2025-07-10 08:22,Sports,Dumbbell Set,6793.03,4,15,0.0,Debit Card,Cancelled,East,CUST0305,
+ORD100549,2025-07-10 14:36,Fashion,Sunglasses,2393.58,4,10,8616.89,Debit Card,Shipped,West,CUST0080,3.0
+ORD100550,2025-07-11 01:48,Fashion,Leather Wallet,4836.94,4,5,18380.37,Cash on Delivery,Returned,South,CUST0141,
+ORD100551,2025-07-11 03:02,Beauty,Hair Dryer,7962.17,5,5,37820.31,Debit Card,Delivered,South,CUST0373,3.0
+ORD100552,2025-07-11 04:02,Sports,Dumbbell Set,1563.39,4,0,6253.56,Wallet,Returned,South,CUST0413,5.0
+ORD100553,2025-07-11 19:22,Fashion,Sunglasses,7190.94,4,5,27325.57,Wallet,Delivered,South,CUST0467,
+ORD100554,2025-07-11 21:51,Sports,Dumbbell Set,5066.97,3,5,14440.86,Debit Card,Shipped,Central,CUST0368,
+ORD100555,2025-07-12 18:05,Sports,Dumbbell Set,7544.57,3,10,20370.34,Cash on Delivery,Returned,South,CUST0183,
+ORD100556,2025-07-12 23:18,Fashion,Sunglasses,1507.81,5,5,7162.1,Credit Card,Returned,North,CUST0343,5.0
+ORD100557,2025-07-13 15:05,Beauty,Lipstick Combo,1701.14,3,0,5103.42,UPI,Processing,East,CUST0337,
+ORD100558,2025-07-13 16:23,Home & Kitchen,LED Bulb Pack,2102.04,4,5,7987.75,UPI,Delivered,South,CUST0225,4.0
+ORD100559,2025-07-13 18:09,Fashion,Leather Wallet,5873.96,3,5,16740.79,Cash on Delivery,Delivered,West,CUST0461,4.0
+ORD100560,2025-07-13 18:48,Grocery,Green Tea Pack,7176.77,1,20,5741.42,Cash on Delivery,Delivered,Central,CUST0200,5.0
+ORD100561,2025-07-14 08:31,Fashion,Sunglasses,4653.89,1,10,0.0,Debit Card,Cancelled,South,CUST0287,
+ORD100562,2025-07-14 10:13,Books,Business Biography,7838.1,3,0,23514.3,Credit Card,Returned,West,CUST0291,
+ORD100563,2025-07-14 16:20,Grocery,Honey Jar,6943.16,4,15,0.0,Cash on Delivery,Cancelled,East,CUST0359,4.0
+ORD100564,2025-07-16 13:25,Home & Kitchen,Mixer Grinder,3678.83,2,5,6989.78,Net Banking,Shipped,North,CUST0056,2.0
+ORD100565,2025-07-16 16:45,Electronics,Smartwatch,3335.17,1,30,2334.62,Wallet,Delivered,North,CUST0236,
+ORD100566,2025-07-16 19:00,Fashion,Running Shoes,1693.15,4,0,6772.6,Credit Card,Processing,North,CUST0442,5.0
+ORD100567,2025-07-17 00:12,Beauty,Perfume 100ml,5852.8,4,0,23411.2,Debit Card,Returned,West,CUST0403,
+ORD100568,2025-07-17 08:31,Fashion,Running Shoes,5089.37,1,20,4071.5,Cash on Delivery,Shipped,West,CUST0309,5.0
+ORD100569,2025-07-17 14:32,Grocery,Honey Jar,6436.96,1,0,0.0,Wallet,Cancelled,South,CUST0431,5.0
+ORD100570,2025-07-17 17:04,Sports,Yoga Mat,1334.39,1,5,1267.67,Net Banking,Delivered,West,CUST0345,5.0
+ORD100571,2025-07-17 19:52,Books,Cookbook,6050.89,4,0,24203.56,Debit Card,Delivered,North,CUST0348,
+ORD100572,2025-07-18 07:59,Home & Kitchen,Mixer Grinder,6703.76,5,5,31842.86,Credit Card,Delivered,West,CUST0395,5.0
+ORD100573,2025-07-18 09:39,Home & Kitchen,Non-stick Pan,5139.86,4,0,20559.44,Cash on Delivery,Processing,West,CUST0207,5.0
+ORD100574,2025-07-18 19:13,Books,Business Biography,7842.77,2,0,15685.54,Debit Card,Delivered,Central,CUST0397,3.0
+ORD100575,2025-07-19 04:13,Home & Kitchen,LED Bulb Pack,2734.81,1,10,2461.33,UPI,Returned,South,CUST0327,4.0
+ORD100576,2025-07-19 14:06,Books,Cookbook,6672.59,4,0,26690.36,UPI,Delivered,Central,CUST0014,4.0
+ORD100577,2025-07-19 20:29,Home & Kitchen,Non-stick Pan,2799.76,2,10,0.0,Credit Card,Cancelled,West,CUST0106,5.0
+ORD100578,2025-07-20 00:00,Fashion,Denim Jacket,1159.13,3,0,3477.39,UPI,Delivered,Central,CUST0314,5.0
+ORD100579,2025-07-20 00:58,Electronics,USB-C Cable,4032.88,1,0,4032.88,Cash on Delivery,Delivered,North,CUST0359,5.0
+ORD100580,2025-07-20 13:00,Electronics,Smartwatch,4674.02,1,10,4206.62,Net Banking,Delivered,Central,CUST0015,
+ORD100581,2025-07-20 17:32,Beauty,Lipstick Combo,5467.86,5,0,27339.3,Net Banking,Shipped,North,CUST0341,5.0
+ORD100582,2025-07-20 23:01,Fashion,Leather Wallet,2432.0,1,20,1945.6,Net Banking,Returned,South,CUST0448,5.0
+ORD100583,2025-07-21 00:02,Sports,Yoga Mat,5634.13,2,5,10704.85,UPI,Delivered,North,CUST0300,5.0
+ORD100584,2025-07-21 05:34,Sports,Cricket Bat,456.58,4,0,1826.32,Debit Card,Delivered,East,CUST0008,4.0
+ORD100585,2025-07-21 06:00,Fashion,Cotton Kurta,4711.15,1,0,4711.15,Wallet,Returned,West,CUST0402,5.0
+ORD100586,2025-07-22 00:54,Beauty,Face Serum,5666.5,4,5,21532.7,Cash on Delivery,Delivered,North,CUST0392,
+ORD100587,2025-07-22 06:44,Fashion,Cotton Kurta,4825.07,4,15,16405.24,Cash on Delivery,Delivered,East,CUST0046,4.0
+ORD100588,2025-07-22 08:08,Fashion,Denim Jacket,4628.98,4,5,17590.12,Wallet,Delivered,North,CUST0072,
+ORD100589,2025-07-22 13:36,Fashion,Denim Jacket,2835.81,5,0,14179.05,Wallet,Delivered,Central,CUST0059,4.0
+ORD100590,2025-07-22 14:44,Fashion,Denim Jacket,2381.17,5,20,0.0,UPI,Cancelled,West,CUST0476,4.0
+ORD100591,2025-07-23 03:39,Sports,Football,1130.08,2,15,1921.14,Wallet,Delivered,South,CUST0068,4.0
+ORD100592,2025-07-23 06:29,Electronics,USB-C Cable,7601.05,3,0,22803.15,UPI,Delivered,Central,CUST0474,
+ORD100593,2025-07-23 15:07,Grocery,Almonds 500g,4711.7,2,0,9423.4,Cash on Delivery,Returned,West,CUST0424,5.0
+ORD100594,2025-07-24 08:27,Beauty,Lipstick Combo,2952.41,2,5,5609.58,Credit Card,Returned,Central,CUST0383,
+ORD100595,2025-07-24 16:41,Electronics,Wireless Earbuds,341.65,4,0,1366.6,Credit Card,Delivered,South,CUST0179,4.0
+ORD100596,2025-07-24 21:50,Beauty,Sunscreen SPF50,2364.23,1,20,1891.38,Credit Card,Delivered,Central,CUST0393,4.0
+ORD100597,2025-07-25 00:00,Electronics,Smartwatch,3066.92,4,0,12267.68,Net Banking,Delivered,Central,CUST0217,
+ORD100598,2025-07-25 10:10,Grocery,Basmati Rice 5kg,2445.38,3,0,7336.14,Debit Card,Delivered,Central,CUST0370,5.0
+ORD100599,2025-07-25 23:13,Beauty,Lipstick Combo,1651.91,5,30,0.0,Cash on Delivery,Cancelled,West,CUST0264,
+ORD100600,2025-07-26 02:02,Grocery,Cooking Oil 1L,7854.94,1,0,0.0,Credit Card,Cancelled,Central,CUST0218,4.0
+ORD100601,2025-07-26 09:17,Fashion,Sunglasses,4958.28,4,10,17849.81,Credit Card,Delivered,West,CUST0335,5.0
+ORD100602,2025-07-26 09:29,Electronics,Smartwatch,6463.7,2,10,11634.66,UPI,Returned,West,CUST0478,4.0
+ORD100603,2025-07-27 03:57,Grocery,Basmati Rice 5kg,5506.89,4,10,19824.8,Net Banking,Delivered,West,CUST0445,3.0
+ORD100604,2025-07-27 08:18,Electronics,Bluetooth Speaker,5582.73,5,0,27913.65,Net Banking,Shipped,Central,CUST0303,5.0
+ORD100605,2025-07-27 12:43,Sports,Cricket Bat,6355.36,4,0,0.0,Debit Card,Cancelled,East,CUST0137,5.0
+ORD100606,2025-07-27 15:15,Home & Kitchen,Mixer Grinder,1869.67,4,5,7104.75,Debit Card,Returned,East,CUST0379,
+ORD100607,2025-07-28 00:17,Fashion,Sunglasses,568.64,2,0,1137.28,Credit Card,Processing,East,CUST0138,
+ORD100608,2025-07-28 02:58,Grocery,Honey Jar,6862.23,5,5,32595.59,Wallet,Returned,East,CUST0043,5.0
+ORD100609,2025-07-28 17:55,Fashion,Cotton Kurta,1081.45,2,15,1838.46,Debit Card,Delivered,South,CUST0367,2.0
+ORD100610,2025-07-29 02:21,Home & Kitchen,Air Fryer,7762.69,5,5,0.0,Cash on Delivery,Cancelled,North,CUST0050,3.0
+ORD100611,2025-07-29 20:36,Beauty,Hair Dryer,1665.35,2,0,3330.7,UPI,Delivered,West,CUST0202,4.0
+ORD100612,2025-07-30 06:57,Sports,Cricket Bat,6045.9,1,20,4836.72,Debit Card,Returned,West,CUST0038,4.0
+ORD100613,2025-07-30 08:55,Books,Business Biography,6053.55,3,0,18160.65,UPI,Delivered,Central,CUST0032,5.0
+ORD100614,2025-07-30 14:35,Books,Business Biography,5851.0,3,0,17553.0,Cash on Delivery,Processing,Central,CUST0456,4.0
+ORD100615,2025-07-30 20:19,Sports,Yoga Mat,7186.46,5,5,34135.68,Debit Card,Processing,East,CUST0184,
+ORD100616,2025-07-31 01:08,Sports,Dumbbell Set,7582.42,1,5,7203.3,Cash on Delivery,Delivered,Central,CUST0362,
+ORD100617,2025-07-31 04:49,Beauty,Face Serum,4269.94,3,5,12169.33,Debit Card,Shipped,Central,CUST0380,5.0
+ORD100618,2025-07-31 09:18,Sports,Football,3412.47,1,30,2388.73,Debit Card,Delivered,West,CUST0117,2.0
+ORD100619,2025-07-31 12:18,Sports,Dumbbell Set,1190.51,1,15,1011.93,Wallet,Delivered,Central,CUST0024,4.0
+ORD100620,2025-07-31 18:48,Grocery,Green Tea Pack,4645.03,3,0,13935.09,Cash on Delivery,Delivered,South,CUST0433,4.0
+ORD100621,2025-07-31 23:49,Grocery,Green Tea Pack,7927.07,5,5,37653.58,Debit Card,Returned,East,CUST0010,5.0
+ORD100622,2025-08-01 07:11,Beauty,Perfume 100ml,743.34,2,5,1412.35,Wallet,Shipped,North,CUST0262,3.0
+ORD100623,2025-08-01 09:27,Beauty,Sunscreen SPF50,6963.1,2,10,0.0,Wallet,Cancelled,North,CUST0309,4.0
+ORD100624,2025-08-01 10:24,Books,Self-Help Book,295.86,1,0,295.86,UPI,Delivered,North,CUST0112,
+ORD100625,2025-08-01 10:44,Fashion,Leather Wallet,3370.11,3,30,7077.23,Cash on Delivery,Processing,North,CUST0374,5.0
+ORD100626,2025-08-03 03:25,Grocery,Basmati Rice 5kg,5224.78,5,10,23511.51,Wallet,Processing,South,CUST0014,4.0
+ORD100627,2025-08-03 07:27,Books,Self-Help Book,5384.58,5,5,25576.76,Wallet,Delivered,West,CUST0142,4.0
+ORD100628,2025-08-03 17:59,Books,Cookbook,1103.16,2,5,0.0,Cash on Delivery,Cancelled,West,CUST0365,3.0
+ORD100629,2025-08-03 19:42,Sports,Dumbbell Set,1780.25,2,10,3204.45,Wallet,Shipped,East,CUST0431,1.0
+ORD100630,2025-08-03 22:03,Fashion,Cotton Kurta,1504.16,4,15,5114.14,UPI,Processing,North,CUST0064,
+ORD100631,2025-08-04 00:52,Grocery,Honey Jar,2467.04,5,5,11718.44,UPI,Shipped,Central,CUST0073,3.0
+ORD100632,2025-08-04 17:55,Sports,Resistance Bands,3083.52,4,5,11717.38,Credit Card,Shipped,South,CUST0101,5.0
+ORD100633,2025-08-05 00:26,Home & Kitchen,Non-stick Pan,7870.18,1,0,7870.18,Net Banking,Returned,North,CUST0366,3.0
+ORD100634,2025-08-05 08:31,Beauty,Hair Dryer,3043.36,5,5,14455.96,Net Banking,Delivered,North,CUST0021,
+ORD100635,2025-08-05 08:40,Fashion,Denim Jacket,3568.36,2,15,6066.21,Credit Card,Processing,Central,CUST0153,4.0
+ORD100636,2025-08-05 10:17,Fashion,Denim Jacket,3207.79,3,0,9623.37,Debit Card,Delivered,North,CUST0457,4.0
+ORD100637,2025-08-05 20:18,Grocery,Green Tea Pack,4488.74,4,10,16159.46,Debit Card,Shipped,West,CUST0289,4.0
+ORD100638,2025-08-05 23:01,Electronics,Smartwatch,4913.85,3,10,0.0,Debit Card,Cancelled,East,CUST0027,
+ORD100639,2025-08-06 01:13,Sports,Football,713.22,1,10,641.9,Net Banking,Delivered,West,CUST0066,4.0
+ORD100640,2025-08-06 13:43,Books,Fiction Novel,384.01,5,0,0.0,Credit Card,Cancelled,Central,CUST0223,
+ORD100641,2025-08-06 17:18,Home & Kitchen,LED Bulb Pack,6887.24,2,5,0.0,Wallet,Cancelled,North,CUST0063,3.0
+ORD100642,2025-08-06 19:30,Electronics,Wireless Earbuds,5491.26,4,10,19768.54,Net Banking,Delivered,West,CUST0461,
+ORD100643,2025-08-06 23:59,Home & Kitchen,Non-stick Pan,5810.24,3,0,17430.72,Debit Card,Delivered,East,CUST0123,
+ORD100644,2025-08-07 07:10,Grocery,Green Tea Pack,2895.96,5,15,12307.83,Cash on Delivery,Shipped,Central,CUST0315,
+ORD100645,2025-08-07 16:03,Books,Kids Storybook,2952.69,5,5,14025.28,Net Banking,Processing,East,CUST0391,
+ORD100646,2025-08-07 23:55,Books,Fiction Novel,2735.57,5,15,11626.17,Credit Card,Shipped,South,CUST0244,4.0
+ORD100647,2025-08-08 00:26,Beauty,Perfume 100ml,7309.08,3,10,19734.52,UPI,Delivered,Central,CUST0267,4.0
+ORD100648,2025-08-08 02:39,Fashion,Sunglasses,2941.84,3,0,8825.52,Cash on Delivery,Delivered,East,CUST0422,3.0
+ORD100649,2025-08-08 05:59,Home & Kitchen,Non-stick Pan,959.75,2,10,1727.55,Wallet,Delivered,South,CUST0243,4.0
+ORD100650,2025-08-09 11:00,Electronics,Smartwatch,6019.22,3,20,14446.13,Net Banking,Delivered,East,CUST0420,5.0
+ORD100651,2025-08-09 21:45,Books,Fiction Novel,7162.85,4,0,28651.4,Net Banking,Returned,Central,CUST0412,4.0
+ORD100652,2025-08-10 03:15,Electronics,Power Bank 20000mAh,1287.09,1,15,1094.03,Credit Card,Delivered,Central,CUST0012,5.0
+ORD100653,2025-08-10 14:14,Books,Kids Storybook,7857.26,5,10,35357.67,Debit Card,Delivered,North,CUST0205,2.0
+ORD100654,2025-08-10 16:15,Sports,Cricket Bat,1516.3,4,0,6065.2,UPI,Delivered,South,CUST0139,4.0
+ORD100655,2025-08-10 22:59,Home & Kitchen,Mixer Grinder,4807.75,4,20,15384.8,Net Banking,Processing,Central,CUST0219,
+ORD100656,2025-08-11 14:42,Grocery,Basmati Rice 5kg,1090.68,3,15,2781.23,Cash on Delivery,Delivered,South,CUST0337,
+ORD100657,2025-08-11 18:33,Books,Self-Help Book,4645.18,3,10,12541.99,Debit Card,Delivered,West,CUST0432,3.0
+ORD100658,2025-08-11 18:51,Beauty,Face Serum,2344.29,4,0,0.0,Cash on Delivery,Cancelled,South,CUST0400,3.0
+ORD100659,2025-08-11 20:52,Home & Kitchen,Non-stick Pan,1212.18,2,0,2424.36,UPI,Delivered,West,CUST0185,5.0
+ORD100660,2025-08-12 03:03,Home & Kitchen,Mixer Grinder,1573.31,2,0,3146.62,Wallet,Returned,West,CUST0469,5.0
+ORD100661,2025-08-12 18:39,Home & Kitchen,Air Fryer,2255.93,5,20,9023.72,Debit Card,Returned,West,CUST0242,5.0
+ORD100662,2025-08-12 23:08,Grocery,Honey Jar,6141.85,3,20,14740.44,Net Banking,Delivered,Central,CUST0172,
+ORD100663,2025-08-13 07:04,Electronics,Smartwatch,4340.42,2,15,7378.71,Credit Card,Shipped,Central,CUST0137,4.0
+ORD100664,2025-08-13 18:56,Beauty,Lipstick Combo,3483.2,5,20,13932.8,Net Banking,Delivered,West,CUST0273,
+ORD100665,2025-08-13 20:36,Grocery,Basmati Rice 5kg,7223.15,1,0,7223.15,Wallet,Delivered,West,CUST0399,
+ORD100666,2025-08-13 21:28,Books,Self-Help Book,1598.42,5,0,7992.1,Wallet,Delivered,North,CUST0475,5.0
+ORD100667,2025-08-14 03:42,Books,Kids Storybook,5103.82,5,0,25519.1,Debit Card,Delivered,East,CUST0183,
+ORD100668,2025-08-14 21:53,Grocery,Basmati Rice 5kg,7183.06,3,30,15084.43,UPI,Delivered,East,CUST0473,1.0
+ORD100669,2025-08-15 17:08,Grocery,Cooking Oil 1L,2712.98,2,0,5425.96,Wallet,Returned,West,CUST0233,
+ORD100670,2025-08-15 20:09,Electronics,Power Bank 20000mAh,993.65,2,10,1788.57,Debit Card,Delivered,North,CUST0386,4.0
+ORD100671,2025-08-16 01:07,Books,Kids Storybook,4910.17,4,0,0.0,Wallet,Cancelled,South,CUST0342,
+ORD100672,2025-08-17 00:29,Electronics,Smartwatch,2510.12,1,5,2384.61,Net Banking,Shipped,West,CUST0076,4.0
+ORD100673,2025-08-17 05:10,Home & Kitchen,Non-stick Pan,5991.03,5,20,23964.12,UPI,Delivered,Central,CUST0052,5.0
+ORD100674,2025-08-17 07:52,Grocery,Honey Jar,5721.98,2,0,11443.96,Credit Card,Shipped,Central,CUST0232,4.0
+ORD100675,2025-08-17 14:37,Electronics,Bluetooth Speaker,4817.6,3,0,14452.8,Debit Card,Returned,Central,CUST0387,3.0
+ORD100676,2025-08-17 20:29,Grocery,Almonds 500g,6322.41,3,0,18967.23,UPI,Returned,Central,CUST0117,5.0
+ORD100677,2025-08-18 22:11,Books,Self-Help Book,1789.79,5,5,8501.5,Cash on Delivery,Processing,West,CUST0298,5.0
+ORD100678,2025-08-19 00:33,Beauty,Hair Dryer,4974.97,3,5,14178.66,Debit Card,Delivered,North,CUST0193,
+ORD100679,2025-08-19 02:50,Fashion,Running Shoes,5141.79,4,0,20567.16,Cash on Delivery,Returned,South,CUST0026,5.0
+ORD100680,2025-08-19 02:59,Grocery,Almonds 500g,5268.72,2,30,7376.21,Net Banking,Delivered,East,CUST0382,4.0
+ORD100681,2025-08-19 14:12,Books,Cookbook,4765.35,3,15,12151.64,Credit Card,Delivered,West,CUST0169,5.0
+ORD100682,2025-08-19 18:34,Beauty,Perfume 100ml,4911.98,5,10,22103.91,Debit Card,Processing,North,CUST0311,5.0
+ORD100683,2025-08-19 21:45,Electronics,USB-C Cable,6674.51,1,15,5673.33,Wallet,Delivered,North,CUST0473,
+ORD100684,2025-08-20 11:44,Beauty,Perfume 100ml,7873.15,5,15,33460.89,UPI,Delivered,South,CUST0396,5.0
+ORD100685,2025-08-21 04:52,Books,Self-Help Book,7409.85,2,5,14078.72,Net Banking,Delivered,North,CUST0272,
+ORD100686,2025-08-21 12:32,Sports,Cricket Bat,5119.22,5,0,25596.1,Debit Card,Shipped,Central,CUST0219,
+ORD100687,2025-08-21 14:35,Fashion,Running Shoes,5201.75,5,5,24708.31,Debit Card,Shipped,South,CUST0397,5.0
+ORD100688,2025-08-21 15:08,Home & Kitchen,Mixer Grinder,6796.79,5,0,33983.95,Credit Card,Returned,South,CUST0011,
+ORD100689,2025-08-21 15:18,Home & Kitchen,Air Fryer,331.7,3,5,945.34,Cash on Delivery,Returned,Central,CUST0135,5.0
+ORD100690,2025-08-21 21:58,Sports,Dumbbell Set,6894.46,3,0,0.0,UPI,Cancelled,Central,CUST0173,4.0
+ORD100691,2025-08-21 22:36,Grocery,Basmati Rice 5kg,353.33,5,5,1678.32,Credit Card,Delivered,South,CUST0042,5.0
+ORD100692,2025-08-22 05:34,Home & Kitchen,LED Bulb Pack,4300.09,3,5,12255.26,Debit Card,Delivered,North,CUST0369,
+ORD100693,2025-08-22 11:51,Beauty,Lipstick Combo,1658.32,3,0,4974.96,Debit Card,Delivered,South,CUST0172,5.0
+ORD100694,2025-08-23 05:20,Home & Kitchen,Air Fryer,3599.62,2,10,0.0,Cash on Delivery,Cancelled,Central,CUST0195,4.0
+ORD100695,2025-08-23 06:11,Books,Cookbook,3478.0,4,0,13912.0,Debit Card,Returned,North,CUST0204,3.0
+ORD100696,2025-08-23 16:46,Sports,Yoga Mat,6643.56,3,0,19930.68,Cash on Delivery,Delivered,Central,CUST0452,
+ORD100697,2025-08-24 14:45,Electronics,Smartwatch,1560.2,2,10,0.0,Net Banking,Cancelled,East,CUST0383,5.0
+ORD100698,2025-08-24 14:50,Electronics,Wireless Earbuds,2543.16,4,0,10172.64,UPI,Shipped,Central,CUST0125,5.0
+ORD100699,2025-08-24 19:16,Beauty,Perfume 100ml,3142.35,2,15,5342.0,Debit Card,Delivered,South,CUST0123,4.0
+ORD100700,2025-08-25 01:29,Electronics,Power Bank 20000mAh,3794.17,4,15,12900.18,Net Banking,Processing,South,CUST0318,5.0
+ORD100701,2025-08-25 03:33,Grocery,Honey Jar,1006.98,5,15,4279.66,Wallet,Processing,Central,CUST0453,3.0
+ORD100702,2025-08-26 10:50,Fashion,Running Shoes,6128.17,3,15,15626.83,UPI,Delivered,North,CUST0149,3.0
+ORD100703,2025-08-26 13:14,Sports,Football,6202.41,3,5,17676.87,UPI,Shipped,Central,CUST0342,4.0
+ORD100704,2025-08-26 14:57,Grocery,Almonds 500g,2275.32,3,15,0.0,Wallet,Cancelled,North,CUST0340,
+ORD100705,2025-08-26 19:15,Books,Kids Storybook,5780.58,2,5,10983.1,Cash on Delivery,Delivered,West,CUST0498,2.0
+ORD100706,2025-08-27 02:16,Grocery,Almonds 500g,7600.69,3,5,21661.97,Wallet,Returned,North,CUST0095,
+ORD100707,2025-08-27 05:30,Electronics,Power Bank 20000mAh,4989.01,1,5,4739.56,Credit Card,Returned,West,CUST0019,
+ORD100708,2025-08-27 16:45,Home & Kitchen,Bedsheet Set,6109.08,1,10,5498.17,Debit Card,Processing,East,CUST0447,4.0
+ORD100709,2025-08-28 05:54,Home & Kitchen,Air Fryer,2888.01,5,15,12274.04,UPI,Shipped,North,CUST0030,5.0
+ORD100710,2025-08-29 02:07,Fashion,Leather Wallet,3614.98,2,5,6868.46,Wallet,Delivered,South,CUST0275,4.0
+ORD100711,2025-08-29 04:14,Fashion,Leather Wallet,758.18,1,10,682.36,Credit Card,Returned,North,CUST0357,
+ORD100712,2025-08-29 11:46,Beauty,Perfume 100ml,1647.78,3,20,3954.67,Debit Card,Delivered,West,CUST0116,5.0
+ORD100713,2025-08-29 13:38,Fashion,Denim Jacket,4167.59,4,0,16670.36,Wallet,Processing,East,CUST0065,
+ORD100714,2025-08-30 16:13,Fashion,Sunglasses,2807.58,5,10,12634.11,Wallet,Shipped,North,CUST0466,5.0
+ORD100715,2025-08-30 19:24,Fashion,Leather Wallet,2509.16,4,0,10036.64,UPI,Delivered,South,CUST0295,5.0
+ORD100716,2025-08-31 11:26,Beauty,Lipstick Combo,7372.12,5,10,33174.54,Wallet,Delivered,West,CUST0392,
+ORD100717,2025-08-31 15:32,Books,Cookbook,3573.75,4,0,14295.0,Net Banking,Delivered,West,CUST0093,5.0
+ORD100718,2025-08-31 16:24,Fashion,Cotton Kurta,7628.68,2,10,13731.62,UPI,Returned,South,CUST0003,2.0
+ORD100719,2025-08-31 20:18,Electronics,Bluetooth Speaker,2071.52,4,5,7871.78,Debit Card,Delivered,Central,CUST0018,3.0
+ORD100720,2025-09-01 01:32,Grocery,Cooking Oil 1L,4821.67,2,15,8196.84,Wallet,Delivered,East,CUST0033,
+ORD100721,2025-09-01 12:31,Fashion,Leather Wallet,6938.69,5,5,32958.78,Wallet,Delivered,East,CUST0249,4.0
+ORD100722,2025-09-02 06:15,Beauty,Sunscreen SPF50,3146.97,5,0,15734.85,Net Banking,Shipped,East,CUST0296,
+ORD100723,2025-09-02 08:58,Fashion,Running Shoes,6427.76,1,0,6427.76,Wallet,Returned,West,CUST0331,5.0
+ORD100724,2025-09-03 14:04,Electronics,Smartwatch,7754.71,2,10,13958.48,UPI,Processing,South,CUST0437,
+ORD100725,2025-09-03 15:00,Beauty,Perfume 100ml,3180.63,1,0,3180.63,Net Banking,Delivered,Central,CUST0245,5.0
+ORD100726,2025-09-03 16:56,Home & Kitchen,Mixer Grinder,458.49,2,5,871.13,Cash on Delivery,Delivered,North,CUST0150,
+ORD100727,2025-09-03 21:21,Beauty,Hair Dryer,3590.09,1,10,3231.08,Credit Card,Delivered,East,CUST0330,1.0
+ORD100728,2025-09-03 23:04,Grocery,Cooking Oil 1L,3690.77,4,0,14763.08,Cash on Delivery,Shipped,West,CUST0078,5.0
+ORD100729,2025-09-03 23:19,Sports,Football,6667.26,5,15,28335.86,Wallet,Delivered,Central,CUST0492,
+ORD100730,2025-09-04 08:32,Electronics,Bluetooth Speaker,5608.96,1,5,5328.51,Debit Card,Delivered,North,CUST0320,
+ORD100731,2025-09-04 19:53,Fashion,Denim Jacket,5252.27,5,0,26261.35,Wallet,Delivered,Central,CUST0265,4.0
+ORD100732,2025-09-05 19:28,Beauty,Sunscreen SPF50,7010.11,1,0,7010.11,UPI,Shipped,East,CUST0299,4.0
+ORD100733,2025-09-05 20:55,Home & Kitchen,Non-stick Pan,6159.87,3,10,16631.65,UPI,Processing,West,CUST0306,
+ORD100734,2025-09-06 08:55,Home & Kitchen,Mixer Grinder,2935.84,4,0,11743.36,Net Banking,Delivered,East,CUST0481,3.0
+ORD100735,2025-09-06 11:06,Fashion,Sunglasses,5179.43,5,5,24602.29,UPI,Delivered,South,CUST0250,5.0
+ORD100736,2025-09-06 15:59,Home & Kitchen,LED Bulb Pack,5863.37,1,5,5570.2,Cash on Delivery,Delivered,South,CUST0434,3.0
+ORD100737,2025-09-06 16:46,Grocery,Almonds 500g,3320.49,4,5,12617.86,UPI,Delivered,South,CUST0095,4.0
+ORD100738,2025-09-07 03:11,Fashion,Running Shoes,4941.73,5,10,22237.78,Net Banking,Delivered,East,CUST0224,1.0
+ORD100739,2025-09-07 12:50,Electronics,Wireless Earbuds,4914.08,3,10,13268.02,Net Banking,Processing,North,CUST0420,3.0
+ORD100740,2025-09-07 15:16,Books,Fiction Novel,3759.29,5,0,18796.45,Credit Card,Delivered,North,CUST0239,4.0
+ORD100741,2025-09-07 20:30,Home & Kitchen,LED Bulb Pack,2859.88,1,0,2859.88,Net Banking,Delivered,North,CUST0391,
+ORD100742,2025-09-08 08:23,Home & Kitchen,Bedsheet Set,1459.48,1,0,0.0,Debit Card,Cancelled,North,CUST0485,3.0
+ORD100743,2025-09-08 17:58,Beauty,Face Serum,2627.45,2,10,4729.41,Debit Card,Delivered,Central,CUST0179,3.0
+ORD100744,2025-09-08 19:11,Books,Business Biography,3008.93,2,20,4814.29,Credit Card,Delivered,North,CUST0065,4.0
+ORD100745,2025-09-09 18:53,Beauty,Perfume 100ml,2167.05,2,0,4334.1,UPI,Delivered,West,CUST0356,5.0
+ORD100746,2025-09-09 23:08,Sports,Resistance Bands,777.55,4,20,2488.16,Cash on Delivery,Delivered,North,CUST0207,5.0
+ORD100747,2025-09-10 01:42,Sports,Cricket Bat,6779.4,3,15,0.0,UPI,Cancelled,West,CUST0140,1.0
+ORD100748,2025-09-10 05:45,Beauty,Perfume 100ml,7026.63,5,0,35133.15,Net Banking,Processing,Central,CUST0150,
+ORD100749,2025-09-10 11:13,Fashion,Running Shoes,6726.85,5,0,33634.25,Wallet,Processing,East,CUST0110,4.0
+ORD100750,2025-09-11 00:20,Books,Business Biography,3088.9,4,15,10502.26,Wallet,Delivered,Central,CUST0334,
+ORD100751,2025-09-11 08:41,Fashion,Cotton Kurta,6062.41,1,0,6062.41,Wallet,Delivered,North,CUST0355,4.0
+ORD100752,2025-09-11 18:32,Grocery,Basmati Rice 5kg,3761.09,5,5,17865.18,Debit Card,Shipped,North,CUST0452,
+ORD100753,2025-09-11 20:47,Grocery,Almonds 500g,659.1,1,0,659.1,Net Banking,Delivered,North,CUST0072,3.0
+ORD100754,2025-09-12 05:53,Beauty,Hair Dryer,4418.02,3,10,11928.65,Net Banking,Delivered,West,CUST0365,4.0
+ORD100755,2025-09-12 06:54,Fashion,Leather Wallet,2620.78,1,20,2096.62,Cash on Delivery,Returned,West,CUST0252,4.0
+ORD100756,2025-09-12 14:35,Electronics,Bluetooth Speaker,4594.85,5,0,22974.25,UPI,Processing,East,CUST0386,
+ORD100757,2025-09-12 19:30,Books,Business Biography,3568.93,3,0,10706.79,Wallet,Delivered,Central,CUST0253,
+ORD100758,2025-09-13 12:11,Grocery,Honey Jar,7634.21,3,5,21757.5,Cash on Delivery,Processing,South,CUST0032,5.0
+ORD100759,2025-09-14 11:18,Beauty,Lipstick Combo,5101.86,5,0,25509.3,Wallet,Shipped,South,CUST0285,5.0
+ORD100760,2025-09-15 08:52,Beauty,Perfume 100ml,4510.44,4,5,17139.67,Cash on Delivery,Returned,West,CUST0262,3.0
+ORD100761,2025-09-15 18:37,Sports,Dumbbell Set,1823.01,5,10,8203.54,Debit Card,Processing,North,CUST0198,5.0
+ORD100762,2025-09-15 19:00,Grocery,Honey Jar,236.34,1,5,224.52,Debit Card,Delivered,Central,CUST0425,5.0
+ORD100763,2025-09-16 21:37,Sports,Dumbbell Set,1422.74,1,0,1422.74,UPI,Shipped,North,CUST0470,5.0
+ORD100764,2025-09-16 23:22,Fashion,Leather Wallet,3660.65,3,0,0.0,UPI,Cancelled,East,CUST0012,
+ORD100765,2025-09-18 11:40,Grocery,Honey Jar,960.27,4,0,0.0,UPI,Cancelled,North,CUST0348,3.0
+ORD100766,2025-09-18 15:44,Sports,Football,7506.65,2,0,15013.3,Credit Card,Returned,Central,CUST0105,5.0
+ORD100767,2025-09-18 16:28,Electronics,Power Bank 20000mAh,4118.33,3,0,12354.99,Net Banking,Returned,West,CUST0389,4.0
+ORD100768,2025-09-18 17:59,Grocery,Green Tea Pack,5809.32,4,5,22075.42,UPI,Delivered,East,CUST0229,4.0
+ORD100769,2025-09-19 13:20,Books,Kids Storybook,5704.02,5,0,28520.1,Cash on Delivery,Delivered,North,CUST0082,3.0
+ORD100770,2025-09-19 14:26,Books,Kids Storybook,3689.46,4,0,14757.84,Cash on Delivery,Returned,South,CUST0485,4.0
+ORD100771,2025-09-19 16:29,Beauty,Hair Dryer,5966.5,3,0,17899.5,Cash on Delivery,Delivered,West,CUST0129,
+ORD100772,2025-09-19 18:25,Sports,Dumbbell Set,2525.45,2,15,4293.26,UPI,Delivered,East,CUST0480,5.0
+ORD100773,2025-09-20 00:48,Home & Kitchen,LED Bulb Pack,2832.68,2,0,5665.36,Credit Card,Delivered,Central,CUST0277,5.0
+ORD100774,2025-09-20 11:20,Electronics,Smartwatch,449.03,5,0,2245.15,Credit Card,Returned,Central,CUST0228,5.0
+ORD100775,2025-09-20 12:54,Electronics,Smartwatch,4331.17,1,20,3464.94,UPI,Shipped,West,CUST0303,4.0
+ORD100776,2025-09-20 17:12,Fashion,Sunglasses,7984.04,4,5,30339.35,UPI,Delivered,West,CUST0114,2.0
+ORD100777,2025-09-20 20:40,Beauty,Hair Dryer,3517.38,1,10,3165.64,Net Banking,Shipped,Central,CUST0079,5.0
+ORD100778,2025-09-20 23:44,Home & Kitchen,Non-stick Pan,4161.17,5,10,18725.26,Cash on Delivery,Processing,Central,CUST0354,5.0
+ORD100779,2025-09-21 00:43,Sports,Dumbbell Set,3014.97,3,20,7235.93,UPI,Shipped,North,CUST0372,2.0
+ORD100780,2025-09-21 14:25,Sports,Football,1691.02,3,5,4819.41,Wallet,Shipped,West,CUST0100,
+ORD100781,2025-09-22 05:08,Electronics,Bluetooth Speaker,5583.9,2,0,0.0,Wallet,Cancelled,Central,CUST0089,
+ORD100782,2025-09-22 06:21,Grocery,Basmati Rice 5kg,7494.19,1,10,6744.77,Cash on Delivery,Processing,East,CUST0475,4.0
+ORD100783,2025-09-22 18:16,Home & Kitchen,Mixer Grinder,5933.57,4,0,23734.28,UPI,Delivered,Central,CUST0318,4.0
+ORD100784,2025-09-23 01:57,Fashion,Sunglasses,7546.28,4,10,27166.61,Debit Card,Processing,West,CUST0162,3.0
+ORD100785,2025-09-23 19:30,Electronics,Bluetooth Speaker,530.7,5,20,2122.8,Credit Card,Returned,East,CUST0322,5.0
+ORD100786,2025-09-24 10:10,Books,Kids Storybook,1389.09,3,0,0.0,Debit Card,Cancelled,Central,CUST0495,5.0
+ORD100787,2025-09-24 14:22,Books,Kids Storybook,4211.43,2,30,5896.0,Net Banking,Returned,North,CUST0139,5.0
+ORD100788,2025-09-24 22:13,Electronics,Bluetooth Speaker,6389.92,1,10,5750.93,Cash on Delivery,Delivered,South,CUST0001,
+ORD100789,2025-09-25 12:33,Sports,Yoga Mat,954.39,4,0,3817.56,Credit Card,Shipped,North,CUST0422,5.0
+ORD100790,2025-09-25 16:53,Books,Self-Help Book,3721.43,4,0,14885.72,UPI,Delivered,East,CUST0132,5.0
+ORD100791,2025-09-26 01:47,Books,Cookbook,1259.8,3,10,3401.46,Net Banking,Returned,Central,CUST0101,
+ORD100792,2025-09-27 10:11,Grocery,Almonds 500g,2622.91,1,20,2098.33,Wallet,Returned,West,CUST0104,4.0
+ORD100793,2025-09-27 13:01,Sports,Yoga Mat,4881.69,2,0,9763.38,Cash on Delivery,Delivered,West,CUST0493,3.0
+ORD100794,2025-09-28 03:31,Grocery,Cooking Oil 1L,6615.06,3,10,17860.66,Cash on Delivery,Processing,South,CUST0215,5.0
+ORD100795,2025-09-28 18:05,Beauty,Sunscreen SPF50,7227.95,3,10,0.0,Net Banking,Cancelled,Central,CUST0101,5.0
+ORD100796,2025-09-29 00:10,Fashion,Cotton Kurta,6630.59,1,5,6299.06,UPI,Delivered,Central,CUST0038,5.0
+ORD100797,2025-09-29 02:38,Electronics,USB-C Cable,2827.2,1,0,2827.2,Cash on Delivery,Processing,North,CUST0064,
+ORD100798,2025-09-29 04:36,Books,Business Biography,6707.85,1,10,6037.06,Net Banking,Processing,South,CUST0132,
+ORD100799,2025-09-29 04:51,Home & Kitchen,Bedsheet Set,2257.79,4,10,8128.04,Net Banking,Delivered,North,CUST0351,4.0
+ORD100800,2025-09-29 07:37,Electronics,Smartwatch,157.57,3,15,401.8,Net Banking,Delivered,North,CUST0182,
+ORD100801,2025-09-29 16:49,Electronics,Smartwatch,6977.38,4,5,26514.04,Debit Card,Shipped,Central,CUST0023,
+ORD100802,2025-09-29 20:28,Electronics,Smartwatch,7806.24,4,5,29663.71,Net Banking,Delivered,West,CUST0048,2.0
+ORD100803,2025-09-29 22:11,Home & Kitchen,Non-stick Pan,5075.36,2,0,0.0,Cash on Delivery,Cancelled,South,CUST0373,
+ORD100804,2025-09-30 06:20,Sports,Yoga Mat,629.69,1,10,566.72,Net Banking,Delivered,East,CUST0280,5.0
+ORD100805,2025-09-30 12:57,Fashion,Running Shoes,719.25,1,15,611.36,Net Banking,Processing,Central,CUST0109,4.0
+ORD100806,2025-09-30 14:07,Sports,Football,1064.71,1,0,1064.71,Cash on Delivery,Delivered,East,CUST0444,4.0
+ORD100807,2025-09-30 16:31,Fashion,Leather Wallet,4159.42,2,10,7486.96,Cash on Delivery,Delivered,Central,CUST0453,4.0
+ORD100808,2025-09-30 19:05,Beauty,Face Serum,1420.35,3,10,3834.94,UPI,Returned,West,CUST0346,
+ORD100809,2025-09-30 22:45,Electronics,Bluetooth Speaker,1332.64,4,0,0.0,Cash on Delivery,Cancelled,North,CUST0255,1.0
+ORD100810,2025-09-30 23:39,Books,Kids Storybook,3967.23,3,0,11901.69,Debit Card,Returned,West,CUST0188,4.0
+ORD100811,2025-10-03 03:36,Sports,Cricket Bat,3606.86,3,0,10820.58,Net Banking,Processing,East,CUST0402,4.0
+ORD100812,2025-10-03 06:33,Home & Kitchen,Air Fryer,6298.62,4,0,25194.48,UPI,Delivered,North,CUST0034,4.0
+ORD100813,2025-10-03 09:37,Sports,Yoga Mat,5769.61,3,5,16443.39,Net Banking,Delivered,West,CUST0309,3.0
+ORD100814,2025-10-03 12:36,Home & Kitchen,Bedsheet Set,5418.09,2,10,9752.56,Wallet,Delivered,North,CUST0106,4.0
+ORD100815,2025-10-03 13:55,Grocery,Honey Jar,1220.38,5,0,6101.9,Cash on Delivery,Returned,South,CUST0137,5.0
+ORD100816,2025-10-03 17:06,Fashion,Cotton Kurta,7564.82,2,0,15129.64,Net Banking,Shipped,West,CUST0016,1.0
+ORD100817,2025-10-04 04:39,Fashion,Sunglasses,7102.15,4,0,28408.6,Credit Card,Processing,East,CUST0121,
+ORD100818,2025-10-05 04:21,Fashion,Running Shoes,4139.25,3,30,0.0,Debit Card,Cancelled,Central,CUST0041,4.0
+ORD100819,2025-10-05 08:21,Sports,Football,7386.12,1,15,6278.2,Cash on Delivery,Processing,East,CUST0283,
+ORD100820,2025-10-05 12:06,Home & Kitchen,Non-stick Pan,6925.6,2,5,13158.64,UPI,Delivered,East,CUST0215,3.0
+ORD100821,2025-10-05 16:47,Electronics,Bluetooth Speaker,7012.47,2,10,0.0,Cash on Delivery,Cancelled,South,CUST0142,
+ORD100822,2025-10-05 22:29,Electronics,Power Bank 20000mAh,7686.14,4,15,26132.88,Cash on Delivery,Returned,South,CUST0376,4.0
+ORD100823,2025-10-06 04:52,Electronics,Wireless Earbuds,3688.93,5,10,16600.18,Credit Card,Delivered,East,CUST0152,4.0
+ORD100824,2025-10-06 13:37,Grocery,Almonds 500g,5844.51,2,5,0.0,Debit Card,Cancelled,South,CUST0078,
+ORD100825,2025-10-06 19:10,Fashion,Sunglasses,6417.0,1,0,6417.0,Debit Card,Processing,North,CUST0378,5.0
+ORD100826,2025-10-07 05:58,Home & Kitchen,Air Fryer,3794.46,2,20,6071.14,Wallet,Shipped,East,CUST0341,4.0
+ORD100827,2025-10-07 06:53,Electronics,Smartwatch,875.0,3,0,2625.0,Net Banking,Delivered,West,CUST0252,
+ORD100828,2025-10-07 18:36,Sports,Cricket Bat,7466.08,2,10,13438.94,Debit Card,Delivered,West,CUST0125,4.0
+ORD100829,2025-10-07 19:36,Sports,Football,4369.28,3,10,11797.06,Debit Card,Returned,Central,CUST0277,4.0
+ORD100830,2025-10-08 11:12,Electronics,USB-C Cable,4457.48,2,0,8914.96,Debit Card,Delivered,Central,CUST0482,
+ORD100831,2025-10-08 18:40,Fashion,Sunglasses,4944.93,3,0,14834.79,UPI,Delivered,West,CUST0432,
+ORD100832,2025-10-09 14:26,Electronics,Power Bank 20000mAh,2586.35,3,0,0.0,Debit Card,Cancelled,East,CUST0441,4.0
+ORD100833,2025-10-09 14:51,Home & Kitchen,Mixer Grinder,4104.39,1,15,3488.73,Net Banking,Delivered,East,CUST0188,
+ORD100834,2025-10-10 00:27,Sports,Dumbbell Set,7590.72,4,0,30362.88,Credit Card,Returned,East,CUST0450,5.0
+ORD100835,2025-10-10 02:40,Sports,Dumbbell Set,1972.29,2,15,3352.89,Wallet,Delivered,West,CUST0099,1.0
+ORD100836,2025-10-10 02:48,Sports,Resistance Bands,3773.65,5,5,17924.84,Net Banking,Processing,North,CUST0071,5.0
+ORD100837,2025-10-10 18:48,Grocery,Almonds 500g,1629.05,2,10,2932.29,Net Banking,Returned,North,CUST0351,4.0
+ORD100838,2025-10-11 16:16,Electronics,Smartwatch,574.21,3,10,1550.37,Cash on Delivery,Processing,West,CUST0309,5.0
+ORD100839,2025-10-11 18:18,Books,Cookbook,4596.16,2,0,9192.32,Wallet,Shipped,Central,CUST0213,
+ORD100840,2025-10-11 22:11,Beauty,Perfume 100ml,3341.51,2,0,6683.02,Debit Card,Delivered,Central,CUST0098,2.0
+ORD100841,2025-10-11 22:58,Grocery,Cooking Oil 1L,7117.57,2,5,13523.38,Credit Card,Returned,North,CUST0426,
+ORD100842,2025-10-12 03:51,Electronics,Wireless Earbuds,6744.99,3,15,17199.72,Credit Card,Delivered,East,CUST0133,3.0
+ORD100843,2025-10-12 04:01,Electronics,Bluetooth Speaker,6975.24,4,10,0.0,Net Banking,Cancelled,Central,CUST0382,5.0
+ORD100844,2025-10-12 17:33,Fashion,Running Shoes,4233.41,3,10,11430.21,Wallet,Delivered,Central,CUST0273,5.0
+ORD100845,2025-10-12 21:55,Electronics,USB-C Cable,1347.66,3,10,3638.68,Wallet,Delivered,West,CUST0455,4.0
+ORD100846,2025-10-13 03:52,Fashion,Cotton Kurta,7593.79,5,0,0.0,UPI,Cancelled,East,CUST0418,4.0
+ORD100847,2025-10-13 05:54,Sports,Resistance Bands,7221.91,1,10,6499.72,UPI,Returned,West,CUST0294,2.0
+ORD100848,2025-10-13 08:10,Electronics,Bluetooth Speaker,1803.08,5,5,8564.63,Net Banking,Processing,North,CUST0469,4.0
+ORD100849,2025-10-13 21:08,Fashion,Sunglasses,6261.66,5,0,31308.3,Wallet,Delivered,West,CUST0459,3.0
+ORD100850,2025-10-13 23:43,Books,Kids Storybook,7353.9,3,5,20958.61,Cash on Delivery,Shipped,West,CUST0250,3.0
+ORD100851,2025-10-14 01:58,Electronics,USB-C Cable,7190.09,1,5,6830.59,Debit Card,Returned,South,CUST0440,
+ORD100852,2025-10-14 04:42,Grocery,Basmati Rice 5kg,3243.26,2,10,5837.87,Wallet,Delivered,North,CUST0399,4.0
+ORD100853,2025-10-15 10:42,Sports,Cricket Bat,1879.09,3,10,5073.54,UPI,Delivered,Central,CUST0183,5.0
+ORD100854,2025-10-15 14:56,Books,Fiction Novel,6823.68,2,20,0.0,Debit Card,Cancelled,South,CUST0076,4.0
+ORD100855,2025-10-15 21:33,Beauty,Perfume 100ml,6023.32,3,30,0.0,Credit Card,Cancelled,East,CUST0334,5.0
+ORD100856,2025-10-16 15:46,Beauty,Sunscreen SPF50,314.73,1,0,314.73,UPI,Delivered,West,CUST0021,4.0
+ORD100857,2025-10-17 05:52,Electronics,Power Bank 20000mAh,7505.96,4,0,30023.84,Debit Card,Delivered,West,CUST0402,5.0
+ORD100858,2025-10-17 14:53,Grocery,Cooking Oil 1L,7622.29,5,0,38111.45,Net Banking,Delivered,South,CUST0085,3.0
+ORD100859,2025-10-18 02:06,Electronics,USB-C Cable,6639.46,1,0,6639.46,UPI,Delivered,West,CUST0393,5.0
+ORD100860,2025-10-18 02:13,Home & Kitchen,Mixer Grinder,616.31,2,0,1232.62,Cash on Delivery,Processing,North,CUST0057,5.0
+ORD100861,2025-10-18 05:47,Grocery,Basmati Rice 5kg,901.49,4,10,0.0,Net Banking,Cancelled,North,CUST0182,
+ORD100862,2025-10-18 10:11,Fashion,Running Shoes,5052.65,3,10,13642.16,Wallet,Processing,East,CUST0337,5.0
+ORD100863,2025-10-18 20:40,Sports,Football,1402.0,2,5,2663.8,Net Banking,Shipped,Central,CUST0161,4.0
+ORD100864,2025-10-19 06:18,Grocery,Green Tea Pack,3796.14,1,10,3416.53,Debit Card,Delivered,West,CUST0393,
+ORD100865,2025-10-19 08:14,Beauty,Perfume 100ml,7122.44,2,15,12108.15,UPI,Processing,North,CUST0316,5.0
+ORD100866,2025-10-20 00:08,Books,Self-Help Book,7773.92,2,0,15547.84,Net Banking,Shipped,Central,CUST0411,4.0
+ORD100867,2025-10-20 18:38,Electronics,Smartwatch,1525.3,1,0,1525.3,Wallet,Delivered,East,CUST0457,4.0
+ORD100868,2025-10-20 19:12,Grocery,Basmati Rice 5kg,3874.22,5,10,17433.99,Wallet,Returned,South,CUST0227,5.0
+ORD100869,2025-10-21 20:16,Grocery,Honey Jar,3842.61,5,10,17291.74,UPI,Delivered,North,CUST0098,4.0
+ORD100870,2025-10-21 23:57,Beauty,Lipstick Combo,287.79,4,0,1151.16,Wallet,Processing,West,CUST0115,4.0
+ORD100871,2025-10-22 13:48,Electronics,Smartwatch,7178.26,2,10,12920.87,Debit Card,Delivered,North,CUST0486,5.0
+ORD100872,2025-10-22 18:31,Fashion,Denim Jacket,5606.13,2,0,11212.26,Cash on Delivery,Delivered,South,CUST0486,3.0
+ORD100873,2025-10-23 02:17,Fashion,Leather Wallet,2795.71,5,15,11881.77,Credit Card,Delivered,Central,CUST0249,
+ORD100874,2025-10-23 18:30,Grocery,Almonds 500g,245.28,4,0,981.12,Wallet,Shipped,East,CUST0103,
+ORD100875,2025-10-24 02:10,Electronics,Smartwatch,5373.32,4,10,19343.95,UPI,Returned,North,CUST0377,5.0
+ORD100876,2025-10-24 04:23,Grocery,Cooking Oil 1L,7313.58,2,10,0.0,Wallet,Cancelled,Central,CUST0280,4.0
+ORD100877,2025-10-24 21:12,Electronics,Bluetooth Speaker,7741.3,1,0,7741.3,Wallet,Shipped,South,CUST0399,
+ORD100878,2025-10-25 12:30,Grocery,Honey Jar,2657.07,5,15,11292.55,Wallet,Delivered,West,CUST0357,4.0
+ORD100879,2025-10-25 14:42,Fashion,Denim Jacket,5040.36,1,5,4788.34,Wallet,Processing,South,CUST0403,5.0
+ORD100880,2025-10-26 04:53,Grocery,Almonds 500g,6039.32,5,10,27176.94,Credit Card,Delivered,South,CUST0481,5.0
+ORD100881,2025-10-26 09:54,Beauty,Hair Dryer,1600.49,1,5,1520.47,Credit Card,Shipped,West,CUST0404,
+ORD100882,2025-10-26 12:38,Electronics,Bluetooth Speaker,969.65,4,5,0.0,Wallet,Cancelled,West,CUST0222,
+ORD100883,2025-10-26 18:29,Electronics,Smartwatch,2835.59,1,30,1984.91,Net Banking,Processing,North,CUST0496,5.0
+ORD100884,2025-10-26 23:38,Books,Cookbook,2384.17,4,5,9059.85,Credit Card,Processing,Central,CUST0260,3.0
+ORD100885,2025-10-27 00:26,Fashion,Cotton Kurta,294.45,2,5,559.45,Credit Card,Delivered,Central,CUST0260,5.0
+ORD100886,2025-10-27 02:04,Beauty,Perfume 100ml,1847.61,4,5,0.0,Debit Card,Cancelled,West,CUST0402,3.0
+ORD100887,2025-10-27 13:56,Books,Fiction Novel,518.59,5,0,2592.95,Debit Card,Processing,West,CUST0165,3.0
+ORD100888,2025-10-27 15:29,Electronics,Bluetooth Speaker,4426.49,5,0,0.0,UPI,Cancelled,Central,CUST0381,
+ORD100889,2025-10-28 02:41,Beauty,Hair Dryer,5704.29,3,30,11979.01,UPI,Shipped,North,CUST0139,
+ORD100890,2025-10-29 07:12,Grocery,Honey Jar,4625.23,4,0,18500.92,Net Banking,Returned,Central,CUST0271,
+ORD100891,2025-10-29 12:44,Beauty,Face Serum,2440.2,2,0,4880.4,UPI,Shipped,North,CUST0310,4.0
+ORD100892,2025-10-29 17:20,Sports,Yoga Mat,5075.79,1,0,5075.79,Net Banking,Returned,North,CUST0149,2.0
+ORD100893,2025-10-29 20:02,Grocery,Green Tea Pack,3227.41,1,0,3227.41,Cash on Delivery,Processing,South,CUST0254,4.0
+ORD100894,2025-10-30 00:26,Beauty,Hair Dryer,4031.29,1,30,2821.9,Net Banking,Delivered,West,CUST0149,
+ORD100895,2025-10-30 11:07,Sports,Resistance Bands,6018.01,4,0,24072.04,UPI,Returned,Central,CUST0282,5.0
+ORD100896,2025-10-30 17:14,Home & Kitchen,Non-stick Pan,5875.95,1,20,4700.76,Cash on Delivery,Returned,East,CUST0362,3.0
+ORD100897,2025-10-31 08:24,Books,Fiction Novel,1104.66,3,5,3148.28,Cash on Delivery,Delivered,Central,CUST0406,4.0
+ORD100898,2025-10-31 14:50,Books,Business Biography,3400.12,3,0,0.0,Cash on Delivery,Cancelled,West,CUST0162,2.0
+ORD100899,2025-10-31 18:54,Electronics,USB-C Cable,171.42,4,0,685.68,Credit Card,Delivered,West,CUST0428,
+ORD100900,2025-10-31 21:42,Home & Kitchen,Air Fryer,397.8,4,5,1511.64,Wallet,Shipped,South,CUST0408,3.0
+ORD100901,2025-11-01 01:53,Beauty,Sunscreen SPF50,170.97,5,15,0.0,Debit Card,Cancelled,North,CUST0252,4.0
+ORD100902,2025-11-01 12:30,Beauty,Hair Dryer,2675.9,3,0,8027.7,Wallet,Delivered,East,CUST0007,5.0
+ORD100903,2025-11-02 01:46,Beauty,Sunscreen SPF50,3339.23,4,15,11353.38,Net Banking,Returned,Central,CUST0492,3.0
+ORD100904,2025-11-02 03:21,Sports,Cricket Bat,6232.65,5,0,31163.25,Cash on Delivery,Shipped,Central,CUST0064,3.0
+ORD100905,2025-11-02 14:26,Sports,Cricket Bat,4961.46,1,20,3969.17,Debit Card,Shipped,East,CUST0052,
+ORD100906,2025-11-03 00:03,Books,Business Biography,321.92,4,10,1158.91,Net Banking,Delivered,South,CUST0462,3.0
+ORD100907,2025-11-03 08:33,Sports,Yoga Mat,1581.28,2,10,2846.3,Wallet,Shipped,West,CUST0469,2.0
+ORD100908,2025-11-04 17:47,Home & Kitchen,Mixer Grinder,5504.69,1,5,5229.46,Cash on Delivery,Processing,North,CUST0230,5.0
+ORD100909,2025-11-05 01:55,Grocery,Green Tea Pack,5074.12,3,0,15222.36,Net Banking,Shipped,North,CUST0299,3.0
+ORD100910,2025-11-05 08:03,Sports,Resistance Bands,7619.61,2,30,10667.45,Cash on Delivery,Delivered,Central,CUST0117,
+ORD100911,2025-11-05 13:22,Fashion,Leather Wallet,948.86,1,15,806.53,Net Banking,Shipped,South,CUST0255,3.0
+ORD100912,2025-11-05 14:29,Fashion,Running Shoes,5275.05,2,0,10550.1,Cash on Delivery,Delivered,North,CUST0241,4.0
+ORD100913,2025-11-05 17:50,Sports,Resistance Bands,3607.55,1,5,3427.17,Credit Card,Shipped,North,CUST0041,5.0
+ORD100914,2025-11-06 02:26,Sports,Resistance Bands,7554.03,1,15,6420.93,Credit Card,Delivered,South,CUST0206,
+ORD100915,2025-11-06 05:42,Grocery,Basmati Rice 5kg,1824.96,1,20,1459.97,Net Banking,Delivered,East,CUST0143,5.0
+ORD100916,2025-11-06 12:24,Grocery,Honey Jar,3993.55,3,5,11381.62,Cash on Delivery,Returned,Central,CUST0255,2.0
+ORD100917,2025-11-07 00:53,Fashion,Leather Wallet,2308.8,5,5,10966.8,Cash on Delivery,Delivered,South,CUST0006,4.0
+ORD100918,2025-11-07 03:44,Electronics,Wireless Earbuds,6875.6,1,20,5500.48,UPI,Returned,South,CUST0082,4.0
+ORD100919,2025-11-07 12:48,Books,Business Biography,7886.03,2,10,14194.85,Credit Card,Shipped,Central,CUST0371,5.0
+ORD100920,2025-11-07 15:58,Books,Cookbook,5087.89,2,10,9158.2,Debit Card,Delivered,Central,CUST0282,
+ORD100921,2025-11-07 20:10,Fashion,Sunglasses,917.31,1,0,917.31,Cash on Delivery,Delivered,East,CUST0487,5.0
+ORD100922,2025-11-07 20:19,Grocery,Almonds 500g,2169.02,5,20,8676.08,Net Banking,Delivered,Central,CUST0216,4.0
+ORD100923,2025-11-08 03:43,Home & Kitchen,Air Fryer,3151.03,4,0,12604.12,Cash on Delivery,Returned,South,CUST0438,4.0
+ORD100924,2025-11-08 08:25,Beauty,Lipstick Combo,6152.39,5,0,30761.95,Cash on Delivery,Delivered,East,CUST0066,5.0
+ORD100925,2025-11-08 12:59,Beauty,Lipstick Combo,7269.53,4,5,27624.21,Debit Card,Shipped,North,CUST0131,4.0
+ORD100926,2025-11-08 15:19,Grocery,Basmati Rice 5kg,5566.08,2,15,9462.34,UPI,Delivered,East,CUST0113,5.0
+ORD100927,2025-11-09 13:53,Electronics,Wireless Earbuds,3965.01,3,0,11895.03,Debit Card,Delivered,West,CUST0489,
+ORD100928,2025-11-09 20:10,Beauty,Hair Dryer,4794.76,5,5,22775.11,Wallet,Delivered,North,CUST0070,5.0
+ORD100929,2025-11-10 01:50,Sports,Yoga Mat,3214.67,2,10,5786.41,Credit Card,Delivered,Central,CUST0057,5.0
+ORD100930,2025-11-10 08:14,Fashion,Leather Wallet,1428.23,2,5,2713.64,Cash on Delivery,Delivered,West,CUST0361,
+ORD100931,2025-11-10 14:19,Beauty,Lipstick Combo,1641.64,2,5,3119.12,Cash on Delivery,Delivered,North,CUST0197,4.0
+ORD100932,2025-11-11 05:45,Books,Cookbook,3120.74,4,0,12482.96,Debit Card,Delivered,Central,CUST0343,4.0
+ORD100933,2025-11-11 07:29,Beauty,Lipstick Combo,5201.2,3,0,15603.6,Wallet,Returned,South,CUST0273,4.0
+ORD100934,2025-11-12 00:48,Sports,Football,3123.09,5,5,14834.68,Credit Card,Delivered,North,CUST0266,5.0
+ORD100935,2025-11-12 05:53,Beauty,Lipstick Combo,4289.2,4,0,17156.8,UPI,Delivered,East,CUST0397,5.0
+ORD100936,2025-11-12 21:45,Electronics,USB-C Cable,7384.43,2,0,14768.86,UPI,Returned,West,CUST0495,5.0
+ORD100937,2025-11-13 06:32,Sports,Cricket Bat,5792.89,4,0,23171.56,Net Banking,Returned,East,CUST0063,4.0
+ORD100938,2025-11-14 23:20,Grocery,Basmati Rice 5kg,6882.53,3,5,19615.21,Net Banking,Delivered,Central,CUST0362,3.0
+ORD100939,2025-11-15 20:26,Beauty,Hair Dryer,6449.97,2,20,10319.95,UPI,Delivered,South,CUST0474,
+ORD100940,2025-11-17 19:17,Electronics,Wireless Earbuds,6721.83,1,0,6721.83,UPI,Processing,East,CUST0137,
+ORD100941,2025-11-18 15:03,Beauty,Hair Dryer,3620.31,5,15,15386.32,Wallet,Returned,North,CUST0286,3.0
+ORD100942,2025-11-18 15:17,Home & Kitchen,Air Fryer,2565.38,2,5,4874.22,Credit Card,Delivered,East,CUST0296,
+ORD100943,2025-11-19 09:33,Fashion,Running Shoes,6666.63,3,10,17999.9,UPI,Processing,South,CUST0294,4.0
+ORD100944,2025-11-19 11:22,Fashion,Leather Wallet,4995.54,5,10,0.0,UPI,Cancelled,North,CUST0148,5.0
+ORD100945,2025-11-19 22:08,Home & Kitchen,Bedsheet Set,511.37,5,5,2429.01,Wallet,Delivered,South,CUST0103,
+ORD100946,2025-11-20 12:40,Sports,Football,3055.46,2,20,0.0,Credit Card,Cancelled,Central,CUST0445,
+ORD100947,2025-11-21 02:35,Sports,Cricket Bat,2564.96,5,0,12824.8,UPI,Delivered,Central,CUST0475,4.0
+ORD100948,2025-11-21 11:36,Fashion,Denim Jacket,1435.17,1,0,1435.17,Net Banking,Shipped,South,CUST0015,2.0
+ORD100949,2025-11-21 17:19,Electronics,Power Bank 20000mAh,5729.57,1,5,0.0,Credit Card,Cancelled,South,CUST0041,
+ORD100950,2025-11-22 01:12,Sports,Cricket Bat,2218.98,2,0,4437.96,Debit Card,Delivered,West,CUST0209,3.0
+ORD100951,2025-11-22 05:29,Grocery,Basmati Rice 5kg,4948.35,4,0,19793.4,Credit Card,Returned,South,CUST0265,
+ORD100952,2025-11-23 18:09,Home & Kitchen,Bedsheet Set,2336.89,5,0,0.0,Net Banking,Cancelled,West,CUST0243,3.0
+ORD100953,2025-11-24 10:29,Beauty,Face Serum,7421.95,1,10,6679.76,Debit Card,Delivered,South,CUST0293,
+ORD100954,2025-11-24 18:29,Electronics,Bluetooth Speaker,5105.28,3,0,15315.84,Wallet,Shipped,West,CUST0365,
+ORD100955,2025-11-25 05:05,Grocery,Green Tea Pack,501.3,5,0,2506.5,Cash on Delivery,Processing,North,CUST0465,5.0
+ORD100956,2025-11-25 06:31,Electronics,USB-C Cable,6566.84,2,20,10506.94,UPI,Returned,Central,CUST0478,4.0
+ORD100957,2025-11-25 07:03,Beauty,Lipstick Combo,4984.37,1,20,3987.5,Net Banking,Delivered,Central,CUST0416,4.0
+ORD100958,2025-11-25 18:48,Sports,Resistance Bands,4224.99,2,5,8027.48,Wallet,Delivered,Central,CUST0063,5.0
+ORD100959,2025-11-26 08:21,Beauty,Perfume 100ml,269.5,2,15,458.15,UPI,Delivered,North,CUST0308,4.0
+ORD100960,2025-11-26 10:26,Fashion,Sunglasses,7396.59,5,10,0.0,Cash on Delivery,Cancelled,Central,CUST0217,1.0
+ORD100961,2025-11-26 19:13,Electronics,Wireless Earbuds,4192.86,4,5,15932.87,UPI,Returned,East,CUST0358,5.0
+ORD100962,2025-11-27 00:11,Fashion,Sunglasses,6745.38,4,10,24283.37,Credit Card,Delivered,Central,CUST0286,
+ORD100963,2025-11-27 02:17,Beauty,Lipstick Combo,4060.62,1,10,3654.56,Debit Card,Delivered,West,CUST0067,4.0
+ORD100964,2025-11-27 03:07,Fashion,Cotton Kurta,6798.35,3,0,20395.05,Wallet,Processing,West,CUST0308,4.0
+ORD100965,2025-11-27 07:01,Grocery,Green Tea Pack,427.12,1,10,384.41,Net Banking,Delivered,West,CUST0328,5.0
+ORD100966,2025-11-27 18:30,Electronics,Power Bank 20000mAh,1996.87,2,5,3794.05,Net Banking,Returned,East,CUST0210,3.0
+ORD100967,2025-11-27 20:48,Grocery,Basmati Rice 5kg,1683.0,2,10,3029.4,Wallet,Shipped,Central,CUST0093,3.0
+ORD100968,2025-11-28 15:31,Grocery,Honey Jar,6688.41,3,0,0.0,Net Banking,Cancelled,South,CUST0161,4.0
+ORD100969,2025-11-28 19:20,Sports,Dumbbell Set,3211.87,4,0,12847.48,Credit Card,Delivered,Central,CUST0206,
+ORD100970,2025-11-28 20:41,Fashion,Running Shoes,2954.64,4,0,11818.56,Debit Card,Delivered,South,CUST0368,5.0
+ORD100971,2025-11-29 20:00,Electronics,USB-C Cable,879.84,1,20,703.87,Credit Card,Delivered,South,CUST0021,5.0
+ORD100972,2025-11-30 04:51,Books,Self-Help Book,4744.84,2,20,7591.74,Wallet,Delivered,North,CUST0438,3.0
+ORD100973,2025-11-30 07:07,Grocery,Green Tea Pack,889.19,5,5,4223.65,Credit Card,Delivered,Central,CUST0253,
+ORD100974,2025-12-01 14:39,Books,Cookbook,3007.49,5,0,15037.45,Debit Card,Returned,Central,CUST0097,5.0
+ORD100975,2025-12-01 14:47,Grocery,Almonds 500g,3604.33,1,30,2523.03,Debit Card,Processing,Central,CUST0440,3.0
+ORD100976,2025-12-01 22:28,Fashion,Cotton Kurta,7519.36,1,0,7519.36,Net Banking,Delivered,West,CUST0275,3.0
+ORD100977,2025-12-02 00:02,Home & Kitchen,Non-stick Pan,7139.09,2,0,0.0,Wallet,Cancelled,East,CUST0070,
+ORD100978,2025-12-03 08:20,Electronics,Power Bank 20000mAh,1993.89,5,0,0.0,Debit Card,Cancelled,Central,CUST0245,4.0
+ORD100979,2025-12-03 11:34,Fashion,Cotton Kurta,263.74,1,0,263.74,Wallet,Delivered,West,CUST0018,3.0
+ORD100980,2025-12-03 13:59,Grocery,Honey Jar,6693.16,4,0,26772.64,Debit Card,Delivered,South,CUST0284,4.0
+ORD100981,2025-12-03 14:09,Sports,Resistance Bands,548.65,2,15,932.7,Wallet,Processing,East,CUST0170,4.0
+ORD100982,2025-12-03 14:14,Fashion,Cotton Kurta,2775.67,4,0,11102.68,UPI,Delivered,South,CUST0148,3.0
+ORD100983,2025-12-03 23:14,Books,Self-Help Book,5665.42,5,0,28327.1,UPI,Delivered,West,CUST0355,
+ORD100984,2025-12-04 03:12,Grocery,Basmati Rice 5kg,5615.34,2,10,10107.61,Credit Card,Shipped,West,CUST0490,5.0
+ORD100985,2025-12-05 05:19,Grocery,Almonds 500g,5656.8,3,20,13576.32,UPI,Processing,West,CUST0465,5.0
+ORD100986,2025-12-05 05:29,Grocery,Green Tea Pack,2798.03,5,0,0.0,Net Banking,Cancelled,East,CUST0046,
+ORD100987,2025-12-05 14:30,Grocery,Honey Jar,1899.5,3,15,4843.72,UPI,Delivered,East,CUST0153,3.0
+ORD100988,2025-12-06 11:37,Fashion,Running Shoes,5470.23,1,0,5470.23,Net Banking,Returned,South,CUST0315,4.0
+ORD100989,2025-12-06 17:50,Beauty,Hair Dryer,5749.94,3,20,13799.86,Wallet,Processing,Central,CUST0238,
+ORD100990,2025-12-06 18:01,Beauty,Perfume 100ml,6961.36,5,5,33066.46,Credit Card,Returned,West,CUST0146,
+ORD100991,2025-12-07 14:44,Electronics,Power Bank 20000mAh,6296.1,5,10,28332.45,Cash on Delivery,Delivered,North,CUST0396,4.0
+ORD100992,2025-12-07 14:51,Fashion,Denim Jacket,3014.0,5,0,15070.0,Wallet,Delivered,South,CUST0408,
+ORD100993,2025-12-09 00:05,Beauty,Lipstick Combo,1677.58,3,0,0.0,UPI,Cancelled,East,CUST0141,
+ORD100994,2025-12-09 05:04,Electronics,Bluetooth Speaker,958.66,4,10,3451.18,Credit Card,Delivered,East,CUST0410,5.0
+ORD100995,2025-12-09 06:57,Grocery,Almonds 500g,4652.57,4,10,0.0,Wallet,Cancelled,East,CUST0030,5.0
+ORD100996,2025-12-09 16:10,Books,Fiction Novel,2580.83,5,20,10323.32,Cash on Delivery,Delivered,Central,CUST0156,4.0
+ORD100997,2025-12-10 01:43,Sports,Cricket Bat,7948.32,2,10,14306.98,UPI,Returned,East,CUST0346,5.0
+ORD100998,2025-12-10 04:19,Sports,Resistance Bands,4433.71,4,5,0.0,Wallet,Cancelled,West,CUST0174,
+ORD100999,2025-12-10 05:56,Electronics,USB-C Cable,7401.92,5,0,37009.6,Wallet,Shipped,West,CUST0420,3.0
+ORD101000,2025-12-10 20:02,Home & Kitchen,Bedsheet Set,4406.98,5,0,0.0,Debit Card,Cancelled,South,CUST0413,4.0
+ORD101001,2025-12-11 21:27,Grocery,Green Tea Pack,4213.82,3,0,12641.46,Cash on Delivery,Delivered,West,CUST0373,3.0
+ORD101002,2025-12-12 01:13,Electronics,Smartwatch,5482.64,3,0,16447.92,Net Banking,Returned,South,CUST0412,5.0
+ORD101003,2025-12-12 14:27,Fashion,Sunglasses,1875.05,1,20,1500.04,Credit Card,Delivered,South,CUST0026,4.0
+ORD101004,2025-12-12 20:34,Beauty,Sunscreen SPF50,7974.32,4,15,27112.69,Cash on Delivery,Delivered,Central,CUST0209,3.0
+ORD101005,2025-12-12 20:57,Fashion,Denim Jacket,796.54,1,5,756.71,Credit Card,Delivered,South,CUST0222,
+ORD101006,2025-12-13 09:45,Electronics,Bluetooth Speaker,1996.59,2,5,3793.52,Cash on Delivery,Processing,West,CUST0147,3.0
+ORD101007,2025-12-13 17:22,Electronics,Power Bank 20000mAh,4797.35,5,0,23986.75,UPI,Delivered,East,CUST0106,5.0
+ORD101008,2025-12-14 17:16,Electronics,Bluetooth Speaker,2946.15,2,10,5303.07,Net Banking,Processing,South,CUST0253,
+ORD101009,2025-12-15 06:45,Home & Kitchen,LED Bulb Pack,1807.61,1,5,1717.23,UPI,Processing,Central,CUST0480,4.0
+ORD101010,2025-12-15 12:24,Sports,Dumbbell Set,7865.29,1,5,7472.03,Wallet,Delivered,West,CUST0131,
+ORD101011,2025-12-16 07:22,Home & Kitchen,Air Fryer,1348.4,5,0,0.0,Cash on Delivery,Cancelled,East,CUST0380,
+ORD101012,2025-12-16 11:34,Sports,Football,6581.4,2,0,13162.8,Debit Card,Returned,Central,CUST0451,
+ORD101013,2025-12-17 03:33,Home & Kitchen,Non-stick Pan,2368.34,5,5,11249.62,Debit Card,Delivered,West,CUST0133,
+ORD101014,2025-12-17 07:10,Home & Kitchen,Non-stick Pan,6261.55,4,5,23793.89,Net Banking,Delivered,Central,CUST0119,5.0
+ORD101015,2025-12-18 21:58,Grocery,Cooking Oil 1L,3717.85,3,15,9480.52,Net Banking,Delivered,Central,CUST0314,5.0
+ORD101016,2025-12-19 00:53,Grocery,Cooking Oil 1L,7034.54,5,20,28138.16,Credit Card,Processing,East,CUST0447,1.0
+ORD101017,2025-12-19 10:05,Books,Fiction Novel,5764.66,3,5,16429.28,Debit Card,Returned,South,CUST0076,
+ORD101018,2025-12-19 12:42,Beauty,Face Serum,6430.53,3,20,15433.27,UPI,Returned,South,CUST0412,
+ORD101019,2025-12-19 12:53,Electronics,Bluetooth Speaker,649.17,5,10,2921.26,Cash on Delivery,Shipped,Central,CUST0183,4.0
+ORD101020,2025-12-19 13:23,Books,Self-Help Book,2868.25,2,10,5162.85,Wallet,Processing,East,CUST0191,
+ORD101021,2025-12-19 13:35,Home & Kitchen,Bedsheet Set,5949.04,2,10,10708.27,Net Banking,Processing,South,CUST0461,4.0
+ORD101022,2025-12-19 20:43,Electronics,Smartwatch,3432.15,2,5,0.0,Net Banking,Cancelled,North,CUST0329,
+ORD101023,2025-12-20 05:18,Books,Business Biography,7752.93,4,15,26359.96,Cash on Delivery,Processing,South,CUST0424,3.0
+ORD101024,2025-12-20 07:42,Grocery,Almonds 500g,2765.72,3,20,6637.73,UPI,Delivered,North,CUST0106,4.0
+ORD101025,2025-12-20 16:07,Home & Kitchen,Air Fryer,5056.99,4,5,19216.56,Net Banking,Returned,East,CUST0152,3.0
+ORD101026,2025-12-21 01:52,Fashion,Sunglasses,4071.09,4,20,13027.49,Debit Card,Delivered,North,CUST0149,5.0
+ORD101027,2025-12-22 02:20,Beauty,Hair Dryer,2923.89,2,0,5847.78,Wallet,Shipped,North,CUST0445,5.0
+ORD101028,2025-12-23 02:10,Home & Kitchen,Air Fryer,5863.84,4,15,19937.06,Debit Card,Returned,North,CUST0021,
+ORD101029,2025-12-23 04:20,Beauty,Lipstick Combo,2387.79,3,15,6088.86,Cash on Delivery,Delivered,Central,CUST0137,5.0
+ORD101030,2025-12-23 06:07,Sports,Yoga Mat,4100.07,5,5,19475.33,Net Banking,Shipped,West,CUST0151,
+ORD101031,2025-12-23 07:32,Home & Kitchen,Mixer Grinder,3799.9,5,5,0.0,Wallet,Cancelled,Central,CUST0177,3.0
+ORD101032,2025-12-24 01:46,Fashion,Leather Wallet,281.71,5,10,1267.7,UPI,Processing,North,CUST0225,5.0
+ORD101033,2025-12-24 14:53,Electronics,Wireless Earbuds,6799.51,1,10,6119.56,UPI,Shipped,Central,CUST0078,
+ORD101034,2025-12-24 16:18,Electronics,Wireless Earbuds,1646.13,2,0,3292.26,Debit Card,Delivered,North,CUST0402,
+ORD101035,2025-12-25 07:10,Home & Kitchen,LED Bulb Pack,6817.88,2,5,12953.97,Wallet,Returned,Central,CUST0148,
+ORD101036,2025-12-25 12:44,Fashion,Sunglasses,1513.98,2,10,0.0,Debit Card,Cancelled,South,CUST0198,
+ORD101037,2025-12-26 04:55,Grocery,Basmati Rice 5kg,441.3,3,5,1257.7,Debit Card,Processing,East,CUST0283,4.0
+ORD101038,2025-12-26 14:17,Books,Business Biography,5031.72,4,10,18114.19,Net Banking,Delivered,South,CUST0279,
+ORD101039,2025-12-26 19:13,Sports,Football,3965.59,1,20,3172.47,Debit Card,Returned,West,CUST0019,5.0
+ORD101040,2025-12-28 08:55,Books,Kids Storybook,1054.45,5,10,4745.03,Net Banking,Processing,South,CUST0461,4.0
+ORD101041,2025-12-28 12:50,Grocery,Honey Jar,6118.13,3,10,16518.95,Wallet,Processing,South,CUST0118,5.0
+ORD101042,2025-12-28 17:59,Electronics,Smartwatch,7416.03,4,15,25214.5,Cash on Delivery,Returned,West,CUST0212,3.0
+ORD101043,2025-12-29 01:48,Beauty,Perfume 100ml,3346.03,2,0,6692.06,Debit Card,Delivered,Central,CUST0134,4.0
+ORD101044,2025-12-30 12:29,Beauty,Perfume 100ml,7511.61,4,10,27041.8,Net Banking,Shipped,East,CUST0350,
+ORD101045,2025-12-31 11:04,Electronics,Bluetooth Speaker,4165.52,5,5,19786.22,Net Banking,Delivered,South,CUST0394,4.0
+ORD101046,2025-12-31 16:25,Books,Business Biography,3435.63,2,10,6184.13,Credit Card,Delivered,Central,CUST0280,3.0
+ORD101047,2025-12-31 19:42,Beauty,Face Serum,3033.99,1,0,3033.99,UPI,Delivered,Central,CUST0171,5.0
+ORD101048,2026-01-01 14:46,Sports,Resistance Bands,4356.02,1,0,4356.02,Cash on Delivery,Processing,East,CUST0440,
+ORD101049,2026-01-01 18:14,Sports,Cricket Bat,2536.17,5,15,10778.72,Debit Card,Delivered,Central,CUST0464,
+ORD101050,2026-01-02 05:24,Fashion,Sunglasses,5044.86,4,5,19170.47,UPI,Shipped,West,CUST0369,
+ORD101051,2026-01-02 18:15,Grocery,Almonds 500g,5778.73,4,5,21959.17,Net Banking,Delivered,South,CUST0367,
+ORD101052,2026-01-03 07:26,Grocery,Almonds 500g,6743.93,5,0,33719.65,Debit Card,Processing,South,CUST0096,
+ORD101053,2026-01-03 07:28,Home & Kitchen,Air Fryer,3299.65,5,0,16498.25,Net Banking,Shipped,East,CUST0005,5.0
+ORD101054,2026-01-03 18:34,Beauty,Hair Dryer,806.28,5,15,3426.69,UPI,Returned,East,CUST0431,
+ORD101055,2026-01-03 21:36,Beauty,Lipstick Combo,5919.86,4,0,23679.44,Cash on Delivery,Returned,South,CUST0349,5.0
+ORD101056,2026-01-04 00:40,Sports,Yoga Mat,4284.28,1,10,3855.85,Debit Card,Delivered,Central,CUST0130,5.0
+ORD101057,2026-01-04 13:02,Electronics,Wireless Earbuds,1732.07,3,0,0.0,Debit Card,Cancelled,West,CUST0314,
+ORD101058,2026-01-04 13:34,Electronics,Wireless Earbuds,7548.24,1,10,6793.42,Cash on Delivery,Delivered,South,CUST0489,5.0
+ORD101059,2026-01-05 20:54,Home & Kitchen,Non-stick Pan,740.17,5,0,3700.85,Net Banking,Shipped,Central,CUST0407,4.0
+ORD101060,2026-01-06 17:13,Sports,Yoga Mat,5681.42,1,0,5681.42,Wallet,Shipped,Central,CUST0253,3.0
+ORD101061,2026-01-06 19:48,Grocery,Green Tea Pack,6614.89,2,0,13229.78,Credit Card,Delivered,East,CUST0010,5.0
+ORD101062,2026-01-07 05:24,Home & Kitchen,Bedsheet Set,1853.43,4,10,6672.35,Debit Card,Delivered,North,CUST0360,5.0
+ORD101063,2026-01-07 13:37,Sports,Dumbbell Set,4332.16,5,0,21660.8,Debit Card,Delivered,East,CUST0330,2.0
+ORD101064,2026-01-07 14:58,Books,Business Biography,1385.26,3,5,3947.99,UPI,Returned,Central,CUST0366,4.0
+ORD101065,2026-01-07 17:00,Beauty,Face Serum,4917.37,5,0,24586.85,Net Banking,Shipped,West,CUST0131,4.0
+ORD101066,2026-01-08 02:45,Electronics,Smartwatch,3384.59,4,5,12861.44,Net Banking,Delivered,West,CUST0478,5.0
+ORD101067,2026-01-08 15:31,Books,Cookbook,2236.69,3,5,6374.57,Debit Card,Delivered,Central,CUST0446,3.0
+ORD101068,2026-01-09 20:25,Home & Kitchen,LED Bulb Pack,2146.95,3,5,6118.81,Debit Card,Processing,West,CUST0477,
+ORD101069,2026-01-10 03:01,Grocery,Almonds 500g,5890.48,1,0,5890.48,Net Banking,Delivered,Central,CUST0024,
+ORD101070,2026-01-10 07:54,Electronics,Bluetooth Speaker,5728.66,3,5,16326.68,Credit Card,Shipped,South,CUST0117,
+ORD101071,2026-01-10 18:10,Fashion,Running Shoes,870.19,4,20,0.0,Cash on Delivery,Cancelled,West,CUST0403,
+ORD101072,2026-01-11 11:05,Books,Business Biography,1665.62,3,0,4996.86,Cash on Delivery,Shipped,Central,CUST0293,3.0
+ORD101073,2026-01-11 12:54,Home & Kitchen,Air Fryer,2196.32,2,0,4392.64,Cash on Delivery,Returned,West,CUST0267,4.0
+ORD101074,2026-01-11 19:43,Sports,Yoga Mat,533.34,5,0,2666.7,Net Banking,Shipped,Central,CUST0464,2.0
+ORD101075,2026-01-11 22:54,Fashion,Sunglasses,7542.76,3,5,0.0,Cash on Delivery,Cancelled,North,CUST0362,5.0
+ORD101076,2026-01-12 01:51,Beauty,Hair Dryer,698.99,2,15,1188.28,Debit Card,Shipped,Central,CUST0218,5.0
+ORD101077,2026-01-12 05:31,Beauty,Face Serum,6212.36,2,5,0.0,Net Banking,Cancelled,East,CUST0453,5.0
+ORD101078,2026-01-12 06:39,Grocery,Green Tea Pack,7389.41,5,10,33252.34,Cash on Delivery,Shipped,West,CUST0292,4.0
+ORD101079,2026-01-12 17:30,Sports,Resistance Bands,758.92,1,10,683.03,UPI,Delivered,East,CUST0146,2.0
+ORD101080,2026-01-12 18:20,Electronics,Power Bank 20000mAh,2282.46,5,0,11412.3,Credit Card,Delivered,South,CUST0153,2.0
+ORD101081,2026-01-12 18:36,Beauty,Sunscreen SPF50,564.78,1,5,536.54,Debit Card,Delivered,South,CUST0310,4.0
+ORD101082,2026-01-13 14:31,Grocery,Basmati Rice 5kg,1888.78,2,15,3210.93,Debit Card,Returned,South,CUST0331,
+ORD101083,2026-01-14 02:56,Electronics,Smartwatch,2091.6,4,0,0.0,Debit Card,Cancelled,North,CUST0212,5.0
+ORD101084,2026-01-14 13:33,Beauty,Lipstick Combo,1625.0,1,0,1625.0,Credit Card,Processing,West,CUST0089,
+ORD101085,2026-01-15 01:02,Books,Self-Help Book,1614.98,1,15,1372.73,Cash on Delivery,Delivered,Central,CUST0436,3.0
+ORD101086,2026-01-16 12:25,Home & Kitchen,LED Bulb Pack,3551.81,4,10,12786.52,UPI,Delivered,West,CUST0037,5.0
+ORD101087,2026-01-17 06:09,Beauty,Lipstick Combo,7254.21,3,5,20674.5,Net Banking,Delivered,North,CUST0338,
+ORD101088,2026-01-17 14:31,Electronics,USB-C Cable,2493.25,5,0,12466.25,Net Banking,Returned,Central,CUST0027,4.0
+ORD101089,2026-01-17 20:13,Books,Fiction Novel,1024.98,4,5,3894.92,Debit Card,Delivered,East,CUST0419,
+ORD101090,2026-01-17 23:01,Books,Fiction Novel,5986.47,3,5,17061.44,Wallet,Delivered,South,CUST0124,
+ORD101091,2026-01-17 23:09,Beauty,Face Serum,1256.8,2,5,2387.92,Cash on Delivery,Delivered,North,CUST0367,5.0
+ORD101092,2026-01-18 00:59,Grocery,Green Tea Pack,1491.54,3,0,4474.62,Cash on Delivery,Returned,North,CUST0355,4.0
+ORD101093,2026-01-18 08:28,Beauty,Hair Dryer,4631.74,3,20,11116.18,Debit Card,Processing,South,CUST0078,3.0
+ORD101094,2026-01-18 14:24,Fashion,Leather Wallet,2345.61,4,10,8444.2,Debit Card,Shipped,Central,CUST0306,5.0
+ORD101095,2026-01-19 00:21,Beauty,Face Serum,7042.75,3,10,19015.42,Debit Card,Delivered,West,CUST0166,
+ORD101096,2026-01-19 01:13,Electronics,USB-C Cable,7441.79,3,10,20092.83,Credit Card,Returned,West,CUST0393,4.0
+ORD101097,2026-01-19 01:53,Grocery,Cooking Oil 1L,1291.52,3,5,3680.83,Wallet,Shipped,North,CUST0483,5.0
+ORD101098,2026-01-19 03:47,Grocery,Green Tea Pack,987.22,1,5,937.86,Credit Card,Delivered,North,CUST0245,4.0
+ORD101099,2026-01-19 03:59,Beauty,Face Serum,7652.24,2,5,14539.26,Net Banking,Delivered,South,CUST0221,4.0
+ORD101100,2026-01-19 08:55,Grocery,Almonds 500g,6274.05,3,10,16939.94,Cash on Delivery,Delivered,West,CUST0237,1.0
+ORD101101,2026-01-19 11:22,Grocery,Almonds 500g,3013.55,3,0,0.0,UPI,Cancelled,East,CUST0006,
+ORD101102,2026-01-19 17:38,Sports,Football,1751.1,1,30,1225.77,Debit Card,Delivered,Central,CUST0225,
+ORD101103,2026-01-20 15:45,Sports,Football,4686.6,1,0,4686.6,Debit Card,Delivered,East,CUST0418,4.0
+ORD101104,2026-01-20 19:17,Books,Kids Storybook,7950.0,2,5,15105.0,UPI,Delivered,South,CUST0489,5.0
+ORD101105,2026-01-21 07:22,Fashion,Running Shoes,309.13,3,0,927.39,Net Banking,Shipped,West,CUST0246,5.0
+ORD101106,2026-01-21 09:29,Books,Kids Storybook,760.61,1,30,0.0,UPI,Cancelled,South,CUST0140,5.0
+ORD101107,2026-01-21 11:55,Grocery,Cooking Oil 1L,6722.69,2,10,12100.84,UPI,Shipped,East,CUST0339,4.0
+ORD101108,2026-01-21 16:45,Fashion,Denim Jacket,3701.89,1,5,0.0,UPI,Cancelled,South,CUST0447,4.0
+ORD101109,2026-01-22 01:03,Home & Kitchen,Non-stick Pan,7384.34,5,10,33229.53,Net Banking,Delivered,North,CUST0014,5.0
+ORD101110,2026-01-22 01:08,Fashion,Denim Jacket,6598.39,3,15,0.0,UPI,Cancelled,East,CUST0081,4.0
+ORD101111,2026-01-22 02:19,Fashion,Cotton Kurta,532.71,5,0,2663.55,Debit Card,Processing,North,CUST0232,4.0
+ORD101112,2026-01-22 02:39,Sports,Resistance Bands,1725.83,2,5,3279.08,Debit Card,Processing,South,CUST0234,3.0
+ORD101113,2026-01-22 15:34,Beauty,Perfume 100ml,6568.45,1,10,5911.6,Cash on Delivery,Delivered,South,CUST0093,5.0
+ORD101114,2026-01-23 06:25,Home & Kitchen,LED Bulb Pack,957.66,5,5,4548.88,Credit Card,Delivered,Central,CUST0394,3.0
+ORD101115,2026-01-23 09:39,Home & Kitchen,LED Bulb Pack,3556.7,2,10,6402.06,Debit Card,Delivered,South,CUST0040,4.0
+ORD101116,2026-01-23 11:31,Books,Self-Help Book,4395.42,4,0,17581.68,Net Banking,Delivered,North,CUST0369,
+ORD101117,2026-01-23 11:45,Grocery,Green Tea Pack,3731.43,3,15,9515.15,Net Banking,Processing,North,CUST0365,5.0
+ORD101118,2026-01-23 13:43,Sports,Yoga Mat,3643.58,2,10,6558.44,Debit Card,Returned,North,CUST0013,5.0
+ORD101119,2026-01-23 17:57,Home & Kitchen,LED Bulb Pack,7246.05,4,10,26085.78,Wallet,Shipped,Central,CUST0068,
+ORD101120,2026-01-23 22:20,Electronics,Power Bank 20000mAh,557.26,5,0,2786.3,UPI,Delivered,East,CUST0426,5.0
+ORD101121,2026-01-24 01:38,Electronics,Bluetooth Speaker,5898.51,4,15,20054.93,Wallet,Delivered,South,CUST0005,4.0
+ORD101122,2026-01-24 18:15,Electronics,USB-C Cable,675.57,2,5,1283.58,Net Banking,Delivered,West,CUST0499,4.0
+ORD101123,2026-01-25 06:09,Books,Self-Help Book,5744.12,5,5,27284.57,Debit Card,Shipped,North,CUST0287,
+ORD101124,2026-01-25 08:27,Fashion,Cotton Kurta,7274.41,2,10,0.0,Credit Card,Cancelled,West,CUST0233,5.0
+ORD101125,2026-01-27 00:09,Home & Kitchen,Non-stick Pan,2739.89,3,0,8219.67,UPI,Processing,South,CUST0406,5.0
+ORD101126,2026-01-27 05:16,Books,Fiction Novel,7606.27,4,20,0.0,Debit Card,Cancelled,East,CUST0060,5.0
+ORD101127,2026-01-27 18:52,Beauty,Lipstick Combo,3681.11,2,5,6994.11,Debit Card,Delivered,West,CUST0336,
+ORD101128,2026-01-28 09:51,Electronics,Wireless Earbuds,1732.41,2,30,0.0,Debit Card,Cancelled,West,CUST0470,5.0
+ORD101129,2026-01-30 00:11,Books,Self-Help Book,2708.16,3,0,0.0,Net Banking,Cancelled,East,CUST0437,3.0
+ORD101130,2026-01-30 03:44,Home & Kitchen,Non-stick Pan,6780.86,2,0,13561.72,UPI,Returned,North,CUST0441,4.0
+ORD101131,2026-01-30 14:05,Grocery,Cooking Oil 1L,7385.68,5,5,35081.98,Net Banking,Delivered,North,CUST0071,5.0
+ORD101132,2026-01-30 20:00,Sports,Resistance Bands,3402.36,2,0,6804.72,Cash on Delivery,Returned,West,CUST0166,4.0
+ORD101133,2026-01-31 15:12,Electronics,USB-C Cable,3989.38,2,0,7978.76,UPI,Delivered,East,CUST0414,
+ORD101134,2026-02-01 01:00,Electronics,Wireless Earbuds,4039.36,5,10,0.0,UPI,Cancelled,East,CUST0463,4.0
+ORD101135,2026-02-01 05:34,Books,Business Biography,1759.92,5,0,8799.6,UPI,Returned,North,CUST0154,5.0
+ORD101136,2026-02-01 08:19,Books,Cookbook,2893.44,3,5,8246.3,Credit Card,Delivered,Central,CUST0323,4.0
+ORD101137,2026-02-01 11:31,Sports,Resistance Bands,1332.36,1,20,0.0,Wallet,Cancelled,South,CUST0083,5.0
+ORD101138,2026-02-02 01:49,Sports,Cricket Bat,7576.22,4,0,0.0,Net Banking,Cancelled,East,CUST0033,3.0
+ORD101139,2026-02-02 10:49,Sports,Football,7634.59,3,5,0.0,Credit Card,Cancelled,Central,CUST0272,
+ORD101140,2026-02-02 19:20,Home & Kitchen,LED Bulb Pack,4185.22,1,0,0.0,UPI,Cancelled,North,CUST0033,
+ORD101141,2026-02-04 03:06,Grocery,Green Tea Pack,3569.91,1,30,2498.94,Net Banking,Returned,East,CUST0495,5.0
+ORD101142,2026-02-04 09:16,Books,Kids Storybook,3431.15,5,0,17155.75,UPI,Delivered,South,CUST0028,4.0
+ORD101143,2026-02-04 09:43,Books,Cookbook,2400.91,4,15,8163.09,Wallet,Processing,West,CUST0282,5.0
+ORD101144,2026-02-04 11:04,Sports,Resistance Bands,2752.62,5,15,11698.63,Debit Card,Delivered,Central,CUST0316,3.0
+ORD101145,2026-02-04 19:09,Fashion,Denim Jacket,5910.4,4,0,0.0,Net Banking,Cancelled,North,CUST0466,
+ORD101146,2026-02-05 01:46,Home & Kitchen,Air Fryer,5939.19,2,10,10690.54,Cash on Delivery,Delivered,South,CUST0419,3.0
+ORD101147,2026-02-05 19:18,Books,Business Biography,5736.16,5,30,20076.56,UPI,Delivered,East,CUST0229,
+ORD101148,2026-02-06 01:21,Grocery,Honey Jar,3636.72,5,5,17274.42,Cash on Delivery,Delivered,East,CUST0439,
+ORD101149,2026-02-06 01:33,Home & Kitchen,Mixer Grinder,4144.83,5,0,20724.15,Net Banking,Delivered,East,CUST0485,1.0
+ORD101150,2026-02-06 03:05,Beauty,Perfume 100ml,3270.89,1,0,3270.89,Debit Card,Processing,West,CUST0052,3.0
+ORD101151,2026-02-07 11:56,Electronics,Smartwatch,3102.46,5,15,0.0,Cash on Delivery,Cancelled,North,CUST0473,4.0
+ORD101152,2026-02-07 17:00,Home & Kitchen,Air Fryer,3905.13,3,0,11715.39,Net Banking,Delivered,West,CUST0492,5.0
+ORD101153,2026-02-08 08:43,Books,Fiction Novel,4756.15,4,10,17122.14,Debit Card,Processing,Central,CUST0392,4.0
+ORD101154,2026-02-09 03:01,Sports,Football,3858.28,3,0,11574.84,Credit Card,Shipped,South,CUST0358,
+ORD101155,2026-02-09 04:20,Books,Self-Help Book,6895.96,2,0,13791.92,Debit Card,Returned,East,CUST0462,
+ORD101156,2026-02-09 06:26,Grocery,Honey Jar,5432.22,3,10,14666.99,Net Banking,Delivered,East,CUST0171,4.0
+ORD101157,2026-02-09 20:23,Sports,Football,2995.07,2,10,5391.13,Net Banking,Shipped,North,CUST0465,4.0
+ORD101158,2026-02-10 07:03,Sports,Resistance Bands,5909.62,5,0,29548.1,Debit Card,Delivered,North,CUST0232,2.0
+ORD101159,2026-02-10 09:21,Sports,Football,2710.14,5,15,11518.1,Debit Card,Processing,North,CUST0424,3.0
+ORD101160,2026-02-10 11:24,Beauty,Hair Dryer,4818.95,1,15,0.0,Net Banking,Cancelled,South,CUST0419,
+ORD101161,2026-02-10 20:35,Books,Cookbook,5921.14,4,0,23684.56,Cash on Delivery,Delivered,Central,CUST0119,1.0
+ORD101162,2026-02-11 06:43,Fashion,Leather Wallet,6473.31,1,5,6149.64,Net Banking,Processing,Central,CUST0467,4.0
+ORD101163,2026-02-11 12:09,Books,Self-Help Book,5040.61,3,15,0.0,Cash on Delivery,Cancelled,South,CUST0043,
+ORD101164,2026-02-11 16:22,Beauty,Perfume 100ml,2222.98,3,10,6002.05,UPI,Delivered,East,CUST0219,4.0
+ORD101165,2026-02-11 20:19,Beauty,Lipstick Combo,6654.3,4,0,26617.2,Net Banking,Delivered,North,CUST0108,5.0
+ORD101166,2026-02-11 22:45,Grocery,Cooking Oil 1L,4801.83,1,5,4561.74,UPI,Delivered,South,CUST0082,5.0
+ORD101167,2026-02-12 09:45,Sports,Dumbbell Set,4689.82,1,0,4689.82,Debit Card,Processing,East,CUST0001,4.0
+ORD101168,2026-02-13 04:50,Home & Kitchen,Air Fryer,6380.51,1,10,5742.46,Debit Card,Delivered,Central,CUST0424,5.0
+ORD101169,2026-02-13 12:33,Home & Kitchen,Mixer Grinder,3625.62,3,0,10876.86,Wallet,Delivered,South,CUST0186,4.0
+ORD101170,2026-02-13 15:26,Sports,Football,3168.68,5,5,0.0,Net Banking,Cancelled,South,CUST0104,
+ORD101171,2026-02-14 09:02,Electronics,USB-C Cable,3101.5,2,10,5582.7,Debit Card,Delivered,North,CUST0194,5.0
+ORD101172,2026-02-14 13:40,Electronics,Power Bank 20000mAh,2399.44,4,10,0.0,Wallet,Cancelled,Central,CUST0343,4.0
+ORD101173,2026-02-14 20:57,Home & Kitchen,Non-stick Pan,3875.7,4,0,15502.8,Wallet,Delivered,East,CUST0241,4.0
+ORD101174,2026-02-15 04:33,Sports,Cricket Bat,1415.54,4,0,5662.16,Net Banking,Returned,North,CUST0374,4.0
+ORD101175,2026-02-15 10:40,Beauty,Face Serum,4066.26,5,0,0.0,UPI,Cancelled,South,CUST0130,2.0
+ORD101176,2026-02-15 17:17,Fashion,Denim Jacket,2060.33,2,15,3502.56,Credit Card,Processing,Central,CUST0433,5.0
+ORD101177,2026-02-15 21:47,Books,Self-Help Book,2570.16,5,5,12208.26,Net Banking,Returned,West,CUST0081,
+ORD101178,2026-02-16 18:37,Grocery,Green Tea Pack,5851.65,5,10,26332.42,Wallet,Delivered,North,CUST0069,5.0
+ORD101179,2026-02-17 18:40,Electronics,Power Bank 20000mAh,6338.37,3,5,18064.35,UPI,Returned,West,CUST0469,4.0
+ORD101180,2026-02-19 01:10,Grocery,Honey Jar,5296.62,1,10,4766.96,Cash on Delivery,Delivered,South,CUST0229,4.0
+ORD101181,2026-02-19 22:42,Books,Fiction Novel,6571.15,4,0,26284.6,Net Banking,Shipped,South,CUST0090,4.0
+ORD101182,2026-02-20 00:59,Grocery,Basmati Rice 5kg,5312.77,1,15,4515.85,Cash on Delivery,Returned,South,CUST0344,4.0
+ORD101183,2026-02-21 06:27,Beauty,Perfume 100ml,721.6,3,5,2056.56,Wallet,Returned,North,CUST0386,
+ORD101184,2026-02-21 08:54,Beauty,Face Serum,4926.01,4,0,0.0,Cash on Delivery,Cancelled,East,CUST0389,5.0
+ORD101185,2026-02-21 19:05,Fashion,Cotton Kurta,7025.67,5,10,31615.52,Cash on Delivery,Delivered,South,CUST0492,
+ORD101186,2026-02-22 01:08,Sports,Resistance Bands,7845.58,3,0,0.0,UPI,Cancelled,North,CUST0396,3.0
+ORD101187,2026-02-22 07:51,Books,Cookbook,242.26,5,0,1211.3,UPI,Shipped,South,CUST0460,
+ORD101188,2026-02-22 08:43,Home & Kitchen,Bedsheet Set,1749.31,1,5,1661.84,Net Banking,Delivered,East,CUST0092,3.0
+ORD101189,2026-02-22 18:05,Beauty,Perfume 100ml,5416.05,4,30,0.0,Debit Card,Cancelled,North,CUST0447,
+ORD101190,2026-02-22 23:45,Beauty,Sunscreen SPF50,540.29,3,0,1620.87,Debit Card,Delivered,West,CUST0262,5.0
+ORD101191,2026-02-23 05:45,Fashion,Denim Jacket,2948.38,3,5,8402.88,Wallet,Delivered,North,CUST0377,
+ORD101192,2026-02-23 14:00,Fashion,Leather Wallet,3595.01,5,5,17076.3,Net Banking,Returned,East,CUST0029,4.0
+ORD101193,2026-02-24 09:22,Beauty,Perfume 100ml,1799.33,1,5,1709.36,Debit Card,Delivered,East,CUST0008,4.0
+ORD101194,2026-02-24 22:11,Beauty,Perfume 100ml,5897.81,3,0,17693.43,Wallet,Delivered,East,CUST0276,5.0
+ORD101195,2026-02-25 05:58,Sports,Dumbbell Set,5812.43,2,5,11043.62,UPI,Shipped,East,CUST0195,
+ORD101196,2026-02-25 15:34,Grocery,Cooking Oil 1L,2181.82,4,10,7854.55,Net Banking,Returned,North,CUST0203,5.0
+ORD101197,2026-02-25 15:59,Grocery,Basmati Rice 5kg,4788.7,1,0,0.0,Wallet,Cancelled,East,CUST0464,1.0
+ORD101198,2026-02-25 17:53,Books,Business Biography,1720.08,4,10,0.0,Debit Card,Cancelled,East,CUST0321,5.0
+ORD101199,2026-02-25 18:50,Sports,Dumbbell Set,4886.77,1,0,4886.77,Wallet,Returned,Central,CUST0067,3.0
+ORD101200,2026-02-25 23:55,Grocery,Green Tea Pack,2665.42,2,15,4531.21,Cash on Delivery,Delivered,East,CUST0166,
+ORD101201,2026-02-26 04:19,Fashion,Cotton Kurta,2533.36,5,30,8866.76,UPI,Returned,East,CUST0072,5.0
+ORD101202,2026-02-26 10:55,Sports,Cricket Bat,6596.94,1,0,6596.94,Net Banking,Returned,South,CUST0043,4.0
+ORD101203,2026-02-26 17:59,Home & Kitchen,LED Bulb Pack,717.69,2,0,1435.38,Net Banking,Processing,South,CUST0154,2.0
+ORD101204,2026-02-26 20:50,Books,Kids Storybook,3486.62,3,10,9413.87,Credit Card,Processing,North,CUST0192,4.0
+ORD101205,2026-02-27 08:02,Sports,Yoga Mat,7311.97,2,0,14623.94,Debit Card,Delivered,Central,CUST0253,3.0
+ORD101206,2026-02-27 09:25,Home & Kitchen,Air Fryer,982.99,4,0,3931.96,Net Banking,Returned,Central,CUST0026,5.0
+ORD101207,2026-02-27 13:58,Electronics,Power Bank 20000mAh,4688.91,2,15,7971.15,Credit Card,Delivered,North,CUST0126,5.0
+ORD101208,2026-02-27 20:21,Electronics,USB-C Cable,7631.7,3,0,22895.1,UPI,Delivered,North,CUST0340,5.0
+ORD101209,2026-02-27 20:53,Electronics,Power Bank 20000mAh,3614.02,1,5,3433.32,Wallet,Delivered,East,CUST0411,
+ORD101210,2026-02-28 00:57,Home & Kitchen,Bedsheet Set,3371.77,3,30,7080.72,UPI,Delivered,North,CUST0392,3.0
+ORD101211,2026-02-28 04:56,Electronics,Power Bank 20000mAh,530.82,4,15,1804.79,UPI,Delivered,North,CUST0170,3.0
+ORD101212,2026-02-28 06:23,Grocery,Cooking Oil 1L,7704.62,2,0,15409.24,Debit Card,Delivered,South,CUST0486,4.0
+ORD101213,2026-02-28 22:53,Home & Kitchen,Mixer Grinder,1320.42,2,15,2244.71,Debit Card,Shipped,South,CUST0144,
+ORD101214,2026-03-01 09:25,Home & Kitchen,LED Bulb Pack,728.24,3,10,1966.25,Net Banking,Delivered,Central,CUST0112,
+ORD101215,2026-03-01 20:22,Grocery,Cooking Oil 1L,1476.5,2,0,2953.0,Net Banking,Shipped,Central,CUST0288,1.0
+ORD101216,2026-03-02 04:47,Grocery,Green Tea Pack,6979.11,1,10,6281.2,Cash on Delivery,Returned,South,CUST0191,
+ORD101217,2026-03-02 06:14,Grocery,Almonds 500g,1673.14,2,10,0.0,Wallet,Cancelled,South,CUST0307,5.0
+ORD101218,2026-03-02 19:36,Grocery,Basmati Rice 5kg,4247.75,3,0,12743.25,Debit Card,Processing,West,CUST0236,5.0
+ORD101219,2026-03-03 04:12,Electronics,Wireless Earbuds,7435.22,3,30,15613.96,Cash on Delivery,Delivered,South,CUST0332,
+ORD101220,2026-03-03 13:08,Fashion,Sunglasses,5403.68,3,20,12968.83,Credit Card,Delivered,East,CUST0288,5.0
+ORD101221,2026-03-03 19:40,Grocery,Basmati Rice 5kg,3122.93,5,5,14833.92,Credit Card,Returned,North,CUST0039,3.0
+ORD101222,2026-03-03 23:11,Home & Kitchen,Mixer Grinder,1661.25,4,5,6312.75,Net Banking,Returned,East,CUST0214,4.0
+ORD101223,2026-03-04 10:41,Home & Kitchen,LED Bulb Pack,1433.09,3,15,0.0,UPI,Cancelled,West,CUST0424,
+ORD101224,2026-03-04 18:42,Books,Self-Help Book,3399.91,2,0,0.0,Debit Card,Cancelled,Central,CUST0064,5.0
+ORD101225,2026-03-05 09:59,Fashion,Denim Jacket,5010.05,5,10,22545.22,Net Banking,Returned,West,CUST0336,4.0
+ORD101226,2026-03-05 10:29,Sports,Resistance Bands,7785.45,5,0,38927.25,Credit Card,Returned,East,CUST0354,
+ORD101227,2026-03-06 08:13,Electronics,Bluetooth Speaker,6012.59,4,10,21645.32,Debit Card,Delivered,South,CUST0312,3.0
+ORD101228,2026-03-06 11:08,Beauty,Sunscreen SPF50,5222.57,2,30,7311.6,Net Banking,Returned,Central,CUST0172,4.0
+ORD101229,2026-03-06 16:18,Electronics,Power Bank 20000mAh,4820.71,1,15,4097.6,Credit Card,Processing,South,CUST0400,
+ORD101230,2026-03-06 22:10,Beauty,Sunscreen SPF50,2580.71,4,0,10322.84,Cash on Delivery,Returned,East,CUST0214,5.0
+ORD101231,2026-03-07 12:57,Beauty,Perfume 100ml,7835.57,4,10,0.0,Debit Card,Cancelled,Central,CUST0341,
+ORD101232,2026-03-07 19:47,Books,Self-Help Book,7130.73,5,5,33870.97,Debit Card,Returned,Central,CUST0048,4.0
+ORD101233,2026-03-07 21:06,Home & Kitchen,Bedsheet Set,3496.04,1,0,3496.04,Cash on Delivery,Delivered,Central,CUST0048,5.0
+ORD101234,2026-03-08 04:20,Fashion,Denim Jacket,6394.76,5,15,27177.73,Wallet,Shipped,East,CUST0426,4.0
+ORD101235,2026-03-08 07:49,Home & Kitchen,Mixer Grinder,2874.31,5,10,12934.4,Cash on Delivery,Processing,Central,CUST0257,
+ORD101236,2026-03-08 14:15,Electronics,Wireless Earbuds,7448.04,2,10,0.0,Net Banking,Cancelled,West,CUST0215,4.0
+ORD101237,2026-03-08 18:29,Fashion,Cotton Kurta,6318.64,2,5,12005.42,Debit Card,Delivered,Central,CUST0489,4.0
+ORD101238,2026-03-08 20:06,Fashion,Cotton Kurta,2825.9,1,10,2543.31,Wallet,Delivered,Central,CUST0415,
+ORD101239,2026-03-10 02:45,Electronics,Wireless Earbuds,3597.95,3,20,8635.08,Credit Card,Shipped,East,CUST0152,5.0
+ORD101240,2026-03-10 14:12,Home & Kitchen,Non-stick Pan,7571.79,3,5,21579.6,UPI,Delivered,East,CUST0259,
+ORD101241,2026-03-10 16:28,Grocery,Green Tea Pack,5303.76,1,10,4773.38,Credit Card,Delivered,North,CUST0356,2.0
+ORD101242,2026-03-10 17:19,Fashion,Cotton Kurta,1637.54,1,0,1637.54,UPI,Delivered,East,CUST0428,3.0
+ORD101243,2026-03-11 03:57,Grocery,Green Tea Pack,6732.74,3,0,20198.22,UPI,Delivered,Central,CUST0228,5.0
+ORD101244,2026-03-12 11:50,Books,Kids Storybook,5225.67,1,0,0.0,Credit Card,Cancelled,Central,CUST0034,3.0
+ORD101245,2026-03-12 15:33,Electronics,Smartwatch,3681.63,2,5,6995.1,UPI,Delivered,East,CUST0252,4.0
+ORD101246,2026-03-12 17:58,Electronics,Bluetooth Speaker,5076.99,4,0,20307.96,Wallet,Delivered,Central,CUST0406,4.0
+ORD101247,2026-03-12 21:10,Grocery,Cooking Oil 1L,4307.4,1,10,3876.66,UPI,Delivered,West,CUST0399,
+ORD101248,2026-03-13 04:41,Fashion,Sunglasses,3656.99,2,15,6216.88,Net Banking,Processing,Central,CUST0266,
+ORD101249,2026-03-13 05:11,Sports,Resistance Bands,5226.93,1,5,4965.58,Debit Card,Delivered,East,CUST0337,2.0
+ORD101250,2026-03-13 05:20,Books,Business Biography,7181.58,2,5,13645.0,Wallet,Shipped,South,CUST0471,
+ORD101251,2026-03-13 13:03,Fashion,Cotton Kurta,748.32,1,15,636.07,Wallet,Delivered,West,CUST0349,
+ORD101252,2026-03-13 19:22,Books,Self-Help Book,7761.25,2,0,15522.5,Net Banking,Delivered,West,CUST0490,5.0
+ORD101253,2026-03-13 21:29,Beauty,Lipstick Combo,5273.14,4,5,20037.93,Net Banking,Shipped,North,CUST0259,3.0
+ORD101254,2026-03-15 03:19,Fashion,Leather Wallet,5094.27,3,10,0.0,Wallet,Cancelled,Central,CUST0495,5.0
+ORD101255,2026-03-15 13:45,Electronics,Wireless Earbuds,5706.62,4,0,22826.48,Debit Card,Shipped,South,CUST0334,4.0
+ORD101256,2026-03-15 20:51,Grocery,Almonds 500g,4573.57,1,0,4573.57,UPI,Delivered,Central,CUST0393,
+ORD101257,2026-03-16 02:11,Electronics,Power Bank 20000mAh,6393.76,5,30,22378.16,UPI,Processing,West,CUST0232,
+ORD101258,2026-03-16 06:01,Beauty,Sunscreen SPF50,5224.19,3,5,14888.94,Debit Card,Shipped,North,CUST0381,5.0
+ORD101259,2026-03-16 17:38,Grocery,Almonds 500g,3915.18,2,15,6655.81,Debit Card,Shipped,South,CUST0376,5.0
+ORD101260,2026-03-16 23:24,Grocery,Honey Jar,7841.51,2,0,0.0,Debit Card,Cancelled,East,CUST0090,3.0
+ORD101261,2026-03-17 09:48,Beauty,Sunscreen SPF50,5189.38,5,10,0.0,Net Banking,Cancelled,Central,CUST0221,5.0
+ORD101262,2026-03-17 14:10,Home & Kitchen,Mixer Grinder,643.47,4,20,2059.1,Cash on Delivery,Delivered,Central,CUST0378,5.0
+ORD101263,2026-03-17 15:23,Grocery,Almonds 500g,431.74,3,10,0.0,Cash on Delivery,Cancelled,West,CUST0095,
+ORD101264,2026-03-17 17:52,Sports,Cricket Bat,4623.79,5,0,23118.95,Net Banking,Delivered,Central,CUST0314,3.0
+ORD101265,2026-03-17 18:14,Fashion,Cotton Kurta,5247.79,3,5,14956.2,UPI,Shipped,East,CUST0090,5.0
+ORD101266,2026-03-17 18:23,Fashion,Sunglasses,413.71,2,5,786.05,Credit Card,Processing,North,CUST0377,5.0
+ORD101267,2026-03-18 09:10,Electronics,Bluetooth Speaker,6860.37,3,5,19552.05,Credit Card,Delivered,Central,CUST0075,
+ORD101268,2026-03-18 13:44,Sports,Resistance Bands,7424.97,2,0,14849.94,Wallet,Delivered,East,CUST0495,4.0
+ORD101269,2026-03-18 14:47,Books,Business Biography,6715.29,1,0,0.0,Net Banking,Cancelled,South,CUST0112,2.0
+ORD101270,2026-03-18 20:47,Sports,Yoga Mat,5775.87,3,10,15594.85,Debit Card,Delivered,North,CUST0465,
+ORD101271,2026-03-18 21:27,Sports,Dumbbell Set,1679.46,1,30,0.0,Debit Card,Cancelled,South,CUST0256,4.0
+ORD101272,2026-03-19 04:02,Fashion,Sunglasses,6188.61,5,5,29395.9,Cash on Delivery,Shipped,South,CUST0128,5.0
+ORD101273,2026-03-19 09:24,Books,Fiction Novel,1176.95,2,15,2000.82,Net Banking,Delivered,South,CUST0270,4.0
+ORD101274,2026-03-19 11:10,Grocery,Cooking Oil 1L,4329.3,3,30,9091.53,Wallet,Processing,North,CUST0079,5.0
+ORD101275,2026-03-20 02:35,Fashion,Leather Wallet,4403.69,5,15,18715.68,UPI,Delivered,Central,CUST0118,
+ORD101276,2026-03-20 07:14,Beauty,Face Serum,1272.53,3,10,0.0,Credit Card,Cancelled,South,CUST0250,5.0
+ORD101277,2026-03-20 13:16,Home & Kitchen,Non-stick Pan,3819.39,1,15,3246.48,Wallet,Delivered,North,CUST0183,4.0
+ORD101278,2026-03-20 19:01,Books,Fiction Novel,2230.59,1,20,1784.47,UPI,Returned,South,CUST0111,
+ORD101279,2026-03-20 19:22,Home & Kitchen,Bedsheet Set,679.35,5,5,3226.91,Wallet,Delivered,Central,CUST0143,
+ORD101280,2026-03-21 03:09,Fashion,Leather Wallet,1902.06,1,5,1806.96,Credit Card,Shipped,South,CUST0377,5.0
+ORD101281,2026-03-21 12:27,Books,Cookbook,4240.6,5,0,21203.0,Net Banking,Delivered,South,CUST0140,
+ORD101282,2026-03-21 20:12,Grocery,Almonds 500g,5572.44,4,0,0.0,Net Banking,Cancelled,West,CUST0218,5.0
+ORD101283,2026-03-21 21:06,Grocery,Honey Jar,2767.21,2,30,3874.09,Credit Card,Delivered,Central,CUST0161,
+ORD101284,2026-03-21 22:13,Electronics,Power Bank 20000mAh,2568.4,1,0,2568.4,Net Banking,Processing,Central,CUST0011,4.0
+ORD101285,2026-03-22 13:32,Electronics,Bluetooth Speaker,5538.34,5,10,0.0,Wallet,Cancelled,South,CUST0315,5.0
+ORD101286,2026-03-23 01:49,Home & Kitchen,LED Bulb Pack,5631.41,2,0,11262.82,Credit Card,Returned,Central,CUST0382,5.0
+ORD101287,2026-03-23 06:33,Books,Fiction Novel,4623.41,1,0,0.0,Wallet,Cancelled,West,CUST0190,5.0
+ORD101288,2026-03-23 09:19,Home & Kitchen,Mixer Grinder,1425.67,3,0,4277.01,Cash on Delivery,Delivered,Central,CUST0074,
+ORD101289,2026-03-23 13:16,Sports,Cricket Bat,846.96,5,10,3811.32,Credit Card,Delivered,South,CUST0427,4.0
+ORD101290,2026-03-23 16:32,Electronics,USB-C Cable,6266.77,3,5,17860.29,UPI,Delivered,North,CUST0188,
+ORD101291,2026-03-24 03:10,Fashion,Running Shoes,3074.0,3,20,7377.6,UPI,Delivered,West,CUST0115,
+ORD101292,2026-03-24 05:41,Books,Cookbook,2925.9,1,15,2487.02,Wallet,Delivered,South,CUST0145,1.0
+ORD101293,2026-03-24 07:34,Fashion,Sunglasses,7941.42,5,5,37721.74,Wallet,Delivered,North,CUST0136,5.0
+ORD101294,2026-03-25 21:58,Books,Self-Help Book,1244.8,1,0,1244.8,Credit Card,Delivered,North,CUST0201,5.0
+ORD101295,2026-03-25 22:42,Electronics,Wireless Earbuds,161.36,5,5,766.46,Cash on Delivery,Shipped,South,CUST0031,2.0
+ORD101296,2026-03-26 07:58,Sports,Football,5945.95,2,20,9513.52,Debit Card,Delivered,South,CUST0463,4.0
+ORD101297,2026-03-26 18:03,Home & Kitchen,Air Fryer,6580.13,4,5,25004.49,Debit Card,Delivered,West,CUST0326,2.0
+ORD101298,2026-03-27 07:17,Fashion,Sunglasses,7889.35,5,5,37474.41,Net Banking,Delivered,North,CUST0012,
+ORD101299,2026-03-27 16:33,Home & Kitchen,LED Bulb Pack,5365.24,5,0,26826.2,UPI,Delivered,North,CUST0471,
+ORD101300,2026-03-27 21:11,Beauty,Lipstick Combo,986.91,1,15,838.87,Credit Card,Shipped,North,CUST0164,
+ORD101301,2026-03-28 11:54,Home & Kitchen,Air Fryer,2426.46,3,0,7279.38,Debit Card,Delivered,South,CUST0185,
+ORD101302,2026-03-28 21:11,Books,Self-Help Book,305.29,2,0,610.58,Cash on Delivery,Shipped,South,CUST0009,5.0
+ORD101303,2026-03-29 07:29,Electronics,Wireless Earbuds,2143.8,3,0,6431.4,Credit Card,Processing,East,CUST0033,4.0
+ORD101304,2026-03-29 20:13,Home & Kitchen,Mixer Grinder,6509.98,5,15,27667.41,Cash on Delivery,Returned,South,CUST0304,
+ORD101305,2026-03-31 12:32,Fashion,Sunglasses,4341.07,3,0,13023.21,UPI,Processing,West,CUST0167,
+ORD101306,2026-04-01 00:39,Fashion,Sunglasses,5507.91,1,5,5232.51,Wallet,Delivered,South,CUST0488,4.0
+ORD101307,2026-04-01 01:17,Books,Self-Help Book,1087.16,5,15,4620.43,Cash on Delivery,Delivered,East,CUST0095,
+ORD101308,2026-04-01 03:51,Sports,Resistance Bands,1783.89,4,5,6778.78,Net Banking,Processing,West,CUST0452,5.0
+ORD101309,2026-04-01 09:24,Grocery,Honey Jar,185.27,4,10,666.97,Credit Card,Delivered,Central,CUST0126,4.0
+ORD101310,2026-04-01 14:34,Home & Kitchen,Non-stick Pan,5078.33,1,20,4062.66,Net Banking,Delivered,South,CUST0237,3.0
+ORD101311,2026-04-01 15:08,Home & Kitchen,LED Bulb Pack,3102.56,2,0,0.0,UPI,Cancelled,West,CUST0491,4.0
+ORD101312,2026-04-02 01:26,Fashion,Leather Wallet,662.3,1,5,629.18,Net Banking,Shipped,Central,CUST0191,3.0
+ORD101313,2026-04-03 01:26,Books,Self-Help Book,2777.74,5,10,0.0,UPI,Cancelled,West,CUST0127,5.0
+ORD101314,2026-04-03 10:51,Sports,Cricket Bat,1837.38,4,10,0.0,Debit Card,Cancelled,South,CUST0083,
+ORD101315,2026-04-03 14:47,Electronics,Power Bank 20000mAh,7734.01,3,20,18561.62,Net Banking,Shipped,West,CUST0368,4.0
+ORD101316,2026-04-04 09:44,Fashion,Denim Jacket,762.72,2,5,1449.17,Net Banking,Delivered,West,CUST0241,
+ORD101317,2026-04-04 10:13,Fashion,Sunglasses,4298.58,5,20,17194.32,Credit Card,Delivered,West,CUST0493,4.0
+ORD101318,2026-04-04 13:39,Electronics,Smartwatch,4214.05,3,5,0.0,Cash on Delivery,Cancelled,West,CUST0213,
+ORD101319,2026-04-04 15:11,Beauty,Lipstick Combo,6308.02,2,20,10092.83,Debit Card,Processing,Central,CUST0135,
+ORD101320,2026-04-05 00:13,Grocery,Basmati Rice 5kg,4902.8,4,0,19611.2,Wallet,Delivered,West,CUST0304,4.0
+ORD101321,2026-04-05 03:57,Beauty,Hair Dryer,153.52,1,10,138.17,Net Banking,Delivered,West,CUST0021,5.0
+ORD101322,2026-04-05 04:58,Home & Kitchen,Air Fryer,6334.88,5,15,26923.24,Credit Card,Shipped,West,CUST0222,4.0
+ORD101323,2026-04-05 10:30,Electronics,USB-C Cable,967.89,1,0,967.89,Wallet,Delivered,Central,CUST0038,5.0
+ORD101324,2026-04-05 15:25,Books,Business Biography,6494.12,4,0,0.0,Debit Card,Cancelled,West,CUST0483,5.0
+ORD101325,2026-04-05 20:30,Fashion,Leather Wallet,6073.66,1,0,6073.66,UPI,Returned,East,CUST0419,4.0
+ORD101326,2026-04-05 22:19,Home & Kitchen,Non-stick Pan,6544.49,5,30,22905.71,Wallet,Shipped,Central,CUST0035,3.0
+ORD101327,2026-04-06 15:38,Electronics,Wireless Earbuds,2585.07,4,10,9306.25,Cash on Delivery,Shipped,East,CUST0216,5.0
+ORD101328,2026-04-07 12:28,Grocery,Cooking Oil 1L,4006.69,3,0,12020.07,Net Banking,Delivered,South,CUST0258,2.0
+ORD101329,2026-04-07 19:03,Sports,Yoga Mat,563.71,1,0,563.71,Cash on Delivery,Delivered,South,CUST0037,5.0
+ORD101330,2026-04-08 03:42,Electronics,USB-C Cable,7008.64,5,15,29786.72,Credit Card,Returned,West,CUST0181,
+ORD101331,2026-04-08 14:57,Beauty,Hair Dryer,3910.87,4,0,15643.48,Wallet,Delivered,East,CUST0061,5.0
+ORD101332,2026-04-08 16:31,Beauty,Perfume 100ml,7149.92,3,0,21449.76,Cash on Delivery,Shipped,East,CUST0124,
+ORD101333,2026-04-09 00:15,Home & Kitchen,LED Bulb Pack,7607.23,5,10,0.0,Wallet,Cancelled,East,CUST0343,3.0
+ORD101334,2026-04-09 13:37,Beauty,Perfume 100ml,1858.03,5,0,9290.15,UPI,Delivered,South,CUST0329,3.0
+ORD101335,2026-04-10 00:10,Electronics,Wireless Earbuds,5793.98,3,10,15643.75,Credit Card,Delivered,South,CUST0293,5.0
+ORD101336,2026-04-10 00:40,Sports,Football,5121.11,5,5,24325.27,Wallet,Delivered,East,CUST0378,5.0
+ORD101337,2026-04-10 09:35,Grocery,Green Tea Pack,3829.14,2,15,6509.54,Cash on Delivery,Processing,West,CUST0468,5.0
+ORD101338,2026-04-12 11:33,Sports,Football,7756.28,3,0,23268.84,UPI,Delivered,East,CUST0057,3.0
+ORD101339,2026-04-13 05:56,Electronics,Wireless Earbuds,2418.92,4,0,9675.68,UPI,Shipped,East,CUST0186,5.0
+ORD101340,2026-04-13 06:45,Electronics,USB-C Cable,3859.74,5,0,0.0,UPI,Cancelled,North,CUST0291,2.0
+ORD101341,2026-04-13 11:53,Books,Fiction Novel,7370.25,3,10,19899.68,Wallet,Shipped,South,CUST0247,
+ORD101342,2026-04-13 17:17,Grocery,Almonds 500g,5390.46,2,10,9702.83,Credit Card,Delivered,South,CUST0066,5.0
+ORD101343,2026-04-13 17:21,Home & Kitchen,Non-stick Pan,5976.1,2,30,0.0,Credit Card,Cancelled,West,CUST0152,1.0
+ORD101344,2026-04-13 18:00,Grocery,Honey Jar,3704.7,3,5,10558.39,Cash on Delivery,Delivered,East,CUST0210,4.0
+ORD101345,2026-04-14 10:43,Fashion,Leather Wallet,458.99,2,15,780.28,Credit Card,Shipped,Central,CUST0038,5.0
+ORD101346,2026-04-14 20:05,Fashion,Leather Wallet,5918.23,5,5,28111.59,Net Banking,Shipped,West,CUST0454,5.0
+ORD101347,2026-04-15 07:57,Sports,Dumbbell Set,2690.36,5,10,12106.62,Debit Card,Delivered,West,CUST0052,5.0
+ORD101348,2026-04-15 19:18,Books,Cookbook,4848.27,1,5,0.0,UPI,Cancelled,West,CUST0022,5.0
+ORD101349,2026-04-17 05:41,Electronics,Wireless Earbuds,1636.83,5,20,0.0,Debit Card,Cancelled,South,CUST0445,2.0
+ORD101350,2026-04-17 10:06,Fashion,Sunglasses,7131.26,4,0,0.0,Wallet,Cancelled,Central,CUST0134,1.0
+ORD101351,2026-04-18 00:55,Books,Business Biography,2342.34,5,0,11711.7,Wallet,Delivered,Central,CUST0364,
+ORD101352,2026-04-18 11:42,Beauty,Lipstick Combo,443.32,4,15,0.0,Cash on Delivery,Cancelled,North,CUST0487,4.0
+ORD101353,2026-04-18 20:14,Beauty,Sunscreen SPF50,2773.14,2,0,5546.28,UPI,Processing,East,CUST0175,
+ORD101354,2026-04-18 21:46,Sports,Football,2078.27,3,10,0.0,Debit Card,Cancelled,Central,CUST0357,4.0
+ORD101355,2026-04-19 11:13,Electronics,Smartwatch,5690.74,2,5,10812.41,Debit Card,Delivered,East,CUST0441,5.0
+ORD101356,2026-04-19 18:55,Books,Self-Help Book,697.18,3,0,2091.54,Cash on Delivery,Delivered,Central,CUST0056,4.0
+ORD101357,2026-04-19 19:53,Electronics,Power Bank 20000mAh,782.87,2,0,1565.74,Net Banking,Returned,East,CUST0088,
+ORD101358,2026-04-20 12:09,Electronics,Bluetooth Speaker,3968.27,3,15,10119.09,Wallet,Delivered,Central,CUST0252,5.0
+ORD101359,2026-04-20 12:22,Grocery,Green Tea Pack,6496.97,3,10,0.0,Debit Card,Cancelled,East,CUST0318,1.0
+ORD101360,2026-04-20 14:47,Books,Cookbook,5445.36,1,0,5445.36,Debit Card,Processing,Central,CUST0344,4.0
+ORD101361,2026-04-21 08:14,Sports,Football,1881.46,1,10,1693.31,UPI,Processing,East,CUST0135,5.0
+ORD101362,2026-04-21 17:26,Beauty,Sunscreen SPF50,5211.1,3,15,13288.3,Cash on Delivery,Processing,North,CUST0018,3.0
+ORD101363,2026-04-21 18:03,Home & Kitchen,Bedsheet Set,5600.21,5,10,25200.94,Net Banking,Returned,Central,CUST0251,5.0
+ORD101364,2026-04-22 12:06,Sports,Football,3403.05,5,10,15313.72,Debit Card,Shipped,East,CUST0468,5.0
+ORD101365,2026-04-22 21:11,Fashion,Running Shoes,2736.05,2,10,0.0,Net Banking,Cancelled,East,CUST0436,2.0
+ORD101366,2026-04-23 16:40,Sports,Football,7681.27,4,5,29188.83,UPI,Returned,South,CUST0480,3.0
+ORD101367,2026-04-23 17:26,Fashion,Cotton Kurta,4237.28,4,5,0.0,Credit Card,Cancelled,South,CUST0096,2.0
+ORD101368,2026-04-24 06:10,Sports,Cricket Bat,1728.72,5,0,8643.6,Cash on Delivery,Delivered,South,CUST0352,5.0
+ORD101369,2026-04-24 20:27,Beauty,Lipstick Combo,7561.56,4,0,30246.24,Wallet,Returned,North,CUST0337,4.0
+ORD101370,2026-04-25 00:36,Sports,Cricket Bat,7835.04,3,5,22329.86,Credit Card,Delivered,West,CUST0233,3.0
+ORD101371,2026-04-25 04:44,Electronics,USB-C Cable,7577.33,5,0,37886.65,Net Banking,Shipped,South,CUST0254,2.0
+ORD101372,2026-04-26 16:32,Fashion,Cotton Kurta,7082.08,3,30,0.0,Credit Card,Cancelled,East,CUST0336,4.0
+ORD101373,2026-04-26 22:30,Home & Kitchen,Bedsheet Set,4078.42,4,10,14682.31,Debit Card,Shipped,East,CUST0431,
+ORD101374,2026-04-27 10:51,Home & Kitchen,LED Bulb Pack,6712.77,3,10,0.0,Net Banking,Cancelled,West,CUST0018,3.0
+ORD101375,2026-04-28 02:32,Electronics,Wireless Earbuds,6725.64,2,5,12778.72,UPI,Delivered,North,CUST0113,
+ORD101376,2026-04-28 07:32,Fashion,Running Shoes,6881.84,4,10,24774.62,Cash on Delivery,Delivered,North,CUST0436,5.0
+ORD101377,2026-04-28 11:18,Sports,Football,161.38,5,0,806.9,Credit Card,Shipped,West,CUST0404,
+ORD101378,2026-04-28 18:26,Home & Kitchen,Non-stick Pan,3761.77,3,0,11285.31,UPI,Delivered,Central,CUST0204,2.0
+ORD101379,2026-04-29 04:00,Beauty,Perfume 100ml,244.13,4,10,878.87,Debit Card,Shipped,East,CUST0436,4.0
+ORD101380,2026-04-29 05:27,Electronics,Bluetooth Speaker,3453.48,4,0,0.0,UPI,Cancelled,East,CUST0324,4.0
+ORD101381,2026-04-29 09:11,Grocery,Cooking Oil 1L,5659.91,3,0,16979.73,Credit Card,Delivered,East,CUST0086,3.0
+ORD101382,2026-04-29 10:26,Books,Cookbook,2395.24,1,0,2395.24,Wallet,Processing,North,CUST0225,5.0
+ORD101383,2026-04-29 11:17,Home & Kitchen,LED Bulb Pack,3256.91,3,10,8793.66,Net Banking,Delivered,West,CUST0004,
+ORD101384,2026-04-29 13:19,Sports,Cricket Bat,2804.87,5,5,13323.13,UPI,Delivered,Central,CUST0004,4.0
+ORD101385,2026-04-29 15:00,Fashion,Running Shoes,1373.34,2,0,0.0,Credit Card,Cancelled,North,CUST0367,5.0
+ORD101386,2026-04-30 04:53,Sports,Dumbbell Set,2315.35,2,20,3704.56,UPI,Delivered,North,CUST0175,3.0
+ORD101387,2026-04-30 06:39,Grocery,Green Tea Pack,4972.49,3,15,0.0,Debit Card,Cancelled,East,CUST0198,5.0
+ORD101388,2026-04-30 13:13,Books,Fiction Novel,5190.99,1,5,4931.44,Credit Card,Shipped,East,CUST0049,2.0
+ORD101389,2026-04-30 20:37,Fashion,Sunglasses,316.15,2,30,442.61,Net Banking,Delivered,North,CUST0226,5.0
+ORD101390,2026-05-01 06:18,Beauty,Sunscreen SPF50,1082.71,2,10,0.0,UPI,Cancelled,Central,CUST0257,1.0
+ORD101391,2026-05-01 18:27,Books,Business Biography,5762.15,3,10,15557.8,Net Banking,Shipped,Central,CUST0215,
+ORD101392,2026-05-02 00:13,Sports,Football,564.65,3,0,1693.95,Net Banking,Returned,East,CUST0335,
+ORD101393,2026-05-02 13:54,Grocery,Green Tea Pack,7375.95,3,0,22127.85,Cash on Delivery,Delivered,West,CUST0002,1.0
+ORD101394,2026-05-02 16:50,Books,Self-Help Book,299.46,5,10,1347.57,Net Banking,Returned,West,CUST0204,
+ORD101395,2026-05-02 20:15,Books,Business Biography,4438.56,4,5,0.0,Cash on Delivery,Cancelled,North,CUST0353,4.0
+ORD101396,2026-05-03 01:44,Beauty,Lipstick Combo,911.6,4,5,3464.08,Credit Card,Shipped,East,CUST0052,3.0
+ORD101397,2026-05-03 07:32,Grocery,Almonds 500g,382.67,5,0,1913.35,Net Banking,Shipped,Central,CUST0083,4.0
+ORD101398,2026-05-03 12:05,Home & Kitchen,Bedsheet Set,3682.47,4,15,12520.4,Cash on Delivery,Delivered,South,CUST0003,5.0
+ORD101399,2026-05-03 13:32,Home & Kitchen,Bedsheet Set,7077.57,4,15,24063.74,UPI,Returned,West,CUST0271,
+ORD101400,2026-05-03 14:16,Books,Business Biography,5025.13,2,0,10050.26,Net Banking,Delivered,Central,CUST0116,3.0
+ORD101401,2026-05-03 22:25,Home & Kitchen,Air Fryer,4016.22,4,15,0.0,Credit Card,Cancelled,East,CUST0478,5.0
+ORD101402,2026-05-05 16:38,Beauty,Hair Dryer,2488.76,3,10,0.0,UPI,Cancelled,East,CUST0288,
+ORD101403,2026-05-06 07:37,Books,Self-Help Book,2406.45,2,5,4572.25,Cash on Delivery,Delivered,Central,CUST0091,
+ORD101404,2026-05-06 13:55,Grocery,Cooking Oil 1L,6866.69,1,5,6523.36,Net Banking,Delivered,East,CUST0188,4.0
+ORD101405,2026-05-06 21:08,Home & Kitchen,LED Bulb Pack,7718.98,5,10,0.0,Debit Card,Cancelled,East,CUST0109,4.0
+ORD101406,2026-05-07 01:17,Grocery,Cooking Oil 1L,4957.74,5,0,24788.7,Net Banking,Delivered,North,CUST0158,3.0
+ORD101407,2026-05-07 12:40,Grocery,Cooking Oil 1L,1420.38,4,0,5681.52,Net Banking,Delivered,West,CUST0063,
+ORD101408,2026-05-07 12:57,Home & Kitchen,Air Fryer,7944.76,3,0,0.0,Net Banking,Cancelled,Central,CUST0387,
+ORD101409,2026-05-07 20:05,Sports,Resistance Bands,5294.41,4,10,19059.88,Net Banking,Delivered,East,CUST0324,2.0
+ORD101410,2026-05-08 01:46,Beauty,Lipstick Combo,1330.25,2,15,0.0,Debit Card,Cancelled,North,CUST0435,2.0
+ORD101411,2026-05-09 08:29,Beauty,Lipstick Combo,4541.41,5,10,20436.34,Cash on Delivery,Shipped,North,CUST0044,
+ORD101412,2026-05-09 14:40,Fashion,Denim Jacket,1532.27,2,20,2451.63,Credit Card,Delivered,Central,CUST0127,5.0
+ORD101413,2026-05-09 14:55,Fashion,Cotton Kurta,2712.95,3,5,7731.91,Wallet,Processing,Central,CUST0429,2.0
+ORD101414,2026-05-10 04:23,Books,Kids Storybook,7303.57,1,0,7303.57,Net Banking,Delivered,South,CUST0052,4.0
+ORD101415,2026-05-10 17:11,Home & Kitchen,Non-stick Pan,372.25,2,5,707.28,UPI,Shipped,East,CUST0124,4.0
+ORD101416,2026-05-10 19:14,Electronics,Smartwatch,7590.13,1,15,6451.61,Credit Card,Returned,Central,CUST0350,
+ORD101417,2026-05-10 20:59,Grocery,Basmati Rice 5kg,4057.41,3,15,0.0,Wallet,Cancelled,Central,CUST0101,5.0
+ORD101418,2026-05-11 15:25,Beauty,Perfume 100ml,4056.05,3,10,10951.34,UPI,Returned,West,CUST0222,
+ORD101419,2026-05-12 04:28,Sports,Resistance Bands,7104.02,3,20,17049.65,Credit Card,Delivered,South,CUST0482,3.0
+ORD101420,2026-05-12 06:10,Home & Kitchen,Mixer Grinder,1309.83,4,20,4191.46,Net Banking,Shipped,West,CUST0454,4.0
+ORD101421,2026-05-12 14:07,Electronics,Smartwatch,6348.16,2,0,12696.32,Credit Card,Returned,West,CUST0113,
+ORD101422,2026-05-12 17:11,Home & Kitchen,Bedsheet Set,5062.38,2,0,10124.76,Credit Card,Shipped,South,CUST0422,5.0
+ORD101423,2026-05-12 22:10,Fashion,Denim Jacket,3148.41,4,15,0.0,Net Banking,Cancelled,West,CUST0358,
+ORD101424,2026-05-12 23:08,Grocery,Almonds 500g,6166.67,2,15,0.0,UPI,Cancelled,Central,CUST0128,
+ORD101425,2026-05-13 01:18,Beauty,Face Serum,814.72,2,15,1385.02,Credit Card,Delivered,West,CUST0412,3.0
+ORD101426,2026-05-13 01:47,Fashion,Running Shoes,5276.97,5,20,21107.88,Credit Card,Delivered,East,CUST0346,
+ORD101427,2026-05-13 10:30,Home & Kitchen,Mixer Grinder,6452.59,4,15,21938.81,Wallet,Shipped,West,CUST0457,
+ORD101428,2026-05-14 03:19,Grocery,Basmati Rice 5kg,6479.42,2,0,12958.84,Wallet,Processing,West,CUST0002,5.0
+ORD101429,2026-05-14 07:17,Grocery,Green Tea Pack,7108.5,4,0,0.0,Wallet,Cancelled,East,CUST0055,4.0
+ORD101430,2026-05-14 07:32,Electronics,Bluetooth Speaker,2050.92,1,30,1435.64,Cash on Delivery,Processing,South,CUST0232,4.0
+ORD101431,2026-05-14 21:26,Beauty,Sunscreen SPF50,7218.45,2,0,14436.9,Net Banking,Shipped,Central,CUST0142,2.0
+ORD101432,2026-05-15 01:13,Sports,Cricket Bat,237.93,5,0,0.0,Net Banking,Cancelled,East,CUST0069,
+ORD101433,2026-05-15 21:43,Books,Business Biography,6722.25,5,20,26889.0,Net Banking,Delivered,North,CUST0219,
+ORD101434,2026-05-15 23:49,Books,Kids Storybook,7290.01,3,0,21870.03,Credit Card,Returned,North,CUST0387,5.0
+ORD101435,2026-05-16 01:08,Sports,Yoga Mat,7934.53,2,15,13488.7,Wallet,Shipped,West,CUST0341,5.0
+ORD101436,2026-05-16 07:21,Sports,Football,2514.72,3,5,7166.95,Cash on Delivery,Returned,West,CUST0403,5.0
+ORD101437,2026-05-16 23:06,Books,Kids Storybook,7126.9,3,5,20311.66,UPI,Processing,West,CUST0176,4.0
+ORD101438,2026-05-17 06:49,Sports,Cricket Bat,4662.13,4,10,16783.67,Cash on Delivery,Shipped,North,CUST0411,5.0
+ORD101439,2026-05-17 16:51,Grocery,Almonds 500g,4747.99,2,5,9021.18,Net Banking,Returned,West,CUST0404,5.0
+ORD101440,2026-05-18 09:30,Fashion,Leather Wallet,5967.91,4,10,21484.48,Credit Card,Delivered,West,CUST0190,4.0
+ORD101441,2026-05-18 10:36,Sports,Yoga Mat,4824.83,1,10,4342.35,Cash on Delivery,Delivered,North,CUST0300,4.0
+ORD101442,2026-05-19 13:41,Grocery,Almonds 500g,2032.17,2,30,2845.04,Cash on Delivery,Delivered,Central,CUST0056,
+ORD101443,2026-05-20 17:13,Electronics,Wireless Earbuds,7910.59,5,5,37575.3,Wallet,Delivered,East,CUST0480,
+ORD101444,2026-05-21 08:44,Home & Kitchen,LED Bulb Pack,7671.77,2,20,12274.83,Credit Card,Processing,Central,CUST0440,
+ORD101445,2026-05-21 20:28,Home & Kitchen,Air Fryer,4006.42,4,15,13621.83,Credit Card,Delivered,East,CUST0372,
+ORD101446,2026-05-22 06:33,Grocery,Cooking Oil 1L,3121.55,2,0,6243.1,UPI,Shipped,North,CUST0214,4.0
+ORD101447,2026-05-22 15:17,Fashion,Sunglasses,7147.11,2,10,12864.8,Credit Card,Shipped,South,CUST0120,
+ORD101448,2026-05-23 07:47,Sports,Dumbbell Set,1864.89,4,5,7086.58,UPI,Delivered,East,CUST0313,5.0
+ORD101449,2026-05-24 05:17,Sports,Resistance Bands,3213.18,5,15,13656.02,UPI,Shipped,East,CUST0414,1.0
+ORD101450,2026-05-24 09:04,Beauty,Sunscreen SPF50,2119.09,4,0,8476.36,Cash on Delivery,Delivered,West,CUST0476,
+ORD101451,2026-05-24 10:21,Electronics,Bluetooth Speaker,7117.1,5,10,32026.95,Wallet,Delivered,Central,CUST0106,
+ORD101452,2026-05-24 11:39,Home & Kitchen,Non-stick Pan,2595.98,5,0,12979.9,Debit Card,Returned,North,CUST0008,5.0
+ORD101453,2026-05-24 13:23,Home & Kitchen,Air Fryer,5963.67,4,20,19083.74,Credit Card,Returned,North,CUST0302,
+ORD101454,2026-05-25 07:26,Home & Kitchen,Mixer Grinder,7458.12,5,5,35426.07,Debit Card,Processing,South,CUST0370,3.0
+ORD101455,2026-05-25 14:25,Electronics,USB-C Cable,4348.86,3,0,13046.58,UPI,Returned,South,CUST0367,1.0
+ORD101456,2026-05-25 20:25,Beauty,Sunscreen SPF50,4274.48,5,10,0.0,Debit Card,Cancelled,Central,CUST0027,5.0
+ORD101457,2026-05-26 09:18,Home & Kitchen,Air Fryer,1064.73,3,15,2715.06,Debit Card,Delivered,South,CUST0463,
+ORD101458,2026-05-27 03:53,Sports,Yoga Mat,5736.69,2,15,9752.37,Debit Card,Processing,Central,CUST0084,3.0
+ORD101459,2026-05-27 21:27,Fashion,Leather Wallet,5857.2,4,0,0.0,Net Banking,Cancelled,West,CUST0487,4.0
+ORD101460,2026-05-28 05:59,Sports,Football,1476.41,5,20,5905.64,Cash on Delivery,Processing,Central,CUST0113,5.0
+ORD101461,2026-05-28 06:03,Beauty,Lipstick Combo,321.12,3,15,818.86,Net Banking,Shipped,North,CUST0129,4.0
+ORD101462,2026-05-29 01:15,Books,Cookbook,5753.9,1,10,5178.51,Debit Card,Delivered,North,CUST0031,5.0
+ORD101463,2026-05-30 10:43,Fashion,Sunglasses,2012.18,5,0,10060.9,Cash on Delivery,Returned,North,CUST0466,3.0
+ORD101464,2026-05-30 15:17,Grocery,Basmati Rice 5kg,1459.39,4,5,5545.68,Cash on Delivery,Returned,Central,CUST0103,4.0
+ORD101465,2026-05-30 15:53,Home & Kitchen,LED Bulb Pack,2956.88,4,0,11827.52,Debit Card,Processing,South,CUST0287,5.0
+ORD101466,2026-05-30 20:44,Grocery,Honey Jar,3575.69,1,0,3575.69,Wallet,Shipped,South,CUST0408,4.0
+ORD101467,2026-05-31 00:58,Books,Kids Storybook,5715.26,4,10,0.0,Debit Card,Cancelled,West,CUST0150,3.0
+ORD101468,2026-05-31 22:15,Grocery,Honey Jar,5891.66,1,20,4713.33,Net Banking,Shipped,West,CUST0397,4.0
+ORD101469,2026-06-01 02:01,Grocery,Green Tea Pack,6383.54,1,5,6064.36,Credit Card,Shipped,Central,CUST0420,4.0
+ORD101470,2026-06-01 07:42,Electronics,Power Bank 20000mAh,7382.52,5,0,36912.6,Debit Card,Processing,South,CUST0354,3.0
+ORD101471,2026-06-01 11:20,Beauty,Sunscreen SPF50,2889.65,1,15,2456.2,Net Banking,Shipped,West,CUST0495,3.0
+ORD101472,2026-06-01 15:08,Electronics,Bluetooth Speaker,6407.27,2,10,11533.09,Credit Card,Delivered,South,CUST0032,5.0
+ORD101473,2026-06-01 22:49,Home & Kitchen,Bedsheet Set,4671.12,2,10,8408.02,UPI,Delivered,East,CUST0175,4.0
+ORD101474,2026-06-02 08:25,Electronics,Wireless Earbuds,6075.4,3,30,0.0,Cash on Delivery,Cancelled,West,CUST0163,4.0
+ORD101475,2026-06-02 10:08,Electronics,Bluetooth Speaker,7478.51,3,5,21313.75,Wallet,Delivered,East,CUST0189,4.0
+ORD101476,2026-06-02 11:36,Home & Kitchen,Air Fryer,479.13,4,0,1916.52,Credit Card,Returned,Central,CUST0174,5.0
+ORD101477,2026-06-02 21:55,Grocery,Honey Jar,1908.81,2,5,3626.74,Debit Card,Shipped,Central,CUST0290,3.0
+ORD101478,2026-06-03 08:09,Grocery,Cooking Oil 1L,4194.26,1,0,4194.26,Net Banking,Delivered,West,CUST0155,
+ORD101479,2026-06-03 18:19,Grocery,Almonds 500g,2836.48,3,5,0.0,Cash on Delivery,Cancelled,East,CUST0197,5.0
+ORD101480,2026-06-04 21:36,Electronics,USB-C Cable,1394.86,4,5,5300.47,Credit Card,Delivered,South,CUST0029,
+ORD101481,2026-06-05 00:25,Fashion,Sunglasses,4691.98,2,15,0.0,UPI,Cancelled,East,CUST0286,4.0
+ORD101482,2026-06-05 06:01,Sports,Resistance Bands,2062.61,1,5,1959.48,Debit Card,Processing,Central,CUST0435,5.0
+ORD101483,2026-06-06 02:34,Sports,Football,2512.3,3,0,7536.9,Credit Card,Delivered,North,CUST0388,
+ORD101484,2026-06-06 05:41,Electronics,Smartwatch,2082.57,4,20,0.0,Cash on Delivery,Cancelled,Central,CUST0146,
+ORD101485,2026-06-07 01:23,Beauty,Hair Dryer,6039.46,1,10,5435.51,Net Banking,Delivered,West,CUST0043,5.0
+ORD101486,2026-06-07 08:31,Grocery,Honey Jar,1841.46,2,0,0.0,UPI,Cancelled,Central,CUST0141,
+ORD101487,2026-06-08 18:39,Fashion,Leather Wallet,4238.08,2,0,0.0,Wallet,Cancelled,West,CUST0401,5.0
+ORD101488,2026-06-08 19:04,Electronics,Bluetooth Speaker,6462.72,5,15,27466.56,Wallet,Delivered,North,CUST0056,4.0
+ORD101489,2026-06-09 08:14,Grocery,Green Tea Pack,5068.06,1,10,4561.25,Wallet,Processing,East,CUST0060,5.0
+ORD101490,2026-06-09 13:57,Home & Kitchen,Non-stick Pan,1095.23,5,10,4928.54,Credit Card,Returned,West,CUST0347,5.0
+ORD101491,2026-06-09 16:36,Sports,Resistance Bands,3176.02,1,0,3176.02,Wallet,Delivered,West,CUST0154,4.0
+ORD101492,2026-06-10 06:35,Home & Kitchen,Air Fryer,5676.66,3,15,14475.48,UPI,Processing,South,CUST0117,
+ORD101493,2026-06-10 07:34,Home & Kitchen,Bedsheet Set,3147.17,3,15,8025.28,Net Banking,Delivered,East,CUST0383,4.0
+ORD101494,2026-06-10 10:12,Home & Kitchen,Non-stick Pan,994.57,2,0,1989.14,Cash on Delivery,Processing,North,CUST0105,4.0
+ORD101495,2026-06-10 15:59,Grocery,Cooking Oil 1L,4382.94,3,10,11833.94,Debit Card,Shipped,East,CUST0379,1.0
+ORD101496,2026-06-10 16:57,Sports,Dumbbell Set,4399.44,1,0,0.0,Debit Card,Cancelled,Central,CUST0410,4.0
+ORD101497,2026-06-11 12:08,Electronics,Power Bank 20000mAh,7713.51,4,0,0.0,Wallet,Cancelled,South,CUST0390,5.0
+ORD101498,2026-06-12 05:07,Beauty,Sunscreen SPF50,2039.61,4,0,8158.44,Net Banking,Returned,East,CUST0246,3.0
+ORD101499,2026-06-12 08:41,Electronics,USB-C Cable,3669.25,1,0,3669.25,UPI,Delivered,Central,CUST0392,
+ORD101500,2026-06-13 15:58,Electronics,Power Bank 20000mAh,4244.2,3,0,12732.6,Net Banking,Delivered,West,CUST0297,5.0
+ORD101501,2026-06-14 04:50,Home & Kitchen,Mixer Grinder,7673.05,2,10,13811.49,Wallet,Delivered,North,CUST0438,
+ORD101502,2026-06-15 00:15,Sports,Yoga Mat,4828.19,3,0,14484.57,Net Banking,Delivered,North,CUST0015,2.0
+ORD101503,2026-06-15 13:22,Beauty,Perfume 100ml,5401.64,4,0,21606.56,Credit Card,Processing,Central,CUST0196,5.0
+ORD101504,2026-06-15 15:53,Grocery,Almonds 500g,7993.23,3,0,23979.69,Credit Card,Delivered,West,CUST0463,
+ORD101505,2026-06-16 00:43,Fashion,Cotton Kurta,524.62,4,15,1783.71,Cash on Delivery,Delivered,South,CUST0396,4.0
+ORD101506,2026-06-16 19:39,Fashion,Sunglasses,2069.79,2,15,3518.64,Wallet,Returned,Central,CUST0168,
+ORD101507,2026-06-16 21:46,Books,Fiction Novel,7572.98,4,5,28777.32,Credit Card,Returned,East,CUST0406,4.0
+ORD101508,2026-06-17 06:09,Beauty,Face Serum,1152.65,2,5,0.0,Cash on Delivery,Cancelled,North,CUST0233,3.0
+ORD101509,2026-06-18 05:05,Sports,Resistance Bands,5421.08,1,0,5421.08,Cash on Delivery,Shipped,West,CUST0256,4.0
+ORD101510,2026-06-19 15:10,Home & Kitchen,Mixer Grinder,3279.91,3,10,8855.76,Credit Card,Returned,South,CUST0129,
+ORD101511,2026-06-20 18:41,Books,Fiction Novel,2724.45,3,10,7356.02,Wallet,Delivered,North,CUST0198,2.0
+ORD101512,2026-06-21 03:27,Electronics,Power Bank 20000mAh,4428.26,3,0,13284.78,Credit Card,Processing,South,CUST0474,5.0
+ORD101513,2026-06-21 04:58,Home & Kitchen,Non-stick Pan,3143.71,2,0,6287.42,Net Banking,Delivered,Central,CUST0207,4.0
+ORD101514,2026-06-21 05:29,Books,Business Biography,6923.16,4,5,0.0,UPI,Cancelled,South,CUST0237,5.0
+ORD101515,2026-06-21 07:00,Books,Cookbook,6366.0,3,0,19098.0,Net Banking,Delivered,West,CUST0272,4.0
+ORD101516,2026-06-22 02:43,Electronics,Wireless Earbuds,7285.28,3,0,21855.84,Net Banking,Delivered,North,CUST0321,5.0
+ORD101517,2026-06-22 05:53,Fashion,Running Shoes,6496.65,5,5,30859.09,UPI,Delivered,West,CUST0078,
+ORD101518,2026-06-22 15:32,Beauty,Lipstick Combo,2107.91,4,0,8431.64,UPI,Delivered,Central,CUST0488,5.0
+ORD101519,2026-06-22 17:16,Sports,Dumbbell Set,5931.27,5,15,25207.9,Net Banking,Delivered,South,CUST0382,4.0
+ORD101520,2026-06-22 18:10,Fashion,Leather Wallet,7226.13,4,20,23123.62,Debit Card,Delivered,North,CUST0359,3.0
+ORD101521,2026-06-23 06:48,Fashion,Leather Wallet,4011.48,3,5,0.0,Wallet,Cancelled,West,CUST0228,
+ORD101522,2026-06-23 08:24,Grocery,Honey Jar,973.28,5,0,4866.4,Cash on Delivery,Shipped,West,CUST0094,4.0
+ORD101523,2026-06-23 15:54,Grocery,Honey Jar,2350.95,3,10,6347.56,Wallet,Delivered,East,CUST0105,5.0
+ORD101524,2026-06-24 14:27,Grocery,Almonds 500g,6445.88,4,15,21915.99,Net Banking,Processing,South,CUST0374,
+ORD101525,2026-06-24 16:03,Grocery,Cooking Oil 1L,1454.68,5,0,7273.4,Credit Card,Delivered,East,CUST0129,1.0
+ORD101526,2026-06-24 17:13,Fashion,Leather Wallet,5157.0,1,10,4641.3,Net Banking,Delivered,West,CUST0433,4.0
+ORD101527,2026-06-24 17:46,Fashion,Sunglasses,6629.17,3,15,16904.38,Credit Card,Delivered,East,CUST0429,3.0
+ORD101528,2026-06-25 01:07,Fashion,Cotton Kurta,7125.85,3,0,21377.55,Wallet,Shipped,West,CUST0271,
+ORD101529,2026-06-25 13:47,Grocery,Almonds 500g,5308.84,5,10,23889.78,Cash on Delivery,Processing,South,CUST0305,
+ORD101530,2026-06-25 15:25,Fashion,Cotton Kurta,207.6,2,20,332.16,Net Banking,Processing,South,CUST0164,5.0
+ORD101531,2026-06-25 17:27,Sports,Football,3909.95,1,5,3714.45,Credit Card,Shipped,South,CUST0276,2.0
+ORD101532,2026-06-25 21:13,Beauty,Sunscreen SPF50,3286.12,1,5,3121.81,UPI,Returned,East,CUST0283,4.0
+ORD101533,2026-06-26 01:07,Grocery,Basmati Rice 5kg,6768.17,5,0,33840.85,Cash on Delivery,Returned,South,CUST0007,
+ORD101534,2026-06-26 09:37,Books,Self-Help Book,1694.17,4,5,6437.85,Credit Card,Processing,South,CUST0261,4.0
+ORD101535,2026-06-27 12:21,Beauty,Hair Dryer,3645.37,3,5,10389.3,Cash on Delivery,Delivered,East,CUST0079,4.0
+ORD101536,2026-06-27 12:50,Grocery,Honey Jar,6079.74,2,5,11551.51,Net Banking,Delivered,East,CUST0457,5.0
+ORD101537,2026-06-28 02:33,Sports,Dumbbell Set,2205.27,4,5,8380.03,Net Banking,Shipped,South,CUST0320,3.0
+ORD101538,2026-06-28 04:11,Sports,Yoga Mat,6497.04,3,10,0.0,Net Banking,Cancelled,West,CUST0400,3.0
+ORD101539,2026-06-28 16:07,Books,Self-Help Book,5326.76,4,0,21307.04,Debit Card,Delivered,West,CUST0072,4.0
+ORD101540,2026-06-29 08:03,Sports,Yoga Mat,2715.04,1,0,2715.04,Net Banking,Delivered,South,CUST0226,4.0
+ORD101541,2026-06-29 08:08,Electronics,Wireless Earbuds,3110.43,3,5,0.0,Wallet,Cancelled,West,CUST0153,4.0
+ORD101542,2026-06-29 11:01,Fashion,Cotton Kurta,4460.88,5,0,22304.4,Net Banking,Delivered,South,CUST0117,2.0
+ORD101543,2026-06-29 22:29,Home & Kitchen,Air Fryer,5305.78,1,20,0.0,UPI,Cancelled,North,CUST0084,
+ORD101544,2026-06-30 04:32,Fashion,Running Shoes,4403.88,5,10,19817.46,UPI,Processing,East,CUST0087,
+ORD101545,2026-06-30 07:29,Grocery,Honey Jar,3501.36,4,10,12604.9,UPI,Shipped,North,CUST0368,4.0
+ORD101546,2026-06-30 09:33,Electronics,Bluetooth Speaker,2574.41,1,20,2059.53,Cash on Delivery,Shipped,North,CUST0366,
+ORD101547,2026-07-02 10:36,Beauty,Perfume 100ml,1618.74,2,0,3237.48,Wallet,Processing,South,CUST0058,3.0
+ORD101548,2026-07-02 20:19,Fashion,Sunglasses,7666.68,5,5,0.0,Wallet,Cancelled,South,CUST0192,3.0
+ORD101549,2026-07-03 07:30,Grocery,Almonds 500g,442.56,5,10,1991.52,Wallet,Shipped,South,CUST0294,
+ORD101550,2026-07-03 21:33,Beauty,Sunscreen SPF50,2351.18,1,10,2116.06,Debit Card,Processing,Central,CUST0246,
+ORD101551,2026-07-04 01:08,Fashion,Running Shoes,7442.51,5,15,31630.67,Wallet,Delivered,Central,CUST0169,3.0
+ORD101552,2026-07-04 02:00,Fashion,Cotton Kurta,7880.86,3,0,23642.58,Wallet,Returned,East,CUST0317,5.0
+ORD101553,2026-07-04 08:40,Home & Kitchen,Bedsheet Set,7099.41,4,0,28397.64,Cash on Delivery,Delivered,North,CUST0410,
+ORD101554,2026-07-04 10:02,Fashion,Denim Jacket,5804.36,4,5,22056.57,UPI,Processing,East,CUST0486,1.0
+ORD101555,2026-07-05 00:17,Electronics,Power Bank 20000mAh,5798.85,2,0,11597.7,Credit Card,Processing,West,CUST0203,5.0
+ORD101556,2026-07-05 05:28,Sports,Dumbbell Set,4743.99,2,5,0.0,Net Banking,Cancelled,North,CUST0217,
+ORD101557,2026-07-05 08:47,Home & Kitchen,Non-stick Pan,889.07,5,5,0.0,Net Banking,Cancelled,West,CUST0055,
+ORD101558,2026-07-05 11:29,Electronics,USB-C Cable,428.76,2,0,857.52,Cash on Delivery,Shipped,North,CUST0436,3.0
+ORD101559,2026-07-06 07:16,Beauty,Lipstick Combo,2520.02,1,20,2016.02,Wallet,Returned,South,CUST0094,5.0
+ORD101560,2026-07-06 07:59,Grocery,Honey Jar,6954.61,2,0,0.0,UPI,Cancelled,East,CUST0247,
+ORD101561,2026-07-06 13:05,Beauty,Sunscreen SPF50,2751.79,2,0,5503.58,Debit Card,Shipped,East,CUST0284,
+ORD101562,2026-07-07 16:36,Home & Kitchen,Bedsheet Set,7150.13,5,15,0.0,Credit Card,Cancelled,East,CUST0041,1.0
+ORD101563,2026-07-07 23:02,Electronics,USB-C Cable,6120.59,3,0,18361.77,Debit Card,Shipped,West,CUST0239,
+ORD101564,2026-07-07 23:27,Home & Kitchen,LED Bulb Pack,1579.94,2,15,2685.9,Debit Card,Returned,South,CUST0403,4.0
+ORD101565,2026-07-08 09:32,Sports,Yoga Mat,5684.91,4,15,19328.69,Cash on Delivery,Delivered,North,CUST0029,3.0
+ORD101566,2026-07-08 23:15,Fashion,Leather Wallet,5348.72,3,15,13639.24,UPI,Delivered,Central,CUST0462,3.0
+ORD101567,2026-07-09 00:46,Grocery,Honey Jar,151.89,2,20,243.02,Cash on Delivery,Processing,Central,CUST0042,4.0
+ORD101568,2026-07-09 18:33,Fashion,Leather Wallet,3704.13,5,5,17594.62,Debit Card,Delivered,West,CUST0100,3.0
+ORD101569,2026-07-10 02:16,Books,Self-Help Book,5073.7,3,20,12176.88,Net Banking,Delivered,North,CUST0260,
+ORD101570,2026-07-10 11:25,Sports,Cricket Bat,5643.38,4,10,0.0,Cash on Delivery,Cancelled,Central,CUST0381,2.0
+ORD101571,2026-07-10 15:46,Grocery,Green Tea Pack,3173.28,1,0,3173.28,Credit Card,Delivered,North,CUST0178,5.0
+ORD101572,2026-07-11 06:59,Beauty,Perfume 100ml,5337.47,4,0,21349.88,Debit Card,Processing,East,CUST0413,4.0
+ORD101573,2026-07-11 08:32,Home & Kitchen,LED Bulb Pack,2729.75,3,10,7370.32,Cash on Delivery,Delivered,South,CUST0311,4.0
+ORD101574,2026-07-12 05:15,Sports,Cricket Bat,4391.86,5,5,20861.34,Credit Card,Delivered,Central,CUST0259,4.0
+ORD101575,2026-07-12 13:15,Books,Self-Help Book,5513.35,5,0,27566.75,Wallet,Delivered,Central,CUST0028,4.0
+ORD101576,2026-07-12 19:04,Sports,Football,7693.92,3,20,18465.41,Wallet,Delivered,East,CUST0021,5.0
+ORD101577,2026-07-12 21:01,Beauty,Face Serum,6535.6,2,10,11764.08,Cash on Delivery,Delivered,East,CUST0029,
+ORD101578,2026-07-12 21:29,Home & Kitchen,Non-stick Pan,3987.89,2,0,7975.78,Debit Card,Processing,Central,CUST0299,
+ORD101579,2026-07-13 09:34,Electronics,USB-C Cable,5437.41,1,15,0.0,Net Banking,Cancelled,West,CUST0292,
+ORD101580,2026-07-13 11:10,Home & Kitchen,Bedsheet Set,3263.67,4,15,11096.48,Net Banking,Delivered,Central,CUST0189,3.0
+ORD101581,2026-07-13 14:46,Books,Fiction Novel,2425.38,4,10,8731.37,Credit Card,Returned,West,CUST0352,1.0
+ORD101582,2026-07-13 17:47,Home & Kitchen,Mixer Grinder,4968.32,3,10,13414.46,Wallet,Delivered,South,CUST0166,3.0
+ORD101583,2026-07-14 00:11,Sports,Yoga Mat,5409.28,3,10,14605.06,Credit Card,Processing,East,CUST0379,
+ORD101584,2026-07-14 11:29,Beauty,Perfume 100ml,7743.9,4,0,30975.6,Debit Card,Shipped,Central,CUST0006,5.0
+ORD101585,2026-07-15 07:20,Sports,Football,1118.01,1,15,950.31,Wallet,Delivered,East,CUST0113,
+ORD101586,2026-07-16 11:41,Grocery,Green Tea Pack,1096.6,3,10,2960.82,Wallet,Processing,West,CUST0032,5.0
+ORD101587,2026-07-16 13:30,Electronics,USB-C Cable,605.77,1,0,0.0,Cash on Delivery,Cancelled,South,CUST0210,4.0
+ORD101588,2026-07-16 19:52,Sports,Dumbbell Set,4073.56,3,10,10998.61,Debit Card,Delivered,North,CUST0311,5.0
+ORD101589,2026-07-17 10:07,Sports,Football,5851.97,1,30,4096.38,Wallet,Delivered,East,CUST0417,2.0
+ORD101590,2026-07-17 21:27,Fashion,Denim Jacket,1836.4,4,10,6611.04,Wallet,Returned,South,CUST0336,
+ORD101591,2026-07-17 22:42,Electronics,Wireless Earbuds,2219.76,5,0,11098.8,UPI,Returned,Central,CUST0313,3.0
+ORD101592,2026-07-18 07:11,Books,Cookbook,4512.18,5,5,21432.86,Debit Card,Returned,North,CUST0445,
+ORD101593,2026-07-19 02:50,Home & Kitchen,Mixer Grinder,4153.49,4,10,14952.56,UPI,Shipped,North,CUST0115,3.0
+ORD101594,2026-07-19 03:32,Electronics,Power Bank 20000mAh,4413.95,5,30,15448.82,Net Banking,Delivered,West,CUST0271,1.0
+ORD101595,2026-07-19 09:07,Home & Kitchen,LED Bulb Pack,6379.7,4,15,21690.98,Credit Card,Shipped,West,CUST0454,
+ORD101596,2026-07-19 11:53,Beauty,Perfume 100ml,4867.3,1,20,0.0,Cash on Delivery,Cancelled,North,CUST0071,5.0
+ORD101597,2026-07-19 13:42,Sports,Yoga Mat,611.65,5,0,3058.25,Credit Card,Delivered,North,CUST0252,5.0
+ORD101598,2026-07-19 17:03,Electronics,USB-C Cable,2693.9,2,20,4310.24,Debit Card,Delivered,East,CUST0286,
+ORD101599,2026-07-19 21:00,Books,Kids Storybook,5636.62,5,0,28183.1,Credit Card,Processing,East,CUST0346,
+ORD101108,2026-01-21 16:45,Fashion,Denim Jacket,3701.89,1,5,0.0,UPI,Cancelled,South,CUST0447,4.0
+ORD100891,2025-10-29 12:44,Beauty,Face Serum,2440.2,2,0,4880.4,UPI,Shipped,North,CUST0310,4.0
+ORD100660,2025-08-12 03:03,Home & Kitchen,Mixer Grinder,1573.31,2,0,3146.62,Wallet,Returned,West,CUST0469,5.0
+ORD101224,2026-03-04 18:42,Books,Self-Help Book,3399.91,2,0,0.0,Debit Card,Cancelled,Central,CUST0064,5.0
+ORD100588,2025-07-22 08:08,Fashion,Denim Jacket,4628.98,4,5,17590.12,Wallet,Delivered,North,CUST0072,
+ORD101384,2026-04-29 13:19,Sports,Cricket Bat,2804.87,5,5,13323.13,UPI,Delivered,Central,CUST0004,4.0
+ORD100761,2025-09-15 18:37,Sports,Dumbbell Set,1823.01,5,10,8203.54,Debit Card,Processing,North,CUST0198,5.0
+ORD100564,2025-07-16 13:25,Home & Kitchen,Mixer Grinder,3678.83,2,5,6989.78,Net Banking,Shipped,North,CUST0056,2.0
+ORD100811,2025-10-03 03:36,Sports,Cricket Bat,3606.86,3,0,10820.58,Net Banking,Processing,East,CUST0402,4.0

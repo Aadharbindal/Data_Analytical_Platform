@@ -306,6 +306,12 @@ Return ONLY a valid JSON object with a single key "insights" containing an array
                     "recommendation": rec,
                     "verified": 1 if is_valid_llm else 0,
                     "audit_sql": f"Deterministic Pandas Pipeline: {c_type}",
+                    # Carry the magnitude computed above through to the insert.
+                    # It used to be recomputed there from "score" — the 0-10
+                    # ranking weight — so the dashboard rendered a relevance
+                    # score as money: an insight about ₹58.82L of credit was
+                    # labelled "₹5 Processed", which is just confidence x 10.
+                    "impact_numeric": impact_numeric,
                     "score": cand.get("score", 0),
                     "dimension_type": dim,
                     "created_at": datetime.utcnow().isoformat() + "Z"
@@ -320,7 +326,7 @@ Return ONLY a valid JSON object with a single key "insights" containing an array
                     cursor.execute("DELETE FROM insights WHERE user_id = %s AND dataset_id = %s", (user_id, dataset_id))
                     for final_ins in final_insights:
                         try:
-                            impact_numeric = float(final_ins.get("score", 0.0))
+                            impact_numeric = float(final_ins.get("impact_numeric", 0.0))
                         except (TypeError, ValueError):
                             impact_numeric = 0.0
                             

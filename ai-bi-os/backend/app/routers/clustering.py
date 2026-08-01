@@ -11,6 +11,7 @@ from pydantic import BaseModel
 from app.core.database import get_db_connection
 from app.services.data_processing import get_active_dataset, get_dataframe
 from app.core.security import get_current_user
+from app.services.stats_service import is_identifier_like, explain_insufficient_rows
 
 router = APIRouter()
 
@@ -38,7 +39,7 @@ async def get_clustering_columns(current_user: dict = Depends(get_current_user))
         if _is_date_like(df, col):
             continue
         num_unique = df[col].nunique()
-        if 'id' in col.lower() or num_unique > total_rows * 0.5:
+        if is_identifier_like(df[col], col, total_rows):
             continue
         features.append(col)
 
@@ -72,13 +73,13 @@ async def train_clustering_model(req: TrainRequest, current_user: dict = Depends
         if _is_date_like(df, f):
             raise HTTPException(status_code=400, detail=f"'{f}' cannot be used: date-like columns are not supported.")
         num_unique = df[f].nunique()
-        if 'id' in f.lower() or num_unique > total_rows * 0.5:
+        if is_identifier_like(df[f], f, total_rows):
             raise HTTPException(status_code=400, detail=f"'{f}' cannot be used: identifier-like column ({num_unique} distinct values in {total_rows} rows).")
 
     df_sub = df[req.features].dropna()
     n_rows_used = len(df_sub)
     if n_rows_used < 20:
-        raise HTTPException(status_code=400, detail="Not enough data: must have >= 20 rows after dropping nulls")
+        raise HTTPException(status_code=400, detail=explain_insufficient_rows(df, req.features))
 
     from sklearn.preprocessing import StandardScaler
     from sklearn.cluster import KMeans

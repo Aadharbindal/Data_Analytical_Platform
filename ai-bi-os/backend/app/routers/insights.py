@@ -1,4 +1,5 @@
 import pandas as pd
+from app.services.stats_service import to_datetime_safe
 import numpy as np
 import re
 import os
@@ -78,7 +79,7 @@ async def get_executive_summary(current_user: dict = Depends(get_current_user)):
 
         if date_col:
             try:
-                df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
+                df[date_col] = to_datetime_safe(df[date_col])
                 df_clean = df.dropna(subset=[date_col])
                 if not df_clean.empty:
                     periods = df_clean.groupby(df_clean[date_col].dt.to_period('M'))
@@ -275,8 +276,23 @@ async def list_insights(dataset_version_id: str = None, current_user: dict = Dep
                     numeric_part = re.findall(r'[0-9]+(?:\.[0-9]+)?', impact_str.replace(',', ''))
                     if numeric_part and (len(numeric_part[0]) == len(impact_str.replace('₹','').replace('$','').replace('£','').strip())):
                         f_val = float(numeric_part[0])
-                        is_curr = '₹' in impact_str or '$' in impact_str or '£' in impact_str or not any(x in d.get('title','').lower() for x in ["count", "volume", "transactions"])
-                        label = "Average" if "avg" in d.get('title','').lower() else ("Transactions" if not is_curr else "Processed")
+                        # Insights from the deterministic engine store a row
+                        # count in `impact` (they are the only ones that set
+                        # dimension_type). Counting rows is not money, so the
+                        # old title-keyword guess stamped a currency symbol on
+                        # them — "Credit Metric Summary" reported 1,411 records
+                        # as "₹1.4K Processed". Anomaly insights do store a real
+                        # value of a named column, so those keep the old rule.
+                        from_engine = d.get('dimension_type') is not None
+                        if from_engine:
+                            is_curr = False
+                        else:
+                            is_curr = (
+                                any(sym in impact_str for sym in ('₹', '$', '£'))
+                                or not any(x in d.get('title', '').lower()
+                                           for x in ["count", "volume", "transactions"])
+                            )
+                        label = "Average" if "avg" in d.get('title','').lower() else ("Records" if not is_curr else "Processed")
                         d['impact'] = format_impact_value(f_val, is_curr, label)
                     else:
                         d['impact'] = replace_revenue_terminology(reformat_currency(d.get('impact', '')))
@@ -304,7 +320,7 @@ async def list_insights(dataset_version_id: str = None, current_user: dict = Dep
 
     if date_col and len(numeric_cols) > 0:
         try:
-            df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
+            df[date_col] = to_datetime_safe(df[date_col])
             df_clean = df.dropna(subset=[date_col])
             
             # Group by month

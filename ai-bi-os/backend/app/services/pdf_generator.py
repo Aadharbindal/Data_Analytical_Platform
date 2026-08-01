@@ -24,7 +24,7 @@ from reportlab.platypus import (
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.graphics.shapes import Drawing, Rect, String
 
-from app.services.stats_service import compute_kpis, find_column, forecast_series, quality_report
+from app.services.stats_service import compute_kpis, find_column, forecast_series, quality_report, to_datetime_safe
 from app.core.config import DB_PATH
 
 # reportlab's built-in base-14 fonts (Helvetica, Times-Roman, ...) only cover
@@ -426,7 +426,7 @@ def generate_pdf_report(dataset_info, df):
     reporting_window = "All available records"
     if date_col:
         try:
-            parsed = pd.to_datetime(df[date_col], errors='coerce').dropna()
+            parsed = to_datetime_safe(df[date_col]).dropna()
             if len(parsed) > 0:
                 reporting_window = f"{parsed.min().strftime('%b %Y')} – {parsed.max().strftime('%b %Y')}"
         except Exception:
@@ -792,7 +792,11 @@ def generate_pdf_report(dataset_info, df):
     seg_col = pick_segment_column(df, exclude_cols)
 
     if seg_col:
-        counts = df[seg_col].astype(str).value_counts()
+        # astype(str) renders missing values as the literal string "nan", which
+        # then appears in the report as a category named "nan". Naming the gap
+        # explicitly keeps the percentages honest (dropping the rows would
+        # silently re-scale every other share) while reading as intended.
+        counts = df[seg_col].fillna("(Not specified)").astype(str).value_counts()
         top = counts.head(5)
         other_count = counts.iloc[5:].sum() if len(counts) > 5 else 0
         labels = list(top.index) + (["Other"] if other_count > 0 else [])
@@ -860,7 +864,7 @@ def generate_pdf_report(dataset_info, df):
         recent_df, prior_df = df, None
         if date_col:
             try:
-                periods = df.groupby(pd.to_datetime(df[date_col], errors='coerce').dt.to_period('M'))
+                periods = df.groupby(to_datetime_safe(df[date_col]).dt.to_period('M'))
                 if len(periods) >= 2:
                     sorted_periods = sorted(periods.groups.keys())
                     recent_df = periods.get_group(sorted_periods[-1])
