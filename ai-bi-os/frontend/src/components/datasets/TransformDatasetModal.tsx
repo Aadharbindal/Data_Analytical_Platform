@@ -102,12 +102,13 @@ export function TransformDatasetModal({ dataset, datasets, onClose }: TransformD
 
   const afterSuccess = async (message: string) => {
     setSuccess(message);
-    await Promise.all([
-      qc.invalidateQueries({ queryKey: ["datasets"] }),
-      qc.invalidateQueries({ queryKey: ["activeDataset"] }),
-      qc.invalidateQueries({ queryKey: ["active-dataset"] }),
-      qc.invalidateQueries({ queryKey: ["dataset-versions"] }),
-    ]);
+    // A rename/formula/merge changes the actual columns and values, so every
+    // analytics page's cache (statistics, trend, distribution, ...) is now
+    // describing data that no longer exists in this shape. Invalidating only
+    // the dataset-metadata keys left those pages showing pre-transform
+    // numbers until a hard refresh — the same gap fixed for dataset
+    // switching and uploads.
+    await qc.invalidateQueries();
   };
 
   const submitRename = async () => {

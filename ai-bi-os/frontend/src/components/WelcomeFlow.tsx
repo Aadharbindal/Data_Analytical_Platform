@@ -144,11 +144,11 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
           setCurrentStatusMsg("Completed! Preparing dashboard...");
           // No decorative mock step — as soon as these queries refetch, the
           // parent Dashboard swaps WelcomeFlow out for the real dashboard.
-          await Promise.all(
-            ["active-dataset", "activeDataset", "datasets", "analytics-kpis", "insights", "executiveSummary"].map((key) =>
-              queryClient.invalidateQueries({ queryKey: [key] })
-            )
-          );
+          // Invalidating only a handful of keys left every other page's
+          // cache (statistics, trend, distribution, ...) pointing at
+          // nothing/stale data for this dataset until a hard refresh, same
+          // gap as the dataset-switch and later-upload paths.
+          await queryClient.invalidateQueries();
           setWelcomeActive(false);
         } else {
           setLoadPct(Math.round(data.progress ?? 0));

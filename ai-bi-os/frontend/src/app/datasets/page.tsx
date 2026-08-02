@@ -546,11 +546,17 @@ export default function DatasetsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
       >
-        <UploadZone 
+        <UploadZone
         onSuccess={() => {
-          qc.invalidateQueries({ queryKey: ["datasets"] });
-          qc.invalidateQueries({ queryKey: ["activeDataset"] });
-        }} 
+          // A fresh upload becomes the active dataset, so every page's
+          // cached analytics (statistics, trend, distribution, KPIs, ...)
+          // is now describing the wrong dataset. Invalidating only
+          // "datasets"/"activeDataset" left all of that stale — the same
+          // gap that made switching datasets show old numbers until a
+          // refresh. Match the activate-mutation's behavior: invalidate
+          // everything.
+          qc.invalidateQueries();
+        }}
         onRedirect={() => router.push("/analytics")}
       />
       </motion.div>
