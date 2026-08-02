@@ -218,6 +218,27 @@ def pick_default_metric(df: pd.DataFrame):
     return num_cols[0]
 
 
+def safe_primary_metric(semantic_dict: dict, df: pd.DataFrame):
+    """Read business_terminology.primary_metric, but only if it actually
+    names a numeric column in this dataframe.
+
+    The semantic dictionary is LLM-generated per dataset, and the LLM can
+    name a plausible-sounding column that was never in the data -- a
+    healthcare dataset's primary_metric came back as "headcount", which
+    doesn't exist in that CSV. Half the call sites for this field already
+    guarded it with an `in df.columns` check; the other half didn't, and
+    handed the unvalidated name straight to a `df[metric]` access. That 500'd
+    both GET /analytics/timeseries and the PDF export for that dataset with
+    "Column not found: headcount" -- a dataset any user could otherwise
+    analyse fine, broken by an LLM guess nobody checked.
+    """
+    bus_term = (semantic_dict or {}).get("business_terminology", {}) or {}
+    metric = bus_term.get("primary_metric")
+    if metric and metric in df.columns and pd.api.types.is_numeric_dtype(df[metric]):
+        return metric
+    return None
+
+
 def find_column(df: pd.DataFrame, pattern: str, numeric_only: bool = False) -> str:
     cols_to_check = df.select_dtypes(include=[np.number]).columns if numeric_only else df.columns
     for col in cols_to_check:

@@ -345,7 +345,8 @@ async def get_timeseries(metric: str = None, current_user: dict = Depends(get_cu
     
     if not metric:
         if semantic_dict:
-            metric = semantic_dict.get("business_terminology", {}).get("primary_metric")
+            from app.services.stats_service import safe_primary_metric
+            metric = safe_primary_metric(semantic_dict, df)
         if not metric:
             from app.services.stats_service import find_column
             metric = find_column(df, r'revenue|sales|amount|\bmrr\b|\barr\b|turnover|income|earnings|\bgmv\b|sales_amount|order_value|net_revenue|total_revenue', numeric_only=True)
@@ -522,7 +523,8 @@ async def get_forecast(
     if not metric:
         semantic_dict = dataset_info.get("semantic_dict")
         if semantic_dict:
-            metric = semantic_dict.get("business_terminology", {}).get("primary_metric")
+            from app.services.stats_service import safe_primary_metric
+            metric = safe_primary_metric(semantic_dict, df)
         if not metric:
             from app.services.stats_service import find_column
             metric = find_column(df, r'revenue|sales|amount|\bmrr\b|\barr\b|turnover|income|earnings|\bgmv\b|sales_amount|order_value|net_revenue|total_revenue', numeric_only=True)
@@ -959,7 +961,19 @@ async def get_metrics_explorer(current_user: dict = Depends(get_current_user)):
                     aggregation = "SUM"
                 else:
                     aggregation = "MEAN"
-        
+
+        # A percentage/rate/score column whose values happen to be floats (a
+        # bonus_pct of 4.4, 17.3, ...) skips the Ratio/Percentage/Score branch
+        # above entirely -- that branch requires an integer column, so the
+        # data-driven type detector falls through to "Continuous" and decides
+        # SUM/MEAN from a monthly-correlation heuristic that has no signal for
+        # what a percentage even means. bonus_pct, attendance_pct, nps_score
+        # and reorder_level all landed on SUM this way. The name-based check
+        # is a second, independent opinion the value-based detector can't
+        # produce; when it fires, it wins.
+        if aggregation != "COUNT" and is_non_additive(col):
+            aggregation = "MEAN"
+
         # ════════════════════════════════════════════════════════
         # TREND — already real (kept as-is)
         # ════════════════════════════════════════════════════════
@@ -1127,6 +1141,12 @@ async def get_metric_intelligence(metric: str, current_user: dict = Depends(get_
                 aggregation = "MEAN"
         else:
             aggregation = "SUM" if (val_min >= 0 and val_max > 100 and val_std > val_mean * 0.3) else "MEAN"
+
+    # See get_metrics_explorer for why this fires: a float-valued percentage
+    # column (bonus_pct, nps_score, ...) skips the integer-only
+    # Ratio/Percentage/Score branch above, so the name is the only signal left.
+    if aggregation != "COUNT" and is_non_additive(metric):
+        aggregation = "MEAN"
 
     current_val = float(clean_col.sum()) if aggregation == "SUM" else float(clean_col.mean())
 

@@ -400,7 +400,15 @@ def generate_pdf_report(dataset_info, df):
     # ── Derived data ─────────────────────────────────────────────────────
     semantic_dict = dataset_info.get("semantic_dict") or {}
     bus_term = semantic_dict.get("business_terminology", {}) if semantic_dict else {}
-    rev_col = bus_term.get("primary_metric") if bus_term else None
+    # safe_primary_metric (not a raw .get) so an LLM-hallucinated column name
+    # that isn't actually in this dataset -- "headcount" on a dataset with no
+    # such column -- comes back None instead of a name later code trusts. That
+    # used to reach `df.groupby(c)[rev_col].sum()` below and 500 the whole PDF
+    # export with "Column not found: headcount". None also correctly falls
+    # through to the primary_kpi fallback a few lines down, which was already
+    # written but unreachable while rev_col stayed truthy-but-wrong.
+    from app.services.stats_service import safe_primary_metric
+    rev_col = safe_primary_metric(semantic_dict, df)
     rev_label = bus_term.get("primary_metric_label", "Total Value") if bus_term else "Total Value"
     rev_type = bus_term.get("primary_metric_type", "currency") if bus_term else "currency"
 
