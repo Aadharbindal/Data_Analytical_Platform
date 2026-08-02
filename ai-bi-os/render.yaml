@@ -1,22 +1,18 @@
 services:
   - type: web
-    name: datamind-backend
+    name: numerate-backend
     runtime: docker
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
     plan: free
     healthCheckPath: /health
-    disk:
-      name: datamind-data
-      mountPath: /app/data
-      sizeGB: 1
     envVars:
       - key: SECRET_KEY
         generateValue: true
       - key: DATA_DIR
         value: /app/data
-      - key: SQLITE_PATH
-        value: /app/data/datamind.db
+      - key: DATABASE_URL
+        sync: false
       - key: CORS_ORIGIN
         sync: false
       - key: FRONTEND_URL
@@ -32,4 +28,14 @@ services:
       - key: OPENAI_API_KEY
         sync: false
       - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_ENDPOINT_URL
+        sync: false
+      - key: AWS_REGION
+        sync: false
+      - key: AWS_BUCKET_NAME
         sync: false
