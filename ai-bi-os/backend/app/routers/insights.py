@@ -242,6 +242,41 @@ def format_impact_value(val: float, is_currency: bool, label: str) -> str:
         else:
             return f"{prefix}{val:,.2f} {label}"
 
+
+def format_insight_impact(impact_val, title: str, dimension_type=None) -> str:
+    """Turns a stored insight's raw `impact` into the display string shown on
+    both the private Insights page and the public share page. Pulled out to
+    one place after the share page's own copy of this logic reintroduced a
+    bug already fixed here: it fed the raw number straight to a client-side
+    formatter that defaults to currency, so a shared dashboard showed
+    "1.4K Records" privately but "₹1.4K Avg" on the public link for the
+    exact same insight -- the two paths disagreed about the same number.
+    """
+    if impact_val is None:
+        return impact_val
+    try:
+        impact_str = str(impact_val).strip()
+        numeric_part = re.findall(r'[0-9]+(?:\.[0-9]+)?', impact_str.replace(',', ''))
+        if not (numeric_part and len(numeric_part[0]) == len(impact_str.replace('₹', '').replace('$', '').replace('£', '').strip())):
+            return replace_revenue_terminology(reformat_currency(impact_str))
+        f_val = float(numeric_part[0])
+        # Insights from the deterministic engine store a row count in
+        # `impact` (they are the only ones that set dimension_type). Counting
+        # rows is not money, so a title-keyword guess alone stamped a
+        # currency symbol on them.
+        from_engine = dimension_type is not None
+        if from_engine:
+            is_curr = False
+        else:
+            is_curr = (
+                any(sym in impact_str for sym in ('₹', '$', '£'))
+                or not any(x in title.lower() for x in ["count", "volume", "transactions"])
+            )
+        label = "Average" if "avg" in title.lower() else ("Records" if not is_curr else "Processed")
+        return format_impact_value(f_val, is_curr, label)
+    except Exception:
+        return impact_val
+
 @router.get("")
 async def list_insights(dataset_version_id: str = None, current_user: dict = Depends(get_current_user)):
     dataset_info = get_active_dataset(current_user["id"])
@@ -269,35 +304,7 @@ async def list_insights(dataset_version_id: str = None, current_user: dict = Dep
             d['description'] = replace_revenue_terminology(reformat_currency(d.get('description', '')))
             
             # Format impact value if it is a numeric float
-            impact_val = d.get('impact')
-            try:
-                if impact_val is not None:
-                    impact_str = str(impact_val).strip()
-                    numeric_part = re.findall(r'[0-9]+(?:\.[0-9]+)?', impact_str.replace(',', ''))
-                    if numeric_part and (len(numeric_part[0]) == len(impact_str.replace('₹','').replace('$','').replace('£','').strip())):
-                        f_val = float(numeric_part[0])
-                        # Insights from the deterministic engine store a row
-                        # count in `impact` (they are the only ones that set
-                        # dimension_type). Counting rows is not money, so the
-                        # old title-keyword guess stamped a currency symbol on
-                        # them — "Credit Metric Summary" reported 1,411 records
-                        # as "₹1.4K Processed". Anomaly insights do store a real
-                        # value of a named column, so those keep the old rule.
-                        from_engine = d.get('dimension_type') is not None
-                        if from_engine:
-                            is_curr = False
-                        else:
-                            is_curr = (
-                                any(sym in impact_str for sym in ('₹', '$', '£'))
-                                or not any(x in d.get('title', '').lower()
-                                           for x in ["count", "volume", "transactions"])
-                            )
-                        label = "Average" if "avg" in d.get('title','').lower() else ("Records" if not is_curr else "Processed")
-                        d['impact'] = format_impact_value(f_val, is_curr, label)
-                    else:
-                        d['impact'] = replace_revenue_terminology(reformat_currency(d.get('impact', '')))
-            except Exception:
-                pass
+            d['impact'] = format_insight_impact(d.get('impact'), d.get('title', ''), d.get('dimension_type'))
                 
             d['recommendation'] = replace_revenue_terminology(reformat_currency(d.get('recommendation', '')))
             

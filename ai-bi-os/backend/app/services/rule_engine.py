@@ -62,9 +62,16 @@ def evaluate_rule_condition(df: pd.DataFrame, rule: dict) -> Tuple[str, Optional
     threshold = float(rule.get("threshold") or 0)
     window = rule.get("window") or "latest"
 
-    if window.lower() == "mom":
-        from app.services.stats_service import find_column, to_datetime_safe
+    from app.services.stats_service import find_column, to_datetime_safe, is_non_additive
 
+    # A balance, price, or rate is a level, not a flow: summing it across rows
+    # or across a month produces a number with no meaning. Everywhere else in
+    # the app (KPIs, forecast, metrics explorer, insights) already defers to
+    # this same check, so a rule on "Balance" agrees with what the rest of the
+    # product reports for it instead of contradicting it.
+    monthly_agg = "mean" if is_non_additive(metric) else "sum"
+
+    if window.lower() == "mom":
         date_col = find_column(df, r"date|month|year|time")
         if not date_col:
             return "ERROR (No Date Column)", None
@@ -75,7 +82,7 @@ def evaluate_rule_condition(df: pd.DataFrame, rule: dict) -> Tuple[str, Optional
         if df_temp.empty:
             return "PENDING (Insufficient Data)", None
 
-        monthly = df_temp.groupby(df_temp[date_col].dt.to_period("M"))[metric].sum()
+        monthly = getattr(df_temp.groupby(df_temp[date_col].dt.to_period("M"))[metric], monthly_agg)()
         if len(monthly) < 2:
             return "PENDING (Insufficient Data)", None
 
@@ -89,17 +96,42 @@ def evaluate_rule_condition(df: pd.DataFrame, rule: dict) -> Tuple[str, Optional
         status = "TRIGGERED" if _check(pct_change, cond, threshold) else "OK"
         return status, _sanitize(pct_change)
 
-    val = float(df[metric].sum())
+    # "latest" is presented to the user as "Latest Value" -- the metric's most
+    # recent single reading. Summing the entire column here was a second,
+    # independent bug on top of the additive/non-additive one: it evaluated
+    # every "Latest Value" rule against a full-history total instead of one
+    # row, for every metric, on every dataset. Sort by date (when a date
+    # column exists) and read the last row; otherwise fall back to the last
+    # row in file order, which is the best available notion of "latest"
+    # without one.
+    clean_col = df[metric].dropna()
+    if clean_col.empty:
+        return "PENDING (Insufficient Data)", None
+    date_col = find_column(df, r"date|month|year|time")
+    if date_col:
+        df_temp = df[[date_col, metric]].copy()
+        df_temp[date_col] = to_datetime_safe(df_temp[date_col])
+        df_temp = df_temp.dropna(subset=[date_col, metric])
+        if df_temp.empty:
+            return "PENDING (Insufficient Data)", None
+        val = float(df_temp.sort_values(date_col).iloc[-1][metric])
+    else:
+        val = float(clean_col.iloc[-1])
     status = "TRIGGERED" if _check(val, cond, threshold) else "OK"
     return status, _sanitize(val)
 
 
 def get_metric_series(user_id: str, dataset_id: str, metric: Optional[str], periods: int = 6) -> list:
-    """Last `periods` months of `metric`'s summed value, for a rule card's
+    """Last `periods` months of `metric`'s aggregated value, for a rule card's
     sparkline. Returns [] whenever a real trend can't be computed (no metric,
     no date column, no data) — never fabricated placeholder points."""
     from app.services.data_processing import get_dataframe
-    from app.services.stats_service import find_column
+    # to_datetime_safe was missing from this import while still being called
+    # below -- a pre-existing NameError. The frontend only fetches this
+    # endpoint for MoM-window rules (gated by `enabled: isMoM`), so a rule on
+    # any other window never hit it, but GET /rules/{id}/series 500'd for
+    # every MoM rule.
+    from app.services.stats_service import find_column, to_datetime_safe, is_non_additive
 
     df = get_dataframe(dataset_id, user_id)
     if df is None or not metric or metric not in df.columns or not pd.api.types.is_numeric_dtype(df[metric]):
@@ -115,7 +147,10 @@ def get_metric_series(user_id: str, dataset_id: str, metric: Optional[str], peri
     if df_temp.empty:
         return []
 
-    monthly = df_temp.groupby(df_temp[date_col].dt.to_period("M"))[metric].sum()
+    # Same reasoning as evaluate_rule_condition: a level metric's monthly
+    # trend is its average, not a monthly total that has no meaning.
+    grouped = df_temp.groupby(df_temp[date_col].dt.to_period("M"))[metric]
+    monthly = grouped.mean() if is_non_additive(metric) else grouped.sum()
     sorted_periods = sorted(monthly.index)[-periods:]
     return [{"period": str(p), "value": _sanitize(float(monthly[p]))} for p in sorted_periods]
 

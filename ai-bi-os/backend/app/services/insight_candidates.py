@@ -1,5 +1,5 @@
 import pandas as pd
-from app.services.stats_service import to_datetime_safe
+from app.services.stats_service import to_datetime_safe, is_non_additive
 import numpy as np
 import logging
 
@@ -163,12 +163,22 @@ def generate_candidates(df: pd.DataFrame, sem_dict: dict) -> list[dict]:
     if metric:
         total_val = float(df[metric].sum())
         mean_val = float(df[metric].mean())
+        # A balance, price, or rate is a level, not a flow: summing it across
+        # rows produces a number with no meaning. This candidate used to hand
+        # the LLM the sum as the headline "value" regardless, so a dataset
+        # whose primary metric was "Balance" got written up as "a significant
+        # negative balance of -75,201 crore" -- the sum of daily closing
+        # balances. `value` here is what downstream renderers treat as the
+        # correct, reportable number; `entity` names it accordingly so the
+        # insight reads "Average Balance" rather than "Total Balance".
+        metric_is_level = is_non_additive(metric)
         candidates.append({
             "type": "metric_summary",
             "dimension": metric,
-            "entity": f"Total {metric}",
-            "value": total_val,
+            "entity": f"{'Average' if metric_is_level else 'Total'} {metric}",
+            "value": mean_val if metric_is_level else total_val,
             "mean_val": round(mean_val, 2),
+            "is_average": metric_is_level,
             "sample_size": len(df)
         })
 

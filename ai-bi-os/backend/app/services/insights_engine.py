@@ -255,7 +255,12 @@ Return ONLY a valid JSON object with a single key "insights" containing an array
                         cat = "Operational"
                     elif c_type == "metric_summary":
                         title = f"Primary Metric Overview: {dim}"
-                        finding = f"Total sum for {dim} reached {cand.get('value', 0):,.2f} with average of {cand.get('mean_val', 0):,.2f} per record."
+                        if cand.get("is_average"):
+                            # A level metric (balance, price, rate): the sum
+                            # across rows is meaningless, so lead with the mean.
+                            finding = f"Average {dim} sits at {cand.get('value', 0):,.2f} across {cand.get('sample_size', 0):,} records."
+                        else:
+                            finding = f"Total sum for {dim} reached {cand.get('value', 0):,.2f} with average of {cand.get('mean_val', 0):,.2f} per record."
                         impact = f"{cand.get('sample_size', 0):,} total transactions evaluated"
                         rec = "Establish baseline thresholds and set up recurring KPI reporting."
                         cat = "Operational"

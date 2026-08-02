@@ -14,7 +14,7 @@ interface SharedData {
   row_count: number;
   kpis: { name: string; value: number; trend?: number; type?: string }[];
   chart_data: { name: string; value: number | null; forecast?: number | null }[];
-  insights: { title: string; description: string; impact: number | null; confidence: number; category: string }[];
+  insights: { title: string; description: string; impact: string | number | null; confidence: number; category: string }[];
 }
 
 // This page is the version outsiders see, so its numbers have to be the same

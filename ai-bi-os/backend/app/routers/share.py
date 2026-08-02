@@ -202,7 +202,7 @@ async def get_shared_dashboard_data(
         semantic_dict = semantic_dict_raw if isinstance(semantic_dict_raw, (dict, list)) else json.loads(semantic_dict_raw)
 
     cursor.execute('''
-        SELECT title, description, impact, confidence, category
+        SELECT title, description, impact, confidence, category, dimension_type
         FROM insights
         WHERE user_id=%s AND dataset_id=%s AND verified=1
         ORDER BY created_at DESC
@@ -218,8 +218,14 @@ async def get_shared_dashboard_data(
 
     kpi_data = compute_kpis(df, semantic_dict)
 
+    # Same formatting the private Insights page uses, so a viewer with the
+    # link sees "1.4K Records" for the same insight the owner sees privately
+    # -- not the raw number reinterpreted as currency by a client-side
+    # formatter that has no way to know it's a row count.
+    from app.routers.insights import format_insight_impact
     insights = [
-        {"title": r["title"], "description": r["description"], "impact": r["impact"],
+        {"title": r["title"], "description": r["description"],
+         "impact": format_insight_impact(r["impact"], r["title"], r["dimension_type"]),
          "confidence": r["confidence"], "category": r["category"]}
         for r in insight_rows
     ]

@@ -10,7 +10,7 @@ from fastapi.responses import PlainTextResponse, HTMLResponse
 from typing import Optional
 from app.services.data_processing import get_active_dataset, get_dataframe
 from app.core.security import get_current_user
-from app.services.stats_service import compute_kpis, compute_executive_kpis, forecast_series, robust_outlier_stats, compute_metric_importance, compute_metric_confidence, to_datetime_safe
+from app.services.stats_service import compute_kpis, compute_executive_kpis, forecast_series, robust_outlier_stats, compute_metric_importance, compute_metric_confidence, to_datetime_safe, is_non_additive
 
 router = APIRouter()
 
@@ -920,7 +920,13 @@ async def get_metrics_explorer(current_user: dict = Depends(get_current_user)):
         elif metric_type == "Count":
             aggregation = "SUM"
         elif metric_type == "Financial":
-            aggregation = "SUM"
+            # A balance is money with a large spread, so the type detector
+            # above classifies it "Financial" same as revenue -- but a balance
+            # is a level, not a flow, and summing it across rows produces a
+            # number with no meaning. Reuse the same non-additive check the
+            # forecast endpoint applies, so "Balance" reads SUM here and MEAN
+            # there instead of contradicting each other.
+            aggregation = "MEAN" if is_non_additive(col) else "SUM"
         elif metric_type == "Delta":
             aggregation = "SUM"
         else:
@@ -1094,7 +1100,12 @@ async def get_metric_intelligence(metric: str, current_user: dict = Depends(get_
         aggregation = "MEAN"
     elif metric_type == "Categorical":
         aggregation = "COUNT"
-    elif metric_type in ("Count", "Financial", "Delta"):
+    elif metric_type == "Financial":
+        # See get_metrics_explorer: same non-additive check, so this detail
+        # view agrees with the list it was opened from instead of relabelling
+        # a balance SUM after the list called it MEAN.
+        aggregation = "MEAN" if is_non_additive(metric) else "SUM"
+    elif metric_type in ("Count", "Delta"):
         aggregation = "SUM"
     else:
         # Continuous: check if monthly sum correlates more with row count than monthly mean does
