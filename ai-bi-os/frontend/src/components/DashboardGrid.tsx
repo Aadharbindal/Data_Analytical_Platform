@@ -176,7 +176,18 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
         className="col-span-12 grid grid-cols-12 gap-6"
       >
         <div className="col-span-8">
-          <RevenueCard data={chartData} semanticDict={activeDataset?.semantic_dict ?? undefined} />
+          <RevenueCard
+            data={chartData}
+            semanticDict={activeDataset?.semantic_dict ?? undefined}
+            // The backend already worked out this KPI's real type (currency,
+            // generic, count, percent) from the column's actual values --
+            // prefer it over re-deriving one from the semantic dictionary,
+            // which doesn't always set primary_metric_type. A healthcare
+            // dataset's chart metric was a day count with no type recorded
+            // there, so the card defaulted to "currency" and rendered a
+            // ~1-day stay duration as "Rs1".
+            kpiType={kpis.find((k) => k?.id === "kpi_rev")?.type}
+          />
         </div>
         <div className="col-span-4">
           <AISummaryCard />

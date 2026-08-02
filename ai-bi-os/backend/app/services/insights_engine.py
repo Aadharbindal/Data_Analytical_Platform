@@ -9,6 +9,7 @@ from datetime import datetime
 from litellm import completion
 from app.core.config import DB_PATH, LLM_MODEL
 from app.services.insight_candidates import generate_candidates
+from app.services.stats_service import is_money_like
 
 class DeepInsightsEngine:
     def __init__(self, db_engine):
@@ -53,6 +54,25 @@ class DeepInsightsEngine:
                 return f"₹{fval:,.2f}"
         except:
             return f"₹{val}"
+
+    def _format_number(self, val):
+        """Same Cr/L/K scaling as _format_currency, without the ₹ -- for a
+        {{value}} placeholder whose underlying column isn't money (stock_qty,
+        units_produced, a headcount). _format_currency used to run
+        unconditionally, so "Critical Stock Levels: the Total stock_qty has a
+        Rs12.19L quantity" stamped a currency symbol on an inventory count."""
+        try:
+            fval = float(val)
+            if fval >= 10000000:
+                return f"{fval / 10000000:,.2f}Cr"
+            elif fval >= 100000:
+                return f"{fval / 100000:,.2f}L"
+            elif fval.is_integer():
+                return f"{int(fval):,}"
+            else:
+                return f"{fval:,.2f}"
+        except:
+            return str(val)
 
     def generate_insights(self, user_id: str, dataset_id: str):
         api_key = os.getenv("GROQ_API_KEY")
@@ -168,9 +188,12 @@ Return ONLY a valid JSON object with a single key "insights" containing an array
             # 4. Zero-Trust Check & Substitution with Deterministic Fallback
             def render(text, cand):
                 if not text: return text
+                # Whether {{value}} is money depends on which column the
+                # candidate is actually about, not a blanket assumption.
+                is_money = is_money_like(cand.get("dimension", ""))
                 for k, v in cand.items():
                     if k == "value":
-                        text = text.replace(f"{{{{{k}}}}}", self._format_currency(v))
+                        text = text.replace(f"{{{{{k}}}}}", self._format_currency(v) if is_money else self._format_number(v))
                     else:
                         text = text.replace(f"{{{{{k}}}}}", str(v))
                 return text

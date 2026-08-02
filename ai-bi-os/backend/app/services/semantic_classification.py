@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 from litellm import completion
 from app.core.config import LLM_MODEL
-from app.services.stats_service import is_non_additive
+from app.services.stats_service import is_non_additive, is_money_like
 
 def validate_and_sanitize_business_terminology(df: pd.DataFrame, domain: str, bus_term: dict):
     entity_col = bus_term.get("entity_col")
@@ -106,6 +106,21 @@ def validate_and_sanitize_business_terminology(df: pd.DataFrame, domain: str, bu
                 r'\b(percent|percentage|pct|rate|ratio|share)\b',
                 str(metric_col).replace('_', ' ').replace('-', ' '), re.IGNORECASE
             ) else "generic"
+
+    # The check above only runs for non-additive columns, so a plainly
+    # additive but non-money column that the LLM still typed as currency
+    # slips through -- a real-estate dataset's "bhk" (bedroom count, summed
+    # fine across rows) got labelled primary_metric_type="currency" and the
+    # dashboard showed "Total Bhk" as a rupee figure. Apply the same
+    # money-name sanity check unconditionally, using the same is_money_like
+    # helper the rest of the app already trusts to decide what is currency.
+    for metric_key, type_key in (
+        ("primary_metric", "primary_metric_type"),
+        ("secondary_metric", "secondary_metric_type"),
+    ):
+        metric_col = bus_term.get(metric_key)
+        if metric_col and bus_term.get(type_key) == "currency" and not is_money_like(metric_col):
+            bus_term[type_key] = "generic"
 
     # A generated label that shares no vocabulary with the column it describes
     # is actively misleading — "Average Customer Ratings" sitting on top of a

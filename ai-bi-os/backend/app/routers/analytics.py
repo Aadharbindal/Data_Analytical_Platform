@@ -377,10 +377,18 @@ async def get_timeseries(metric: str = None, current_user: dict = Depends(get_cu
     df_temp = df.copy()
     df_temp[date_col] = to_datetime_safe(df_temp[date_col])
     df_temp = df_temp.dropna(subset=[date_col])
-    
-    monthly = df_temp.groupby(df_temp[date_col].dt.to_period('M'))[metric].sum().reset_index()
+
+    # A price, rate, or balance is a level, not a flow -- summing it across a
+    # month produces a number with no meaning (this page's default metric on
+    # an e-commerce dataset is unit_price, and "Peak: 4.26L" was the sum of
+    # per-order prices for the busiest month, not a real price anyone quoted).
+    # Same check already applied to KPIs, forecast, Metrics Explorer, and rule
+    # evaluation; this endpoint and /trend below were the two monthly-rollup
+    # paths that had never been brought in line with them.
+    grouped = df_temp.groupby(df_temp[date_col].dt.to_period('M'))[metric]
+    monthly = (grouped.mean() if is_non_additive(metric) else grouped.sum()).reset_index()
     monthly = monthly.sort_values(date_col)
-    
+
     res = []
     for _, row in monthly.iterrows():
         res.append({
@@ -410,7 +418,10 @@ async def get_trend(current_user: dict = Depends(get_current_user)):
 
     trends_res = []
     for col in df_temp.select_dtypes(include=[np.number]).columns:
-        monthly = df_temp.groupby(df_temp[date_col].dt.to_period('M'))[col].sum().reset_index()
+        # See /timeseries above: a level metric's monthly trend is its
+        # average, not a monthly total with no meaning.
+        grouped = df_temp.groupby(df_temp[date_col].dt.to_period('M'))[col]
+        monthly = (grouped.mean() if is_non_additive(col) else grouped.sum()).reset_index()
         monthly = monthly.sort_values(date_col)
         if len(monthly) < 2:
             continue

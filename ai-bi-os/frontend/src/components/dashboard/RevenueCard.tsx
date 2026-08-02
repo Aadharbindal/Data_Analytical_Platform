@@ -20,16 +20,21 @@ import {
 interface RevenueCardProps {
   data: any[];
   semanticDict?: SemanticDict;
+  /** The KPI's real type as the backend determined it from the column's
+   *  actual values. Preferred over primary_metric_type below, which the
+   *  semantic dictionary doesn't always set -- when it's missing, this used
+   *  to default to "currency" regardless of what the metric actually was. */
+  kpiType?: string;
 }
 
-export function RevenueCard({ data, semanticDict }: RevenueCardProps) {
+export function RevenueCard({ data, semanticDict, kpiType }: RevenueCardProps) {
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [range, setRange] = useState<'12m' | 'ytd' | 'all'>('12m');
 
   const chartTitle = semanticDict?.business_terminology?.chart_title || "Monthly Transaction Performance";
   const primaryLabel = semanticDict?.business_terminology?.primary_metric_label || "Volume";
   const primaryMetric = semanticDict?.business_terminology?.primary_metric || "";
-  const metricType = semanticDict?.business_terminology?.primary_metric_type || "currency";
+  const metricType = kpiType || semanticDict?.business_terminology?.primary_metric_type || "currency";
 
   // Data processing logic (Math)
   const processed = useMemo(() => {

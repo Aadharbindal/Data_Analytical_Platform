@@ -593,7 +593,14 @@ def compute_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict:
                     "value": round(float(row[primary_metric]), 2)
                 })
                 
-            fc = forecast_series(df, primary_metric, periods=2)
+            # Match the aggregation the actual points above were just built
+            # with -- forecast_series defaults to sum, so leaving this
+            # unspecified made the forecast leg jump onto a different scale
+            # than the history leg for any mean-based primary metric. A
+            # healthcare dataset's "Average Patient Stay Duration" (~1-4 days
+            # actual) forecast jumped to ~107-121, the *summed* days across
+            # all that month's patients, not a stay length.
+            fc = forecast_series(df, primary_metric, periods=2, agg=primary_op)
             if fc.get("available"):
                 if chart_data:
                     chart_data[-1]["forecast"] = chart_data[-1]["value"]
@@ -882,7 +889,14 @@ def compute_executive_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict
                     "value": round(float(row[primary_metric]), 2)
                 })
                 
-            fc = forecast_series(df, primary_metric, periods=2)
+            # Match the aggregation the actual points above were just built
+            # with -- forecast_series defaults to sum, so leaving this
+            # unspecified made the forecast leg jump onto a different scale
+            # than the history leg for any mean-based primary metric. A
+            # healthcare dataset's "Average Patient Stay Duration" (~1-4 days
+            # actual) forecast jumped to ~107-121, the *summed* days across
+            # all that month's patients, not a stay length.
+            fc = forecast_series(df, primary_metric, periods=2, agg=primary_op)
             if fc.get("available"):
                 if chart_data:
                     chart_data[-1]["forecast"] = chart_data[-1]["value"]
