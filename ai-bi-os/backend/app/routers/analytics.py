@@ -708,11 +708,17 @@ async def generate_report(current_user: dict = Depends(get_current_user)):
     return HTMLResponse(html)
 
 from fastapi.responses import StreamingResponse
-from app.services.pdf_generator import generate_pdf_report
 from datetime import datetime
 
 @router.get("/report.pdf")
 async def get_pdf_report(current_user: dict = Depends(get_current_user)):
+    # Imported here rather than at module level: matplotlib + reportlab are
+    # heavy enough that loading them for every process that merely imports
+    # this router (i.e. every app boot) contributed to OOMing a 512MB
+    # instance, for a feature only exercised when someone actually
+    # downloads a PDF report.
+    from app.services.pdf_generator import generate_pdf_report
+
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         raise HTTPException(status_code=400, detail="No active dataset")

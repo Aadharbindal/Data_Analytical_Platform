@@ -2,8 +2,11 @@ import logging
 import re
 import threading
 import uuid
-from sentence_transformers import SentenceTransformer, CrossEncoder
+from typing import TYPE_CHECKING
 from app.core.database import get_db_connection
+
+if TYPE_CHECKING:
+    from sentence_transformers import SentenceTransformer
 
 logger = logging.getLogger("AI-BI-OS-RAGEngine")
 
@@ -85,10 +88,17 @@ class RAGEngine:
         pass
 
     @classmethod
-    def _get_bi_encoder(cls) -> SentenceTransformer:
+    def _get_bi_encoder(cls) -> "SentenceTransformer":
         if cls._bi_encoder is None:
             with cls._model_lock:
                 if cls._bi_encoder is None:
+                    # Imported here, not at module level -- sentence-transformers
+                    # pulls in torch, which alone is large enough to OOM a
+                    # 512MB instance if paid at app-boot time for every process
+                    # that merely imports this module (e.g. every request
+                    # through chat.py's router registration), regardless of
+                    # whether RAG/chat is ever actually used.
+                    from sentence_transformers import SentenceTransformer
                     cls._bi_encoder = SentenceTransformer('all-MiniLM-L6-v2')
         return cls._bi_encoder
 
@@ -98,6 +108,7 @@ class RAGEngine:
             with cls._model_lock:
                 if cls._cross_encoder is None and not cls._cross_encoder_failed:
                     try:
+                        from sentence_transformers import CrossEncoder
                         cls._cross_encoder = CrossEncoder(cls.CROSS_ENCODER_MODEL)
                     except Exception as e:
                         logger.warning(
@@ -108,7 +119,7 @@ class RAGEngine:
         return cls._cross_encoder
 
     @property
-    def model(self) -> SentenceTransformer:
+    def model(self) -> "SentenceTransformer":
         # Kept for backward compatibility with anything accessing `engine.model` directly.
         return self._get_bi_encoder()
 
