@@ -3,12 +3,10 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { RevenueCard } from "./dashboard/RevenueCard";
+import { DashboardHub } from "./dashboard/DashboardHub";
 import { AISummaryCard } from "./dashboard/AISummaryCard";
 import { InsightPanel } from "./dashboard/InsightPanel";
-import { MetricCard } from "./dashboard/MetricCard";
 import { DataTable } from "./dashboard/DataTable";
-import { MetricCardSkeleton } from "./ui/skeleton-loader";
-import { formatKpiValue as formatValue } from "@/lib/utils";
 import type { Insight, Dataset, ActiveDatasetInfo } from "@/lib/types";
 
 interface DashboardGridProps {
@@ -76,21 +74,6 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
       ? pinnedKpiIds.map((id) => kpis.find((k) => k.id === id)).filter(Boolean)
       : kpis.slice(0, 4);
 
-  const metricCards =
-    selectedKpis.length > 0
-      ? selectedKpis.map((k) => ({
-          title: k.name,
-          value: formatValue(k.value, k.type),
-          trend: k.trend ? `${k.trend > 0 ? "+" : ""}${k.trend.toFixed(1)}%` : "–",
-          trendDown: (k.trend ?? 0) < 0,
-        }))
-      : [
-          { title: "Total Value", value: "-", trend: "-", trendDown: false },
-          { title: "Key Indicator", value: "-", trend: "-", trendDown: false },
-          { title: "Secondary Metric", value: "-", trend: "-", trendDown: false },
-          { title: "Status Health", value: "-", trend: "-", trendDown: false },
-        ];
-
   // Derive up to 3 insight panels from live insights, or fallback to static
   const insightPanels =
     insights.length > 0
@@ -155,20 +138,16 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
       className="grid grid-cols-12 gap-6 w-full"
     >
 
-      {/* Top Row: Metrics */}
-      <div className="col-span-12 grid grid-cols-4 gap-6 w-full">
-        {loading.analytics
-          ? Array.from({ length: 4 }).map((_, i) => (
-              <motion.div key={i} variants={itemVariants}>
-                <MetricCardSkeleton />
-              </motion.div>
-            ))
-          : metricCards.map((card, idx) => (
-              <motion.div key={card.title} variants={itemVariants}>
-                <MetricCard index={idx} {...card} />
-              </motion.div>
-            ))}
-      </div>
+      {/* Hero Row: dataset source + quality flowing into the headline KPIs */}
+      {!loading.analytics && selectedKpis.length > 0 && (
+        <motion.div variants={itemVariants} className="col-span-12">
+          <DashboardHub
+            datasets={datasets}
+            qualityScore={activeDataset?.quality_score}
+            kpis={selectedKpis}
+          />
+        </motion.div>
+      )}
 
       {/* Main Middle Row: Hero Chart & AI Centerpiece */}
       <motion.div

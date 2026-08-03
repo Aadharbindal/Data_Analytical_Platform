@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { ArrowUpRight, ArrowDownRight, DollarSign, Users, CreditCard, Activity } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, DollarSign, Users, CreditCard, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
@@ -12,6 +12,7 @@ interface MetricCardProps {
   trend: string;
   trendDown?: boolean;
   index?: number;
+  type?: string;
 }
 
 const THEMES = [
@@ -40,7 +41,7 @@ const THEMES = [
     stop2: "rgba(52, 211, 153, 0)",
   },
   {
-    icon: Activity,
+    icon: TrendingUp,
     gradient: "from-[#fb923c] to-[#ea580c]",
     glow: "rgba(251, 146, 60, 0.6)",
     stroke: "#fb923c",
@@ -49,8 +50,26 @@ const THEMES = [
   },
 ];
 
-export function MetricCard({ title, value, trend, trendDown = false, index = 0 }: MetricCardProps) {
-  const theme = THEMES[index % THEMES.length];
+// Metric type -> theme index, so a currency figure always gets the $ badge
+// and a percentage always gets the card/rate badge regardless of which KPI
+// slot it lands in. Falls back to cycling by position when the type is
+// missing or unrecognized, so older callers that don't pass `type` keep
+// their existing (still-themed, just position-based) look.
+const TYPE_THEME_INDEX: Record<string, number> = {
+  currency: 0,
+  count: 1,
+  percent: 2,
+  generic: 3,
+  numeric: 3,
+};
+
+export function getMetricTheme(type: string | undefined, index: number) {
+  const themeIndex = type && type in TYPE_THEME_INDEX ? TYPE_THEME_INDEX[type] : index % THEMES.length;
+  return THEMES[themeIndex];
+}
+
+export function MetricCard({ title, value, trend, trendDown = false, index = 0, type }: MetricCardProps) {
+  const theme = getMetricTheme(type, index);
   const Icon = theme.icon;
   const delayMs = 150 + index * 110;
 
