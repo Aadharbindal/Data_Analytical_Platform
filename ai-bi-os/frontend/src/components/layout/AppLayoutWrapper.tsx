@@ -71,14 +71,17 @@ export function AppLayoutWrapper({ children }: { children: React.ReactNode }) {
 
   const isDashboard = pathname === "/";
   const effectivelyWelcomeActive = isDashboard && isWelcomeActive;
+  const isSettings = pathname?.startsWith("/settings") ?? false;
+  const isFullWidthPage = isAnalytics || effectivelyWelcomeActive;
+  const isNoPaddingPage = isSettings;
 
   return (
     <>
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         {!effectivelyWelcomeActive && <Header />}
-        <main id="main-layout" className={`flex-1 relative bg-background [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isAnalytics || effectivelyWelcomeActive ? "overflow-hidden" : "overflow-y-auto p-6 pb-12"}`}>
-          <div className={`${isAnalytics || effectivelyWelcomeActive ? "h-full w-full" : "mx-auto max-w-7xl"}`}>
+        <main id="main-layout" className={`flex-1 relative bg-background [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isFullWidthPage || isNoPaddingPage ? "overflow-hidden" : "overflow-y-auto"} ${isNoPaddingPage || isFullWidthPage ? "" : "p-6 pb-12"}`}>
+          <div className={`${isFullWidthPage || isNoPaddingPage ? "h-full w-full" : "mx-auto max-w-7xl"}`}>
             {children}
           </div>
         </main>
