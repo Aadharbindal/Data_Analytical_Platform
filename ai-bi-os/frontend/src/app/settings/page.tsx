@@ -407,7 +407,7 @@ export default function SettingsPage() {
             initial={{ opacity: 0, x: -12 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ ...easeOut, delay: 0.05 }}
-            className="flex flex-col gap-0 lg:sticky lg:top-0 lg:h-full border-r border-white/[0.04] px-5 py-8"
+            className="flex flex-col gap-0 lg:sticky lg:top-0 lg:h-full border-r border-white/[0.04] px-5 py-8 relative"
           >
             <motion.div
               initial={{ opacity: 0 }}
@@ -450,6 +450,13 @@ export default function SettingsPage() {
                 </div>
               ))}
             </nav>
+
+            {/* Differentiating vertical line node */}
+            <div className="hidden lg:flex absolute top-1/2 -right-[6px] -translate-y-1/2 items-center justify-center">
+              <div className="w-[11px] h-[11px] rounded-full border border-white/10 bg-background flex items-center justify-center">
+                <div className="w-[5px] h-[5px] rounded-full bg-white/40" />
+              </div>
+            </div>
           </motion.div>
 
           {/* Right content area */}
