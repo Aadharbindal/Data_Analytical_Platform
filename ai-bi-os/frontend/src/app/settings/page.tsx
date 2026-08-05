@@ -51,10 +51,10 @@ const staggerContainer = {
   show: { transition: { staggerChildren: 0.035, delayChildren: 0 } },
 };
 
-// Each staggered child rises from 12px with opacity
+// Each staggered child rises smoothly
 const fadeUp = {
-  hidden: { opacity: 0, y: 12, filter: "blur(2px)" },
-  show: { opacity: 1, y: 0, filter: "blur(0px)", transition: easeOut },
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 30, mass: 1 } },
 };
 
 // Section scroll-in
