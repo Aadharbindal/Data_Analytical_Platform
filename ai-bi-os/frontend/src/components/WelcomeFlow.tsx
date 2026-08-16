@@ -101,7 +101,7 @@ function StatCard({
         <div
           className="relative overflow-hidden rounded-[20px] p-[28px_32px]"
           style={{
-            backgroundImage: `linear-gradient(180deg, ${accent}14 0%, oklch(0.2 0.012 260) 55%, oklch(0.175 0.012 260) 100%)`,
+            backgroundImage: `linear-gradient(180deg, ${accent}1f 0%, oklch(0.2 0.012 260) 60%)`,
           }}
         >
           <div className="absolute top-0 left-0 bottom-0 w-[60%] bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.05)] to-transparent pointer-events-none -translate-x-[120%]"
@@ -348,7 +348,7 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
 
                 <div
                   className="relative overflow-hidden rounded-[20px] p-[26px] backdrop-blur-[16px]"
-                  style={{ backgroundImage: 'linear-gradient(180deg, rgba(37,99,235,.10) 0%, rgba(13,17,28,.95) 55%, rgba(9,12,20,.97) 100%)' }}
+                  style={{ backgroundImage: 'linear-gradient(180deg, rgba(45,95,200,.16) 0%, rgba(13,17,28,.92) 60%)' }}
                 >
                   <div className="flex justify-between items-start mb-[22px] relative">
                     <div><div className="text-[14px] font-semibold text-[#c5cbd6] mb-[7px]">Processed Volume</div><div className="text-[30px] font-extrabold">₹4,82,750</div></div>
@@ -419,7 +419,7 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
 
                 <div
                   className="relative overflow-hidden rounded-[20px] p-[22px] backdrop-blur-[16px]"
-                  style={{ backgroundImage: 'linear-gradient(180deg, rgba(37,99,235,.10) 0%, rgba(13,17,28,.95) 55%, rgba(9,12,20,.97) 100%)' }}
+                  style={{ backgroundImage: 'linear-gradient(180deg, rgba(45,95,200,.16) 0%, rgba(13,17,28,.92) 60%)' }}
                 >
                   {/* The search bar reads as something typed into rather than a
                       label: it sits in a well, catches light along its top edge,
