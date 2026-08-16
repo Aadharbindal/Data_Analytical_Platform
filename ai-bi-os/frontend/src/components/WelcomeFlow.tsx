@@ -62,10 +62,14 @@ function StatCard({
     return () => { clearTimeout(timer1); clearTimeout(timer2); };
   }, [isActive, val, delayMs]);
 
+  // Opacity snaps rather than eases. The card's face is a semi-transparent
+  // gradient, so any partial opacity composites it against the section behind
+  // and the whole card arrives looking dimmer than it settles at - a colour
+  // change nobody asked for. It now appears at full strength and only moves.
   const baseStyle = {
     opacity: mounted ? 1 : 0,
     transform: mounted ? 'translateY(0) scale(1)' : 'translateY(18px) scale(0.97)',
-    transition: `opacity 0.55s cubic-bezier(0.22,1,0.36,1) ${delayMs}ms, transform 0.55s cubic-bezier(0.22,1,0.36,1) ${delayMs}ms`,
+    transition: `opacity 1ms linear ${delayMs}ms, transform 0.55s cubic-bezier(0.22,1,0.36,1) ${delayMs}ms`,
   };
 
   const iconStyle = {
@@ -332,7 +336,7 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
             {/* The entrance stays alone on this wrapper: it is an inline style,
                 and a Tailwind hover:-translate on the same element would lose
                 to it. The card inside is free to move. */}
-            <div style={rev(2,180)}>
+            <div style={rev(2,180,{transition:'opacity 1ms linear, transform .7s cubic-bezier(.16,1,.3,1)'})}>
               <div className="group relative overflow-hidden rounded-[20px] p-px shadow-[0_16px_40px_-8px_rgba(0,0,0,.4)] transition-transform duration-300 hover:-translate-y-1">
                 {/* Lit rim, brightest top-left, matching the stat cards on the
                     section before this one. */}
@@ -405,7 +409,7 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
             {/* Entrance alone on the wrapper, hover on the card inside - the
                 same split as the two sections before this one, and for the same
                 reason: an inline transform beats a utility class. */}
-            <div style={rev(3,180)}>
+            <div style={rev(3,180,{transition:'opacity 1ms linear, transform .7s cubic-bezier(.16,1,.3,1)'})}>
               <div className="group relative overflow-hidden rounded-[20px] p-px shadow-[0_16px_40px_-8px_rgba(0,0,0,.4)] transition-transform duration-300 hover:-translate-y-1">
                 <span
                   aria-hidden
