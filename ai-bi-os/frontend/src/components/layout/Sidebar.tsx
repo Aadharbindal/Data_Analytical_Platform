@@ -308,11 +308,20 @@ export function Sidebar() {
           {/* Stays a single row in both states — the old collapsed variant
               switched to flex-col, which re-stacked the avatar and the logout
               button the instant you clicked, ahead of any width animation. */}
+          {/* Collapsed, the hover surface has to be square before rounded-full
+              can read as a circle: the avatar is 32px, so 4px all round makes
+              40x40. With the row's usual py-2.5 it was 40 wide by 52 tall, and
+              a fully rounded box that shape is a stadium, not a circle. Both
+              paddings are in railMotion's transition, so the height eases with
+              the width rather than jumping. The mobile drawer keeps the full
+              row, and with it the original padding and corner. */}
           <div
             style={{ transition: railMotion }}
             className={cn(
-              "group flex items-center justify-between rounded-xl py-2.5 hover:bg-white/[0.03]",
-              isCollapsed ? "px-[4px] max-lg:px-3" : "px-3"
+              "group flex items-center justify-between hover:bg-white/[0.03]",
+              isCollapsed
+                ? "rounded-full px-[4px] py-[4px] max-lg:rounded-xl max-lg:px-3 max-lg:py-2.5"
+                : "rounded-xl px-3 py-2.5"
             )}
           >
             <Link
