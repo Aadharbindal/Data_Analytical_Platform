@@ -17,10 +17,12 @@ const geistMono = Geist_Mono({
 // The primary UI font (globals.css points --font-sans at it). Self-hosted by
 // next/font so it ships with the app instead of costing a blocking request to
 // a third-party origin before first paint.
+// No `weight` list: Inter is a variable font, so next/font serves one file
+// covering the whole range. Naming discrete weights makes it fetch static
+// instances at URLs that don't exist, and every one 404s.
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
