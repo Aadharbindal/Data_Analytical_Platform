@@ -53,16 +53,23 @@ export function AppLayoutWrapper({ children }: { children: React.ReactNode }) {
     });
   }, [user, queryClient]);
 
+  // Ahead of the loading gate, not after it. These pages are built for people
+  // who are not signed in, so none of them has anything to wait for — but the
+  // gate below held them behind the /auth/me round trip anyway, which meant the
+  // marketing page rendered a spinner into its HTML and only became itself once
+  // the backend answered. On a host that sleeps when idle, that answer can take
+  // the best part of a minute, and the page a first-time visitor sees needs the
+  // backend least of all.
+  if (isAuthPage || isPublicSharePage || isLandingPage) {
+    return <>{children}</>;
+  }
+
   if (loading) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
-  }
-
-  if (isAuthPage || isPublicSharePage || isLandingPage) {
-    return <>{children}</>;
   }
 
   if (!user && !isAuthPage) {
