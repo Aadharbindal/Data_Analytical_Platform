@@ -70,6 +70,17 @@ const STEPS = [
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
+/** Starting state for an entrance. Under prefers-reduced-motion the movement,
+ *  scale and blur are dropped but the fade and its timing survive.
+ *
+ *  Gating the whole animation on that setting — which is what this page did at
+ *  first — means anyone who has turned animation effects off in Windows or
+ *  macOS sees the page arrive already finished, with nothing to look at. The
+ *  setting asks for less motion, not for none. */
+function enterFrom(reduce: boolean | null, moving: Record<string, number | string>) {
+  return reduce ? { opacity: 0 } : { opacity: 0, ...moving };
+}
+
 /** Draws itself outward from the centre as it comes into view. A hairline that
  *  simply appears is the one element on the page that would look pasted on. */
 function Rule() {
@@ -77,7 +88,7 @@ function Rule() {
   return (
     <motion.div
       className="mx-auto h-px w-full max-w-5xl origin-center bg-border/40"
-      initial={reduce ? false : { scaleX: 0, opacity: 0 }}
+      initial={enterFrom(reduce, { scaleX: 0 })}
       whileInView={{ scaleX: 1, opacity: 1 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.7, ease: EASE }}
@@ -99,7 +110,7 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
   const reduce = useReducedMotion();
   return (
     <motion.div
-      initial={reduce ? false : { opacity: 0, y: 14 }}
+      initial={enterFrom(reduce, { y: 14 })}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-70px" }}
       transition={{ duration: 0.75, delay, ease: EASE }}
@@ -148,7 +159,7 @@ export function LandingClient() {
           pixels in. The reading content below stays constrained. */}
       <header className="flex w-full items-center justify-between px-5 py-6 sm:px-8">
         <motion.div
-          initial={reduce ? false : { opacity: 0, x: -16 }}
+          initial={enterFrom(reduce, { x: -16 })}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, ease: EASE }}
         >
@@ -161,7 +172,7 @@ export function LandingClient() {
           </Link>
         </motion.div>
         <motion.div
-          initial={reduce ? false : { opacity: 0, x: 16 }}
+          initial={enterFrom(reduce, { x: 16 })}
           animate={{ opacity: 1, x: 0 }}
           whileHover={reduce ? undefined : { y: -2 }}
           transition={{ duration: 0.8, delay: 0.1, ease: EASE }}
@@ -183,7 +194,7 @@ export function LandingClient() {
           <h1 className="max-w-3xl text-balance text-[clamp(1.6rem,4.4vw,2.75rem)] font-semibold leading-[1.15] tracking-[-0.02em]">
             <motion.span
               className="block"
-              initial={reduce ? false : { opacity: 0, y: 22, filter: "blur(8px)" }}
+              initial={enterFrom(reduce, { y: 22, filter: "blur(8px)" })}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ duration: 0.95, delay: HERO_STEP, ease: EASE }}
             >
@@ -191,7 +202,7 @@ export function LandingClient() {
             </motion.span>
             <motion.span
               className="block text-muted-foreground"
-              initial={reduce ? false : { opacity: 0, y: 22, filter: "blur(8px)" }}
+              initial={enterFrom(reduce, { y: 22, filter: "blur(8px)" })}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ duration: 0.95, delay: HERO_STEP * 2, ease: EASE }}
             >
@@ -200,7 +211,7 @@ export function LandingClient() {
           </h1>
 
           <motion.p
-            initial={reduce ? false : { opacity: 0, y: 14 }}
+            initial={enterFrom(reduce, { y: 14 })}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: HERO_STEP * 3, ease: EASE }}
             className="mt-4 max-w-xl text-[15px] leading-relaxed text-muted-foreground"
@@ -224,7 +235,7 @@ export function LandingClient() {
             {/* The two halves are timed apart so the concession lands after the
                 setup, the way it would be said aloud. */}
             <motion.span
-              initial={reduce ? false : { opacity: 0, y: 12 }}
+              initial={enterFrom(reduce, { y: 12 })}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-70px" }}
               transition={{ duration: 0.8, ease: EASE }}
@@ -234,7 +245,7 @@ export function LandingClient() {
               certain.{" "}
             </motion.span>
             <motion.span
-              initial={reduce ? false : { opacity: 0, y: 12 }}
+              initial={enterFrom(reduce, { y: 12 })}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-70px" }}
               transition={{ duration: 0.8, delay: 0.3, ease: EASE }}
@@ -260,7 +271,7 @@ export function LandingClient() {
                 {QUESTIONS.map((q, i) => (
                   <motion.span
                     key={q}
-                    initial={reduce ? false : { opacity: 0, scale: 0.94, y: 8 }}
+                    initial={enterFrom(reduce, { scale: 0.94, y: 8 })}
                     whileInView={{ opacity: 1, scale: 1, y: 0 }}
                     whileHover={reduce ? undefined : { y: -3, scale: 1.03 }}
                     viewport={{ once: true, margin: "-60px" }}
@@ -324,7 +335,7 @@ export function LandingClient() {
             {CAPABILITIES.map((c, i) => (
               <motion.div
                 key={c.label}
-                initial={reduce ? false : { opacity: 0, y: 14, scale: 0.97 }}
+                initial={enterFrom(reduce, { y: 14, scale: 0.97 })}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 whileHover={reduce ? undefined : { y: -3, scale: 1.02 }}
                 viewport={{ once: true, margin: "-60px" }}
@@ -366,7 +377,7 @@ export function LandingClient() {
               ].map((f, i) => (
                 <motion.div
                   key={f.title}
-                  initial={reduce ? false : { opacity: 0, y: 16 }}
+                  initial={enterFrom(reduce, { y: 16 })}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-60px" }}
                   transition={{ duration: 0.45, delay: 0.1 * i, ease: EASE }}

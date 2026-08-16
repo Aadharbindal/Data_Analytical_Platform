@@ -22,25 +22,28 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 /** Both panels expand and collapse by animating their own height, so whatever
  *  sits below moves with them instead of being shoved. Opacity finishes ahead
  *  of the height on the way in and leads it on the way out, which stops the
- *  content from appearing to slide out of a clipped edge. */
-function useSwapMotion(reduce: boolean | null) {
-  if (reduce) {
-    return {
-      initial: { opacity: 0 },
-      animate: { opacity: 1, height: "auto" as const },
-      exit: { opacity: 0 },
-      transition: { duration: 0.15 },
-    };
-  }
-  return {
-    initial: { opacity: 0, height: 0 },
-    animate: { opacity: 1, height: "auto" as const },
-    exit: { opacity: 0, height: 0 },
-    transition: {
-      height: { duration: 0.42, ease: EASE },
-      opacity: { duration: 0.26, ease: "easeOut" as const },
-    },
-  };
+ *  content from appearing to slide out of a clipped edge.
+ *
+ *  This is deliberately identical under prefers-reduced-motion. That setting
+ *  asks for less motion, not none, and an accordion that snaps open is not an
+ *  accessible accordion — it is a broken one. What the setting does switch off
+ *  here is the cursor parallax, the blur and the scale, which are the effects
+ *  it actually exists for. */
+const SWAP_MOTION = {
+  initial: { opacity: 0, height: 0 },
+  animate: { opacity: 1, height: "auto" as const },
+  exit: { opacity: 0, height: 0 },
+  transition: {
+    height: { duration: 0.42, ease: EASE },
+    opacity: { duration: 0.26, ease: "easeOut" as const },
+  },
+};
+
+/** Starting state for an entrance. Under prefers-reduced-motion the movement,
+ *  scale and blur are dropped but the fade and its timing survive — the setting
+ *  asks for less motion, not for a page that arrives already finished. */
+function enterFrom(reduce: boolean | null, moving: Record<string, number | string>) {
+  return reduce ? { opacity: 0 } : { opacity: 0, ...moving };
 }
 
 interface InterrogateSceneProps {
@@ -54,7 +57,7 @@ export function InterrogateScene({ entranceDelay = 0 }: InterrogateSceneProps) {
   const reduce = useReducedMotion();
   const wrapRef = useRef<HTMLDivElement>(null);
   const [pointer, setPointer] = useState({ x: 0, y: 0 });
-  const swap = useSwapMotion(reduce);
+  const swap = SWAP_MOTION;
 
   // The ambient glow tracks the cursor. Stored as an offset from centre in a
   // -1..1 range so the same values drive both the glow position and the very
@@ -99,7 +102,7 @@ export function InterrogateScene({ entranceDelay = 0 }: InterrogateSceneProps) {
             figure resolves out of a blur, which reads as it coming into
             focus — apt for the thing the page asks you to examine. */}
         <motion.div
-          initial={reduce ? false : { opacity: 0, scale: 0.88, filter: "blur(18px)" }}
+          initial={enterFrom(reduce, { scale: 0.88, filter: "blur(18px)" })}
           animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
           transition={{ duration: 1.15, delay: entranceDelay, ease: EASE }}
         >
@@ -141,7 +144,7 @@ export function InterrogateScene({ entranceDelay = 0 }: InterrogateSceneProps) {
             so the swap between prompt and proof stays untouched by it. */}
         <motion.div
           className="relative w-full"
-          initial={reduce ? false : { opacity: 0, y: 18 }}
+          initial={enterFrom(reduce, { y: 18 })}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.85, delay: entranceDelay + 0.3, ease: EASE }}
         >
