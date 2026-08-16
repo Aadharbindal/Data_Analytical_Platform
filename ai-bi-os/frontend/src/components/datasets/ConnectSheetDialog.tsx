@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, Loader2, Sheet, ArrowRight, Info } from "lucide-react";
@@ -21,16 +22,21 @@ export function ConnectSheetDialog() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const qc = useQueryClient();
+  const router = useRouter();
 
   const submit = async () => {
     if (!url.trim()) return;
     setBusy(true);
     setError(null);
     try {
+      // The backend already makes a newly ingested dataset the active one, so
+      // there is nothing to switch to by hand — landing on the analysis view
+      // is what makes connecting feel finished. Matches what an upload does.
       await datasetsApi.connectSheet(url.trim());
       await qc.invalidateQueries();
       setOpen(false);
       setUrl("");
+      router.push("/analytics");
     } catch (e) {
       // The backend's messages here are written for the user (how to share the
       // sheet, what to paste), so they're shown as-is rather than replaced
