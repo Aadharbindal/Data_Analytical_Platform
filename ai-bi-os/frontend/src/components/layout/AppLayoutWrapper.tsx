@@ -18,6 +18,10 @@ export function AppLayoutWrapper({ children }: { children: React.ReactNode }) {
   const isAnalytics = (pathname?.startsWith("/analytics") || pathname?.startsWith("/chat")) ?? false;
   const isAuthPage = pathname === "/login" || pathname === "/signup";
   const isPublicSharePage = pathname?.startsWith("/shared/") ?? false;
+  // The marketing page has to render for people who have never signed in —
+  // without this the redirect below would bounce every visitor to /login,
+  // which is the problem it exists to solve.
+  const isLandingPage = pathname === "/landing";
 
   // ── Background prefetch: warm backend + React Query caches on mount ──────────
   React.useEffect(() => {
@@ -57,14 +61,17 @@ export function AppLayoutWrapper({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (isAuthPage || isPublicSharePage) {
+  if (isAuthPage || isPublicSharePage || isLandingPage) {
     return <>{children}</>;
   }
 
   if (!user && !isAuthPage) {
-    // loading=false (spinner already shown above) and no user → redirect
+    // loading=false (spinner already shown above) and no user → redirect.
+    // Someone arriving at the root has not asked for anything in particular,
+    // so they get the marketing page; someone who typed a deeper URL wanted
+    // that page, and sending them to sign in is the shortest way back to it.
     if (typeof window !== "undefined") {
-      window.location.href = "/login";
+      window.location.href = pathname === "/" ? "/landing" : "/login";
     }
     return null;
   }

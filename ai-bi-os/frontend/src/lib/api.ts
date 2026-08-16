@@ -29,6 +29,21 @@ function refreshSession(): Promise<boolean> {
 
 const AUTH_ENDPOINTS = ["/api/v1/auth/login", "/api/v1/auth/signup", "/api/v1/auth/refresh", "/api/v1/auth/2fa/login-verify"];
 
+/**
+ * Where a dead session should send someone, or null to leave them where they
+ * are. Pages that are meant for signed-out visitors have to be in the second
+ * group: the app calls /auth/me on mount, which 401s for a visitor who has
+ * never signed in, and without this the marketing page would bounce itself to
+ * the login screen before it finished rendering.
+ */
+function redirectTargetFor401(pathname: string): string | null {
+  if (pathname === "/login" || pathname === "/signup" || pathname === "/landing") return null;
+  if (pathname.startsWith("/shared/")) return null;
+  // Nothing specific was asked for, so show the marketing page rather than a
+  // login form. A deeper URL was asked for, so signing in is the way back to it.
+  return pathname === "/" ? "/landing" : "/login";
+}
+
 async function request<T>(path: string, options?: RequestInit, isRetry = false): Promise<T> {
   const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
   const res = await fetch(`${BASE_URL}${path}`, {
@@ -65,8 +80,9 @@ async function request<T>(path: string, options?: RequestInit, isRetry = false):
     // is the endpoint's normal response, not a sign the current session died.
     if (res.status === 401 && typeof window !== "undefined" && !AUTH_ENDPOINTS.some((p) => path.startsWith(p))) {
       localStorage.removeItem("access_token");
-      if (window.location.pathname !== "/login" && window.location.pathname !== "/signup") {
-        window.location.href = "/login";
+      const target = redirectTargetFor401(window.location.pathname);
+      if (target) {
+        window.location.href = target;
       }
     }
     throw new Error(errorMessage || `Request failed with status ${res.status}`);
