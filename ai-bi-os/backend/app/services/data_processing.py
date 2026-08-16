@@ -621,7 +621,13 @@ def init_db():
         ("user_id", "TEXT", "NULL"),
         ("content_hash", "TEXT", "NULL"),
         ("domain", "TEXT", "'generic'"),
-        ("semantic_dict", "TEXT", "NULL")
+        ("semantic_dict", "TEXT", "NULL"),
+        # Where the data came from. Defaults to 'upload' so every dataset that
+        # already exists keeps describing itself correctly; sheet-backed ones
+        # also keep the URL, which is what makes re-fetching possible.
+        ("source_type", "TEXT", "'upload'"),
+        ("source_url", "TEXT", "NULL"),
+        ("source_synced_at", "TEXT", "NULL")
     ]:
         try:
             cursor.execute(f"ALTER TABLE datasets ADD COLUMN {col} {ctype} DEFAULT {default}")

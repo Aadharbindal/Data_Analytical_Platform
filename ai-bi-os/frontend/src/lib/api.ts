@@ -201,6 +201,16 @@ export const datasetsApi = {
       `/api/v1/datasets?workspace_id=${workspace_id}`
     ),
   get: (id: string) => api.get<import("./types").Dataset>(`/api/v1/datasets/${id}`),
+  connectSheet: (url: string) =>
+    api.post<import("./types").Dataset & { unchanged?: boolean }>(
+      "/api/v1/datasets/connect-sheet",
+      { url }
+    ),
+  refreshFromSource: (id: string) =>
+    api.post<import("./types").Dataset & { unchanged?: boolean }>(
+      `/api/v1/datasets/${id}/refresh`,
+      {}
+    ),
   upload: (formData: FormData) =>
     api.upload<{ job_id: string; status: string }>("/api/v1/datasets/upload", formData),
   uploadStatus: (jobId: string) =>

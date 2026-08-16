@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { TableSkeleton } from "@/components/ui/skeleton-loader";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
+import { ConnectSheetDialog } from "@/components/datasets/ConnectSheetDialog";
+import { SheetSourceActions } from "@/components/datasets/SheetSourceActions";
 import {
   Upload,
   Database,
@@ -23,6 +25,7 @@ import {
   Power,
   X,
   File,
+  Sheet,
   ArrowRightLeft,
   Check,
   ChevronRight,
@@ -174,6 +177,10 @@ function UploadZone({ onSuccess, onRedirect }: { onSuccess: () => void, onRedire
           accept=".csv,.tsv,.json,.parquet,.xlsx,.xls"
           onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
         />
+      </div>
+
+      <div className="mt-3">
+        <ConnectSheetDialog />
       </div>
 
       <AnimatePresence>
@@ -668,9 +675,16 @@ export default function DatasetsPage() {
                           {isSelected && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
                         </button>
                         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] bg-[#0c1017] border border-[#1a2235] shadow-sm transition-transform group-hover:scale-105">
-                          <File className="h-4 w-4 text-[#3b82f6]" strokeWidth={2} />
+                          {ds.source_type === "google_sheet" ? (
+                            <Sheet className="h-4 w-4 text-[#34a853]" strokeWidth={2} />
+                          ) : (
+                            <File className="h-4 w-4 text-[#3b82f6]" strokeWidth={2} />
+                          )}
                         </div>
                         <span className="truncate">{ds.name}</span>
+                        {ds.source_type === "google_sheet" && (
+                          <SheetSourceActions dataset={ds} />
+                        )}
                       </div>
                     </td>
                     <td className="px-3 md:px-6 py-5 text-muted-foreground text-sm font-mono truncate">

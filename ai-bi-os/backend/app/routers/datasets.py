@@ -5,6 +5,7 @@ from typing import List, Optional
 import uuid
 import asyncio
 import hashlib
+from datetime import datetime
 from app.core.database import get_db_connection
 import json
 import os
@@ -93,6 +94,116 @@ async def upload_dataset(file: UploadFile = File(...), force: bool = Form(False)
 
     return {"job_id": job_id, "status": "processing"}
 
+def _mark_dataset_source(dataset_id: str, source_type: str, source_url: str) -> None:
+    conn = get_db_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute(
+            "UPDATE datasets SET source_type=%s, source_url=%s, source_synced_at=%s WHERE id=%s",
+            (source_type, source_url, datetime.utcnow().isoformat(), dataset_id),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def _ingest_sheet(url: str, user_id: str, force: bool = True) -> dict:
+    """Fetch a link-shared sheet and put it through the normal upload path.
+
+    Reusing save_dataset rather than writing a parallel importer is the point:
+    sheet data then gets the same parsing, profiling, quality scoring and
+    semantic classification an uploaded file does, and because the generated
+    filename is stable, a re-sync continues the same version lineage.
+
+    `force=False` on a refresh is what keeps that lineage meaningful. Each
+    version is its own row, so syncing a sheet nobody has edited would add an
+    identical row every time — a dataset list full of versions that carry no
+    new information. With the duplicate check left on, an unchanged sheet
+    reports back as already current instead.
+    """
+    from app.services.google_sheets import fetch_sheet_csv, sheet_display_name, SheetError
+    from app.services.data_processing import DuplicateDatasetError
+
+    try:
+        content, export_url = fetch_sheet_csv(url)
+    except SheetError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    try:
+        info = save_dataset(content, sheet_display_name(url), user_id, force=force)
+    except DuplicateDatasetError as dup:
+        existing = dup.existing_info
+        _mark_dataset_source(existing["id"], "google_sheet", url)
+        return {
+            **existing,
+            "unchanged": True,
+            "source_type": "google_sheet",
+            "source_url": url,
+        }
+
+    _mark_dataset_source(info["id"], "google_sheet", url)
+    info["source_type"] = "google_sheet"
+    info["source_url"] = url
+    info["unchanged"] = False
+    return info
+
+
+@router.post("/connect-sheet")
+async def connect_google_sheet(payload: dict, current_user: dict = Depends(get_current_user)):
+    url = (payload or {}).get("url", "").strip()
+    if not url:
+        raise HTTPException(status_code=400, detail="Paste the link to your Google Sheet.")
+    return _ingest_sheet(url, current_user["id"])
+
+
+@router.post("/{dataset_id}/refresh")
+async def refresh_dataset_from_source(dataset_id: str, current_user: dict = Depends(get_current_user)):
+    """Pull the sheet again and save it as a new version of this dataset."""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT source_type, source_url FROM datasets WHERE id=%s AND user_id=%s",
+        (dataset_id, current_user["id"]),
+    )
+    row = cur.fetchone()
+    conn.close()
+
+    if not row:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    source_type, source_url = row
+    if source_type != "google_sheet" or not source_url:
+        raise HTTPException(
+            status_code=400,
+            detail="This dataset was uploaded as a file, so there's no source to refresh from.",
+        )
+
+    info = _ingest_sheet(source_url, current_user["id"], force=False)
+
+    # The refreshed copy is the one the rest of the app should be reading, and
+    # the caches still hold the pre-refresh frame and KPIs until they're
+    # cleared — otherwise a refresh appears to do nothing.
+    conn = get_db_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute(
+            "INSERT INTO active_dataset (user_id, dataset_id) VALUES (%s, %s) "
+            "ON CONFLICT (user_id) DO UPDATE SET dataset_id = EXCLUDED.dataset_id",
+            (current_user["id"], info["id"]),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    invalidate_user_cache(current_user["id"])
+    try:
+        from app.routers.analytics import invalidate_analytics_cache
+        invalidate_analytics_cache(current_user["id"])
+    except Exception:
+        pass
+
+    return info
+
+
 @router.get("/upload/status/{job_id}")
 async def get_upload_status(job_id: str, current_user: dict = Depends(get_current_user)):
     job = get_upload_job(job_id, current_user["id"])
@@ -147,7 +258,7 @@ async def get_active_dataset_route(current_user: dict = Depends(get_current_user
 async def list_datasets(workspace_id: Optional[str] = None, current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score FROM datasets WHERE user_id=%s ORDER BY created_at DESC', (current_user["id"],))
+    cursor.execute('SELECT id, name, status, created_at, latest_version, filepath, columns, skipped_rows, sheet_name, version, quality_score, source_type, source_url, source_synced_at FROM datasets WHERE user_id=%s ORDER BY created_at DESC', (current_user["id"],))
     rows = cursor.fetchall()
     conn.close()
 
@@ -170,7 +281,10 @@ async def list_datasets(workspace_id: Optional[str] = None, current_user: dict =
             "skipped_rows": r[7],
             "sheet_name": r[8],
             "version": r[9],
-            "quality_score": r[10]
+            "quality_score": r[10],
+            "source_type": r[11] or "upload",
+            "source_url": r[12],
+            "source_synced_at": r[13],
         }
         for r in rows
     ]

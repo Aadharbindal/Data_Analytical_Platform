@@ -60,6 +60,11 @@ export interface Dataset {
   domain?: string;
   semantic_dict?: SemanticDict;
   columns?: DatasetColumn[];
+  /** 'upload' for a file, 'google_sheet' for a link-shared sheet that can be
+   *  re-pulled from source. Defaults to 'upload' for every pre-existing row. */
+  source_type?: "upload" | "google_sheet";
+  source_url?: string | null;
+  source_synced_at?: string | null;
 }
 
 export interface ActiveDatasetInfo {
