@@ -408,11 +408,52 @@ export function LandingClient() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-60px" }}
                   transition={{ duration: 0.95, delay: 0.09 * i, ease: EASE }}
-                  className="flex flex-col gap-2.5"
+                  className="h-full"
                 >
-                  <f.icon className="h-[18px] w-[18px] text-primary" strokeWidth={2} />
-                  <h3 className="text-sm font-semibold">{f.title}</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">{f.body}</p>
+                  {/* Lit along the top edge only, where the step cards above are
+                      lit all the way round. Same palette and the same idea about
+                      where the light is, but a different shape — giving both
+                      rows the identical treatment would make the page read as
+                      one card grid repeated twice. */}
+                  <div
+                    className="group relative h-full overflow-hidden rounded-2xl transition-transform duration-300 hover:-translate-y-1"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(180deg, color-mix(in srgb, var(--primary) 5%, var(--surface)) 0%, var(--background) 100%)",
+                    }}
+                  >
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-x-0 top-0 h-px"
+                      style={{
+                        backgroundImage:
+                          "linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--primary) 85%, transparent) 28%, color-mix(in srgb, var(--primary) 25%, transparent) 72%, transparent 100%)",
+                      }}
+                    />
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10 transition-colors duration-300 group-hover:ring-primary/25"
+                    />
+                    {/* Washes down from the lit edge on hover, so the light
+                        appears to come from the top rather than from nowhere. */}
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                      style={{
+                        backgroundImage:
+                          "radial-gradient(100% 65% at 50% 0%, color-mix(in srgb, var(--primary) 17%, transparent) 0%, transparent 70%)",
+                      }}
+                    />
+
+                    <div className="relative flex flex-col gap-2.5 p-6">
+                      <f.icon
+                        className="h-[18px] w-[18px] text-primary transition-transform duration-300 group-hover:scale-110"
+                        strokeWidth={2}
+                      />
+                      <h3 className="text-sm font-semibold">{f.title}</h3>
+                      <p className="text-sm leading-relaxed text-muted-foreground">{f.body}</p>
+                    </div>
+                  </div>
                 </motion.div>
               ))}
             </div>
