@@ -235,7 +235,10 @@ export function InterrogateScene({ entranceDelay = 0 }: InterrogateSceneProps) {
               </motion.div>
             ) : (
               <motion.div key="prompt" {...swap} className="overflow-hidden">
-                <div className="mt-5 flex flex-col items-center gap-3">
+                {/* The gap does the work rather than the top margin: the caption
+                    belongs close under the figure, and only the button needed
+                    to come down. */}
+                <div className="mt-5 flex flex-col items-center gap-6">
                   <p className="text-sm text-muted-foreground">
                     Total payments this year. Where did it come from?
                   </p>
