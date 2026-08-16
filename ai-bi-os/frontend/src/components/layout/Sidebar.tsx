@@ -31,6 +31,10 @@ import {
 } from "lucide-react";
 import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
 
+/** Survives reloads as well as navigation — the rail's width is a preference,
+ *  and a preference that resets when you refresh is not one. */
+const SIDEBAR_COLLAPSED_KEY = "numerate:sidebar-collapsed";
+
 const mainNavItems = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "Datasets", href: "/datasets", icon: Database },
@@ -76,21 +80,34 @@ const itemVariants = {
 export function Sidebar() {
   const pathname = usePathname();
   const { user, logout, avatarVersion } = useAuth();
-  const { isWelcomeActive, isMobileNavOpen, setMobileNavOpen } = useLayoutStore();
-  const [isManualCollapsed, setIsManualCollapsed] = useState(false);
-  const [isManualExpanded, setIsManualExpanded] = useState(false);
+  const { isMobileNavOpen, setMobileNavOpen } = useLayoutStore();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-
-  const isAnalyticsRoute = pathname?.startsWith("/analytics") ?? false;
-  const isWelcomePage = pathname === "/" && isWelcomeActive;
 
   // Desktop-only concept: the narrow icon rail. On mobile the sidebar is an
   // off-canvas drawer that is either fully open or fully hidden, so every
   // collapse style below is applied at `lg:` and the mobile drawer always
   // renders the full-width, labelled version.
-  const isCollapsed = (isAnalyticsRoute || isWelcomePage) ? !isManualExpanded : isManualCollapsed;
+  //
+  // One piece of state, changed only by the toggle. This used to be two flags
+  // picked between by route — collapsed by default on the welcome screen and
+  // under /analytics, expanded everywhere else — which meant walking from the
+  // welcome screen to any other page silently reopened a rail the user had
+  // deliberately left shut. The rail is the user's setting, not the route's.
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
+  // Restored after mount rather than in the initial state: the server renders
+  // the default, and reading storage during the first render would make the
+  // markup disagree with what was sent.
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
+      if (saved !== null) setIsCollapsed(saved === "1");
+    } catch {
+      // Private mode, or storage disabled. The default stands.
+    }
+    setMounted(true);
+  }, []);
 
   // The collapsed icon rail keeps its original desktop classes untouched, and
   // mobile re-expands them via `max-lg:`. Overriding in that direction matters:
@@ -120,17 +137,30 @@ export function Sidebar() {
   // both directions is what made this read as a jerk rather than a slide.
   const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
   const RAIL_MS = 380;
-  const railMotion = `width ${RAIL_MS}ms ${EASE}, padding ${RAIL_MS}ms ${EASE}`;
-  const labelMotion = isCollapsed
-    ? `opacity 150ms ease-out, max-width ${RAIL_MS}ms ${EASE}, margin-left ${RAIL_MS}ms ${EASE}`
-    : `opacity 220ms ease-in 190ms, max-width ${RAIL_MS}ms ${EASE}, margin-left ${RAIL_MS}ms ${EASE}`;
+
+  // Silent until the stored width has been restored. The rail renders collapsed
+  // first and only then learns it should be open, so leaving transitions on
+  // would play a full expand on every single page load for anyone who keeps it
+  // open — an animation for something the user never asked to change.
+  const railMotion = mounted
+    ? `width ${RAIL_MS}ms ${EASE}, padding ${RAIL_MS}ms ${EASE}`
+    : "none";
+  const labelMotion = !mounted
+    ? "none"
+    : isCollapsed
+      ? `opacity 150ms ease-out, max-width ${RAIL_MS}ms ${EASE}, margin-left ${RAIL_MS}ms ${EASE}`
+      : `opacity 220ms ease-in 190ms, max-width ${RAIL_MS}ms ${EASE}, margin-left ${RAIL_MS}ms ${EASE}`;
 
   const toggleSidebar = () => {
-    if (isAnalyticsRoute || isWelcomePage) {
-      setIsManualExpanded(!isManualExpanded);
-    } else {
-      setIsManualCollapsed(!isManualCollapsed);
-    }
+    setIsCollapsed((collapsed) => {
+      const next = !collapsed;
+      try {
+        window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, next ? "1" : "0");
+      } catch {
+        // Storage unavailable — the choice still holds for this session.
+      }
+      return next;
+    });
   };
 
   // Navigating always dismisses the drawer — otherwise tapping a link on a
