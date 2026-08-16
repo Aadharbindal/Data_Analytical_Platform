@@ -24,9 +24,33 @@ const inter = Inter({
   display: "swap",
 });
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://numerate-analytics.vercel.app";
+const DESCRIPTION =
+  "Upload a spreadsheet and ask questions in plain English. Every number is computed by deterministic code and independently verified before you see it.";
+
 export const metadata: Metadata = {
-  title: "Numerate",
-  description: "Enterprise AI Business Intelligence Operating System",
+  // Required for the relative opengraph-image path below to resolve to an
+  // absolute URL — crawlers reject relative image references.
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Numerate — Smart Analytics. Better Decisions.",
+    template: "%s · Numerate",
+  },
+  description: DESCRIPTION,
+  applicationName: "Numerate",
+  openGraph: {
+    type: "website",
+    siteName: "Numerate",
+    title: "Numerate — Smart Analytics. Better Decisions.",
+    description: DESCRIPTION,
+    url: SITE_URL,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Numerate — Smart Analytics. Better Decisions.",
+    description: DESCRIPTION,
+  },
 };
 
 // Resource hints — browser pre-resolves backend DNS before first API call
