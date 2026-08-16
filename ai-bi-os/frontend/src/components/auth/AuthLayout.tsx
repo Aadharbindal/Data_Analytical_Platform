@@ -69,31 +69,43 @@ export function AuthLayout({ children }: AuthLayoutProps) {
           it can end up halfway down the page or squeezed out entirely. Someone
           who opened this by accident should find the way out in the corner
           where they expect it. */}
+      {/* Everything about this points left, because that is where it goes: the
+          pill shifts left on hover, the arrow shifts further still, and the glow
+          arrives from the left edge. Glass rather than a solid fill, since it
+          sits over the drifting blobs and should let them through. */}
       <Link
         href="/landing"
-        className="group animate-auth-fade-up"
+        className="group animate-auth-fade-up fixed left-7 top-6 z-[3] inline-flex overflow-hidden rounded-full no-underline ring-1 ring-inset ring-white/10 backdrop-blur-md transition-all duration-300 hover:-translate-x-0.5 hover:shadow-[0_0_22px_-8px_var(--primary)] hover:ring-primary/35"
         style={{
-          position: "fixed",
-          top: "24px",
-          left: "28px",
-          zIndex: 3,
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "8px",
-          padding: "8px 14px 8px 11px",
-          borderRadius: "999px",
-          border: "1px solid rgba(255,255,255,0.10)",
-          background: "rgba(255,255,255,0.03)",
-          color: "#9aa4b5",
-          fontSize: "13px",
-          fontWeight: 500,
-          textDecoration: "none",
-          backdropFilter: "blur(8px)",
           animationDelay: "0.05s",
+          backgroundImage:
+            "linear-gradient(110deg, color-mix(in srgb, var(--primary) 12%, transparent) 0%, rgba(255,255,255,0.04) 55%, rgba(255,255,255,0.02) 100%)",
         }}
       >
-        <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" strokeWidth={2} />
-        Back
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 left-0 w-px"
+          style={{
+            backgroundImage:
+              "linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--primary) 80%, transparent) 50%, transparent 100%)",
+          }}
+        />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+          style={{
+            backgroundImage:
+              "radial-gradient(75% 140% at 0% 50%, color-mix(in srgb, var(--primary) 22%, transparent) 0%, transparent 72%)",
+          }}
+        />
+
+        <span className="relative flex items-center gap-2 py-2 pl-[11px] pr-[14px] text-[13px] font-medium text-[#9aa4b5] transition-colors duration-300 group-hover:text-white">
+          <ArrowLeft
+            className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1"
+            strokeWidth={2}
+          />
+          Back
+        </span>
       </Link>
 
       {/* Ambient background blobs */}
