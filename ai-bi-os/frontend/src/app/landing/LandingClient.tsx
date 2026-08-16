@@ -68,8 +68,21 @@ const STEPS = [
   },
 ];
 
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+/** Draws itself outward from the centre as it comes into view. A hairline that
+ *  simply appears is the one element on the page that would look pasted on. */
 function Rule() {
-  return <div className="mx-auto h-px w-full max-w-5xl bg-border/40" />;
+  const reduce = useReducedMotion();
+  return (
+    <motion.div
+      className="mx-auto h-px w-full max-w-5xl origin-center bg-border/40"
+      initial={reduce ? false : { scaleX: 0, opacity: 0 }}
+      whileInView={{ scaleX: 1, opacity: 1 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.7, ease: EASE }}
+    />
+  );
 }
 
 /** Small caps label. Used instead of headlines so the page never competes with
@@ -89,15 +102,27 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
       initial={reduce ? false : { opacity: 0, y: 14 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-70px" }}
-      transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.45, delay, ease: EASE }}
     >
       {children}
     </motion.div>
   );
 }
 
+/** Lift on hover. Kept to two pixels and a border brighten — enough to say the
+ *  card is a surface, not enough to make the page bounce as the cursor crosses
+ *  it. Skipped entirely under reduced motion. */
+function useHoverLift(reduce: boolean | null) {
+  if (reduce) return {};
+  return {
+    whileHover: { y: -3 },
+    transition: { type: "spring" as const, stiffness: 320, damping: 24 },
+  };
+}
+
 export function LandingClient() {
   const reduce = useReducedMotion();
+  const lift = useHoverLift(reduce);
 
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden bg-background text-foreground">
@@ -190,11 +215,15 @@ export function LandingClient() {
                 {QUESTIONS.map((q, i) => (
                   <motion.span
                     key={q}
-                    initial={reduce ? false : { opacity: 0, scale: 0.94 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
+                    initial={reduce ? false : { opacity: 0, scale: 0.94, y: 8 }}
+                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                    whileHover={reduce ? undefined : { y: -3, scale: 1.03 }}
                     viewport={{ once: true, margin: "-60px" }}
-                    transition={{ duration: 0.35, delay: i * 0.06 }}
-                    className="rounded-full border border-border/60 bg-surface/40 px-4 py-2 text-[13px] text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                    transition={{
+                      opacity: { duration: 0.3, delay: i * 0.055 },
+                      default: { type: "spring", stiffness: 340, damping: 24, delay: i * 0.055 },
+                    }}
+                    className="cursor-default rounded-full border border-border/60 bg-surface/40 px-4 py-2 text-[13px] text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
                   >
                     {q}
                   </motion.span>
@@ -211,13 +240,20 @@ export function LandingClient() {
           <div className="grid gap-4 sm:grid-cols-3">
             {STEPS.map((s, i) => (
               <Reveal key={s.title} delay={i * 0.08}>
-                <div className="h-full rounded-2xl border border-border/60 bg-surface/30 p-6 transition-colors hover:border-primary/30">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/25 bg-primary/10">
+                <motion.div
+                  {...lift}
+                  className="group h-full rounded-2xl border border-border/60 bg-surface/30 p-6 transition-colors hover:border-primary/30"
+                >
+                  <motion.div
+                    whileHover={reduce ? undefined : { rotate: -6, scale: 1.08 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 18 }}
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/25 bg-primary/10"
+                  >
                     <s.icon className="h-[18px] w-[18px] text-primary" strokeWidth={2} />
-                  </div>
+                  </motion.div>
                   <h3 className="mt-4 text-[15px] font-semibold">{s.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
-                </div>
+                </motion.div>
               </Reveal>
             ))}
           </div>
@@ -241,12 +277,21 @@ export function LandingClient() {
 
           <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {CAPABILITIES.map((c, i) => (
-              <Reveal key={c.label} delay={0.04 * i}>
-                <div className="flex h-full items-center gap-3 rounded-xl border border-border/50 bg-surface/25 px-4 py-3.5">
-                  <c.icon className="h-4 w-4 shrink-0 text-primary/80" strokeWidth={2} />
-                  <span className="text-sm text-foreground">{c.label}</span>
-                </div>
-              </Reveal>
+              <motion.div
+                key={c.label}
+                initial={reduce ? false : { opacity: 0, y: 14, scale: 0.97 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                whileHover={reduce ? undefined : { y: -3, scale: 1.02 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ type: "spring", stiffness: 300, damping: 24, delay: 0.045 * i }}
+                className="group flex h-full items-center gap-3 rounded-xl border border-border/50 bg-surface/25 px-4 py-3.5 transition-colors hover:border-primary/35 hover:bg-surface/45"
+              >
+                <c.icon
+                  className="h-4 w-4 shrink-0 text-primary/80 transition-colors group-hover:text-primary"
+                  strokeWidth={2}
+                />
+                <span className="text-sm text-foreground">{c.label}</span>
+              </motion.div>
             ))}
           </div>
         </section>
@@ -274,11 +319,18 @@ export function LandingClient() {
                   body: "A linked Google Sheet pulls the latest rows on refresh, and tells you when nothing changed.",
                 },
               ].map((f, i) => (
-                <div key={f.title} className="flex flex-col gap-2.5">
+                <motion.div
+                  key={f.title}
+                  initial={reduce ? false : { opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-60px" }}
+                  transition={{ duration: 0.45, delay: 0.1 * i, ease: EASE }}
+                  className="flex flex-col gap-2.5"
+                >
                   <f.icon className="h-[18px] w-[18px] text-primary" strokeWidth={2} />
                   <h3 className="text-sm font-semibold">{f.title}</h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">{f.body}</p>
-                </div>
+                </motion.div>
               ))}
             </div>
           </Reveal>
@@ -295,19 +347,31 @@ export function LandingClient() {
               check, nothing else on this page matters.
             </p>
             <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-              <Link
-                href="/signup"
-                className="group flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-medium text-primary-foreground shadow-[0_10px_34px_-10px_var(--primary)] transition-transform hover:scale-[1.03] active:scale-[0.98]"
+              <motion.div
+                whileHover={reduce ? undefined : { scale: 1.04, y: -2 }}
+                whileTap={reduce ? undefined : { scale: 0.98 }}
+                transition={{ type: "spring", stiffness: 380, damping: 22 }}
               >
-                Get started free
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-              </Link>
-              <Link
-                href="/login"
-                className="rounded-full border border-border/60 px-6 py-3.5 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                <Link
+                  href="/signup"
+                  className="group flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-medium text-primary-foreground shadow-[0_10px_34px_-10px_var(--primary)]"
+                >
+                  Get started free
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </Link>
+              </motion.div>
+              <motion.div
+                whileHover={reduce ? undefined : { y: -2 }}
+                whileTap={reduce ? undefined : { scale: 0.98 }}
+                transition={{ type: "spring", stiffness: 380, damping: 22 }}
               >
-                I already have an account
-              </Link>
+                <Link
+                  href="/login"
+                  className="block rounded-full border border-border/60 px-6 py-3.5 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                >
+                  I already have an account
+                </Link>
+              </motion.div>
             </div>
           </Reveal>
         </section>
