@@ -17,8 +17,6 @@ import {
   PieChart,
   Share2,
   History,
-  Check,
-  X,
 } from "lucide-react";
 import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
 import { InterrogateScene } from "@/components/landing/InterrogateScene";
@@ -256,44 +254,6 @@ export function LandingClient() {
         <Rule />
 
         {/* ---------------------------------------------------------------- */}
-        {/* Stating the limits is unusual on a marketing page and is the point:
-            a tool that claims everything is harder to trust than one that says
-            where it stops. */}
-        <section className="py-14 sm:py-16">
-          <Reveal>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="rounded-2xl border border-border/60 bg-surface/30 p-6">
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-success" strokeWidth={2.4} />
-                  <h3 className="text-[15px] font-semibold">What it will do</h3>
-                </div>
-                <ul className="mt-4 space-y-2.5 text-sm leading-relaxed text-muted-foreground">
-                  <li>Totals, trends, rankings, breakdowns and change over time.</li>
-                  <li>Project a series forward, with the uncertainty shown alongside it.</li>
-                  <li>Show the formula, the row count and the rows for any figure.</li>
-                  <li>Keep every version of a dataset, so an old number stays reproducible.</li>
-                </ul>
-              </div>
-
-              <div className="rounded-2xl border border-border/60 bg-surface/30 p-6">
-                <div className="flex items-center gap-2">
-                  <X className="h-4 w-4 text-muted-foreground" strokeWidth={2.4} />
-                  <h3 className="text-[15px] font-semibold">What it won&apos;t do</h3>
-                </div>
-                <ul className="mt-4 space-y-2.5 text-sm leading-relaxed text-muted-foreground">
-                  <li>Answer questions your data doesn&apos;t contain.</li>
-                  <li>Fill a gap with something approximate — it says it can&apos;t instead.</li>
-                  <li>Present a projection as though it were a fact.</li>
-                  <li>Decide for you. It shows the working; the call is yours.</li>
-                </ul>
-              </div>
-            </div>
-          </Reveal>
-        </section>
-
-        <Rule />
-
-        {/* ---------------------------------------------------------------- */}
         <section className="py-14 sm:py-16">
           <Reveal>
             <div className="grid gap-4 sm:grid-cols-3">
@@ -353,20 +313,10 @@ export function LandingClient() {
         </section>
       </main>
 
-      <footer className="border-t border-border/40">
-        <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-4 px-5 py-8 text-xs text-muted-foreground sm:flex-row sm:px-8">
-          {/* No mark down here on purpose — the logo's glow is a fixed blur that
-              doesn't scale, so a footer-sized one would be mostly halo. */}
-          <span>Numerate — Smart Analytics. Better Decisions.</span>
-          <div className="flex items-center gap-5">
-            <Link href="/login" className="transition-colors hover:text-foreground">
-              Sign in
-            </Link>
-            <Link href="/signup" className="transition-colors hover:text-foreground">
-              Create account
-            </Link>
-          </div>
-        </div>
+      {/* No links down here: the header carries sign-in and the closing call to
+          action carries both, so a third copy sits directly under the second. */}
+      <footer className="border-t border-border/40 py-8 text-center text-xs text-muted-foreground">
+        Numerate — Smart Analytics. Better Decisions.
       </footer>
     </div>
   );
