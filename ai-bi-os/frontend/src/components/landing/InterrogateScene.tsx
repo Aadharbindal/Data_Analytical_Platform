@@ -43,7 +43,13 @@ function useSwapMotion(reduce: boolean | null) {
   };
 }
 
-export function InterrogateScene() {
+interface InterrogateSceneProps {
+  /** Seconds to wait before this scene plays its entrance, so it can take its
+   *  turn in the page's opening sequence rather than arriving with the text. */
+  entranceDelay?: number;
+}
+
+export function InterrogateScene({ entranceDelay = 0 }: InterrogateSceneProps) {
   const [open, setOpen] = useState(false);
   const reduce = useReducedMotion();
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -87,6 +93,16 @@ export function InterrogateScene() {
       />
 
       <div className="flex w-full flex-col items-center">
+        {/* Entrance lives on a wrapper rather than on the button itself: the
+            button's own animate prop is already driving the cursor parallax and
+            the open/closed scale, and a second one would overwrite it. The
+            figure resolves out of a blur, which reads as it coming into
+            focus — apt for the thing the page asks you to examine. */}
+        <motion.div
+          initial={reduce ? false : { opacity: 0, scale: 0.88, filter: "blur(18px)" }}
+          animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+          transition={{ duration: 1.15, delay: entranceDelay, ease: EASE }}
+        >
         {/* The figure. Clicking is the whole point of the page, so it is a real
             button rather than a div with a handler — reachable by keyboard and
             announced as interactive. */}
@@ -109,6 +125,7 @@ export function InterrogateScene() {
             {TOTAL_LABEL}
           </span>
         </motion.button>
+        </motion.div>
 
         {/* One AnimatePresence rather than the two that ran side by side: the
             outgoing panel collapses its height while the incoming one expands,
@@ -120,7 +137,14 @@ export function InterrogateScene() {
             old one's exit animation, so anything that stalls the animation
             leaves the number permanently unopenable. Overlapping the two is
             both smoother and impossible to deadlock. */}
-        <div className="relative w-full">
+        {/* The entrance sits on this wrapper rather than inside the presence,
+            so the swap between prompt and proof stays untouched by it. */}
+        <motion.div
+          className="relative w-full"
+          initial={reduce ? false : { opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.85, delay: entranceDelay + 0.3, ease: EASE }}
+        >
           <AnimatePresence initial={false}>
             {open ? (
               <motion.div key="proof" {...swap} className="overflow-hidden">
@@ -208,7 +232,7 @@ export function InterrogateScene() {
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

@@ -102,12 +102,17 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
       initial={reduce ? false : { opacity: 0, y: 14 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-70px" }}
-      transition={{ duration: 0.45, delay, ease: EASE }}
+      transition={{ duration: 0.75, delay, ease: EASE }}
     >
       {children}
     </motion.div>
   );
 }
+
+/** The opening sequence. Every element in the first screen takes its turn
+ *  rather than arriving together, and each takes close to a second to settle —
+ *  the page is asking to be looked at before it is scrolled past. */
+const HERO_STEP = 0.22;
 
 /** Lift on hover. Kept to two pixels and a border brighten — enough to say the
  *  card is a surface, not enough to make the page bounce as the cursor crosses
@@ -142,38 +147,62 @@ export function LandingClient() {
           sign-in page, otherwise on a wide monitor it floats hundreds of
           pixels in. The reading content below stays constrained. */}
       <header className="flex w-full items-center justify-between px-5 py-6 sm:px-8">
-        <Link href="/landing" className="flex items-center gap-3">
-          {/* The glow is a fixed 15px blur that doesn't scale with the logo, so
-              anything under ~32px gets swamped by its own halo. 36 keeps it in
-              proportion and in line with every other place the mark appears. */}
-          <AnimatedLogo size={36} />
-          <span className="text-base font-semibold tracking-wide">Numerate</span>
-        </Link>
-        <Link
-          href="/login"
-          className="rounded-full border border-border/60 px-4 py-2 text-sm text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
+        <motion.div
+          initial={reduce ? false : { opacity: 0, x: -16 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: EASE }}
         >
-          Sign in
-        </Link>
+          <Link href="/landing" className="flex items-center gap-3">
+            {/* The glow is a fixed 15px blur that doesn't scale with the logo, so
+                anything under ~32px gets swamped by its own halo. 36 keeps it in
+                proportion and in line with every other place the mark appears. */}
+            <AnimatedLogo size={36} />
+            <span className="text-base font-semibold tracking-wide">Numerate</span>
+          </Link>
+        </motion.div>
+        <motion.div
+          initial={reduce ? false : { opacity: 0, x: 16 }}
+          animate={{ opacity: 1, x: 0 }}
+          whileHover={reduce ? undefined : { y: -2 }}
+          transition={{ duration: 0.8, delay: 0.1, ease: EASE }}
+        >
+          <Link
+            href="/login"
+            className="block rounded-full border border-border/60 px-4 py-2 text-sm text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
+          >
+            Sign in
+          </Link>
+        </motion.div>
       </header>
 
       <main className="mx-auto w-full max-w-6xl px-5 sm:px-8">
         {/* ---------------------------------------------------------------- */}
         <section className="flex min-h-[72vh] flex-col items-center justify-center py-8 text-center">
-          <motion.h1
-            initial={reduce ? false : { opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="max-w-3xl text-balance text-[clamp(1.6rem,4.4vw,2.75rem)] font-semibold leading-[1.15] tracking-[-0.02em]"
-          >
-            Ask your spreadsheet anything.
-            <span className="block text-muted-foreground">Then check the answer.</span>
-          </motion.h1>
+          {/* The two lines arrive separately: the claim, then the qualifier that
+              makes it worth reading. Landing them together loses that turn. */}
+          <h1 className="max-w-3xl text-balance text-[clamp(1.6rem,4.4vw,2.75rem)] font-semibold leading-[1.15] tracking-[-0.02em]">
+            <motion.span
+              className="block"
+              initial={reduce ? false : { opacity: 0, y: 22, filter: "blur(8px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 0.95, delay: HERO_STEP, ease: EASE }}
+            >
+              Ask your spreadsheet anything.
+            </motion.span>
+            <motion.span
+              className="block text-muted-foreground"
+              initial={reduce ? false : { opacity: 0, y: 22, filter: "blur(8px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 0.95, delay: HERO_STEP * 2, ease: EASE }}
+            >
+              Then check the answer.
+            </motion.span>
+          </h1>
 
           <motion.p
-            initial={reduce ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.12 }}
+            initial={reduce ? false : { opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: HERO_STEP * 3, ease: EASE }}
             className="mt-4 max-w-xl text-[15px] leading-relaxed text-muted-foreground"
           >
             Every figure is computed by code, never guessed by a model — and any of
@@ -181,7 +210,7 @@ export function LandingClient() {
           </motion.p>
 
           <div className="mt-10 w-full">
-            <InterrogateScene />
+            <InterrogateScene entranceDelay={HERO_STEP * 4} />
           </div>
         </section>
 
@@ -192,12 +221,28 @@ export function LandingClient() {
             what the product is built on, so it gets words, not iconography. */}
         <section className="mx-auto max-w-2xl py-14 text-center sm:py-16">
           <p className="text-[clamp(1.1rem,2.4vw,1.4rem)] leading-relaxed tracking-[-0.01em]">
-            Ask most AI tools about your sales data and you get a number that sounds
-            certain.{" "}
-            <span className="text-muted-foreground">
+            {/* The two halves are timed apart so the concession lands after the
+                setup, the way it would be said aloud. */}
+            <motion.span
+              initial={reduce ? false : { opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-70px" }}
+              transition={{ duration: 0.8, ease: EASE }}
+              className="inline-block"
+            >
+              Ask most AI tools about your sales data and you get a number that sounds
+              certain.{" "}
+            </motion.span>
+            <motion.span
+              initial={reduce ? false : { opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-70px" }}
+              transition={{ duration: 0.8, delay: 0.3, ease: EASE }}
+              className="inline-block text-muted-foreground"
+            >
               You have no way to tell whether it is. For a business decision, a wrong
               number that looks right is worse than no number at all.
-            </span>
+            </motion.span>
           </p>
         </section>
 
@@ -220,8 +265,8 @@ export function LandingClient() {
                     whileHover={reduce ? undefined : { y: -3, scale: 1.03 }}
                     viewport={{ once: true, margin: "-60px" }}
                     transition={{
-                      opacity: { duration: 0.3, delay: i * 0.055 },
-                      default: { type: "spring", stiffness: 340, damping: 24, delay: i * 0.055 },
+                      opacity: { duration: 0.5, delay: i * 0.085 },
+                      default: { type: "spring", stiffness: 210, damping: 26, delay: i * 0.085 },
                     }}
                     className="cursor-default rounded-full border border-border/60 bg-surface/40 px-4 py-2 text-[13px] text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
                   >
@@ -283,7 +328,7 @@ export function LandingClient() {
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 whileHover={reduce ? undefined : { y: -3, scale: 1.02 }}
                 viewport={{ once: true, margin: "-60px" }}
-                transition={{ type: "spring", stiffness: 300, damping: 24, delay: 0.045 * i }}
+                transition={{ type: "spring", stiffness: 200, damping: 26, delay: 0.07 * i }}
                 className="group flex h-full items-center gap-3 rounded-xl border border-border/50 bg-surface/25 px-4 py-3.5 transition-colors hover:border-primary/35 hover:bg-surface/45"
               >
                 <c.icon
