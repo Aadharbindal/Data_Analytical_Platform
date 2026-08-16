@@ -469,13 +469,34 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
               </div>
               <div className="flex items-center gap-[14px] my-5"><div className="flex-1 h-[1px] bg-white/10"></div><span className="text-[12px] text-gray-500">or</span><div className="flex-1 h-[1px] bg-white/10"></div></div>
               <div className="flex flex-wrap items-center justify-center gap-3">
+                {/* The rim goes on the outside and the fill stays exactly as it
+                    was, so the button gets an edge without losing the blue that
+                    marks it as the one thing to press on this screen. */}
                 <button
                   onClick={() => setTourOpen(true)}
-                  className="relative overflow-hidden inline-flex items-center gap-[10px] py-[14px] px-[26px] border-none rounded-[14px] bg-gradient-to-r from-blue-600 to-blue-500 text-white text-[15px] font-bold cursor-pointer shadow-[0_10px_30px_rgba(37,99,235,0.4)] transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_36px_rgba(37,99,235,0.55)]"
+                  className="group relative inline-flex overflow-hidden rounded-[14px] p-px border-none cursor-pointer shadow-[0_10px_30px_rgba(37,99,235,0.4)] transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(37,99,235,0.6)]"
                 >
-                  <PlayCircle className="relative z-10 h-[18px] w-[18px]" />
-                  <span className="relative z-10">Take a guided tour</span>
-                  <div className="absolute inset-0 bg-[linear-gradient(100deg,transparent_30%,rgba(255,255,255,0.35)_50%,transparent_70%)] bg-[length:200%_100%] animate-ws-shimmer"></div>
+                  <span
+                    aria-hidden
+                    className="absolute inset-0 rounded-[14px]"
+                    style={{ backgroundImage: 'linear-gradient(140deg, rgba(255,255,255,.6) 0%, rgba(125,179,255,.3) 45%, rgba(37,99,235,.55) 100%)' }}
+                  />
+
+                  <span className="relative flex items-center gap-[10px] rounded-[13px] py-[14px] px-[26px] bg-gradient-to-r from-blue-600 to-blue-500 text-white text-[15px] font-bold">
+                    <span aria-hidden className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-white/55 to-transparent" />
+
+                    {/* The standing shimmer this button already had. */}
+                    <span aria-hidden className="absolute inset-0 bg-[linear-gradient(100deg,transparent_30%,rgba(255,255,255,0.35)_50%,transparent_70%)] bg-[length:200%_100%] animate-ws-shimmer"></span>
+
+                    {/* A second, faster pass on hover, so pressing feels
+                        answered rather than just waiting for the loop. */}
+                    <span aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden rounded-[13px]">
+                      <span className="absolute inset-y-0 -left-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/45 to-transparent transition-[left] duration-700 ease-out group-hover:left-[150%]" />
+                    </span>
+
+                    <PlayCircle className="relative z-10 h-[18px] w-[18px] transition-transform duration-300 group-hover:scale-110" />
+                    <span className="relative z-10">Take a guided tour</span>
+                  </span>
                 </button>
               </div>
             </div>
