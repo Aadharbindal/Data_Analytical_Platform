@@ -377,3 +377,38 @@ nextjs-portal,
 .fc-aurora-2 { animation: fcAurora2 22s ease-in-out infinite; }
 .fc-now-pulse { animation: fcNowPulse 2.6s ease-out infinite; transform-box: fill-box; transform-origin: center; }
 .fc-live-pulse { animation: fcLivePulse 2.4s ease-out infinite; }
+
+/* Dock-style panel open/close.
+   For panels that should read as growing out of the control that opened them
+   (the notification bell), the way a macOS Dock window emerges from its icon.
+   Base UI already points --transform-origin at the trigger, so scaling alone
+   makes the panel emanate from the button rather than from its own centre.
+
+   Opening overshoots slightly via a back-out curve: that tiny bounce past
+   1.0 is what separates "grew out of the icon" from "faded in". Closing does
+   not overshoot, it accelerates away and shrinks back toward the trigger, so
+   dismissing feels immediate rather than springy. */
+@keyframes dockPanelIn {
+  from { opacity: 0; transform: scale(0.82) translateY(-6px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes dockPanelOut {
+  from { opacity: 1; transform: scale(1) translateY(0); }
+  to   { opacity: 0; transform: scale(0.9) translateY(-4px); }
+}
+
+/* Two classes plus an attribute selector, so this outranks the single-class
+   zoom/fade utilities the shared dropdown ships with. */
+[data-slot="dropdown-menu-content"].dock-panel[data-open] {
+  animation: dockPanelIn 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+[data-slot="dropdown-menu-content"].dock-panel[data-closed] {
+  animation: dockPanelOut 170ms cubic-bezier(0.4, 0, 1, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="dropdown-menu-content"].dock-panel[data-open],
+  [data-slot="dropdown-menu-content"].dock-panel[data-closed] {
+    animation-duration: 1ms;
+  }
+}

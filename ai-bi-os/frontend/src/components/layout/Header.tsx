@@ -81,7 +81,7 @@ function NotificationBell() {
           </span>
         )}
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" sideOffset={10} className="w-[380px] max-w-[92vw] rounded-2xl border border-border/60 bg-popover/95 p-0 shadow-2xl backdrop-blur-xl">
+      <DropdownMenuContent align="end" sideOffset={10} className="dock-panel w-[380px] max-w-[92vw] rounded-2xl border border-border/60 bg-popover/95 p-0 shadow-2xl backdrop-blur-xl">
         <div className="flex items-center justify-between border-b border-border/40 px-4 py-3.5">
           <div className="flex items-center gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-blue-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_0_10px_-3px_var(--primary)]">
