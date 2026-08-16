@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
 import { InterrogateScene } from "@/components/landing/InterrogateScene";
+import { SignInButton } from "@/components/landing/SignInButton";
 
 /* Deliberately not built like the signed-in welcome flow, which is already a
    numbered scroll tour of alternating text-and-mockup panels. Repeating that
@@ -179,12 +180,7 @@ export function LandingClient() {
           whileHover={reduce ? undefined : { y: -2 }}
           transition={{ duration: HERO_DURATION, delay: HERO_STEP * 0.6, ease: EASE }}
         >
-          <Link
-            href="/login"
-            className="block rounded-full border border-border/60 px-4 py-2 text-sm text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
-          >
-            Sign in
-          </Link>
+          <SignInButton />
         </motion.div>
       </header>
 
