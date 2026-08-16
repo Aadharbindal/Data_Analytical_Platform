@@ -402,14 +402,47 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
               <h2 style={{...rev(3,90), fontSize:'clamp(30px,4vw,46px)', fontWeight:800, lineHeight:1.08, letterSpacing:'-.03em', margin:'0 0 20px'}}>Just <em className="not-italic bg-clip-text text-transparent bg-gradient-to-r from-[#4d8bff] to-[#8ab8ff]">ask the AI.</em></h2>
               <p style={{...rev(3,170), fontSize:'15.5px', lineHeight:1.6, color:'#9aa4b5', margin:0, maxWidth:'420px'}}>The search bar is an AI assistant — ask in plain English, get an executive summary, and share insights with your team. Always mark figures as verified before you rely on them.</p>
             </div>
-            <div style={{...rev(3,180), background:'rgba(13,17,28,.92)', border:'1px solid rgba(59,130,246,.18)', borderRadius:'20px', padding:'22px', backdropFilter:'blur(16px)', boxShadow:'inset 0 1px 0 0 rgba(255,255,255,.05),0 16px 40px -8px rgba(0,0,0,.4)'}}>
-              <div className="flex items-center gap-[10px] bg-white/5 border border-white/10 rounded-full py-[13px] px-[18px] mb-[18px]">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
-                <span className="text-[13px] text-[#8b93a3]">Which category grew fastest?</span>
+            {/* Entrance alone on the wrapper, hover on the card inside - the
+                same split as the two sections before this one, and for the same
+                reason: an inline transform beats a utility class. */}
+            <div style={rev(3,180)}>
+              <div className="group relative overflow-hidden rounded-[20px] p-px shadow-[0_16px_40px_-8px_rgba(0,0,0,.4)] transition-transform duration-300 hover:-translate-y-1">
+                <span
+                  aria-hidden
+                  className="absolute inset-0 rounded-[20px]"
+                  style={{ backgroundImage: 'linear-gradient(140deg, rgba(77,139,255,.55) 0%, rgba(255,255,255,.06) 42%, rgba(77,139,255,.12) 100%)' }}
+                />
+
+                <div
+                  className="relative overflow-hidden rounded-[20px] p-[22px] backdrop-blur-[16px]"
+                  style={{ backgroundImage: 'linear-gradient(180deg, rgba(37,99,235,.10) 0%, rgba(13,17,28,.95) 55%, rgba(9,12,20,.97) 100%)' }}
+                >
+                  {/* The search bar reads as something typed into rather than a
+                      label: it sits in a well, catches light along its top edge,
+                      and carries a caret after the question. */}
+                  <div
+                    className="relative flex items-center gap-[10px] rounded-full py-[13px] px-[18px] mb-[18px] ring-1 ring-inset ring-white/10"
+                    style={{ backgroundImage: 'linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(255,255,255,.05) 100%)' }}
+                  >
+                    <span aria-hidden className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+                    <span className="text-[13px] text-[#8b93a3]">Which category grew fastest?</span>
+                    <span aria-hidden className="h-[15px] w-px bg-[#4d8bff] animate-ws-pulse" />
+                  </div>
+
+                  <div style={rev(3,360)}><div className="flex gap-[10px] items-baseline text-[13.5px] leading-[1.6] text-[#c5cbd6]"><span aria-hidden className="mt-[7px] h-[5px] w-[5px] shrink-0 rounded-full bg-[#4d8bff] shadow-[0_0_8px_1px_rgba(77,139,255,.6)]" />Sales grew fastest — up 18% month over month.</div></div>
+                  <div style={rev(3,480)}><div className="flex gap-[10px] items-baseline text-[13.5px] leading-[1.6] text-[#c5cbd6]"><span aria-hidden className="mt-[7px] h-[5px] w-[5px] shrink-0 rounded-full bg-[#4d8bff] shadow-[0_0_8px_1px_rgba(77,139,255,.6)]" />1,284 active users — a six-month high.</div></div>
+
+                  {/* Given a surface of its own, because it is a caution about
+                      the two lines above it rather than a third bullet. */}
+                  <div style={rev(3,600)}>
+                    <div className="mt-3 flex items-center gap-[10px] rounded-lg py-2 px-[11px] text-[11.5px] text-[#FFB020] ring-1 ring-inset ring-[#FFB020]/25 bg-[#FFB020]/[0.07]">
+                      <span aria-hidden className="w-[7px] h-[7px] shrink-0 rounded-full bg-[#FFB020] animate-ws-pulse"></span>
+                      Mark as verified before relying on this
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div style={rev(3,360)}><div className="flex gap-[10px] text-[13.5px] leading-[1.6] text-[#c5cbd6]"><span className="text-[#4d8bff]">•</span>Sales grew fastest — up 18% month over month.</div></div>
-              <div style={rev(3,480)}><div className="flex gap-[10px] text-[13.5px] leading-[1.6] text-[#c5cbd6]"><span className="text-[#4d8bff]">•</span>1,284 active users — a six-month high.</div></div>
-              <div style={rev(3,600)}><div className="flex gap-[10px] items-center text-[11.5px] text-[#FFB020] mt-1"><span className="w-[7px] h-[7px] rounded-full bg-[#FFB020] animate-ws-pulse"></span>Mark as verified before relying on this</div></div>
             </div>
           </div>
         </section>
