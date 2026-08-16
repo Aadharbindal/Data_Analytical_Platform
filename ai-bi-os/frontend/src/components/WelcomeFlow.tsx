@@ -6,16 +6,31 @@ import { useQueryClient } from "@tanstack/react-query";
 import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
 import { useLayoutStore } from "@/hooks/useLayoutStore";
 import { GuidedTourModal } from "@/components/GuidedTourModal";
-import { PlayCircle } from "lucide-react";
+import {
+  PlayCircle,
+  Activity,
+  AlertTriangle,
+  TrendingUp,
+  BarChart2,
+  type LucideIcon,
+} from "lucide-react";
 
 interface WelcomeFlowProps {
   userName?: string;
 }
 
-function StatCard({ 
-  val, label, valColor, iconBg, delayMs, isActive 
-}: { 
-  val: number, label: string, valColor: string, iconBg: string, delayMs: number, isActive: boolean 
+function StatCard({
+  val, label, valColor, accent, icon: Icon, delayMs, isActive
+}: {
+  val: number,
+  label: string,
+  valColor: string,
+  /** Drives the rim, the face wash, the icon tile and the hover glow, so each
+   *  card carries one colour throughout instead of only in its figure. */
+  accent: string,
+  icon: LucideIcon,
+  delayMs: number,
+  isActive: boolean
 }) {
   const [mounted, setMounted] = useState(false);
   const [count, setCount] = useState(0);
@@ -60,14 +75,67 @@ function StatCard({
   };
 
   return (
-    <div className="relative overflow-hidden bg-[oklch(0.2_0.012_260)] border border-[rgba(59,130,246,.15)] rounded-[20px] p-[28px_32px] shadow-[0_8px_24px_rgba(0,0,0,0.35)]" style={baseStyle}>
-      <div className="absolute top-0 left-0 bottom-0 w-[60%] bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.05)] to-transparent pointer-events-none -translate-x-[120%]" 
-           style={{ animation: mounted ? `wsGlowSweep 1.1s ease-out ${delayMs + 250}ms forwards` : 'none' }}></div>
-      <div className="flex items-center gap-[14px] relative z-10 mb-[18px]">
-        <div className={`w-[44px] h-[44px] rounded-[12px] flex items-center justify-center shrink-0 ${iconBg}`} style={iconStyle}></div>
-        <div className="text-[14px] font-medium text-[#8b93a3] leading-[1.3]">{label}</div>
+    /* The entrance transform stays on this wrapper by itself. It is an inline
+       style, so a Tailwind hover:-translate on the same element would lose to
+       it - the card below is free to move because nothing inline touches it. */
+    <div style={baseStyle}>
+      <div
+        className="group relative overflow-hidden rounded-[20px] p-px shadow-[0_8px_24px_rgba(0,0,0,0.35)] transition-transform duration-300 hover:-translate-y-1"
+        /* Published as a variable so the icon tile below can glow in this
+           card's colour: a Tailwind hover class cannot interpolate a prop. */
+        style={{ ["--accent" as string]: accent } as React.CSSProperties}
+      >
+        {/* Rim in the card's own colour, brightest at the top-left. */}
+        <span
+          aria-hidden
+          className="absolute inset-0 rounded-[20px]"
+          style={{
+            backgroundImage: `linear-gradient(140deg, ${accent}80 0%, rgba(255,255,255,0.06) 42%, ${accent}1f 100%)`,
+          }}
+        />
+
+        <div
+          className="relative overflow-hidden rounded-[20px] p-[28px_32px]"
+          style={{
+            backgroundImage: `linear-gradient(180deg, ${accent}14 0%, oklch(0.2 0.012 260) 55%, oklch(0.175 0.012 260) 100%)`,
+          }}
+        >
+          <div className="absolute top-0 left-0 bottom-0 w-[60%] bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.05)] to-transparent pointer-events-none -translate-x-[120%]"
+               style={{ animation: mounted ? `wsGlowSweep 1.1s ease-out ${delayMs + 250}ms forwards` : 'none' }}></div>
+
+          {/* Gathers in the corner the rim is brightest at, so hovering reads
+              as the card turning toward the light. */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+            style={{
+              backgroundImage: `radial-gradient(115% 80% at 12% 0%, ${accent}2e 0%, transparent 70%)`,
+            }}
+          />
+
+          <div className="flex items-center gap-[14px] relative z-10 mb-[18px]">
+            {/* This tile was empty: it carried the centring styles for a child
+                that was never there, which is why it read as a plain coloured
+                square. The icons match the ones /analytics uses for these same
+                four figures. */}
+            <div
+              className="w-[44px] h-[44px] rounded-[12px] flex items-center justify-center shrink-0 ring-1 ring-inset ring-white/10 transition-shadow duration-300 group-hover:shadow-[0_0_22px_-4px_var(--accent)]"
+              style={{
+                ...iconStyle,
+                backgroundImage: `linear-gradient(160deg, ${accent}4d 0%, ${accent}12 100%)`,
+              }}
+            >
+              <Icon
+                className="h-5 w-5 transition-transform duration-300 group-hover:scale-110"
+                style={{ color: accent }}
+                strokeWidth={2.2}
+              />
+            </div>
+            <div className="text-[14px] font-medium text-[#8b93a3] leading-[1.3]">{label}</div>
+          </div>
+          <div className={`relative text-[34px] font-bold tracking-tight tabular-nums ${valColor}`}>{Math.round(count)}</div>
+        </div>
       </div>
-      <div className={`text-[34px] font-bold tracking-tight tabular-nums ${valColor}`}>{Math.round(count)}</div>
     </div>
   );
 }
@@ -230,17 +298,21 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
             </div>
             <div className="grid grid-cols-2 gap-4">
               {[
-                { val: 12, label: 'KPIs Monitored', valColor: 'text-white', iconBg: 'bg-[#1c325f]' },
-                { val: 3, label: 'Recent Outliers', valColor: 'text-[#FFB020]', iconBg: 'bg-[#5a4214]' },
-                { val: 8, label: 'Active Trends', valColor: 'text-[#37D67A]', iconBg: 'bg-[#144d28]' },
-                { val: 3, label: 'Forecast Horizons', valColor: 'text-[#8b5cf6]', iconBg: 'bg-[#361d6e]' }
+                /* The accents are the app's own semantic colours - the warning
+                   and success tokens, and the violet already established for
+                   prediction - rather than four blues picked to look nice. */
+                { val: 12, label: 'KPIs Monitored', valColor: 'text-white', accent: '#3b82f6', icon: Activity },
+                { val: 3, label: 'Recent Outliers', valColor: 'text-[#FFB020]', accent: '#FFB020', icon: AlertTriangle },
+                { val: 8, label: 'Active Trends', valColor: 'text-[#37D67A]', accent: '#37D67A', icon: TrendingUp },
+                { val: 3, label: 'Forecast Horizons', valColor: 'text-[#8b5cf6]', accent: '#8b5cf6', icon: BarChart2 }
               ].map((c, i) => (
                 <StatCard 
                   key={i}
                   val={c.val}
                   label={c.label}
                   valColor={c.valColor}
-                  iconBg={c.iconBg}
+                  accent={c.accent}
+                  icon={c.icon}
                   delayMs={i * 90}
                   isActive={active === 1}
                 />
@@ -257,22 +329,66 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
               <h2 style={{...rev(2,90), fontSize:'clamp(30px,4vw,46px)', fontWeight:800, lineHeight:1.08, letterSpacing:'-.03em', margin:'0 0 20px'}}>Watch it move,<br/><em className="not-italic bg-clip-text text-transparent bg-gradient-to-r from-[#4d8bff] to-[#8ab8ff]">safely stored.</em></h2>
               <p style={{...rev(2,170), fontSize:'15.5px', lineHeight:1.6, color:'#9aa4b5', margin:0, maxWidth:'420px'}}>The main chart plots processed volume month by month and projects the next — all on enterprise-grade security that protects your data.</p>
             </div>
-            <div style={{...rev(2,180), background:'rgba(13,17,28,.92)', border:'1px solid rgba(59,130,246,.18)', borderRadius:'20px', padding:'26px', backdropFilter:'blur(16px)', boxShadow:'inset 0 1px 0 0 rgba(255,255,255,.05),0 16px 40px -8px rgba(0,0,0,.4)'}}>
-              <div className="flex justify-between items-start mb-[22px]">
-                <div><div className="text-[14px] font-semibold text-[#c5cbd6] mb-[7px]">Processed Volume</div><div className="text-[30px] font-extrabold">₹4,82,750</div></div>
-                <span className="bg-[#37D67A]/15 text-[#37D67A] text-[12.5px] font-bold py-1 px-[11px] rounded-full">↑ 12.4%</span>
-              </div>
-              <div className="h-[180px] flex items-end gap-2">
-                {bars.map((b, i) => (
-                  <div key={i} className="flex-1 flex items-end h-full">
-                    <div style={{
-                      width: '100%', borderRadius: '5px 5px 0 0',
-                      height: (active===2 ? (b.v/480*100) : 0) + '%',
-                      transition: 'height .8s cubic-bezier(.16,1,.3,1)', transitionDelay: (active===2 ? 200+i*45 : 0) + 'ms',
-                      background: b.proj ? 'repeating-linear-gradient(135deg,rgba(77,139,255,.6) 0 5px,rgba(77,139,255,.22) 5px 10px)' : 'linear-gradient(180deg,#4d8bff,#2563eb)'
-                    }}></div>
+            {/* The entrance stays alone on this wrapper: it is an inline style,
+                and a Tailwind hover:-translate on the same element would lose
+                to it. The card inside is free to move. */}
+            <div style={rev(2,180)}>
+              <div className="group relative overflow-hidden rounded-[20px] p-px shadow-[0_16px_40px_-8px_rgba(0,0,0,.4)] transition-transform duration-300 hover:-translate-y-1">
+                {/* Lit rim, brightest top-left, matching the stat cards on the
+                    section before this one. */}
+                <span
+                  aria-hidden
+                  className="absolute inset-0 rounded-[20px]"
+                  style={{ backgroundImage: 'linear-gradient(140deg, rgba(77,139,255,.55) 0%, rgba(255,255,255,.06) 42%, rgba(77,139,255,.12) 100%)' }}
+                />
+
+                <div
+                  className="relative overflow-hidden rounded-[20px] p-[26px] backdrop-blur-[16px]"
+                  style={{ backgroundImage: 'linear-gradient(180deg, rgba(37,99,235,.10) 0%, rgba(13,17,28,.95) 55%, rgba(9,12,20,.97) 100%)' }}
+                >
+                  <div className="flex justify-between items-start mb-[22px] relative">
+                    <div><div className="text-[14px] font-semibold text-[#c5cbd6] mb-[7px]">Processed Volume</div><div className="text-[30px] font-extrabold">₹4,82,750</div></div>
+                    <span className="bg-[#37D67A]/15 text-[#37D67A] text-[12.5px] font-bold py-1 px-[11px] rounded-full ring-1 ring-inset ring-[#37D67A]/25">↑ 12.4%</span>
                   </div>
-                ))}
+
+                  <div className="relative h-[180px]">
+                    {/* Gridlines and a baseline. Bars floating on nothing read
+                        as decoration; sitting them on a scale reads as a chart. */}
+                    <div aria-hidden className="pointer-events-none absolute inset-0">
+                      {[0, 25, 50, 75].map(t => (
+                        <div key={t} className="absolute inset-x-0 h-px bg-white/[0.045]" style={{ top: t + '%' }} />
+                      ))}
+                      <div className="absolute inset-x-0 bottom-0 h-px bg-white/15" />
+                    </div>
+
+                    <div className="relative h-full flex items-end gap-2">
+                      {bars.map((b, i) => (
+                        <div key={i} className="flex-1 flex items-end h-full">
+                          <div
+                            className="group-hover:brightness-110"
+                            style={{
+                              width: '100%', borderRadius: '5px 5px 0 0',
+                              height: (active===2 ? (b.v/480*100) : 0) + '%',
+                              // Both transitions declared here, because an
+                              // inline `transition` replaces whatever a utility
+                              // class sets. The stagger is written into the
+                              // height half only: as a separate transitionDelay
+                              // it would apply to filter too, and the last bar
+                              // would take most of a second to react to hover.
+                              transition: `height .8s cubic-bezier(.16,1,.3,1) ${active===2 ? 200+i*45 : 0}ms, filter .3s ease`,
+                              background: b.proj ? 'repeating-linear-gradient(135deg,rgba(77,139,255,.6) 0 5px,rgba(77,139,255,.22) 5px 10px)' : 'linear-gradient(180deg,#4d8bff,#2563eb)',
+                              // A lit cap on every bar, from the same direction
+                              // the rim is lit, plus its own colour cast below.
+                              boxShadow: b.proj
+                                ? 'inset 0 1px 0 rgba(255,255,255,.22)'
+                                : 'inset 0 1px 0 rgba(255,255,255,.38), 0 6px 18px -8px rgba(77,139,255,.75)',
+                            }}
+                          ></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
