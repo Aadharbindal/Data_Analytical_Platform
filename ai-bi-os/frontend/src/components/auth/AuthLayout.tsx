@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
 
 interface AuthLayoutProps {
@@ -63,6 +64,38 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         alignItems: "center",
       }}
     >
+      {/* Fixed to the window rather than placed in the left column: that column
+          is vertically centred and shrinks on short screens, so anything inside
+          it can end up halfway down the page or squeezed out entirely. Someone
+          who opened this by accident should find the way out in the corner
+          where they expect it. */}
+      <Link
+        href="/landing"
+        className="group animate-auth-fade-up"
+        style={{
+          position: "fixed",
+          top: "24px",
+          left: "28px",
+          zIndex: 3,
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "8px",
+          padding: "8px 14px 8px 11px",
+          borderRadius: "999px",
+          border: "1px solid rgba(255,255,255,0.10)",
+          background: "rgba(255,255,255,0.03)",
+          color: "#9aa4b5",
+          fontSize: "13px",
+          fontWeight: 500,
+          textDecoration: "none",
+          backdropFilter: "blur(8px)",
+          animationDelay: "0.05s",
+        }}
+      >
+        <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" strokeWidth={2} />
+        Back
+      </Link>
+
       {/* Ambient background blobs */}
       <div
         className="animate-auth-blob-drift-1"
@@ -127,12 +160,18 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         {/* LEFT COLUMN */}
         <div style={{ flex: "1 1 480px", minWidth: 0, maxWidth: "640px" }}>
           
-          <div className="animate-auth-fade-up" style={{ display: "flex", alignItems: "center", gap: "14px", animationDelay: "0.05s" }}>
+          {/* The mark is a link too — clicking a logo to get home is the first
+              thing most people try, and it costs nothing to honour. */}
+          <Link
+            href="/landing"
+            className="animate-auth-fade-up"
+            style={{ display: "flex", alignItems: "center", gap: "14px", animationDelay: "0.05s", textDecoration: "none", width: "fit-content" }}
+          >
             <AnimatedLogo size={56} className="animate-auth-glow-pulse" />
             <div style={{ fontSize: "24px", fontWeight: 800, color: "#fff", letterSpacing: "-0.02em", marginTop: "-4px" }}>
               Numerate
             </div>
-          </div>
+          </Link>
 
           <div className="animate-auth-fade-up" style={{ display: "inline-flex", marginTop: "20px", animationDelay: "0.15s" }}>
             <div
