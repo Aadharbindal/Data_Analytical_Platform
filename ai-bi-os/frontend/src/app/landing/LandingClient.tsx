@@ -364,16 +364,52 @@ export function LandingClient() {
                 key={c.label}
                 initial={enterFrom(reduce, { y: 14, scale: 0.97 })}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                whileHover={reduce ? undefined : { y: -3, scale: 1.02 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ type: "spring", stiffness: 145, damping: 24, delay: 0.05 * i }}
-                className="group flex h-full items-center gap-3 rounded-xl border border-border/50 bg-surface/25 px-4 py-3.5 transition-colors hover:border-primary/35 hover:bg-surface/45"
+                className="h-full"
               >
-                <c.icon
-                  className="h-4 w-4 shrink-0 text-primary/80 transition-colors group-hover:text-primary"
-                  strokeWidth={2}
-                />
-                <span className="text-sm text-foreground">{c.label}</span>
+                {/* Lit down the left edge. The step cards are lit all the way
+                    round and the row below them along the top: three shapes for
+                    three rows, from one palette and one idea about where the
+                    light is. A left edge is also the one that survives being
+                    this small - a full rim on a tile this size is mostly
+                    corner. */}
+                <div
+                  className="group relative h-full overflow-hidden rounded-xl transition-transform duration-300 hover:-translate-y-0.5"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(100deg, color-mix(in srgb, var(--primary) 9%, var(--surface)) 0%, var(--surface) 45%, var(--background) 100%)",
+                  }}
+                >
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-y-0 left-0 w-px"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--primary) 85%, transparent) 50%, transparent 100%)",
+                    }}
+                  />
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-white/10 transition-colors duration-300 group-hover:ring-primary/30"
+                  />
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                    style={{
+                      backgroundImage:
+                        "radial-gradient(75% 140% at 0% 50%, color-mix(in srgb, var(--primary) 19%, transparent) 0%, transparent 70%)",
+                    }}
+                  />
+
+                  <div className="relative flex items-center gap-3 px-4 py-3.5">
+                    <c.icon
+                      className="h-4 w-4 shrink-0 text-primary/80 transition-all duration-300 group-hover:scale-110 group-hover:text-primary"
+                      strokeWidth={2}
+                    />
+                    <span className="text-sm text-foreground">{c.label}</span>
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>
