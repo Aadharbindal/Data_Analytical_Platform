@@ -320,8 +320,12 @@ function HubNode({
       className={`group flex items-center gap-3 rounded-xl ${
         align === "right" ? "flex-row-reverse text-right" : ""
       } ${
+        // No hover background: these nodes sit on the hub's open canvas, and a
+        // filled panel behind one of them reads as a stray card rather than a
+        // hover state. The "Where from?" label and the icon brightening are
+        // enough of a cue. Padding stays for the larger tap target.
         clickable
-          ? "cursor-pointer -m-2 p-2 transition-colors hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+          ? "cursor-pointer -m-2 p-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
           : ""
       }`}
     >
