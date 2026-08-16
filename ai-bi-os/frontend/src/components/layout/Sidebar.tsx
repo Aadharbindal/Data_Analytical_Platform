@@ -119,10 +119,11 @@ export function Sidebar() {
   // space has to exist before text appears in it. Fading symmetrically in
   // both directions is what made this read as a jerk rather than a slide.
   const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
-  const railMotion = `width 260ms ${EASE}, padding 260ms ${EASE}`;
+  const RAIL_MS = 380;
+  const railMotion = `width ${RAIL_MS}ms ${EASE}, padding ${RAIL_MS}ms ${EASE}`;
   const labelMotion = isCollapsed
-    ? `opacity 110ms ease-out, max-width 260ms ${EASE}, margin-left 260ms ${EASE}`
-    : `opacity 170ms ease-in 130ms, max-width 260ms ${EASE}, margin-left 260ms ${EASE}`;
+    ? `opacity 150ms ease-out, max-width ${RAIL_MS}ms ${EASE}, margin-left ${RAIL_MS}ms ${EASE}`
+    : `opacity 220ms ease-in 190ms, max-width ${RAIL_MS}ms ${EASE}, margin-left ${RAIL_MS}ms ${EASE}`;
 
   const toggleSidebar = () => {
     if (isAnalyticsRoute || isWelcomePage) {
@@ -190,7 +191,7 @@ export function Sidebar() {
         className="absolute -right-3 top-[24px] hidden h-6 w-6 items-center justify-center rounded-full bg-[#11131a] border border-border text-muted-foreground shadow-[0_0_10px_rgba(0,0,0,0.5)] hover:bg-white/[0.1] hover:text-foreground z-50 transition-all duration-200 lg:flex"
         title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
       >
-        <ChevronLeft className={cn("h-3.5 w-3.5", isCollapsed && "rotate-180")} style={{ transition: `transform 260ms ${EASE}` }} strokeWidth={2.5} />
+        <ChevronLeft className={cn("h-3.5 w-3.5", isCollapsed && "rotate-180")} style={{ transition: `transform ${RAIL_MS}ms ${EASE}` }} strokeWidth={2.5} />
       </button>
 
       {/* Close button — mobile drawer only */}
