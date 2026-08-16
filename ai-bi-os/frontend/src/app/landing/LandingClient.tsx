@@ -3,7 +3,23 @@
 import React from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, FileSpreadsheet, Sheet, MessageSquareText } from "lucide-react";
+import {
+  ArrowRight,
+  FileSpreadsheet,
+  Sheet,
+  MessageSquareText,
+  TrendingUp,
+  LineChart,
+  ScatterChart,
+  Layers,
+  AlertTriangle,
+  Sigma,
+  PieChart,
+  Share2,
+  History,
+  Check,
+  X,
+} from "lucide-react";
 import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
 import { InterrogateScene } from "@/components/landing/InterrogateScene";
 
@@ -12,8 +28,74 @@ import { InterrogateScene } from "@/components/landing/InterrogateScene";
    shape here would give the product two tours and no argument. This page makes
    one point — that a figure can be taken apart — and lets the visitor do it. */
 
+/** Phrased the way someone actually types, not as feature names. */
+const QUESTIONS = [
+  "Which city fell the most last quarter?",
+  "Show revenue by month",
+  "Who are my top 10 customers?",
+  "Is anything unusual in September?",
+  "Compare this month to last",
+  "What is my average deal size?",
+];
+
+/** Every one of these is a real analysis page in the product — nothing here is
+ *  aspirational. Naming them is also the honest answer to "is this just a
+ *  chatbot?", which is the first thing a sceptical visitor will assume. */
+const CAPABILITIES = [
+  { icon: TrendingUp, label: "Trends" },
+  { icon: LineChart, label: "Forecasts" },
+  { icon: ScatterChart, label: "Correlation" },
+  { icon: AlertTriangle, label: "Outliers" },
+  { icon: Layers, label: "Segments" },
+  { icon: Sigma, label: "Regression" },
+  { icon: PieChart, label: "Distribution" },
+  { icon: History, label: "Time series" },
+];
+
+const STEPS = [
+  {
+    icon: FileSpreadsheet,
+    title: "Bring your data",
+    body: "Upload a CSV or Excel file, or connect a Google Sheet that pulls the latest rows whenever you refresh it.",
+  },
+  {
+    icon: MessageSquareText,
+    title: "Ask in plain English",
+    body: "No SQL, no dashboard to assemble first. Ask the way you'd ask the person who owns the spreadsheet.",
+  },
+  {
+    icon: Sheet,
+    title: "Check anything",
+    body: "Click any figure for the formula behind it, how many rows it used, how many it skipped and why, and the rows themselves.",
+  },
+];
+
 function Rule() {
-  return <div className="mx-auto h-px w-full max-w-3xl bg-border/40" />;
+  return <div className="mx-auto h-px w-full max-w-5xl bg-border/40" />;
+}
+
+/** Small caps label. Used instead of headlines so the page never competes with
+ *  the one number in the hero. */
+function Eyebrow({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground/70">
+      {children}
+    </p>
+  );
+}
+
+function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+  const reduce = useReducedMotion();
+  return (
+    <motion.div
+      initial={reduce ? false : { opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-70px" }}
+      transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
 }
 
 export function LandingClient() {
@@ -28,14 +110,14 @@ export function LandingClient() {
         className="pointer-events-none fixed inset-0 -z-20 opacity-[0.35]"
         style={{
           backgroundImage:
-            "radial-gradient(circle at 20% 15%, rgba(59,130,246,0.16) 0%, transparent 45%), radial-gradient(circle at 82% 70%, rgba(99,102,241,0.12) 0%, transparent 45%)",
+            "radial-gradient(circle at 20% 12%, rgba(59,130,246,0.16) 0%, transparent 45%), radial-gradient(circle at 84% 68%, rgba(99,102,241,0.12) 0%, transparent 45%)",
         }}
       />
 
-      {/* Full-bleed rather than centred on max-w-6xl: the brand belongs at the
-          edge of the screen the way it does in the sidebar and on the sign-in
-          page, otherwise on a wide monitor it floats hundreds of pixels in.
-          The reading content below stays constrained. */}
+      {/* Full-bleed rather than centred on the reading column: the brand belongs
+          at the edge of the screen the way it does in the sidebar and on the
+          sign-in page, otherwise on a wide monitor it floats hundreds of
+          pixels in. The reading content below stays constrained. */}
       <header className="flex w-full items-center justify-between px-5 py-6 sm:px-8">
         <Link href="/landing" className="flex items-center gap-3">
           {/* The glow is a fixed 15px blur that doesn't scale with the logo, so
@@ -53,7 +135,8 @@ export function LandingClient() {
       </header>
 
       <main className="mx-auto w-full max-w-6xl px-5 sm:px-8">
-        <section className="flex min-h-[78vh] flex-col items-center justify-center py-10 text-center">
+        {/* ---------------------------------------------------------------- */}
+        <section className="flex min-h-[72vh] flex-col items-center justify-center py-8 text-center">
           <motion.h1
             initial={reduce ? false : { opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
@@ -74,18 +157,18 @@ export function LandingClient() {
             them can be taken apart. Try it on this one.
           </motion.p>
 
-          <div className="mt-12 w-full">
+          <div className="mt-10 w-full">
             <InterrogateScene />
           </div>
         </section>
 
         <Rule />
 
-        {/* The honest contrast, stated in prose rather than as a feature grid.
-            This is the argument the product is built on, so it gets words, not
-            iconography. */}
-        <section className="mx-auto max-w-2xl py-20 text-center">
-          <p className="text-[clamp(1.15rem,2.6vw,1.5rem)] leading-relaxed tracking-[-0.01em]">
+        {/* ---------------------------------------------------------------- */}
+        {/* The argument, stated in prose rather than as a feature grid. It is
+            what the product is built on, so it gets words, not iconography. */}
+        <section className="mx-auto max-w-2xl py-14 text-center sm:py-16">
+          <p className="text-[clamp(1.1rem,2.4vw,1.4rem)] leading-relaxed tracking-[-0.01em]">
             Ask most AI tools about your sales data and you get a number that sounds
             certain.{" "}
             <span className="text-muted-foreground">
@@ -97,79 +180,193 @@ export function LandingClient() {
 
         <Rule />
 
-        <section className="py-20">
-          <div className="mx-auto grid max-w-4xl gap-8 sm:grid-cols-3">
-            {[
-              {
-                icon: FileSpreadsheet,
-                title: "Bring your data",
-                body: "Upload a CSV or Excel file, or connect a Google Sheet that keeps itself current.",
-              },
-              {
-                icon: MessageSquareText,
-                title: "Ask in plain English",
-                body: "No SQL, no dashboard to build. Questions like you'd ask a colleague.",
-              },
-              {
-                icon: Sheet,
-                title: "Check anything",
-                body: "Click a figure for its formula, how much of the data it used, and the rows themselves.",
-              },
-            ].map((s, i) => (
-              <motion.div
-                key={s.title}
-                initial={reduce ? false : { opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.4, delay: i * 0.08 }}
-                className="text-left"
-              >
-                <s.icon className="h-5 w-5 text-primary" strokeWidth={2} />
-                <h3 className="mt-3 text-[15px] font-semibold">{s.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
-              </motion.div>
+        {/* ---------------------------------------------------------------- */}
+        {/* Concrete phrasing does more than an abstract promise of "natural
+            language": it shows the register, and quietly sets expectations
+            about what is worth asking. */}
+        <section className="py-14 sm:py-16">
+          <Reveal>
+            <div className="flex flex-col items-center gap-6">
+              <Eyebrow>Things people actually type</Eyebrow>
+              <div className="flex max-w-4xl flex-wrap justify-center gap-2.5">
+                {QUESTIONS.map((q, i) => (
+                  <motion.span
+                    key={q}
+                    initial={reduce ? false : { opacity: 0, scale: 0.94 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true, margin: "-60px" }}
+                    transition={{ duration: 0.35, delay: i * 0.06 }}
+                    className="rounded-full border border-border/60 bg-surface/40 px-4 py-2 text-[13px] text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                  >
+                    {q}
+                  </motion.span>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+        </section>
+
+        <Rule />
+
+        {/* ---------------------------------------------------------------- */}
+        <section className="py-14 sm:py-16">
+          <div className="grid gap-4 sm:grid-cols-3">
+            {STEPS.map((s, i) => (
+              <Reveal key={s.title} delay={i * 0.08}>
+                <div className="h-full rounded-2xl border border-border/60 bg-surface/30 p-6 transition-colors hover:border-primary/30">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/25 bg-primary/10">
+                    <s.icon className="h-[18px] w-[18px] text-primary" strokeWidth={2} />
+                  </div>
+                  <h3 className="mt-4 text-[15px] font-semibold">{s.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
+                </div>
+              </Reveal>
             ))}
           </div>
         </section>
 
         <Rule />
 
+        {/* ---------------------------------------------------------------- */}
+        {/* The obvious objection is "so it's a chatbot over my CSV". Naming the
+            analyses answers it without arguing. */}
+        <section className="py-14 sm:py-16">
+          <Reveal>
+            <div className="flex flex-col items-center gap-3 text-center">
+              <Eyebrow>Not just a chat box</Eyebrow>
+              <p className="max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+                Behind the answers is a full analysis suite. Ask for any of these in
+                conversation, or open the page and drive it yourself.
+              </p>
+            </div>
+          </Reveal>
+
+          <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {CAPABILITIES.map((c, i) => (
+              <Reveal key={c.label} delay={0.04 * i}>
+                <div className="flex h-full items-center gap-3 rounded-xl border border-border/50 bg-surface/25 px-4 py-3.5">
+                  <c.icon className="h-4 w-4 shrink-0 text-primary/80" strokeWidth={2} />
+                  <span className="text-sm text-foreground">{c.label}</span>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+
+        <Rule />
+
+        {/* ---------------------------------------------------------------- */}
         {/* Stating the limits is unusual on a marketing page and is the point:
             a tool that claims everything is harder to trust than one that says
             where it stops. */}
-        <section className="mx-auto max-w-2xl py-20">
-          <h2 className="text-sm font-medium uppercase tracking-[0.16em] text-muted-foreground">
-            What it does, and doesn&apos;t
-          </h2>
-          <ul className="mt-5 space-y-3 text-[15px] leading-relaxed">
-            <li className="text-foreground">
-              Totals, trends, top and bottom performers, breakdowns, change over time.
-            </li>
-            <li className="text-muted-foreground">
-              Not forecasting the future, and not questions your data doesn&apos;t contain.
-            </li>
-            <li className="text-muted-foreground">
-              It will say it can&apos;t answer rather than produce something approximate.
-            </li>
-          </ul>
+        <section className="py-14 sm:py-16">
+          <Reveal>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="rounded-2xl border border-border/60 bg-surface/30 p-6">
+                <div className="flex items-center gap-2">
+                  <Check className="h-4 w-4 text-success" strokeWidth={2.4} />
+                  <h3 className="text-[15px] font-semibold">What it will do</h3>
+                </div>
+                <ul className="mt-4 space-y-2.5 text-sm leading-relaxed text-muted-foreground">
+                  <li>Totals, trends, rankings, breakdowns and change over time.</li>
+                  <li>Project a series forward, with the uncertainty shown alongside it.</li>
+                  <li>Show the formula, the row count and the rows for any figure.</li>
+                  <li>Keep every version of a dataset, so an old number stays reproducible.</li>
+                </ul>
+              </div>
+
+              <div className="rounded-2xl border border-border/60 bg-surface/30 p-6">
+                <div className="flex items-center gap-2">
+                  <X className="h-4 w-4 text-muted-foreground" strokeWidth={2.4} />
+                  <h3 className="text-[15px] font-semibold">What it won&apos;t do</h3>
+                </div>
+                <ul className="mt-4 space-y-2.5 text-sm leading-relaxed text-muted-foreground">
+                  <li>Answer questions your data doesn&apos;t contain.</li>
+                  <li>Fill a gap with something approximate — it says it can&apos;t instead.</li>
+                  <li>Present a projection as though it were a fact.</li>
+                  <li>Decide for you. It shows the working; the call is yours.</li>
+                </ul>
+              </div>
+            </div>
+          </Reveal>
         </section>
 
-        <section className="flex flex-col items-center gap-5 py-24 text-center">
-          <h2 className="text-[clamp(1.4rem,3.4vw,2rem)] font-semibold tracking-[-0.02em]">
-            Bring one spreadsheet. See what it says.
-          </h2>
-          <Link
-            href="/signup"
-            className="group flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-medium text-primary-foreground shadow-[0_10px_34px_-10px_var(--primary)] transition-transform hover:scale-[1.03] active:scale-[0.98]"
-          >
-            Get started free
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </Link>
+        <Rule />
+
+        {/* ---------------------------------------------------------------- */}
+        <section className="py-14 sm:py-16">
+          <Reveal>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {[
+                {
+                  icon: Share2,
+                  title: "Share a read-only link",
+                  body: "Send a dashboard to someone without an account. They see the figures, not your file.",
+                },
+                {
+                  icon: History,
+                  title: "Every version kept",
+                  body: "Re-upload or refresh and the previous version stays. Numbers from last month still recompute.",
+                },
+                {
+                  icon: Sheet,
+                  title: "Sheets stay connected",
+                  body: "A linked Google Sheet pulls the latest rows on refresh, and tells you when nothing changed.",
+                },
+              ].map((f, i) => (
+                <div key={f.title} className="flex flex-col gap-2.5">
+                  <f.icon className="h-[18px] w-[18px] text-primary" strokeWidth={2} />
+                  <h3 className="text-sm font-semibold">{f.title}</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{f.body}</p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+        </section>
+
+        {/* ---------------------------------------------------------------- */}
+        <section className="flex flex-col items-center gap-5 py-16 text-center sm:py-20">
+          <Reveal>
+            <h2 className="text-[clamp(1.4rem,3.4vw,2rem)] font-semibold tracking-[-0.02em]">
+              Bring one spreadsheet. See what it says.
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
+              Free to start, no card needed. If the first answer isn&apos;t one you can
+              check, nothing else on this page matters.
+            </p>
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                href="/signup"
+                className="group flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-medium text-primary-foreground shadow-[0_10px_34px_-10px_var(--primary)] transition-transform hover:scale-[1.03] active:scale-[0.98]"
+              >
+                Get started free
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+              <Link
+                href="/login"
+                className="rounded-full border border-border/60 px-6 py-3.5 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+              >
+                I already have an account
+              </Link>
+            </div>
+          </Reveal>
         </section>
       </main>
 
-      <footer className="border-t border-border/40 py-8 text-center text-xs text-muted-foreground">
-        Numerate — Smart Analytics. Better Decisions.
+      <footer className="border-t border-border/40">
+        <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-4 px-5 py-8 text-xs text-muted-foreground sm:flex-row sm:px-8">
+          {/* No mark down here on purpose — the logo's glow is a fixed blur that
+              doesn't scale, so a footer-sized one would be mostly halo. */}
+          <span>Numerate — Smart Analytics. Better Decisions.</span>
+          <div className="flex items-center gap-5">
+            <Link href="/login" className="transition-colors hover:text-foreground">
+              Sign in
+            </Link>
+            <Link href="/signup" className="transition-colors hover:text-foreground">
+              Create account
+            </Link>
+          </div>
+        </div>
       </footer>
     </div>
   );
