@@ -100,9 +100,29 @@ export function Sidebar() {
   const railLabel = isCollapsed
     ? "max-w-0 opacity-0 ml-0 max-lg:max-w-[200px] max-lg:opacity-100 max-lg:ml-3"
     : "max-w-[200px] opacity-100 ml-3";
+
+  // The icon is centered in the rail by growing horizontal padding rather than
+  // swapping to `justify-center h-10 w-10 mx-auto`. That swap resized the box
+  // and reset its margin with nothing to tween, so every row jumped a frame
+  // before the width animation had even begun. Padding animates, so the icon
+  // glides to center instead. These rows sit inside a container that already
+  // has 12px of its own padding, so the centering figure is measured against
+  // that inner 40px box, not the full 64px rail: (40 - 18) / 2 = 11px.
   const railItem = isCollapsed
-    ? "justify-center h-10 w-10 mx-auto max-lg:justify-start max-lg:h-auto max-lg:w-auto max-lg:mx-0 max-lg:px-3 max-lg:py-2.5 max-lg:text-[13px]"
-    : "px-3 py-2.5 text-[13px]";
+    ? "py-2.5 text-[13px] px-[11px] max-lg:px-3"
+    : "py-2.5 text-[13px] px-3";
+
+  // One curve, one duration for everything the toggle moves, so the rail
+  // width, the labels and the padding land together. Labels then get a
+  // direction-aware fade: collapsing, the text must clear out *before* the
+  // rail narrows or it visibly squashes against the edge; expanding, the
+  // space has to exist before text appears in it. Fading symmetrically in
+  // both directions is what made this read as a jerk rather than a slide.
+  const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
+  const railMotion = `width 260ms ${EASE}, padding 260ms ${EASE}`;
+  const labelMotion = isCollapsed
+    ? `opacity 110ms ease-out, max-width 260ms ${EASE}, margin-left 260ms ${EASE}`
+    : `opacity 170ms ease-in 130ms, max-width 260ms ${EASE}, margin-left 260ms ${EASE}`;
 
   const toggleSidebar = () => {
     if (isAnalyticsRoute || isWelcomePage) {
@@ -149,7 +169,7 @@ export function Sidebar() {
 
     <aside
       aria-label="Main navigation"
-      style={{ transition: 'width 480ms cubic-bezier(0.65,0,0.35,1), transform 300ms cubic-bezier(0.4,0,0.2,1)' }}
+      style={{ transition: `${railMotion}, transform 300ms ${EASE}` }}
       className={cn(
       // Desktop: permanent in-flow rail, exactly as before.
       "relative z-20 flex h-screen shrink-0 flex-col border-r border-border/60 bg-surface/40 text-text-secondary",
@@ -170,7 +190,7 @@ export function Sidebar() {
         className="absolute -right-3 top-[24px] hidden h-6 w-6 items-center justify-center rounded-full bg-[#11131a] border border-border text-muted-foreground shadow-[0_0_10px_rgba(0,0,0,0.5)] hover:bg-white/[0.1] hover:text-foreground z-50 transition-all duration-200 lg:flex"
         title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
       >
-        <ChevronLeft className={cn("h-3.5 w-3.5", isCollapsed && "rotate-180")} style={{ transition: 'transform 480ms cubic-bezier(0.65,0,0.35,1)' }} strokeWidth={2.5} />
+        <ChevronLeft className={cn("h-3.5 w-3.5", isCollapsed && "rotate-180")} style={{ transition: `transform 260ms ${EASE}` }} strokeWidth={2.5} />
       </button>
 
       {/* Close button — mobile drawer only */}
@@ -183,7 +203,7 @@ export function Sidebar() {
       </button>
 
       {/* Brand / Logo */}
-      <motion.div variants={itemVariants} className={cn("flex h-[72px] shrink-0 items-center border-b border-border/40 mb-2 transition-all duration-400", isCollapsed ? "px-0 justify-center max-lg:px-6 max-lg:justify-start" : "px-6")}>
+      <motion.div variants={itemVariants} style={{ transition: railMotion }} className={cn("flex h-[72px] shrink-0 items-center border-b border-border/40 mb-2", isCollapsed ? "px-[16px] max-lg:px-6" : "px-6")}>
         <Link href="/" className="flex items-center text-foreground font-semibold text-[15px] tracking-wide" title="Numerate">
           <AnimatedLogo />
           <div className={cn(
@@ -191,7 +211,7 @@ export function Sidebar() {
             isCollapsed
               ? "max-w-0 opacity-0 ml-0 max-lg:max-w-[120px] max-lg:opacity-100 max-lg:ml-3"
               : "max-w-[120px] opacity-100 ml-3"
-          )} style={{ transition: 'max-width 420ms cubic-bezier(0.65,0,0.35,1), opacity 300ms ease, margin-left 420ms cubic-bezier(0.65,0,0.35,1)' }}>
+          )} style={{ transition: labelMotion }}>
             <span>Numerate</span>
           </div>
         </Link>
@@ -223,7 +243,7 @@ export function Sidebar() {
                     isActive ? "text-primary drop-shadow-[0_0_8px_rgba(0,112,243,0.3)]" : "text-muted-foreground/70 group-hover:text-foreground/90"
                   )}
                 />
-                <div className={cn("overflow-hidden whitespace-nowrap", railLabel)} style={{ transition: 'max-width 420ms cubic-bezier(0.65,0,0.35,1), opacity 300ms ease, margin-left 420ms cubic-bezier(0.65,0,0.35,1)' }}>
+                <div className={cn("overflow-hidden whitespace-nowrap", railLabel)} style={{ transition: labelMotion }}>
                   {item.name}
                 </div>
               </Link>
@@ -233,7 +253,7 @@ export function Sidebar() {
       </nav>
 
       {/* Bottom Section */}
-      <div className={cn("mt-auto border-t border-border/40 p-3 space-y-0.5 transition-all duration-400", isCollapsed && "flex flex-col items-center p-2 max-lg:block max-lg:p-3")}>
+      <div style={{ transition: railMotion }} className="mt-auto border-t border-border/40 p-3 space-y-0.5">
         {bottomNavItems.map((item) => (
           <motion.div key={item.name} variants={itemVariants}>
             <Link
@@ -245,7 +265,7 @@ export function Sidebar() {
               )}
             >
               <item.icon className="h-[18px] w-[18px] shrink-0 text-muted-foreground/70 group-hover:text-foreground/90 transition-colors" />
-              <div className={cn("overflow-hidden whitespace-nowrap", railLabel)} style={{ transition: 'max-width 420ms cubic-bezier(0.65,0,0.35,1), opacity 300ms ease, margin-left 420ms cubic-bezier(0.65,0,0.35,1)' }}>
+              <div className={cn("overflow-hidden whitespace-nowrap", railLabel)} style={{ transition: labelMotion }}>
                 {item.name}
               </div>
             </Link>
@@ -254,12 +274,16 @@ export function Sidebar() {
 
         {/* User Profile */}
         <motion.div variants={itemVariants} className="pt-2 mt-2 border-t border-border/40 w-full">
-          <div className={cn(
-            "flex items-center rounded-xl hover:bg-white/[0.03] transition-colors duration-200 group",
-            isCollapsed
-              ? "justify-center py-2 px-0 flex-col max-lg:justify-between max-lg:flex-row max-lg:px-3 max-lg:py-2.5"
-              : "justify-between px-3 py-2.5"
-          )}>
+          {/* Stays a single row in both states — the old collapsed variant
+              switched to flex-col, which re-stacked the avatar and the logout
+              button the instant you clicked, ahead of any width animation. */}
+          <div
+            style={{ transition: railMotion }}
+            className={cn(
+              "group flex items-center justify-between rounded-xl py-2.5 hover:bg-white/[0.03]",
+              isCollapsed ? "px-[4px] max-lg:px-3" : "px-3"
+            )}
+          >
             <Link
               href="/settings"
               className="flex items-center min-w-0 cursor-pointer"
@@ -282,16 +306,32 @@ export function Sidebar() {
                 isCollapsed
                   ? "max-w-0 opacity-0 ml-0 max-lg:max-w-[150px] max-lg:opacity-100 max-lg:ml-3"
                   : "max-w-[150px] opacity-100 ml-3"
-              )} style={{ transition: 'max-width 420ms cubic-bezier(0.65,0,0.35,1), opacity 300ms ease, margin-left 420ms cubic-bezier(0.65,0,0.35,1)' }}>
+              )} style={{ transition: labelMotion }}>
                 <span className="text-[13px] font-semibold text-foreground/90 group-hover:text-foreground transition-colors truncate">{user?.full_name || "Guest"}</span>
               </div>
             </Link>
-            <button onClick={() => setShowLogoutConfirm(true)} className={cn(
-                "p-1 hover:text-destructive transition-colors duration-200 text-muted-foreground/70",
-                isCollapsed ? "mt-2 max-lg:mt-0" : "group-hover:text-foreground/90"
-              )} title="Logout">
-              <LogOut className="h-4 w-4 shrink-0" />
-            </button>
+            {/* Collapses to zero width alongside the labels. Left at its
+                natural size it would sit beside the avatar in a 64px rail and,
+                because a flex item's automatic minimum size is its content,
+                hold the whole sidebar open at ~86px. */}
+            <div
+              className={cn(
+                "overflow-hidden",
+                isCollapsed
+                  ? "max-w-0 opacity-0 max-lg:max-w-[32px] max-lg:opacity-100"
+                  : "max-w-[32px] opacity-100"
+              )}
+              style={{ transition: labelMotion }}
+            >
+              <button
+                onClick={() => setShowLogoutConfirm(true)}
+                className="p-1 text-muted-foreground/70 transition-colors duration-200 hover:text-destructive group-hover:text-foreground/90"
+                title="Logout"
+                tabIndex={isCollapsed ? -1 : 0}
+              >
+                <LogOut className="h-4 w-4 shrink-0" />
+              </button>
+            </div>
           </div>
         </motion.div>
       </div>
