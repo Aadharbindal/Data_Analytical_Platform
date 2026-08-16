@@ -2,19 +2,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { chatApi } from "@/lib/api";
-import {
-  AreaChart,
-  Area,
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import dynamic from "next/dynamic";
+
+// Recharts only ships once a message actually contains a chart.
+const ChatMessageChart = dynamic(() => import("@/components/chat/ChatMessageChart"), {
+  ssr: false,
+  loading: () => <div className="mt-3 h-64 w-full animate-pulse rounded-[20px] glass-panel" />,
+});
 
 import { Bot, Send, Database, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -91,25 +85,60 @@ function TypewriterText({
     }
 
     setDisplayedText("");
-    let currentIndex = 0;
+
+    // Driven by requestAnimationFrame rather than a 15ms setInterval. The old
+    // timer fired ~66 times a second and re-rendered the message on each tick,
+    // which is faster than the browser can paint — so a long answer queued up
+    // hundreds of renders the frame loop then had to work through, and the
+    // whole page stuttered while text appeared. rAF caps the work at one
+    // update per frame and reveals however many characters that frame's
+    // elapsed time earns, so the text arrives at the same speed without
+    // outrunning the display.
+    const CHARS_PER_SECOND = 66;
+    let frame = 0;
+    let startedAt = 0;
+    let lastScrolledAt = 0;
+
+    const step = (now: number) => {
+      if (!startedAt) startedAt = now;
+      const revealed = Math.min(
+        text.length,
+        Math.floor(((now - startedAt) / 1000) * CHARS_PER_SECOND)
+      );
+      setDisplayedText(text.slice(0, revealed));
+
+      // Following along costs a layout read + scroll write, so it runs on a
+      // ~100ms cadence instead of once per frame.
+      if (onTyping && now - lastScrolledAt > 100) {
+        lastScrolledAt = now;
+        onTyping();
+      }
+
+      if (revealed < text.length) frame = requestAnimationFrame(step);
+    };
 
     const startDelay = setTimeout(() => {
-      const interval = setInterval(() => {
-        if (currentIndex < text.length) {
-          setDisplayedText(text.slice(0, currentIndex + 1));
-          currentIndex++;
-          if (currentIndex % 3 === 0 && onTyping) {
-            onTyping();
-          }
-        } else {
-          clearInterval(interval);
-        }
-      }, 15); // Fast character typing
-
-      return () => clearInterval(interval);
+      frame = requestAnimationFrame(step);
     }, delay);
 
-    return () => clearTimeout(startDelay);
+    // The typing is decoration; the answer is not. requestAnimationFrame does
+    // not fire in a backgrounded or throttled tab, so switching away mid-reply
+    // and coming back would otherwise leave the message frozen half-written.
+    // Land on the full text regardless of whether a single frame ever ran.
+    const settle = setTimeout(
+      () => setDisplayedText(text),
+      delay + (text.length / CHARS_PER_SECOND) * 1000 + 400
+    );
+
+    // Both timers have to be cleared here. Previously the interval's cleanup
+    // was returned from inside the setTimeout callback, where React never
+    // sees it — so leaving the page mid-answer left the typewriter running
+    // and setting state on an unmounted component.
+    return () => {
+      clearTimeout(startDelay);
+      clearTimeout(settle);
+      if (frame) cancelAnimationFrame(frame);
+    };
     // onTyping/instant intentionally excluded — onTyping is a fresh inline
     // callback every parent render, and instant never changes for a given
     // message instance, so depending on either would just restart the
@@ -219,148 +248,7 @@ const AIMessageBubble: React.FC<{ msg: Message; onTyping?: () => void }> = ({
         {msg.chartConfig &&
           msg.chartConfig.data &&
           msg.chartConfig.data.length > 0 && (
-            <div className="h-64 w-full glass-panel rounded-[20px] p-4 shadow-sm mt-3">
-              <ResponsiveContainer width="100%" height="100%">
-                {msg.chartConfig.type === "bar" ? (
-                  <BarChart data={msg.chartConfig.data}>
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke="rgba(255,255,255,0.03)"
-                      vertical={false}
-                    />
-                    <XAxis
-                      dataKey="name"
-                      stroke="#80848E"
-                      fontSize={11}
-                      fontWeight={500}
-                      axisLine={false}
-                      tickLine={false}
-                      dy={10}
-                    />
-                    <YAxis
-                      stroke="#80848E"
-                      fontSize={11}
-                      fontWeight={500}
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: "rgba(19, 23, 34, 0.85)",
-                        backdropFilter: "blur(12px)",
-                        borderColor: "rgba(255,255,255,0.08)",
-                        borderRadius: "12px",
-                        padding: "8px 12px",
-                      }}
-                      itemStyle={{
-                        color: "#fff",
-                        fontWeight: 600,
-                        fontSize: "13px",
-                      }}
-                    />
-                    <Bar dataKey="value" fill="#0070F3" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                ) : msg.chartConfig.type === "line" ? (
-                  <LineChart data={msg.chartConfig.data}>
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke="rgba(255,255,255,0.05)"
-                      vertical={false}
-                    />
-                    <XAxis
-                      dataKey="name"
-                      stroke="#A0A4AE"
-                      fontSize={12}
-                      axisLine={false}
-                      tickLine={false}
-                      dy={10}
-                    />
-                    <YAxis
-                      stroke="#A0A4AE"
-                      fontSize={12}
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: "#171B27",
-                        borderColor: "rgba(255,255,255,0.1)",
-                        borderRadius: "8px",
-                      }}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="value"
-                      stroke="#0070F3"
-                      strokeWidth={3}
-                      dot={{
-                        r: 4,
-                        fill: "#0070F3",
-                        stroke: "#131722",
-                        strokeWidth: 2,
-                      }}
-                    />
-                  </LineChart>
-                ) : (
-                  <AreaChart data={msg.chartConfig.data}>
-                    <defs>
-                      <linearGradient
-                        id="colorArea"
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                      >
-                        <stop
-                          offset="5%"
-                          stopColor="#0070F3"
-                          stopOpacity={0.3}
-                        />
-                        <stop
-                          offset="95%"
-                          stopColor="#0070F3"
-                          stopOpacity={0}
-                        />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke="rgba(255,255,255,0.05)"
-                      vertical={false}
-                    />
-                    <XAxis
-                      dataKey="name"
-                      stroke="#A0A4AE"
-                      fontSize={12}
-                      axisLine={false}
-                      tickLine={false}
-                      dy={10}
-                    />
-                    <YAxis
-                      stroke="#A0A4AE"
-                      fontSize={12}
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: "#171B27",
-                        borderColor: "rgba(255,255,255,0.1)",
-                        borderRadius: "8px",
-                      }}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="value"
-                      stroke="#0070F3"
-                      strokeWidth={2}
-                      fillOpacity={1}
-                      fill="url(#colorArea)"
-                    />
-                  </AreaChart>
-                )}
-              </ResponsiveContainer>
-            </div>
+            <ChatMessageChart config={msg.chartConfig} />
           )}
 
         {msg.executedSql && msg.executedSql.length > 0 && (
@@ -606,12 +494,17 @@ export const ChatUI: React.FC = () => {
           transition={{ duration: 0.15 }}
           className="max-w-4xl mx-auto w-full px-6 md:px-12 space-y-8 pt-8"
         >
+          {/* No `layout` prop on the message wrappers below. Messages only
+              append to the end, so nothing above them actually moves — but
+              `layout` made framer re-measure every message in the list on
+              every render, and the typewriter re-renders continuously while
+              an answer streams in. That measurement pass over the whole
+              conversation, dozens of times a second, was the stutter. */}
           <AnimatePresence mode="popLayout">
             {messages.map((msg, idx) =>
               msg.role === "user" ? (
                 <motion.div
                   key={msg.id ?? `local-${idx}`}
-                  layout
                   variants={messageVariants}
                   initial="hidden"
                   animate="show"
@@ -625,7 +518,6 @@ export const ChatUI: React.FC = () => {
               ) : (
                 <motion.div
                   key={msg.id ?? `local-${idx}`}
-                  layout
                   variants={messageVariants}
                   initial="hidden"
                   animate="show"
