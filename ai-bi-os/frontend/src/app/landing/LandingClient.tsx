@@ -32,10 +32,17 @@ export function LandingClient() {
         }}
       />
 
-      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-6 sm:px-8">
-        <Link href="/landing" className="flex items-center gap-2.5">
-          <AnimatedLogo size={30} />
-          <span className="text-[15px] font-semibold tracking-wide">Numerate</span>
+      {/* Full-bleed rather than centred on max-w-6xl: the brand belongs at the
+          edge of the screen the way it does in the sidebar and on the sign-in
+          page, otherwise on a wide monitor it floats hundreds of pixels in.
+          The reading content below stays constrained. */}
+      <header className="flex w-full items-center justify-between px-5 py-6 sm:px-8">
+        <Link href="/landing" className="flex items-center gap-3">
+          {/* The glow is a fixed 15px blur that doesn't scale with the logo, so
+              anything under ~32px gets swamped by its own halo. 36 keeps it in
+              proportion and in line with every other place the mark appears. */}
+          <AnimatedLogo size={36} />
+          <span className="text-base font-semibold tracking-wide">Numerate</span>
         </Link>
         <Link
           href="/login"
