@@ -457,14 +457,32 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
             <div style={{...rev(4,0), display:'inline-flex', alignItems:'center', gap:'14px', marginBottom:'22px'}}><span className="text-[12px] tracking-[2px] text-[#5c6473]">04 · GO LIVE</span></div>
             <h2 style={{...rev(4,90), fontSize:'clamp(30px,4vw,46px)', fontWeight:800, lineHeight:1.08, letterSpacing:'-.03em', margin:'0 0 20px'}}>Drop it in.<br/><em className="not-italic bg-clip-text text-transparent bg-gradient-to-r from-[#4d8bff] to-[#8ab8ff]">Come alive.</em></h2>
             <div style={rev(4,180)}>
-              <div className="relative">
-                <div className="absolute -inset-0.5 rounded-[22px] overflow-hidden opacity-60 pointer-events-none"><div className="absolute top-1/2 left-1/2 w-[180%] h-[180%] bg-[conic-gradient(from_0deg,transparent_0%,rgba(77,139,255,0.5)_8%,transparent_16%)] -translate-x-1/2 -translate-y-1/2 animate-ws-border-travel"></div></div>
-                <div onClick={triggerUpload} className="relative block border-[1.5px] border-dashed border-blue-500/40 rounded-[20px] bg-gradient-to-b from-blue-600/10 to-[#0d111c]/60 py-10 px-8 cursor-pointer transition-all duration-250 backdrop-blur-[20px] hover:border-blue-500/80 hover:bg-blue-600/10 hover:-translate-y-[3px]">
-                  <div className="w-[56px] h-[56px] mx-auto mb-4 rounded-[15px] bg-blue-600/15 flex items-center justify-center">
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#8ab8ff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 15V3"/><path d="M7 8l5-5 5 5"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>
+              <div className="group relative">
+                {/* The light already circling this box now runs at full strength
+                    while the cursor is on it, so the border answers the hover
+                    instead of carrying on at the same pace regardless. */}
+                <div className="absolute -inset-0.5 rounded-[22px] overflow-hidden opacity-60 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none"><div className="absolute top-1/2 left-1/2 w-[180%] h-[180%] bg-[conic-gradient(from_0deg,transparent_0%,rgba(77,139,255,0.5)_8%,transparent_16%)] -translate-x-1/2 -translate-y-1/2 animate-ws-border-travel"></div></div>
+                {/* duration-250 was doing nothing - Tailwind's scale has no 250,
+                    so the class produced no rule and the transition fell back to
+                    its 150ms default. */}
+                <div onClick={triggerUpload} className="relative block overflow-hidden border-[1.5px] border-dashed border-blue-500/40 rounded-[20px] bg-gradient-to-b from-blue-600/10 to-[#0d111c]/60 py-10 px-8 cursor-pointer transition-all duration-300 backdrop-blur-[20px] hover:border-blue-500/80 hover:bg-blue-600/10 hover:-translate-y-[3px]">
+                  {/* Rises from below the box, in the direction a file being
+                      taken in would travel. */}
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                    style={{ backgroundImage: 'radial-gradient(85% 70% at 50% 118%, rgba(77,139,255,.24) 0%, transparent 70%)' }}
+                  />
+
+                  <div
+                    className="relative w-[56px] h-[56px] mx-auto mb-4 rounded-[15px] flex items-center justify-center ring-1 ring-inset ring-blue-400/25 transition-shadow duration-300 group-hover:shadow-[0_0_28px_-6px_rgba(77,139,255,.85)]"
+                    style={{ backgroundImage: 'linear-gradient(160deg, rgba(77,139,255,.3) 0%, rgba(77,139,255,.07) 100%)' }}
+                  >
+                    {/* The arrow lifts on hover: this control sends a file up. */}
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#8ab8ff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:-translate-y-[3px]"><path d="M12 15V3"/><path d="M7 8l5-5 5 5"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>
                   </div>
-                  <div className="text-[15.5px] font-bold mb-1.5">Click to browse or drag a file here</div>
-                  <div className="text-[12.5px] text-[#8b93a3]">CSV or Excel · up to 25 MB · header row required</div>
+                  <div className="relative text-[15.5px] font-bold mb-1.5">Click to browse or drag a file here</div>
+                  <div className="relative text-[12.5px] text-[#8b93a3]">CSV or Excel · up to 25 MB · header row required</div>
                 </div>
               </div>
               <div className="flex items-center gap-[14px] my-5"><div className="flex-1 h-[1px] bg-white/10"></div><span className="text-[12px] text-gray-500">or</span><div className="flex-1 h-[1px] bg-white/10"></div></div>
