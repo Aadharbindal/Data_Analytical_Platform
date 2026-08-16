@@ -239,15 +239,56 @@ export function InterrogateScene({ entranceDelay = 0 }: InterrogateSceneProps) {
                   <p className="text-sm text-muted-foreground">
                     Total payments this year. Where did it come from?
                   </p>
+                  {/* Everything here is CSS: a gradient rim, a gradient face, a
+                      hairline along the top edge and a glow, none of which move.
+                      That is deliberate — anyone with reduced motion turned on
+                      sees no perpetual animation at all, so the button has to
+                      carry itself standing still. The hover effects are plain
+                      transitions, which run for everyone. */}
                   <motion.button
                     onClick={() => setOpen(true)}
                     whileHover={reduce ? undefined : { scale: 1.04 }}
                     whileTap={reduce ? undefined : { scale: 0.97 }}
                     transition={{ type: "spring", stiffness: 400, damping: 22 }}
-                    className="flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-5 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/20"
+                    className="group relative overflow-hidden rounded-full p-px shadow-[0_0_26px_-14px_var(--primary)] transition-shadow duration-500 hover:shadow-[0_0_30px_-10px_var(--primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
-                    <MousePointerClick className="h-4 w-4" />
-                    Interrogate this number
+                    {/* Every colour here is mixed from --primary and --surface
+                        rather than picked by hand. Hard-coded blues were a shade
+                        brighter and greener than the theme's #0070F3, which is
+                        what made this read as borrowed from another site. */}
+                    <span
+                      aria-hidden
+                      className="absolute inset-0 rounded-full"
+                      style={{
+                        backgroundImage:
+                          "linear-gradient(135deg, color-mix(in srgb, var(--primary) 65%, transparent) 0%, rgba(255,255,255,0.07) 45%, color-mix(in srgb, var(--primary) 25%, transparent) 100%)",
+                      }}
+                    />
+
+                    <span
+                      className="relative flex items-center gap-2.5 rounded-full px-6 py-3 text-sm font-medium tracking-[0.01em] text-primary transition-colors duration-300 group-hover:text-foreground"
+                      style={{
+                        backgroundImage:
+                          "linear-gradient(180deg, color-mix(in srgb, var(--primary) 13%, var(--surface)) 0%, var(--surface) 60%, var(--background) 100%)",
+                      }}
+                    >
+                      {/* A hairline along the top edge, faint enough to read as a
+                          catch of light rather than a stroke of white. */}
+                      <span
+                        aria-hidden
+                        className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                      />
+
+                      <span aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden rounded-full">
+                        <span className="absolute inset-y-0 -left-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/15 to-transparent transition-[left] duration-700 ease-out group-hover:left-[150%]" />
+                      </span>
+
+                      <MousePointerClick
+                        className="relative h-4 w-4 text-primary transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110"
+                        strokeWidth={2.2}
+                      />
+                      <span className="relative">Interrogate this number</span>
+                    </span>
                   </motion.button>
                 </div>
               </motion.div>

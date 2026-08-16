@@ -127,20 +127,8 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 const HERO_STEP = 0.15;
 const HERO_DURATION = 1.3;
 
-/** Lift on hover. Kept to two pixels and a border brighten — enough to say the
- *  card is a surface, not enough to make the page bounce as the cursor crosses
- *  it. Skipped entirely under reduced motion. */
-function useHoverLift(reduce: boolean | null) {
-  if (reduce) return {};
-  return {
-    whileHover: { y: -3 },
-    transition: { type: "spring" as const, stiffness: 320, damping: 24 },
-  };
-}
-
 export function LandingClient() {
   const reduce = useReducedMotion();
-  const lift = useHoverLift(reduce);
 
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden bg-background text-foreground">
@@ -293,20 +281,62 @@ export function LandingClient() {
           <div className="grid gap-4 sm:grid-cols-3">
             {STEPS.map((s, i) => (
               <Reveal key={s.title} delay={i * 0.09}>
-                <motion.div
-                  {...lift}
-                  className="group h-full rounded-2xl border border-border/60 bg-surface/30 p-6 transition-colors hover:border-primary/30"
-                >
-                  <motion.div
-                    whileHover={reduce ? undefined : { rotate: -6, scale: 1.08 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 18 }}
-                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/25 bg-primary/10"
+                {/* Same construction as the hero's button: a 1px gradient rim
+                    under an opaque face, every colour mixed from --primary and
+                    --surface so it belongs to this theme rather than to a blue
+                    picked by hand. The lift and the glow are CSS transitions,
+                    not framer, so they still run for anyone who has asked their
+                    system for reduced motion — which switches framer off. */}
+                <div className="group relative h-full overflow-hidden rounded-2xl p-px transition-transform duration-300 hover:-translate-y-1">
+                  <span
+                    aria-hidden
+                    className="absolute inset-0 rounded-2xl"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(150deg, color-mix(in srgb, var(--primary) 45%, transparent) 0%, rgba(255,255,255,0.06) 32%, rgba(255,255,255,0.02) 100%)",
+                    }}
+                  />
+
+                  <div
+                    className="relative h-full overflow-hidden rounded-2xl p-6"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(180deg, color-mix(in srgb, var(--primary) 7%, var(--surface)) 0%, var(--background) 100%)",
+                    }}
                   >
-                    <s.icon className="h-[18px] w-[18px] text-primary" strokeWidth={2} />
-                  </motion.div>
-                  <h3 className="mt-4 text-[15px] font-semibold">{s.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
-                </motion.div>
+                    {/* Light gathering in the corner the rim is brightest at,
+                        so hovering looks like the card turning toward it. */}
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                      style={{
+                        backgroundImage:
+                          "radial-gradient(120% 80% at 15% 0%, color-mix(in srgb, var(--primary) 20%, transparent) 0%, transparent 70%)",
+                      }}
+                    />
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/18 to-transparent"
+                    />
+
+                    <div
+                      className="relative flex h-11 w-11 items-center justify-center rounded-xl ring-1 ring-inset ring-white/10 transition-shadow duration-300 group-hover:shadow-[0_0_22px_-6px_var(--primary)]"
+                      style={{
+                        backgroundImage:
+                          "linear-gradient(160deg, color-mix(in srgb, var(--primary) 30%, transparent) 0%, color-mix(in srgb, var(--primary) 8%, transparent) 100%)",
+                      }}
+                    >
+                      <s.icon
+                        className="h-[18px] w-[18px] text-primary transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110"
+                        strokeWidth={2}
+                      />
+                    </div>
+                    <h3 className="relative mt-4 text-[15px] font-semibold">{s.title}</h3>
+                    <p className="relative mt-2 text-sm leading-relaxed text-muted-foreground">
+                      {s.body}
+                    </p>
+                  </div>
+                </div>
               </Reveal>
             ))}
           </div>
