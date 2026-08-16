@@ -4,7 +4,6 @@ import React from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import {
-  ArrowRight,
   FileSpreadsheet,
   Sheet,
   MessageSquareText,
@@ -20,7 +19,7 @@ import {
 } from "lucide-react";
 import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
 import { InterrogateScene } from "@/components/landing/InterrogateScene";
-import { SignInButton } from "@/components/landing/SignInButton";
+import { RimButton, PrimaryButton } from "@/components/landing/LandingButtons";
 
 /* Deliberately not built like the signed-in welcome flow, which is already a
    numbered scroll tour of alternating text-and-mockup panels. Repeating that
@@ -180,7 +179,7 @@ export function LandingClient() {
           whileHover={reduce ? undefined : { y: -2 }}
           transition={{ duration: HERO_DURATION, delay: HERO_STEP * 0.6, ease: EASE }}
         >
-          <SignInButton />
+          <RimButton href="/login">Sign in</RimButton>
         </motion.div>
       </header>
 
@@ -406,25 +405,19 @@ export function LandingClient() {
                 whileTap={reduce ? undefined : { scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 380, damping: 22 }}
               >
-                <Link
-                  href="/signup"
-                  className="group flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-medium text-primary-foreground shadow-[0_10px_34px_-10px_var(--primary)]"
-                >
-                  Get started free
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </Link>
+                <PrimaryButton href="/signup">Get started free</PrimaryButton>
               </motion.div>
+              {/* The same control as the header's sign-in, because it is the
+                  same destination and the same kind of choice. Two different
+                  treatments for one action would read as two actions. */}
               <motion.div
                 whileHover={reduce ? undefined : { y: -2 }}
                 whileTap={reduce ? undefined : { scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 380, damping: 22 }}
               >
-                <Link
-                  href="/login"
-                  className="block rounded-full border border-border/60 px-6 py-3.5 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
-                >
+                <RimButton href="/login" size="lg">
                   I already have an account
-                </Link>
+                </RimButton>
               </motion.div>
             </div>
           </Reveal>
