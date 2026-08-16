@@ -110,11 +110,11 @@ export default function AnalyticsDashboard() {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="flex flex-col gap-8 h-full p-8 overflow-y-auto"
+      className="flex flex-col gap-8 h-full p-4 sm:p-8 overflow-y-auto"
     >
 
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {/* KPI Summary Card */}
         <motion.div variants={itemVariants} className="glass-card rounded-[20px] p-6 flex flex-col gap-4">
           <div className="flex items-center gap-3 text-muted-foreground">
@@ -152,7 +152,7 @@ export default function AnalyticsDashboard() {
         </motion.div>
       </div>
       
-      <div className="grid grid-cols-2 gap-6 mt-4">
+      <div className="grid grid-cols-1 gap-6 mt-4 lg:grid-cols-2">
         {/* Regression Models */}
         <motion.div variants={itemVariants} className="h-full">
         {regression.data && regression.data.length > 0 ? (

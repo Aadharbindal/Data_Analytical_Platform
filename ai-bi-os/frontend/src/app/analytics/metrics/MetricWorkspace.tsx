@@ -162,7 +162,7 @@ export function MetricWorkspace({ metricName, onBack }: MetricWorkspaceProps) {
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-y-auto p-8 bg-gradient-to-b from-background to-muted/20 dark:from-[#050505] dark:to-[#0a0a0a] relative">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-gradient-to-b from-background to-muted/20 dark:from-[#050505] dark:to-[#0a0a0a] relative">
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
         <div className="max-w-5xl mx-auto relative z-10">
@@ -398,7 +398,7 @@ function TrendTab({ data }: { data: any }) {
 function DistributionTab({ data }: { data: any }) {
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
         <Card>
           <StatBox label="Distribution Type" value={data.type} />
         </Card>
@@ -560,7 +560,7 @@ function CalculationTab({ data }: { data: any }) {
       </Card>
       
       <Card title="Execution Metadata">
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
           <StatBox label="Formula" value={data.formula} />
           <StatBox label="Rows Used" value={data.rowsUsed} />
           <StatBox label="Missing Removed" value={data.missingRemoved} />

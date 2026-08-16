@@ -171,15 +171,15 @@ export function SharedDashboardClient({ token }: { token: string }) {
 
   return (
     <div className="h-screen w-full overflow-y-auto bg-background text-foreground">
-      <header className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-background/80 backdrop-blur-md border-b border-white/[0.06]">
-        <div className="flex items-center gap-2">
-          <BarChart3 className="h-5 w-5 text-primary" />
+      <header className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-b border-white/[0.06] bg-background/80 px-4 py-3 backdrop-blur-md sm:px-6 sm:py-4">
+        <div className="flex min-w-0 items-center gap-2">
+          <BarChart3 className="h-5 w-5 shrink-0 text-primary" />
           <span className="text-sm font-semibold">Numerate</span>
-          <span className="text-xs text-muted-foreground border border-border/50 rounded-full px-2 py-0.5 ml-2">
+          <span className="hidden rounded-full border border-border/50 px-2 py-0.5 text-xs text-muted-foreground sm:ml-2 sm:inline">
             Shared read-only view
           </span>
         </div>
-        <div className="text-xs text-muted-foreground">
+        <div className="min-w-0 truncate text-xs text-muted-foreground">
           {data.dataset_name} · {data.row_count.toLocaleString()} rows
         </div>
       </header>
@@ -188,20 +188,20 @@ export function SharedDashboardClient({ token }: { token: string }) {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
-        className="max-w-7xl mx-auto p-6 flex flex-col gap-6"
+        className="mx-auto flex max-w-7xl flex-col gap-4 p-4 sm:gap-6 sm:p-6"
       >
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 sm:gap-6 md:grid-cols-4">
           {metricCards.length > 0 ? (
             metricCards.map((card, idx) => <MetricCard key={card.title} index={idx} {...card} />)
           ) : (
-            <div className="col-span-4 text-sm text-muted-foreground">No metrics available for this dataset.</div>
+            <div className="col-span-full text-sm text-muted-foreground">No metrics available for this dataset.</div>
           )}
         </div>
 
         {data.chart_data.length > 0 && (
-          <div className="glass-card rounded-[20px] border border-border/50 p-5">
+          <div className="glass-card rounded-[20px] border border-border/50 p-3 sm:p-5">
             <h3 className="text-sm font-medium text-muted-foreground mb-4">Performance Over Time</h3>
-            <div className="h-64">
+            <div className="h-56 sm:h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={data.chart_data} margin={{ top: 10, right: 20, bottom: 5, left: 5 }}>
                   <defs>
@@ -224,7 +224,7 @@ export function SharedDashboardClient({ token }: { token: string }) {
         {data.insights.length > 0 && (
           <div>
             <h3 className="text-sm font-medium text-muted-foreground mb-3">Key Insights</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
               {data.insights.slice(0, 3).map((ins, i) => (
                 <InsightPanel
                   key={`${ins.title}-${i}`}

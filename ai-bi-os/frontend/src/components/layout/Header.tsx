@@ -7,8 +7,9 @@ import { motion } from "framer-motion";
 import { datasetsApi, notificationsApi } from "@/lib/api";
 import type { AppNotification } from "@/lib/types";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Search, Bell, GitBranch, CheckCheck, Inbox, X } from "lucide-react";
+import { Search, Bell, GitBranch, CheckCheck, Inbox, X, Menu } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useLayoutStore } from "@/hooks/useLayoutStore";
 
 // Backend timestamps are naive UTC strings (datetime.utcnow().isoformat()),
 // with no trailing "Z" or offset. `new Date()` treats a date-time string
@@ -168,6 +169,7 @@ export function Header() {
   const qc = useQueryClient();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+  const { toggleMobileNav } = useLayoutStore();
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && searchQuery.trim()) {
@@ -194,17 +196,27 @@ export function Header() {
   });
 
   return (
-    <header className="flex h-[72px] shrink-0 items-center gap-x-4 border-b border-border/60 bg-background px-8">
+    <header className="flex h-[64px] shrink-0 items-center gap-x-2 border-b border-border/60 bg-background px-4 sm:gap-x-4 sm:px-8 lg:h-[72px]">
+      {/* Hamburger — opens the off-canvas sidebar drawer. Mobile only; on
+          desktop the sidebar is always on screen. */}
+      <button
+        onClick={toggleMobileNav}
+        aria-label="Open navigation"
+        className="-ml-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface hover:text-foreground lg:hidden"
+      >
+        <Menu className="h-5 w-5" />
+      </button>
+
       {/* Breadcrumbs or Context */}
-      <div className="flex flex-1 items-center gap-x-4">
-        <div className="flex items-center text-[13px] tracking-wide">
-          <span className="font-semibold text-foreground/90 mr-2">Global Analytics</span>
-          
+      <div className="flex min-w-0 flex-1 items-center gap-x-4">
+        <div className="flex min-w-0 items-center text-[13px] tracking-wide">
+          <span className="mr-2 hidden font-semibold text-foreground/90 lg:inline">Global Analytics</span>
+
           {datasets && datasets.length > 0 && (
             <DropdownMenu>
-              <DropdownMenuTrigger 
+              <DropdownMenuTrigger
                 disabled={activateMutation.isPending}
-                className="flex items-center gap-1.5 bg-surface border border-border/80 text-xs font-semibold text-foreground rounded-lg px-3 py-1.5 outline-none hover:bg-white/5 transition-colors focus:ring-2 focus:ring-primary/30 shadow-sm cursor-pointer ml-2 max-w-[250px]"
+                className="flex min-w-0 items-center gap-1.5 bg-surface border border-border/80 text-xs font-semibold text-foreground rounded-lg px-3 py-1.5 outline-none hover:bg-white/5 transition-colors focus:ring-2 focus:ring-primary/30 shadow-sm cursor-pointer lg:ml-2 max-w-[160px] sm:max-w-[250px]"
               >
                 <span className="truncate">
                   {activeDataset ? activeDataset.name : "Select Dataset"}
@@ -236,8 +248,11 @@ export function Header() {
       </div>
 
       {/* Search and AI Tools */}
-      <div className="flex flex-1 items-center justify-end gap-x-5">
-        <div className="relative w-full max-w-md group">
+      <div className="flex shrink-0 items-center justify-end gap-x-1 md:flex-1 md:gap-x-5">
+        {/* Full search field needs room the phone viewport doesn't have once
+            the dataset switcher is on screen, so below md it collapses to an
+            icon that opens the same AI chat the Enter key here would. */}
+        <div className="group relative hidden w-full max-w-md md:block">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
             <Search className="h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
           </div>
@@ -251,8 +266,16 @@ export function Header() {
           />
         </div>
 
+        <button
+          onClick={() => router.push("/chat")}
+          aria-label="Ask AI"
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface hover:text-foreground md:hidden"
+        >
+          <Search className="h-4 w-4" />
+        </button>
+
         {/* Action Buttons */}
-        <div className="flex items-center gap-x-1.5 border-l border-border/40 pl-5">
+        <div className="flex items-center gap-x-1.5 md:border-l md:border-border/40 md:pl-5">
           <NotificationBell />
         </div>
       </div>

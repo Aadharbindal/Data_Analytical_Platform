@@ -28,12 +28,12 @@ export default function ModelValidationPage() {
   });
 
   if (isLoading) {
-    return <div className="p-8 text-center text-muted-foreground animate-pulse">Loading model validation...</div>;
+    return <div className="p-4 sm:p-8 text-center text-muted-foreground animate-pulse">Loading model validation...</div>;
   }
 
   if (isError) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-8">
         <div className="bg-destructive/10 text-destructive p-4 rounded-lg flex items-center gap-3">
           <AlertTriangle className="h-5 w-5" />
           <p>Could not reach the analytics API.</p>
@@ -44,7 +44,7 @@ export default function ModelValidationPage() {
 
   if (!data?.available) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-8">
         <h1 className="text-3xl font-bold tracking-tight mb-6">Model Validation</h1>
         <div className="glass-card rounded-[20px] p-10 flex flex-col items-center justify-center text-center border-dashed border-2 border-border/40 min-h-[240px]">
           <Activity className="h-8 w-8 text-muted-foreground/50 mb-3" />

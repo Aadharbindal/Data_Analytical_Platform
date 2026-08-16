@@ -260,7 +260,7 @@ function RuleCard({ rule, onViewHistory }: { rule: BusinessRule; onViewHistory: 
 
       <div className="border-t border-border/40" />
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="flex min-w-0 items-center gap-2.5">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-blue-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_0_10px_-3px_var(--primary)]">
             <BarChart3 className="h-3.5 w-3.5 text-white" />

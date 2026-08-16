@@ -27,6 +27,7 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  X,
 } from "lucide-react";
 import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
 
@@ -75,7 +76,7 @@ const itemVariants = {
 export function Sidebar() {
   const pathname = usePathname();
   const { user, logout, avatarVersion } = useAuth();
-  const { isWelcomeActive } = useLayoutStore();
+  const { isWelcomeActive, isMobileNavOpen, setMobileNavOpen } = useLayoutStore();
   const [isManualCollapsed, setIsManualCollapsed] = useState(false);
   const [isManualExpanded, setIsManualExpanded] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -84,8 +85,24 @@ export function Sidebar() {
 
   const isAnalyticsRoute = pathname?.startsWith("/analytics") ?? false;
   const isWelcomePage = pathname === "/" && isWelcomeActive;
-  
+
+  // Desktop-only concept: the narrow icon rail. On mobile the sidebar is an
+  // off-canvas drawer that is either fully open or fully hidden, so every
+  // collapse style below is applied at `lg:` and the mobile drawer always
+  // renders the full-width, labelled version.
   const isCollapsed = (isAnalyticsRoute || isWelcomePage) ? !isManualExpanded : isManualCollapsed;
+
+  // The collapsed icon rail keeps its original desktop classes untouched, and
+  // mobile re-expands them via `max-lg:`. Overriding in that direction matters:
+  // a `lg:`-prefixed override of an arbitrary base value (e.g. `lg:max-w-[0px]`
+  // against `max-w-[200px]`) loses on source order in Tailwind v4, whereas
+  // `max-lg:` utilities are emitted after the base ones and reliably win.
+  const railLabel = isCollapsed
+    ? "max-w-0 opacity-0 ml-0 max-lg:max-w-[200px] max-lg:opacity-100 max-lg:ml-3"
+    : "max-w-[200px] opacity-100 ml-3";
+  const railItem = isCollapsed
+    ? "justify-center h-10 w-10 mx-auto max-lg:justify-start max-lg:h-auto max-lg:w-auto max-lg:mx-0 max-lg:px-3 max-lg:py-2.5 max-lg:text-[13px]"
+    : "px-3 py-2.5 text-[13px]";
 
   const toggleSidebar = () => {
     if (isAnalyticsRoute || isWelcomePage) {
@@ -95,33 +112,85 @@ export function Sidebar() {
     }
   };
 
+  // Navigating always dismisses the drawer — otherwise tapping a link on a
+  // phone leaves the overlay covering the page you just moved to.
+  useEffect(() => {
+    setMobileNavOpen(false);
+  }, [pathname, setMobileNavOpen]);
+
+  // Escape closes the drawer, and while it's open the page behind it must not
+  // scroll — without this, scrolling the drawer drags the dashboard with it.
+  useEffect(() => {
+    if (!isMobileNavOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileNavOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [isMobileNavOpen, setMobileNavOpen]);
+
   return (
     <>
+    {/* Backdrop — mobile only. Kept mounted and faded so opening/closing the
+        drawer doesn't re-trigger a mount animation on every toggle. */}
+    <div
+      onClick={() => setMobileNavOpen(false)}
+      aria-hidden="true"
+      className={cn(
+        "fixed inset-0 z-30 bg-background/70 backdrop-blur-sm transition-opacity duration-300 lg:hidden",
+        isMobileNavOpen ? "opacity-100" : "pointer-events-none opacity-0"
+      )}
+    />
+
+    <aside
+      aria-label="Main navigation"
+      style={{ transition: 'width 480ms cubic-bezier(0.65,0,0.35,1), transform 300ms cubic-bezier(0.4,0,0.2,1)' }}
+      className={cn(
+      // Desktop: permanent in-flow rail, exactly as before.
+      "relative z-20 flex h-screen shrink-0 flex-col border-r border-border/60 bg-surface/40 text-text-secondary",
+      isCollapsed ? "w-[64px]" : "w-[260px]",
+      // Mobile: lift out of flow into an off-canvas drawer, always full width.
+      "max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:z-40 max-lg:w-[280px] max-lg:max-w-[85vw] max-lg:bg-surface",
+      isMobileNavOpen ? "max-lg:translate-x-0" : "max-lg:-translate-x-full"
+    )}>
     <motion.div
       initial="hidden"
       animate="show"
       variants={sidebarVariants}
-      style={{ transition: 'width 480ms cubic-bezier(0.65,0,0.35,1)' }}
-      className={cn(
-      "relative flex h-screen flex-col border-r border-border/60 bg-surface/40 text-text-secondary shrink-0 z-20",
-      isCollapsed ? "w-[64px]" : "w-[260px]"
-    )}>
-      {/* Floating Toggle Button */}
+      className="flex h-full flex-col"
+    >
+      {/* Floating Toggle Button — the collapse rail is desktop-only */}
       <button
         onClick={toggleSidebar}
-        className="absolute -right-3 top-[24px] flex h-6 w-6 items-center justify-center rounded-full bg-[#11131a] border border-border text-muted-foreground shadow-[0_0_10px_rgba(0,0,0,0.5)] hover:bg-white/[0.1] hover:text-foreground z-50 transition-all duration-200"
+        className="absolute -right-3 top-[24px] hidden h-6 w-6 items-center justify-center rounded-full bg-[#11131a] border border-border text-muted-foreground shadow-[0_0_10px_rgba(0,0,0,0.5)] hover:bg-white/[0.1] hover:text-foreground z-50 transition-all duration-200 lg:flex"
         title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
       >
         <ChevronLeft className={cn("h-3.5 w-3.5", isCollapsed && "rotate-180")} style={{ transition: 'transform 480ms cubic-bezier(0.65,0,0.35,1)' }} strokeWidth={2.5} />
       </button>
 
+      {/* Close button — mobile drawer only */}
+      <button
+        onClick={() => setMobileNavOpen(false)}
+        aria-label="Close navigation"
+        className="absolute right-3 top-[24px] flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-white/[0.06] hover:text-foreground lg:hidden"
+      >
+        <X className="h-4 w-4" strokeWidth={2.5} />
+      </button>
+
       {/* Brand / Logo */}
-      <motion.div variants={itemVariants} className={cn("flex h-[72px] shrink-0 items-center border-b border-border/40 mb-2 transition-all duration-400", isCollapsed ? "px-0 justify-center" : "px-6")}>
+      <motion.div variants={itemVariants} className={cn("flex h-[72px] shrink-0 items-center border-b border-border/40 mb-2 transition-all duration-400", isCollapsed ? "px-0 justify-center max-lg:px-6 max-lg:justify-start" : "px-6")}>
         <Link href="/" className="flex items-center text-foreground font-semibold text-[15px] tracking-wide" title="Numerate">
           <AnimatedLogo />
           <div className={cn(
             "overflow-hidden whitespace-nowrap flex items-center",
-            isCollapsed ? "max-w-0 opacity-0 ml-0" : "max-w-[120px] opacity-100 ml-3"
+            isCollapsed
+              ? "max-w-0 opacity-0 ml-0 max-lg:max-w-[120px] max-lg:opacity-100 max-lg:ml-3"
+              : "max-w-[120px] opacity-100 ml-3"
           )} style={{ transition: 'max-width 420ms cubic-bezier(0.65,0,0.35,1), opacity 300ms ease, margin-left 420ms cubic-bezier(0.65,0,0.35,1)' }}>
             <span>Numerate</span>
           </div>
@@ -139,7 +208,7 @@ export function Sidebar() {
                 title={isCollapsed ? item.name : undefined}
                 className={cn(
                   "group relative flex items-center rounded-xl font-medium transition-colors duration-200",
-                  isCollapsed ? "justify-center h-10 w-10 mx-auto" : "px-3 py-2.5 text-[13px]",
+                  railItem,
                   isActive
                     ? "text-primary bg-primary/[0.08]"
                     : "text-muted-foreground/90 hover:bg-white/[0.03] hover:text-foreground"
@@ -154,10 +223,7 @@ export function Sidebar() {
                     isActive ? "text-primary drop-shadow-[0_0_8px_rgba(0,112,243,0.3)]" : "text-muted-foreground/70 group-hover:text-foreground/90"
                   )}
                 />
-                <div className={cn(
-                  "overflow-hidden whitespace-nowrap",
-                  isCollapsed ? "max-w-0 opacity-0 ml-0" : "max-w-[200px] opacity-100 ml-3"
-                )} style={{ transition: 'max-width 420ms cubic-bezier(0.65,0,0.35,1), opacity 300ms ease, margin-left 420ms cubic-bezier(0.65,0,0.35,1)' }}>
+                <div className={cn("overflow-hidden whitespace-nowrap", railLabel)} style={{ transition: 'max-width 420ms cubic-bezier(0.65,0,0.35,1), opacity 300ms ease, margin-left 420ms cubic-bezier(0.65,0,0.35,1)' }}>
                   {item.name}
                 </div>
               </Link>
@@ -167,7 +233,7 @@ export function Sidebar() {
       </nav>
 
       {/* Bottom Section */}
-      <div className={cn("mt-auto border-t border-border/40 p-3 space-y-0.5 transition-all duration-400", isCollapsed && "flex flex-col items-center p-2")}>
+      <div className={cn("mt-auto border-t border-border/40 p-3 space-y-0.5 transition-all duration-400", isCollapsed && "flex flex-col items-center p-2 max-lg:block max-lg:p-3")}>
         {bottomNavItems.map((item) => (
           <motion.div key={item.name} variants={itemVariants}>
             <Link
@@ -175,14 +241,11 @@ export function Sidebar() {
               title={isCollapsed ? item.name : undefined}
               className={cn(
                 "group flex items-center rounded-xl font-medium text-muted-foreground/90 transition-colors duration-200 hover:bg-white/[0.03] hover:text-foreground",
-                isCollapsed ? "justify-center h-10 w-10 mx-auto" : "px-3 py-2.5 text-[13px]"
+                railItem
               )}
             >
               <item.icon className="h-[18px] w-[18px] shrink-0 text-muted-foreground/70 group-hover:text-foreground/90 transition-colors" />
-              <div className={cn(
-                "overflow-hidden whitespace-nowrap",
-                isCollapsed ? "max-w-0 opacity-0 ml-0" : "max-w-[200px] opacity-100 ml-3"
-              )} style={{ transition: 'max-width 420ms cubic-bezier(0.65,0,0.35,1), opacity 300ms ease, margin-left 420ms cubic-bezier(0.65,0,0.35,1)' }}>
+              <div className={cn("overflow-hidden whitespace-nowrap", railLabel)} style={{ transition: 'max-width 420ms cubic-bezier(0.65,0,0.35,1), opacity 300ms ease, margin-left 420ms cubic-bezier(0.65,0,0.35,1)' }}>
                 {item.name}
               </div>
             </Link>
@@ -193,7 +256,9 @@ export function Sidebar() {
         <motion.div variants={itemVariants} className="pt-2 mt-2 border-t border-border/40 w-full">
           <div className={cn(
             "flex items-center rounded-xl hover:bg-white/[0.03] transition-colors duration-200 group",
-            isCollapsed ? "justify-center py-2 px-0 flex-col" : "justify-between px-3 py-2.5"
+            isCollapsed
+              ? "justify-center py-2 px-0 flex-col max-lg:justify-between max-lg:flex-row max-lg:px-3 max-lg:py-2.5"
+              : "justify-between px-3 py-2.5"
           )}>
             <Link
               href="/settings"
@@ -214,14 +279,16 @@ export function Sidebar() {
               )}
               <div className={cn(
                 "flex flex-col overflow-hidden justify-center",
-                isCollapsed ? "max-w-0 opacity-0 ml-0" : "max-w-[150px] opacity-100 ml-3"
+                isCollapsed
+                  ? "max-w-0 opacity-0 ml-0 max-lg:max-w-[150px] max-lg:opacity-100 max-lg:ml-3"
+                  : "max-w-[150px] opacity-100 ml-3"
               )} style={{ transition: 'max-width 420ms cubic-bezier(0.65,0,0.35,1), opacity 300ms ease, margin-left 420ms cubic-bezier(0.65,0,0.35,1)' }}>
                 <span className="text-[13px] font-semibold text-foreground/90 group-hover:text-foreground transition-colors truncate">{user?.full_name || "Guest"}</span>
               </div>
             </Link>
             <button onClick={() => setShowLogoutConfirm(true)} className={cn(
                 "p-1 hover:text-destructive transition-colors duration-200 text-muted-foreground/70",
-                isCollapsed ? "mt-2" : "group-hover:text-foreground/90"
+                isCollapsed ? "mt-2 max-lg:mt-0" : "group-hover:text-foreground/90"
               )} title="Logout">
               <LogOut className="h-4 w-4 shrink-0" />
             </button>
@@ -229,6 +296,7 @@ export function Sidebar() {
         </motion.div>
       </div>
     </motion.div>
+    </aside>
 
     {/* Portalled to document.body: the sidebar root above animates with
         CSS transforms, which makes any position:fixed descendant position

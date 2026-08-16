@@ -86,12 +86,15 @@ export default function AnalyticsLayout({ children }: { children: React.ReactNod
         initial="hidden"
         animate="show"
         variants={sidebarVariants}
-        className={`border-r border-border/40 bg-surface/30 backdrop-blur-xl flex flex-col h-full z-10 shrink-0 relative transition-all duration-300 ${isCollapsed ? 'w-[60px]' : 'w-[200px]'}`}
+        // A 200px sub-nav next to content is over half a phone's width, so
+        // below lg this rail is always the icon-only version regardless of
+        // the desktop expand/collapse state.
+        className={`border-r border-border/40 bg-surface/30 backdrop-blur-xl flex flex-col h-full z-10 shrink-0 relative transition-all duration-300 max-lg:w-[60px] ${isCollapsed ? 'w-[60px]' : 'w-[200px]'}`}
       >
         
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="absolute -right-3 top-6 z-20 flex h-6 w-6 items-center justify-center rounded-full border border-border/50 bg-background text-muted-foreground shadow-sm hover:text-foreground hover:bg-surface/80"
+          className="absolute -right-3 top-6 z-20 flex h-6 w-6 items-center justify-center rounded-full border border-border/50 bg-background text-muted-foreground shadow-sm hover:text-foreground hover:bg-surface/80 max-lg:hidden"
         >
           {isCollapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronLeft className="h-3.5 w-3.5" />}
         </button>
@@ -100,7 +103,7 @@ export default function AnalyticsLayout({ children }: { children: React.ReactNod
           {NAV_GROUPS.map((group) => (
             <div key={group.title} className="px-3">
               {!isCollapsed ? (
-                <motion.h3 variants={itemVariants} className="px-2 mb-1.5 text-[10px] font-semibold tracking-wider text-muted-foreground/60 uppercase">
+                <motion.h3 variants={itemVariants} className="px-2 mb-1.5 text-[10px] font-semibold tracking-wider text-muted-foreground/60 uppercase max-lg:hidden">
                   {group.title}
                 </motion.h3>
               ) : (
@@ -119,13 +122,13 @@ export default function AnalyticsLayout({ children }: { children: React.ReactNod
                           isActive 
                             ? "bg-primary/[0.08] text-primary" 
                             : "text-muted-foreground/80 hover:bg-white/[0.04] hover:text-foreground"
-                        } ${isCollapsed ? 'justify-center px-0' : ''}`}
+                        } max-lg:justify-center max-lg:px-0 ${isCollapsed ? 'justify-center px-0' : ''}`}
                       >
                         {isActive && (
                           <div className={`absolute left-[-12px] top-1/2 -translate-y-1/2 w-0.5 h-4 bg-primary rounded-r-full ${isCollapsed ? 'left-[-12px]' : ''}`} />
                         )}
                         <Icon className={`h-3.5 w-3.5 shrink-0 ${isActive ? "text-primary" : "text-muted-foreground/60 group-hover:text-foreground/80"}`} />
-                        {!isCollapsed && <span className="truncate">{item.name}</span>}
+                        {!isCollapsed && <span className="truncate max-lg:hidden">{item.name}</span>}
                       </Link>
                     </motion.div>
                   );

@@ -1,4 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* Inter is loaded through next/font in app/layout.tsx, which self-hosts the
+   files and injects them with the page. The previous @import here fetched it
+   from fonts.googleapis.com at CSS-parse time, which blocks first render on a
+   third-party round trip before any text can paint. */
 @import "tailwindcss";
 
 @import "tw-animate-css";
@@ -19,7 +22,7 @@
 }
 
 @theme {
-  --font-sans: "Inter", var(--font-geist-sans), sans-serif;
+  --font-sans: var(--font-inter), var(--font-geist-sans), sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
 
   --color-background: var(--background);

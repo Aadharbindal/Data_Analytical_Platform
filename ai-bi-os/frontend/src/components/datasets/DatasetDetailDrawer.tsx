@@ -57,7 +57,7 @@ function ProfileTab({ versionId }: { versionId: string }) {
   if (!data) return null;
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-3">
         {[
           { label: "Rows", value: data.row_count.toLocaleString() },
           { label: "Columns", value: data.column_count },

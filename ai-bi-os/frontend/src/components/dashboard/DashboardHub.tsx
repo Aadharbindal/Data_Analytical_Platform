@@ -180,7 +180,19 @@ export function DashboardHub({ datasets, qualityScore, kpis }: DashboardHubProps
   }, [leftNodes.length, rightNodes.length]);
 
   return (
-    <div ref={containerRef} className="relative w-full overflow-hidden px-6 py-8">
+    <>
+    {/* Mobile: the hub diagram needs horizontal room for two node columns plus
+        the logo between them — well past a phone's width, where the columns
+        would collide. Below lg the same nodes render as a plain stacked grid
+        and the connectors are dropped, since curves between stacked cards
+        carry no meaning. */}
+    <div className="grid grid-cols-1 gap-3 py-2 sm:grid-cols-2 lg:hidden">
+      {[...leftNodes, ...rightNodes].map((node, i) => (
+        <HubNode key={i} node={node} align="left" delay={0.1 + i * 0.08} iconRef={() => {}} />
+      ))}
+    </div>
+
+    <div ref={containerRef} className="relative hidden w-full overflow-hidden px-6 py-8 lg:block">
       {geometry && (
         <svg
           viewBox={`0 0 ${geometry.size.width} ${geometry.size.height}`}
@@ -263,6 +275,7 @@ export function DashboardHub({ datasets, qualityScore, kpis }: DashboardHubProps
         </div>
       </div>
     </div>
+    </>
   );
 }
 

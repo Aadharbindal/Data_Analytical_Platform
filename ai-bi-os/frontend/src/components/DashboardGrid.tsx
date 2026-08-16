@@ -135,7 +135,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="grid grid-cols-12 gap-6 w-full"
+      className="grid w-full grid-cols-12 gap-4 sm:gap-6"
     >
 
       {/* Hero Row: dataset source + quality flowing into the headline KPIs */}
@@ -152,9 +152,12 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
       {/* Main Middle Row: Hero Chart & AI Centerpiece */}
       <motion.div
         variants={itemVariants}
-        className="col-span-12 grid grid-cols-12 gap-6"
+        className="col-span-12 grid grid-cols-12 gap-4 sm:gap-6"
       >
-        <div className="col-span-8">
+        {/* Side by side from lg up — the original desktop split, unchanged.
+            Below that the summary drops beneath the chart at full width
+            rather than being squeezed into a third of a phone screen. */}
+        <div className="col-span-12 lg:col-span-8">
           <RevenueCard
             data={chartData}
             semanticDict={activeDataset?.semantic_dict ?? undefined}
@@ -168,13 +171,13 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
             kpiType={kpis.find((k) => k?.id === "kpi_rev")?.type}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-12 lg:col-span-4">
           <AISummaryCard />
         </div>
       </motion.div>
 
-      {/* Bottom Row: Insights */}
-      <motion.div variants={itemVariants} className="col-span-12 grid grid-cols-3 gap-6">
+      {/* Bottom Row: Insights — one per row on phones, three across on desktop */}
+      <motion.div variants={itemVariants} className="col-span-12 grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
         {insightPanels.map((panel, index) => (
           <InsightPanel key={`${panel.title}-${index}`} {...panel} index={index} />
         ))}
