@@ -252,21 +252,42 @@ export function LandingClient() {
           <Reveal>
             <div className="flex flex-col items-center gap-6">
               <Eyebrow>Things people actually type</Eyebrow>
+              {/* Each chip is lit from inside rather than along an edge, which
+                  is the one direction the other three rows have not used. The
+                  caret is the point of the section - these are things someone
+                  types, so each one carries a text cursor. */}
               <div className="flex max-w-4xl flex-wrap justify-center gap-2.5">
                 {QUESTIONS.map((q, i) => (
                   <motion.span
                     key={q}
                     initial={enterFrom(reduce, { scale: 0.94, y: 8 })}
                     whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                    whileHover={reduce ? undefined : { y: -3, scale: 1.03 }}
                     viewport={{ once: true, margin: "-60px" }}
                     transition={{
                       opacity: { duration: 0.7, delay: i * 0.055 },
                       default: { type: "spring", stiffness: 150, damping: 24, delay: i * 0.055 },
                     }}
-                    className="cursor-default rounded-full border border-border/60 bg-surface/40 px-4 py-2 text-[13px] text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                    className="group relative inline-flex cursor-default items-center gap-2.5 overflow-hidden rounded-full px-4 py-2 text-[13px] text-muted-foreground ring-1 ring-inset ring-white/10 transition-all duration-300 hover:-translate-y-0.5 hover:text-foreground hover:ring-primary/30"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(180deg, color-mix(in srgb, var(--primary) 6%, var(--surface)) 0%, var(--background) 100%)",
+                    }}
                   >
-                    {q}
+                    {/* Rises from below the pill on hover, so the glow reads as
+                        coming from within it rather than off one of its sides. */}
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                      style={{
+                        backgroundImage:
+                          "radial-gradient(70% 130% at 50% 125%, color-mix(in srgb, var(--primary) 24%, transparent) 0%, transparent 72%)",
+                      }}
+                    />
+                    <span
+                      aria-hidden
+                      className="relative h-3 w-px shrink-0 bg-primary/50 transition-colors duration-300 group-hover:bg-primary"
+                    />
+                    <span className="relative">{q}</span>
                   </motion.span>
                 ))}
               </div>
