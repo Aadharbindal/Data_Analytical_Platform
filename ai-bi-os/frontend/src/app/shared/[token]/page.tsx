@@ -16,11 +16,22 @@ export async function generateMetadata(): Promise<Metadata> {
   const description =
     "A read-only view of verified metrics and insights, shared from Numerate.";
 
+  // The image has to be named again here. Declaring an `openGraph` object on a
+  // segment replaces the parent's rather than merging into it, so the root
+  // opengraph-image.tsx that every other route inherits was being dropped and
+  // these links previewed as text with no card image at all.
+  const image = "/opengraph-image";
+
   return {
     title,
     description,
-    openGraph: { title: `${title} · Numerate`, description },
-    twitter: { card: "summary_large_image", title: `${title} · Numerate`, description },
+    openGraph: { title: `${title} · Numerate`, description, images: [image] },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} · Numerate`,
+      description,
+      images: [image],
+    },
     // These links are handed out privately. Keeping them out of search results
     // means a forwarded dashboard can't later surface to strangers via Google.
     robots: { index: false, follow: false },
