@@ -297,6 +297,90 @@ def robust_outlier_stats(series: pd.Series, z_threshold: float = 3.0, mad_thresh
 
     return {"count": count, "method": method, "skewness": round(skewness, 2), "iqr_count": iqr_count}
 
+
+def resolve_kpi_provenance(df: pd.DataFrame, semantic_dict: dict, kpi_id: str) -> dict:
+    """Describe exactly how one dashboard KPI is produced.
+
+    The point of this function existing at all is that the number on the card
+    and the rows shown when a user drills into it must come from one
+    definition. If the drilldown re-derived "which rows count" on its own,
+    the two could disagree — and a provenance view that contradicts the figure
+    it is explaining is worse than showing nothing.
+
+    Returns the source column, the aggregation, a human-readable formula, and
+    a boolean mask of the rows that actually contribute. Returns None when the
+    id doesn't map to a column in this dataset (e.g. a KPI from a dataset that
+    has since been switched).
+    """
+    if df is None or not semantic_dict:
+        return None
+
+    bus_term = semantic_dict.get("business_terminology", {}) or {}
+
+    def entry(column, op, formula, mask, note=None):
+        if column is None or column not in df.columns:
+            return None
+        return {
+            "column": column,
+            "aggregation": op,
+            "formula": formula,
+            "mask": mask,
+            "note": note,
+        }
+
+    if kpi_id == "kpi_rev":
+        col = bus_term.get("primary_metric")
+        op = bus_term.get("primary_metric_op", "sum")
+        if not col or col not in df.columns:
+            return None
+        return entry(col, op, f"{op.upper()}({col})", df[col].notna())
+
+    if kpi_id == "kpi_deal_size":
+        col = bus_term.get("secondary_metric")
+        op = bus_term.get("secondary_metric_op", "mean")
+        if not col or col not in df.columns:
+            return None
+        return entry(col, op, f"{op.upper()}({col})", df[col].notna())
+
+    if kpi_id == "kpi_users":
+        col = bus_term.get("entity_col")
+        if not col or col not in df.columns:
+            return None
+        # Mirrors compute_kpis: a near-unique reference column is one row per
+        # entity, so the figure is a row count rather than a distinct count.
+        try:
+            per_row = df[col].nunique(dropna=True) > len(df) * 0.9
+        except Exception:
+            per_row = False
+        if pd.api.types.is_numeric_dtype(df[col]) and not _ENTITY_ID_PATTERN.search(str(col)):
+            return entry(col, "sum", f"SUM({col})", df[col].notna())
+        if per_row:
+            return entry(col, "count", f"COUNT(rows)", pd.Series(True, index=df.index),
+                         "Every row is one record, so this counts rows rather than distinct values.")
+        return entry(col, "nunique", f"COUNT(DISTINCT {col})", df[col].notna())
+
+    if kpi_id == "kpi_pipeline":
+        col = bus_term.get("status_col")
+        healthy = bus_term.get("status_healthy_regex", "")
+        if not col or col not in df.columns:
+            return None
+        return entry(
+            col, "percent",
+            f"COUNT({col} matching /{healthy}/) / COUNT(rows) x 100",
+            df[col].notna(),
+            "Rows whose status matches the healthy pattern, over all rows with a status.",
+        )
+
+    if kpi_id.startswith("col_"):
+        col = kpi_id[4:]
+        if col not in df.columns:
+            return None
+        op = "mean" if is_non_additive(col) else "sum"
+        return entry(col, op, f"{op.upper()}({col})", df[col].notna())
+
+    return None
+
+
 def compute_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict:
     if df is None:
         return {"kpis": [], "chart_data": []}
@@ -661,6 +745,23 @@ def compute_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict:
                 k["history"] = hist
         except Exception:
             pass
+
+    # Provenance for every KPI, from the same resolver the drilldown endpoint
+    # uses — so "where did this come from" can never describe a different
+    # calculation than the one that produced the number on the card.
+    for k in kpis:
+        prov = resolve_kpi_provenance(original_df, semantic_dict, k["id"])
+        if not prov:
+            continue
+        rows_used = int(prov["mask"].sum())
+        k["provenance"] = {
+            "column": prov["column"],
+            "aggregation": prov["aggregation"],
+            "formula": prov["formula"],
+            "rows_used": rows_used,
+            "rows_total": int(len(original_df)),
+            "note": prov["note"],
+        }
 
     return {"kpis": kpis, "chart_data": chart_data}
 

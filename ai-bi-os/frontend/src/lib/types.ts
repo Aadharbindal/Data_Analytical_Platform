@@ -287,6 +287,30 @@ export interface QueryResult {
   execution_time_ms: number;
 }
 
+/** How a KPI was produced, attached to every KPI by compute_kpis. */
+export interface KpiProvenanceSummary {
+  column: string;
+  aggregation: string;
+  formula: string;
+  rows_used: number;
+  rows_total: number;
+  note?: string | null;
+}
+
+/** GET /analytics/kpi-provenance — the rows behind one KPI, plus the figure
+ *  recomputed from exactly those rows so the UI can show it agrees with the
+ *  card rather than asking the reader to take it on faith. */
+export interface KpiProvenance extends KpiProvenanceSummary {
+  kpi_id: string;
+  excluded: number;
+  excluded_reason: string | null;
+  recomputed_value: number | null;
+  columns: string[];
+  rows: Array<Record<string, unknown>>;
+  offset: number;
+  limit: number;
+}
+
 export interface KpiItem {
   id: string;
   name: string;
@@ -296,6 +320,7 @@ export interface KpiItem {
   trend?: number;
   type?: "currency" | "count" | "percent" | "generic";
   history?: Array<{ date: string; value: number }>;
+  provenance?: KpiProvenanceSummary;
 }
 
 export interface AnalyticsKPIs {

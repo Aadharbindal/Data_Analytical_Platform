@@ -4,6 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { RevenueCard } from "./dashboard/RevenueCard";
 import { DashboardHub } from "./dashboard/DashboardHub";
+import { KpiProvenanceDialog } from "./dashboard/KpiProvenanceDialog";
 import { AISummaryCard } from "./dashboard/AISummaryCard";
 import { InsightPanel } from "./dashboard/InsightPanel";
 import { DataTable } from "./dashboard/DataTable";
@@ -73,6 +74,8 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
     pinnedKpiIds && pinnedKpiIds.length > 0
       ? pinnedKpiIds.map((id) => kpis.find((k) => k.id === id)).filter(Boolean)
       : kpis.slice(0, 4);
+
+  const [inspecting, setInspecting] = React.useState<{ id: string; name: string; value: number; type?: string } | null>(null);
 
   // Derive up to 3 insight panels from live insights, or fallback to static
   const insightPanels =
@@ -145,6 +148,9 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
             datasets={datasets}
             qualityScore={activeDataset?.quality_score}
             kpis={selectedKpis}
+            onInspectKpi={(k) =>
+              setInspecting({ id: k.id as string, name: k.name, value: k.value, type: k.type })
+            }
           />
         </motion.div>
       )}
@@ -188,6 +194,14 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
         <h3 className="text-lg font-medium text-foreground mb-4">Dataset Registry</h3>
         <DataTable datasets={datasets} loading={loading.datasets} />
       </motion.div>
+
+      <KpiProvenanceDialog
+        kpiId={inspecting?.id ?? null}
+        kpiName={inspecting?.name ?? ""}
+        cardValue={inspecting?.value}
+        kpiType={inspecting?.type}
+        onClose={() => setInspecting(null)}
+      />
     </motion.div>
   );
 };

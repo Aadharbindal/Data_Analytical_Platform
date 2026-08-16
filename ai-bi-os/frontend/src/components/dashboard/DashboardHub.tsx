@@ -2,7 +2,7 @@
 
 import React, { useLayoutEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { FileSpreadsheet, ShieldCheck, LucideIcon } from "lucide-react";
+import { FileSpreadsheet, ShieldCheck, Search, LucideIcon } from "lucide-react";
 import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
 import { getMetricTheme } from "./MetricCard";
 import { formatKpiValue } from "@/lib/utils";
@@ -19,6 +19,7 @@ interface DashboardHubProps {
   datasets: Dataset[];
   qualityScore?: number;
   kpis: HubKpi[];
+  onInspectKpi?: (kpi: HubKpi) => void;
 }
 
 interface Node {
@@ -28,6 +29,10 @@ interface Node {
   gradient: string;
   glow: string;
   stroke: string;
+  /** Set only on the KPI nodes — clicking opens the provenance view. The
+   *  dataset/quality nodes on the left aren't computed figures, so there is
+   *  nothing to trace and they stay inert. */
+  onInspect?: () => void;
 }
 
 interface Point {
@@ -100,7 +105,7 @@ function centerOf(el: HTMLElement, containerRect: DOMRect): Point {
   };
 }
 
-export function DashboardHub({ datasets, qualityScore, kpis }: DashboardHubProps) {
+export function DashboardHub({ datasets, qualityScore, kpis, onInspectKpi }: DashboardHubProps) {
   const leftNodes: Node[] = [
     {
       icon: FileSpreadsheet,
@@ -123,6 +128,7 @@ export function DashboardHub({ datasets, qualityScore, kpis }: DashboardHubProps
   const rightNodes: Node[] = kpis.slice(0, 4).map((k, i) => {
     const theme = getMetricTheme(k.type, i);
     return {
+      onInspect: k.id ? () => onInspectKpi?.(k) : undefined,
       icon: theme.icon,
       label: k.name,
       value: formatKpiValue(k.value, k.type),
@@ -291,16 +297,39 @@ function HubNode({
   iconRef: (el: HTMLDivElement | null) => void;
 }) {
   const Icon = node.icon;
+  const clickable = !!node.onInspect;
   return (
     <motion.div
       initial={{ opacity: 0, x: align === "left" ? -12 : 12 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5, delay }}
-      className={`flex items-center gap-3 ${align === "right" ? "flex-row-reverse text-right" : ""}`}
+      onClick={node.onInspect}
+      role={clickable ? "button" : undefined}
+      tabIndex={clickable ? 0 : undefined}
+      title={clickable ? "See where this number came from" : undefined}
+      onKeyDown={
+        clickable
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                node.onInspect?.();
+              }
+            }
+          : undefined
+      }
+      className={`group flex items-center gap-3 rounded-xl ${
+        align === "right" ? "flex-row-reverse text-right" : ""
+      } ${
+        clickable
+          ? "cursor-pointer -m-2 p-2 transition-colors hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+          : ""
+      }`}
     >
       <div
         ref={iconRef}
-        className={`flex shrink-0 items-center justify-center w-11 h-11 rounded-full bg-gradient-to-br ${node.gradient}`}
+        className={`flex shrink-0 items-center justify-center w-11 h-11 rounded-full bg-gradient-to-br ${node.gradient} ${
+          clickable ? "transition-[filter] duration-200 group-hover:brightness-110" : ""
+        }`}
         style={{ boxShadow: `inset 0 1px 0 rgba(255,255,255,0.35), 0 0 16px -4px ${node.glow}` }}
       >
         <Icon className="w-5 h-5 text-white" strokeWidth={2.25} />
@@ -308,6 +337,11 @@ function HubNode({
       <div className="min-w-0">
         <p className="text-xs text-foreground/60 truncate max-w-[140px]">{node.label}</p>
         <p className="text-sm font-semibold text-foreground truncate max-w-[140px]">{node.value}</p>
+        {clickable && (
+          <p className="flex items-center gap-1 text-[10px] font-medium text-primary opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+            <Search className="h-2.5 w-2.5" /> Where from?
+          </p>
+        )}
       </div>
     </motion.div>
   );

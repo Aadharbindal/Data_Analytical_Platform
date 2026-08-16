@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import csv
 import io
+import json
 import logging
 import re
 import threading
@@ -88,6 +89,96 @@ async def get_kpis_endpoint(current_user: dict = Depends(get_current_user)):
     _rcache_set(cache_key, result)
     return result
 
+
+@router.get("/kpi-provenance")
+async def get_kpi_provenance(
+    kpi_id: str,
+    limit: int = 50,
+    offset: int = 0,
+    current_user: dict = Depends(get_current_user),
+):
+    """The rows a KPI was actually computed from, plus the figure recomputed
+    from exactly those rows.
+
+    Returning the recomputed value is the point: the caller can check it
+    against the number on the card. A provenance view that quietly disagrees
+    with the figure it claims to explain would cost more trust than showing
+    nothing at all, so the disagreement is made checkable rather than assumed
+    away.
+    """
+    dataset_info = get_active_dataset(current_user["id"])
+    if not dataset_info:
+        raise HTTPException(status_code=400, detail="No active dataset")
+
+    df = get_dataframe(dataset_info["id"], current_user["id"])
+    if df is None:
+        raise HTTPException(status_code=400, detail="Dataset not loaded")
+
+    from app.services.stats_service import resolve_kpi_provenance
+
+    prov = resolve_kpi_provenance(df, dataset_info.get("semantic_dict"), kpi_id)
+    if not prov:
+        raise HTTPException(status_code=404, detail="No provenance for this metric")
+
+    col, op, mask = prov["column"], prov["aggregation"], prov["mask"]
+    used = df[mask]
+    rows_used, rows_total = int(len(used)), int(len(df))
+
+    # Recompute from the contributing rows only, using the same aggregation
+    # compute_kpis applied.
+    recomputed = None
+    try:
+        if op == "sum":
+            recomputed = float(used[col].sum())
+        elif op == "mean":
+            recomputed = float(used[col].mean())
+        elif op == "nunique":
+            recomputed = float(used[col].nunique())
+        elif op == "count":
+            recomputed = float(rows_used)
+        elif op == "percent":
+            healthy = dataset_info.get("semantic_dict", {}).get(
+                "business_terminology", {}
+            ).get("status_healthy_regex", "")
+            s = used[col].astype(str)
+            recomputed = float(s.str.contains(healthy, case=False, na=False).sum() / len(used) * 100) if len(used) else 0.0
+    except Exception:
+        recomputed = None
+
+    # Show the metric's own column first — it is the one being explained.
+    ordered = [col] + [c for c in df.columns if c != col]
+    page = used.iloc[offset : offset + max(1, min(limit, 200))][ordered]
+
+    # NaN is not valid JSON; send nulls the client can render as "empty".
+    records = json.loads(page.to_json(orient="records", date_format="iso"))
+
+    excluded = rows_total - rows_used
+    return {
+        "kpi_id": kpi_id,
+        "column": col,
+        "aggregation": op,
+        "formula": prov["formula"],
+        "note": prov["note"],
+        "rows_used": rows_used,
+        "rows_total": rows_total,
+        "excluded": excluded,
+        "excluded_reason": (
+            f"{excluded} row{'s' if excluded != 1 else ''} left out because {col} is empty"
+            if excluded > 0
+            else None
+        ),
+        # Rounded exactly as compute_kpis rounds this metric (percentages to 1
+        # decimal, everything else to 2). Rounding differently would surface a
+        # 56.9-vs-56.91 "mismatch" that isn't one, which defeats the purpose of
+        # publishing the recomputed figure in the first place.
+        "recomputed_value": (
+            None if recomputed is None else round(recomputed, 1 if op == "percent" else 2)
+        ),
+        "columns": ordered,
+        "rows": records,
+        "offset": offset,
+        "limit": limit,
+    }
 
 
 @router.get("/eda")
