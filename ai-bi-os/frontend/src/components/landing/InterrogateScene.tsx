@@ -87,8 +87,16 @@ export function InterrogateScene({ entranceDelay = 0 }: InterrogateSceneProps) {
           x: reduce ? 0 : pointer.x * 60,
           y: reduce ? 0 : pointer.y * 40,
           opacity: open ? 0.5 : 0.32,
+          // A slow breath underneath everything, on its own clock, so the page
+          // keeps moving faintly long after the entrance has finished.
+          scale: reduce ? 1 : [1, 1.08, 1],
         }}
-        transition={{ type: "spring", stiffness: 40, damping: 20 }}
+        transition={{
+          x: { type: "spring", stiffness: 40, damping: 20 },
+          y: { type: "spring", stiffness: 40, damping: 20 },
+          opacity: { duration: 0.6, ease: "easeOut" },
+          scale: { duration: 9, ease: "easeInOut", repeat: Infinity },
+        }}
         style={{
           background:
             "radial-gradient(circle, rgba(59,130,246,0.55) 0%, rgba(59,130,246,0) 70%)",
@@ -104,7 +112,16 @@ export function InterrogateScene({ entranceDelay = 0 }: InterrogateSceneProps) {
         <motion.div
           initial={enterFrom(reduce, { scale: 0.88, filter: "blur(18px)" })}
           animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-          transition={{ duration: 1.15, delay: entranceDelay, ease: EASE }}
+          transition={{ duration: 1.45, delay: entranceDelay, ease: EASE }}
+        >
+        {/* A separate layer for the perpetual drift, because the wrapper above
+            it is busy finishing the entrance and the button below it is busy
+            with the cursor parallax — three jobs, three elements. Six seconds
+            for six pixels: enough that the page is never quite still, not
+            enough to notice it moving. */}
+        <motion.div
+          animate={reduce ? undefined : { y: [0, -6, 0] }}
+          transition={{ duration: 6, ease: "easeInOut", repeat: Infinity }}
         >
         {/* The figure. Clicking is the whole point of the page, so it is a real
             button rather than a div with a handler — reachable by keyboard and
@@ -129,6 +146,7 @@ export function InterrogateScene({ entranceDelay = 0 }: InterrogateSceneProps) {
           </span>
         </motion.button>
         </motion.div>
+        </motion.div>
 
         {/* One AnimatePresence rather than the two that ran side by side: the
             outgoing panel collapses its height while the incoming one expands,
@@ -146,7 +164,7 @@ export function InterrogateScene({ entranceDelay = 0 }: InterrogateSceneProps) {
           className="relative w-full"
           initial={enterFrom(reduce, { y: 18 })}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.85, delay: entranceDelay + 0.3, ease: EASE }}
+          transition={{ duration: 1.1, delay: entranceDelay + 0.22, ease: EASE }}
         >
           <AnimatePresence initial={false}>
             {open ? (

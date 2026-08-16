@@ -91,7 +91,7 @@ function Rule() {
       initial={enterFrom(reduce, { scaleX: 0 })}
       whileInView={{ scaleX: 1, opacity: 1 }}
       viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.7, ease: EASE }}
+      transition={{ duration: 1.0, ease: EASE }}
     />
   );
 }
@@ -113,17 +113,19 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
       initial={enterFrom(reduce, { y: 14 })}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-70px" }}
-      transition={{ duration: 0.75, delay, ease: EASE }}
+      transition={{ duration: 0.95, delay, ease: EASE }}
     >
       {children}
     </motion.div>
   );
 }
 
-/** The opening sequence. Every element in the first screen takes its turn
- *  rather than arriving together, and each takes close to a second to settle —
- *  the page is asking to be looked at before it is scrolled past. */
-const HERO_STEP = 0.22;
+/** The opening sequence. The gap between elements is far shorter than how long
+ *  each one takes, so every element is still settling when the next begins —
+ *  five overlapping moves read as one continuous rise, where an interval wider
+ *  than the duration would read as five separate arrivals. */
+const HERO_STEP = 0.15;
+const HERO_DURATION = 1.3;
 
 /** Lift on hover. Kept to two pixels and a border brighten — enough to say the
  *  card is a surface, not enough to make the page bounce as the cursor crosses
@@ -161,7 +163,7 @@ export function LandingClient() {
         <motion.div
           initial={enterFrom(reduce, { x: -16 })}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, ease: EASE }}
+          transition={{ duration: HERO_DURATION, ease: EASE }}
         >
           <Link href="/landing" className="flex items-center gap-3">
             {/* The glow is a fixed 15px blur that doesn't scale with the logo, so
@@ -175,7 +177,7 @@ export function LandingClient() {
           initial={enterFrom(reduce, { x: 16 })}
           animate={{ opacity: 1, x: 0 }}
           whileHover={reduce ? undefined : { y: -2 }}
-          transition={{ duration: 0.8, delay: 0.1, ease: EASE }}
+          transition={{ duration: HERO_DURATION, delay: HERO_STEP * 0.6, ease: EASE }}
         >
           <Link
             href="/login"
@@ -196,7 +198,7 @@ export function LandingClient() {
               className="block"
               initial={enterFrom(reduce, { y: 22, filter: "blur(8px)" })}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              transition={{ duration: 0.95, delay: HERO_STEP, ease: EASE }}
+              transition={{ duration: HERO_DURATION, delay: HERO_STEP, ease: EASE }}
             >
               Ask your spreadsheet anything.
             </motion.span>
@@ -204,7 +206,7 @@ export function LandingClient() {
               className="block text-muted-foreground"
               initial={enterFrom(reduce, { y: 22, filter: "blur(8px)" })}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              transition={{ duration: 0.95, delay: HERO_STEP * 2, ease: EASE }}
+              transition={{ duration: HERO_DURATION, delay: HERO_STEP * 2, ease: EASE }}
             >
               Then check the answer.
             </motion.span>
@@ -213,7 +215,7 @@ export function LandingClient() {
           <motion.p
             initial={enterFrom(reduce, { y: 14 })}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: HERO_STEP * 3, ease: EASE }}
+            transition={{ duration: HERO_DURATION, delay: HERO_STEP * 3, ease: EASE }}
             className="mt-4 max-w-xl text-[15px] leading-relaxed text-muted-foreground"
           >
             Every figure is computed by code, never guessed by a model — and any of
@@ -238,7 +240,7 @@ export function LandingClient() {
               initial={enterFrom(reduce, { y: 12 })}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-70px" }}
-              transition={{ duration: 0.8, ease: EASE }}
+              transition={{ duration: HERO_DURATION, ease: EASE }}
               className="inline-block"
             >
               Ask most AI tools about your sales data and you get a number that sounds
@@ -248,7 +250,7 @@ export function LandingClient() {
               initial={enterFrom(reduce, { y: 12 })}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-70px" }}
-              transition={{ duration: 0.8, delay: 0.3, ease: EASE }}
+              transition={{ duration: HERO_DURATION, delay: 0.25, ease: EASE }}
               className="inline-block text-muted-foreground"
             >
               You have no way to tell whether it is. For a business decision, a wrong
@@ -276,8 +278,8 @@ export function LandingClient() {
                     whileHover={reduce ? undefined : { y: -3, scale: 1.03 }}
                     viewport={{ once: true, margin: "-60px" }}
                     transition={{
-                      opacity: { duration: 0.5, delay: i * 0.085 },
-                      default: { type: "spring", stiffness: 210, damping: 26, delay: i * 0.085 },
+                      opacity: { duration: 0.7, delay: i * 0.055 },
+                      default: { type: "spring", stiffness: 150, damping: 24, delay: i * 0.055 },
                     }}
                     className="cursor-default rounded-full border border-border/60 bg-surface/40 px-4 py-2 text-[13px] text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
                   >
@@ -295,7 +297,7 @@ export function LandingClient() {
         <section className="py-14 sm:py-16">
           <div className="grid gap-4 sm:grid-cols-3">
             {STEPS.map((s, i) => (
-              <Reveal key={s.title} delay={i * 0.08}>
+              <Reveal key={s.title} delay={i * 0.09}>
                 <motion.div
                   {...lift}
                   className="group h-full rounded-2xl border border-border/60 bg-surface/30 p-6 transition-colors hover:border-primary/30"
@@ -339,7 +341,7 @@ export function LandingClient() {
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 whileHover={reduce ? undefined : { y: -3, scale: 1.02 }}
                 viewport={{ once: true, margin: "-60px" }}
-                transition={{ type: "spring", stiffness: 200, damping: 26, delay: 0.07 * i }}
+                transition={{ type: "spring", stiffness: 145, damping: 24, delay: 0.05 * i }}
                 className="group flex h-full items-center gap-3 rounded-xl border border-border/50 bg-surface/25 px-4 py-3.5 transition-colors hover:border-primary/35 hover:bg-surface/45"
               >
                 <c.icon
@@ -380,7 +382,7 @@ export function LandingClient() {
                   initial={enterFrom(reduce, { y: 16 })}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-60px" }}
-                  transition={{ duration: 0.45, delay: 0.1 * i, ease: EASE }}
+                  transition={{ duration: 0.95, delay: 0.09 * i, ease: EASE }}
                   className="flex flex-col gap-2.5"
                 >
                   <f.icon className="h-[18px] w-[18px] text-primary" strokeWidth={2} />
