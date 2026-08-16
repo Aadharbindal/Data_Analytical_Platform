@@ -458,14 +458,27 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
             <h2 style={{...rev(4,90), fontSize:'clamp(30px,4vw,46px)', fontWeight:800, lineHeight:1.08, letterSpacing:'-.03em', margin:'0 0 20px'}}>Drop it in.<br/><em className="not-italic bg-clip-text text-transparent bg-gradient-to-r from-[#4d8bff] to-[#8ab8ff]">Come alive.</em></h2>
             <div style={rev(4,180)}>
               <div className="group relative">
-                {/* The light already circling this box now runs at full strength
-                    while the cursor is on it, so the border answers the hover
-                    instead of carrying on at the same pace regardless. */}
-                <div className="absolute -inset-0.5 rounded-[22px] overflow-hidden opacity-60 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none"><div className="absolute top-1/2 left-1/2 w-[180%] h-[180%] bg-[conic-gradient(from_0deg,transparent_0%,rgba(77,139,255,0.5)_8%,transparent_16%)] -translate-x-1/2 -translate-y-1/2 animate-ws-border-travel"></div></div>
                 {/* duration-250 was doing nothing - Tailwind's scale has no 250,
                     so the class produced no rule and the transition fell back to
                     its 150ms default. */}
                 <div onClick={triggerUpload} className="relative block overflow-hidden border-[1.5px] border-dashed border-blue-500/40 rounded-[20px] bg-gradient-to-b from-blue-600/10 to-[#0d111c]/60 py-10 px-8 cursor-pointer transition-all duration-300 backdrop-blur-[20px] hover:border-blue-500/80 hover:bg-blue-600/10 hover:-translate-y-[3px]">
+                  {/* A band of light crossing the box, right to left. This
+                      replaces the conic gradient that used to spin around the
+                      border: the same wsShimmer keyframe the buttons use, run
+                      in reverse, so the whole flow sweeps rather than one
+                      element circling on its own. */}
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 bg-[linear-gradient(100deg,transparent_35%,rgba(138,184,255,0.15)_50%,transparent_65%)] bg-[length:200%_100%]"
+                    /* Declared inline rather than as animate-ws-shimmer plus an
+                       arbitrary direction. That class lives in globals.css as
+                       plain CSS, which outranks Tailwind's layered utilities,
+                       and its `animation` shorthand resets direction to normal -
+                       so the reverse would have been silently dropped and the
+                       band would have swept the wrong way. */
+                    style={{ animation: 'wsShimmer 3s linear infinite reverse' }}
+                  />
+
                   {/* Rises from below the box, in the direction a file being
                       taken in would travel. */}
                   <span
