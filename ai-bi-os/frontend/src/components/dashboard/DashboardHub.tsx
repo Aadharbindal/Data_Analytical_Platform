@@ -96,6 +96,17 @@ function shortenTowards(from: Point, to: Point, dist: number): Point {
   return { x: from.x + dx * t, y: from.y + dy * t };
 }
 
+// Where the line from `from` to `to` crosses a given x. Used to end a line at
+// the label's edge: shortening by a distance would depend on how far away the
+// node happens to sit, whereas the text always begins at a known x.
+function pointAtX(from: Point, to: Point, x: number): Point {
+  const dx = to.x - from.x;
+  // Degenerate case: nothing sensible to interpolate, so leave it where it is.
+  if (Math.abs(dx) < 0.5) return { x, y: to.y };
+  const t = Math.min(1, Math.max(0, (x - from.x) / dx));
+  return { x, y: from.y + (to.y - from.y) * t };
+}
+
 function centerOf(el: HTMLElement, containerRect: DOMRect): Point {
   const r = el.getBoundingClientRect();
   return {
@@ -142,12 +153,18 @@ export function DashboardHub({ datasets, qualityScore, kpis, onInspectKpi }: Das
   const centerRef = useRef<HTMLDivElement>(null);
   const leftIconRefs = useRef<(HTMLDivElement | null)[]>([]);
   const rightIconRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const leftTextRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const rightTextRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const [geometry, setGeometry] = useState<{
     size: { width: number; height: number };
     center: Point;
     left: Point[];
     right: Point[];
+    /** x of each label's near edge, measured on the side the line approaches
+     *  from. The endpoint is derived from this rather than from the icon. */
+    leftTextEdge: number[];
+    rightTextEdge: number[];
   } | null>(null);
 
   // The icon circles are laid out by flexbox (justify-around inside
@@ -172,6 +189,14 @@ export function DashboardHub({ datasets, qualityScore, kpis, onInspectKpi }: Das
         right: rightIconRefs.current
           .filter((el): el is HTMLDivElement => !!el)
           .map((el) => centerOf(el, containerRect)),
+        // A line reaches a left node from its right, and a right node from its
+        // left, so the edge that matters is the one facing the hub.
+        leftTextEdge: leftTextRefs.current
+          .filter((el): el is HTMLDivElement => !!el)
+          .map((el) => el.getBoundingClientRect().right - containerRect.left),
+        rightTextEdge: rightTextRefs.current
+          .filter((el): el is HTMLDivElement => !!el)
+          .map((el) => el.getBoundingClientRect().left - containerRect.left),
       });
     };
 
@@ -207,8 +232,24 @@ export function DashboardHub({ datasets, qualityScore, kpis, onInspectKpi }: Das
           {[...leftNodes.slice(0, geometry.left.length), ...rightNodes.slice(0, geometry.right.length)].map(
             (node, i) => {
               const isLeft = i < geometry.left.length;
-              const iconPos = isLeft ? geometry.left[i] : geometry.right[i - geometry.left.length];
-              const endPos = shortenTowards(geometry.center, iconPos, (iconPos.r ?? 22) + 3);
+              const idx = isLeft ? i : i - geometry.left.length;
+              const iconPos = isLeft ? geometry.left[idx] : geometry.right[idx];
+              const textEdge = isLeft ? geometry.leftTextEdge[idx] : geometry.rightTextEdge[idx];
+
+              // Stop at the label, not at the icon behind it. Ending on the
+              // circle meant the last stretch of every line ran underneath the
+              // text, which is the one place a line has nothing to say and
+              // makes the words harder to read. Falls back to the icon edge if
+              // the label has not been measured yet.
+              const GAP = 12;
+              const endPos =
+                textEdge != null
+                  ? pointAtX(
+                      geometry.center,
+                      iconPos,
+                      isLeft ? textEdge + GAP : textEdge - GAP
+                    )
+                  : shortenTowards(geometry.center, iconPos, (iconPos.r ?? 22) + 3);
               const d = buildPath(geometry.center, endPos);
               return (
                 <g key={i}>
@@ -250,6 +291,7 @@ export function DashboardHub({ datasets, qualityScore, kpis, onInspectKpi }: Das
               align="left"
               delay={0.5 + i * 0.12}
               iconRef={(el) => (leftIconRefs.current[i] = el)}
+              textRef={(el) => (leftTextRefs.current[i] = el)}
             />
           ))}
         </div>
@@ -276,6 +318,7 @@ export function DashboardHub({ datasets, qualityScore, kpis, onInspectKpi }: Das
               align="right"
               delay={0.5 + (i + leftNodes.length) * 0.12}
               iconRef={(el) => (rightIconRefs.current[i] = el)}
+              textRef={(el) => (rightTextRefs.current[i] = el)}
             />
           ))}
         </div>
@@ -290,11 +333,15 @@ function HubNode({
   align,
   delay,
   iconRef,
+  textRef,
 }: {
   node: Node;
   align: "left" | "right";
   delay: number;
   iconRef: (el: HTMLDivElement | null) => void;
+  /** The label block. Lines end at its near edge, so the text is never
+   *  something a connector has to pass underneath. */
+  textRef?: (el: HTMLDivElement | null) => void;
 }) {
   const Icon = node.icon;
   const clickable = !!node.onInspect;
@@ -338,7 +385,7 @@ function HubNode({
       >
         <Icon className="w-5 h-5 text-white" strokeWidth={2.25} />
       </div>
-      <div className="min-w-0">
+      <div ref={textRef} className="min-w-0">
         <p className="text-xs text-foreground/60 truncate max-w-[140px]">{node.label}</p>
         <p className="text-sm font-semibold text-foreground truncate max-w-[140px]">{node.value}</p>
         {clickable && (
