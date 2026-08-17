@@ -98,6 +98,132 @@ async def get_session_messages(session_id: str, current_user: dict = Depends(get
     return [_row_to_message(r) for r in rows]
 
 
+# Only a read may be replayed. The SQL being re-run was written by the model,
+# and although it already ran once when the answer was produced, "it ran before"
+# is not a reason to run anything again unchecked. Anything that is not a plain
+# SELECT or a CTE ending in one is refused rather than sanitised, because a
+# rewrite that is nearly right is worse than a refusal.
+_READ_ONLY_PREFIXES = ("select", "with")
+_FORBIDDEN_SQL = (
+    "insert", "update", "delete", "drop", "alter", "create", "attach",
+    "copy", "export", "install", "load", "pragma", "call", "truncate",
+)
+
+
+def _is_read_only(sql: str) -> bool:
+    stripped = " ".join((sql or "").strip().lower().split())
+    if not stripped.startswith(_READ_ONLY_PREFIXES):
+        return False
+    # A statement separator means there is more than one statement, and only the
+    # first was inspected. Trailing semicolons are fine.
+    if ";" in stripped.rstrip(";"):
+        return False
+    return not any(f" {word} " in f" {stripped} " for word in _FORBIDDEN_SQL)
+
+
+@router.get("/messages/{message_id}/provenance")
+async def get_message_provenance(
+    message_id: str,
+    limit: int = 50,
+    current_user: dict = Depends(get_current_user),
+):
+    """The queries behind one AI answer, re-run, with the rows they return.
+
+    A figure the assistant states in prose is exactly the kind a reader cannot
+    check, which is the reason this exists: the same promise the dashboard
+    drilldown makes, kept in the one place the number arrives with the least
+    evidence attached. The SQL is re-executed rather than replayed from a cached
+    result, so what is shown is what the data says now, not what it said when
+    the answer was written - and if those differ, that is worth seeing.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    # Scoped by user_id, not just message id: a message id is guessable and
+    # would otherwise expose another account's queries and rows.
+    cursor.execute(
+        "SELECT id, role, executed_sql, created_at FROM chat_messages WHERE id = %s AND user_id = %s",
+        (message_id, current_user["id"]),
+    )
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        raise HTTPException(status_code=404, detail="Message not found")
+
+    raw = row["executed_sql"]
+    statements = raw if isinstance(raw, list) else (json.loads(raw) if raw else [])
+    if not statements:
+        raise HTTPException(
+            status_code=404,
+            detail="This answer was not computed from your data, so there is nothing to show.",
+        )
+
+    dataset_info = get_active_dataset(current_user["id"])
+    if not dataset_info:
+        raise HTTPException(status_code=400, detail="No active dataset")
+
+    filename_db = dataset_info.get("filepath")
+    filepath = get_dataset_path(filename_db) if filename_db else None
+    if not filepath or not os.path.exists(filepath):
+        raise HTTPException(status_code=400, detail="Dataset file is no longer available")
+
+    fmt = "csv"
+    if filepath.endswith(".parquet"):
+        fmt = "parquet"
+    elif filepath.endswith(".json"):
+        fmt = "json"
+
+    engine = DuckDBEngine()
+    try:
+        engine.register_dataset("active_dataset", filepath, format=fmt)
+
+        capped = max(1, min(limit, 200))
+        queries = []
+        for sql in statements:
+            if not _is_read_only(sql):
+                queries.append({
+                    "sql": sql,
+                    "columns": [],
+                    "rows": [],
+                    "row_count": 0,
+                    "truncated": False,
+                    "error": "Refused: only read queries are re-run here.",
+                })
+                continue
+            try:
+                result = engine.execute(sql)
+                rows = result.get("rows", [])
+                queries.append({
+                    "sql": sql,
+                    "columns": [c["name"] for c in result.get("schema", [])],
+                    "rows": rows[:capped],
+                    "row_count": len(rows),
+                    "truncated": len(rows) > capped,
+                    "error": None,
+                })
+            except HTTPException as exc:
+                # The engine raises HTTPException on a bad query. One statement
+                # failing should not lose the others, so it is reported in place.
+                queries.append({
+                    "sql": sql,
+                    "columns": [],
+                    "rows": [],
+                    "row_count": 0,
+                    "truncated": False,
+                    "error": str(exc.detail),
+                })
+    finally:
+        engine.close()
+
+    return {
+        "message_id": message_id,
+        "dataset_name": dataset_info.get("name") or dataset_info.get("filename"),
+        "answered_at": row["created_at"],
+        "queries": queries,
+        "replayed_at": datetime.utcnow().isoformat() + "Z",
+    }
+
+
 @router.patch("/sessions/{session_id}")
 async def update_session(session_id: str, data: dict = Body(...), current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
@@ -167,13 +293,18 @@ async def chat(request: ChatRequest, current_user: dict = Depends(get_current_us
     conn.commit()
 
     def save_message(role, content, executed_sql=None, chart_config=None, trace_id=None):
+        """Returns the id it wrote, so the answer can be handed back with a
+        handle the caller can use to ask how it was computed. Without it a
+        freshly received answer is the one thing on screen that cannot be
+        checked, which is exactly backwards."""
+        message_id = f"msg_{uuid.uuid4().hex[:8]}"
         cursor.execute(
             """
             INSERT INTO chat_messages (id, session_id, user_id, role, content, executed_sql, chart_config, trace_id, created_at)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             """,
             (
-                f"msg_{uuid.uuid4().hex[:8]}",
+                message_id,
                 session_id,
                 user_id,
                 role,
@@ -185,14 +316,18 @@ async def chat(request: ChatRequest, current_user: dict = Depends(get_current_us
             ),
         )
         conn.commit()
+        return message_id
 
     save_message("user", request.message)
 
     def finish(response_text, executed_sql=None, chart_config=None, trace_id=None):
-        save_message("ai", response_text, executed_sql=executed_sql, chart_config=chart_config, trace_id=trace_id)
+        message_id = save_message(
+            "ai", response_text, executed_sql=executed_sql, chart_config=chart_config, trace_id=trace_id
+        )
         conn.close()
         return {
             "response": response_text,
+            "message_id": message_id,
             "executed_sql": executed_sql or [],
             "chart_config": chart_config,
             "trace_id": trace_id,

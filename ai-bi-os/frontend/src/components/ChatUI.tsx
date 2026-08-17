@@ -10,13 +10,13 @@ const ChatMessageChart = dynamic(() => import("@/components/chat/ChatMessageChar
   loading: () => <div className="mt-3 h-64 w-full animate-pulse rounded-[20px] glass-panel" />,
 });
 
-import { Bot, Send, Database, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { Bot, Send, Database, Loader2, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ChatSessionSidebar } from "@/components/chat/ChatSessionSidebar";
-import type { ChatMessage } from "@/lib/types";
+import type { ChatMessage, ChatProvenance } from "@/lib/types";
 
 // ─── Page-level entrance variants ───────────────────────────────────────────────
 const containerVariants = {
@@ -186,11 +186,159 @@ interface Message {
   instant?: boolean;
 }
 
+/**
+ * Lets a figure stated in prose be checked, which is the one place a number
+ * arrives with the least evidence attached.
+ *
+ * Pressing this re-runs the answer's queries against the dataset as it is right
+ * now rather than replaying a stored result. That is deliberate: a cached
+ * result could only ever confirm itself, and if the data has moved since the
+ * answer was written, that is the single most useful thing a reader could
+ * learn. The SQL is shown whether or not it can be re-run, so an answer stays
+ * inspectable even when the dataset it was written against is gone.
+ */
+const AnswerProvenance: React.FC<{ messageId?: string; sql: string[] }> = ({
+  messageId,
+  sql,
+}) => {
+  const [open, setOpen] = useState(false);
+  const [data, setData] = useState<ChatProvenance | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const toggle = async () => {
+    if (open) {
+      setOpen(false);
+      return;
+    }
+    setOpen(true);
+    if (data || !messageId) return;
+    setLoading(true);
+    setError(null);
+    try {
+      setData(await chatApi.provenance(messageId));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not re-run these queries.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="mt-3">
+      <button
+        onClick={toggle}
+        className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <Database size={12} />
+        {open ? "Hide the working" : "Check this answer"}
+      </button>
+
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{
+              height: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
+              opacity: { duration: 0.22 },
+            }}
+            className="overflow-hidden"
+          >
+            <div className="mt-3 space-y-3">
+              {loading && (
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Loader2 size={12} className="animate-spin" />
+                  Re-running against your data…
+                </div>
+              )}
+
+              {error && (
+                <div className="rounded-lg border border-error/25 bg-error/10 p-3 text-xs leading-relaxed text-error">
+                  {error}
+                </div>
+              )}
+
+              {/* Falls back to the statements alone when there is no id to ask
+                  with — an answer from before this session was saved, or one
+                  still in flight. Better than hiding the control entirely. */}
+              {(data?.queries ?? sql.map((s) => ({
+                sql: s,
+                columns: [],
+                rows: [],
+                row_count: 0,
+                truncated: false,
+                error: null,
+              }))).map((q, i) => (
+                <div key={i} className="overflow-hidden rounded-xl border border-border/60 bg-surface/30">
+                  <pre className="overflow-x-auto border-b border-border/40 bg-[#0a0a0a] p-3 text-[11px] leading-relaxed text-[#d4d4d4]">
+                    <code>{q.sql}</code>
+                  </pre>
+
+                  {q.error ? (
+                    <p className="p-3 text-[11px] leading-relaxed text-warning">{q.error}</p>
+                  ) : q.rows.length > 0 ? (
+                    <>
+                      <div className="max-h-64 overflow-auto">
+                        <table className="w-full min-w-max text-left text-[11px]">
+                          <thead className="sticky top-0 bg-surface/80 backdrop-blur">
+                            <tr>
+                              {q.columns.map((c) => (
+                                <th key={c} className="whitespace-nowrap px-3 py-2 font-medium text-muted-foreground">
+                                  {c}
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {q.rows.map((row, ri) => (
+                              <tr key={ri} className="border-t border-border/25">
+                                {q.columns.map((c) => (
+                                  <td key={c} className="whitespace-nowrap px-3 py-1.5 text-foreground/90 tabular-metrics">
+                                    {row[c] === null || row[c] === undefined ? (
+                                      <span className="text-muted-foreground/50">empty</span>
+                                    ) : (
+                                      String(row[c])
+                                    )}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                      <p className="border-t border-border/40 px-3 py-2 text-[11px] text-muted-foreground">
+                        {q.truncated
+                          ? `Showing ${q.rows.length} of ${q.row_count} rows`
+                          : `${q.row_count} row${q.row_count === 1 ? "" : "s"}`}
+                      </p>
+                    </>
+                  ) : data ? (
+                    <p className="p-3 text-[11px] text-muted-foreground">This query returned no rows.</p>
+                  ) : null}
+                </div>
+              ))}
+
+              {data && (
+                <p className="text-[11px] text-muted-foreground/70">
+                  Re-run just now against {data.dataset_name ?? "your active dataset"}. If a
+                  figure above disagrees with the answer, the data has changed since it was
+                  written.
+                </p>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
 const AIMessageBubble: React.FC<{ msg: Message; onTyping?: () => void }> = ({
   msg,
   onTyping,
 }) => {
-  const [showSql, setShowSql] = useState(false);
   const [isTyping, setIsTyping] = useState(!msg.instant);
 
   return (
@@ -252,22 +400,7 @@ const AIMessageBubble: React.FC<{ msg: Message; onTyping?: () => void }> = ({
           )}
 
         {msg.executedSql && msg.executedSql.length > 0 && (
-          <div className="mt-2">
-            <button
-              onClick={() => setShowSql(!showSql)}
-              className="text-xs text-muted-foreground hover:text-foreground font-medium flex items-center gap-1.5 transition-colors"
-            >
-              <Database size={12} />
-              {showSql ? "Hide Database Query" : "View Executed SQL"}
-            </button>
-            {showSql && (
-              <div className="mt-3 p-4 bg-[#0a0a0a] border border-border rounded-lg overflow-x-auto">
-                <pre className="text-xs text-[#d4d4d4] font-mono leading-relaxed">
-                  <code>{msg.executedSql.join("\n\n")}</code>
-                </pre>
-              </div>
-            )}
-          </div>
+          <AnswerProvenance messageId={msg.id} sql={msg.executedSql} />
         )}
       </div>
     </div>
@@ -359,6 +492,9 @@ export const ChatUI: React.FC = () => {
       setMessages((prev) => [
         ...prev,
         {
+          // Carried through so the answer just received can be checked without
+          // reloading the conversation first.
+          id: data.message_id,
           role: "ai",
           content: data.response,
           chartConfig: data.chart_config ?? undefined,

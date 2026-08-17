@@ -392,6 +392,14 @@ export const shareApi = {
       "/api/v1/share/mine"
     ),
   revoke: (token: string) => api.delete(`/api/v1/share/${token}`),
+  /** The rows behind one figure on a shared dashboard. POST with the password
+   *  in the body for the same reason the dashboard itself does: a query string
+   *  ends up in server logs, history and Referer headers. */
+  provenance: (token: string, kpiId: string, password?: string | null) =>
+    api.post<import("./types").KpiProvenance>(`/api/v1/share/${token}/provenance`, {
+      kpi_id: kpiId,
+      ...(password ? { password } : {}),
+    }),
 };
 
 
@@ -472,6 +480,11 @@ export const chatApi = {
   rename: (sessionId: string, title: string) =>
     api.patch<{ success: boolean }>(`/api/v1/chat/sessions/${sessionId}`, { title }),
   delete: (sessionId: string) => api.delete<{ success: boolean }>(`/api/v1/chat/sessions/${sessionId}`),
+  /** The queries behind one answer, re-run now against the active dataset. */
+  provenance: (messageId: string, limit = 50) =>
+    api.get<import("./types").ChatProvenance>(
+      `/api/v1/chat/messages/${messageId}/provenance?limit=${limit}`
+    ),
 };
 
 // Recommendations (Module 15)

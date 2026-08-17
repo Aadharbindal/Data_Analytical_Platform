@@ -13,6 +13,10 @@ interface MetricCardProps {
   trendDown?: boolean;
   index?: number;
   type?: string;
+  /** Makes the card a button that opens its drilldown. Optional so the callers
+   *  that only display a figure are unchanged - a card with nothing behind it
+   *  should not look or behave as though it has. */
+  onInspect?: () => void;
 }
 
 const THEMES = [
@@ -68,7 +72,7 @@ export function getMetricTheme(type: string | undefined, index: number) {
   return THEMES[themeIndex];
 }
 
-export function MetricCard({ title, value, trend, trendDown = false, index = 0, type }: MetricCardProps) {
+export function MetricCard({ title, value, trend, trendDown = false, index = 0, type, onInspect }: MetricCardProps) {
   const theme = getMetricTheme(type, index);
   const Icon = theme.icon;
   const delayMs = 150 + index * 110;
@@ -78,7 +82,25 @@ export function MetricCard({ title, value, trend, trendDown = false, index = 0, 
       whileHover={{ y: -2, scale: 1.01 }}
       whileTap={{ scale: 0.98 }}
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
-      className="group h-full relative overflow-hidden rounded-[20px]"
+      onClick={onInspect}
+      // A real button role and key handling rather than a click handler on a
+      // div: this is the control that lets someone check the figure, and it
+      // should be reachable without a mouse.
+      role={onInspect ? "button" : undefined}
+      tabIndex={onInspect ? 0 : undefined}
+      onKeyDown={
+        onInspect
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onInspect();
+              }
+            }
+          : undefined
+      }
+      className={`group h-full relative overflow-hidden rounded-[20px] ${
+        onInspect ? "cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60" : ""
+      }`}
     >
       <Card className="glass-card relative overflow-hidden h-full flex flex-col transition-all hover:bg-surface/50 border border-border/50 rounded-[20px]">
         {/* Glow Sweep */}

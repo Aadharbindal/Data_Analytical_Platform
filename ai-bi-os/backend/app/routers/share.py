@@ -9,9 +9,38 @@ from app.core.database import get_db_connection
 from app.core.security import get_current_user, hash_password, verify_password
 from app.routers.auth import limiter
 from app.services.data_processing import get_active_dataset, get_dataframe
-from app.services.stats_service import compute_kpis
+from app.services.stats_service import compute_kpis, resolve_kpi_provenance
 
 router = APIRouter()
+
+
+def _resolve_share(cursor, token: str, password: Optional[str]) -> tuple:
+    """Validate a share token, its expiry and its password, returning the
+    dataset and owner it points at.
+
+    Shared by the dashboard and its drilldown so the two can never disagree
+    about who is allowed in: a drilldown that checked the token but forgot the
+    password would hand the underlying rows to anyone holding the link, which
+    is a worse leak than the dashboard it sits behind.
+    """
+    cursor.execute(
+        "SELECT dataset_id, user_id, password_hash, expires_at FROM shared_links WHERE token=%s",
+        (token,),
+    )
+    row = cursor.fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail="This share link is invalid or has been revoked.")
+
+    if row["expires_at"] and datetime.now().isoformat() > row["expires_at"]:
+        raise HTTPException(status_code=410, detail="This share link has expired.")
+
+    if row["password_hash"]:
+        if not password:
+            raise HTTPException(status_code=401, detail={"error": "password_required"})
+        if not verify_password(password, row["password_hash"]):
+            raise HTTPException(status_code=401, detail={"error": "incorrect_password"})
+
+    return row["dataset_id"], row["user_id"]
 
 
 @router.post("/create")
@@ -159,31 +188,11 @@ async def get_shared_dashboard_data(
     """
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute(
-        "SELECT dataset_id, user_id, password_hash, expires_at FROM shared_links WHERE token=%s",
-        (token,)
-    )
-    row = cursor.fetchone()
-    if not row:
+    try:
+        dataset_id, owner_id = _resolve_share(cursor, token, data.get("password"))
+    except HTTPException:
         conn.close()
-        raise HTTPException(status_code=404, detail="This share link is invalid or has been revoked.")
-
-    dataset_id, owner_id, password_hash, expires_at = (
-        row["dataset_id"], row["user_id"], row["password_hash"], row["expires_at"]
-    )
-
-    if expires_at and datetime.now().isoformat() > expires_at:
-        conn.close()
-        raise HTTPException(status_code=410, detail="This share link has expired.")
-
-    if password_hash:
-        supplied = data.get("password")
-        if not supplied:
-            conn.close()
-            raise HTTPException(status_code=401, detail={"error": "password_required"})
-        if not verify_password(supplied, password_hash):
-            conn.close()
-            raise HTTPException(status_code=401, detail={"error": "incorrect_password"})
+        raise
 
     cursor.execute(
         "UPDATE shared_links SET view_count = view_count + 1, last_viewed_at = %s WHERE token = %s",
@@ -236,4 +245,112 @@ async def get_shared_dashboard_data(
         "kpis": kpi_data.get("kpis", []),
         "chart_data": kpi_data.get("chart_data", []),
         "insights": insights,
+    }
+
+
+@router.post("/{token}/provenance")
+@limiter.limit("10/minute")
+async def get_shared_kpi_provenance(
+    request: Request,
+    token: str,
+    data: dict = Body(default={}),
+):
+    """The rows behind one figure on a shared dashboard, and that figure
+    recomputed from exactly those rows.
+
+    The person holding a share link is the one with the least reason to take a
+    number on trust: they did not build the dashboard, cannot see the data, and
+    in most cases do not have an account. Giving the owner a drilldown and the
+    recipient none puts the check in the one place it is least needed.
+
+    Same token, expiry and password gate as the dashboard itself, and the same
+    per-IP limit, since this reads the underlying rows.
+    """
+    kpi_id = data.get("kpi_id")
+    if not kpi_id:
+        raise HTTPException(status_code=400, detail="kpi_id is required")
+
+    limit = max(1, min(int(data.get("limit", 50)), 200))
+    offset = max(0, int(data.get("offset", 0)))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        dataset_id, owner_id = _resolve_share(cursor, token, data.get("password"))
+        cursor.execute(
+            "SELECT name, semantic_dict FROM datasets WHERE id=%s AND user_id=%s",
+            (dataset_id, owner_id),
+        )
+        ds_row = cursor.fetchone()
+    finally:
+        conn.close()
+
+    if not ds_row:
+        raise HTTPException(status_code=404, detail="The shared dataset is no longer available.")
+
+    semantic_raw = ds_row["semantic_dict"]
+    semantic_dict = None
+    if semantic_raw:
+        semantic_dict = semantic_raw if isinstance(semantic_raw, (dict, list)) else json.loads(semantic_raw)
+
+    df = get_dataframe(dataset_id, owner_id)
+    if df is None:
+        raise HTTPException(status_code=404, detail="The shared dataset is no longer available.")
+
+    prov = resolve_kpi_provenance(df, semantic_dict, kpi_id)
+    if not prov:
+        raise HTTPException(status_code=404, detail="No provenance for this metric")
+
+    col, op, mask = prov["column"], prov["aggregation"], prov["mask"]
+    used = df[mask]
+    rows_used, rows_total = int(len(used)), int(len(df))
+
+    # Recomputed from the contributing rows with the same aggregation
+    # compute_kpis applied, so the viewer can hold it against the card.
+    recomputed = None
+    try:
+        if op == "sum":
+            recomputed = float(used[col].sum())
+        elif op == "mean":
+            recomputed = float(used[col].mean())
+        elif op == "nunique":
+            recomputed = float(used[col].nunique())
+        elif op == "count":
+            recomputed = float(rows_used)
+        elif op == "percent":
+            healthy = (semantic_dict or {}).get("business_terminology", {}).get("status_healthy_regex", "")
+            s = used[col].astype(str)
+            recomputed = (
+                float(s.str.contains(healthy, case=False, na=False).sum() / len(used) * 100)
+                if len(used)
+                else 0.0
+            )
+    except Exception:
+        recomputed = None
+
+    if recomputed is not None:
+        recomputed = round(recomputed, 1 if op == "percent" else 2)
+
+    ordered = [col] + [c for c in df.columns if c != col]
+    page = used.iloc[offset : offset + limit][ordered]
+    records = json.loads(page.to_json(orient="records", date_format="iso"))
+
+    excluded = rows_total - rows_used
+    return {
+        "kpi_id": kpi_id,
+        "column": col,
+        "aggregation": op,
+        "formula": prov["formula"],
+        "note": prov["note"],
+        "rows_used": rows_used,
+        "rows_total": rows_total,
+        "excluded": excluded,
+        "excluded_reason": (
+            f"{excluded} row{'s' if excluded != 1 else ''} left out because {col} is empty"
+            if excluded > 0
+            else None
+        ),
+        "recomputed_value": recomputed,
+        "columns": list(page.columns),
+        "rows": records,
     }

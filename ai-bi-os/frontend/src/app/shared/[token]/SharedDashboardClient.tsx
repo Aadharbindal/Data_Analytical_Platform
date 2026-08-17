@@ -6,13 +6,23 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { BarChart3, Loader2, ShieldAlert, Lock, ArrowRight, Clock } from "lucide-react";
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { InsightPanel } from "@/components/dashboard/InsightPanel";
-import { BASE_URL } from "@/lib/api";
+import { BASE_URL, shareApi } from "@/lib/api";
+import { KpiProvenanceDialog } from "@/components/dashboard/KpiProvenanceDialog";
 import { formatKpiValue } from "@/lib/utils";
 
 interface SharedData {
   dataset_name: string;
   row_count: number;
-  kpis: { name: string; value: number; trend?: number; type?: string }[];
+  kpis: {
+    id?: string;
+    name: string;
+    value: number;
+    trend?: number;
+    type?: string;
+    /** Present when this figure can be taken apart. compute_kpis already
+     *  attaches it; the type simply never said so. */
+    provenance?: { column?: string; formula?: string } | null;
+  }[];
   chart_data: { name: string; value: number | null; forecast?: number | null }[];
   insights: { title: string; description: string; impact: string | number | null; confidence: number; category: string }[];
 }
@@ -61,6 +71,12 @@ export function SharedDashboardClient({ token }: { token: string }) {
   const [state, setState] = useState<ViewState>({ kind: "loading" });
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [inspecting, setInspecting] = useState<{
+    id: string;
+    name: string;
+    value: number;
+    type?: string;
+  } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -167,6 +183,9 @@ export function SharedDashboardClient({ token }: { token: string }) {
     value: formatKpiValue(k.value, k.type),
     trend: k.trend !== undefined && k.trend !== null ? `${k.trend > 0 ? "+" : ""}${k.trend.toFixed(1)}%` : "–",
     trendDown: (k.trend ?? 0) < 0,
+    // Only offered where there is something behind it. A card that opens an
+    // empty drilldown is worse than one that never invited the click.
+    kpi: k.id && k.provenance ? k : null,
   }));
 
   return (
@@ -192,7 +211,18 @@ export function SharedDashboardClient({ token }: { token: string }) {
       >
         <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 sm:gap-6 md:grid-cols-4">
           {metricCards.length > 0 ? (
-            metricCards.map((card, idx) => <MetricCard key={card.title} index={idx} {...card} />)
+            metricCards.map(({ kpi, ...card }, idx) => (
+              <MetricCard
+                key={card.title}
+                index={idx}
+                {...card}
+                onInspect={
+                  kpi
+                    ? () => setInspecting({ id: kpi.id as string, name: kpi.name, value: kpi.value, type: kpi.type })
+                    : undefined
+                }
+              />
+            ))
           ) : (
             <div className="col-span-full text-sm text-muted-foreground">No metrics available for this dataset.</div>
           )}
@@ -243,9 +273,23 @@ export function SharedDashboardClient({ token }: { token: string }) {
         )}
 
         <p className="text-center text-xs text-muted-foreground/60 pt-4 pb-8">
-          This is a read-only view shared by the dataset owner. Powered by Numerate.
+          This is a read-only view shared by the dataset owner. Every figure above can be
+          opened to see the rows behind it. Powered by Numerate.
         </p>
       </motion.div>
+
+      {/* The same dialog the owner gets, pointed at the public endpoint. The
+          password is carried through because the drilldown reads the underlying
+          rows and has to clear the same gate the dashboard did. */}
+      <KpiProvenanceDialog
+        kpiId={inspecting?.id ?? null}
+        kpiName={inspecting?.name ?? ""}
+        cardValue={inspecting?.value}
+        kpiType={inspecting?.type}
+        onClose={() => setInspecting(null)}
+        cacheKey={`share:${token}`}
+        fetcher={(kpiId) => shareApi.provenance(token, kpiId, password || null)}
+      />
     </div>
   );
 }

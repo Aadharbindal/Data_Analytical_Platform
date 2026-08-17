@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { analyticsApi } from "@/lib/api";
 import { formatKpiValue } from "@/lib/utils";
+import type { KpiProvenance } from "@/lib/types";
 
 interface Props {
   kpiId: string | null;
@@ -21,6 +22,15 @@ interface Props {
   cardValue?: number;
   kpiType?: string;
   onClose: () => void;
+  /** How to fetch the drilldown. Defaults to the signed-in endpoint; the public
+   *  shared dashboard passes its own, which goes through the share token and
+   *  its password instead. One dialog either way — a second implementation for
+   *  the public view is how the two would end up explaining the same figure
+   *  differently. */
+  fetcher?: (kpiId: string) => Promise<KpiProvenance>;
+  /** Distinguishes the two callers' caches, so a public drilldown and a private
+   *  one for the same kpi id are never served from each other's entry. */
+  cacheKey?: string;
 }
 
 function cell(v: unknown): string {
@@ -29,10 +39,18 @@ function cell(v: unknown): string {
   return String(v);
 }
 
-export function KpiProvenanceDialog({ kpiId, kpiName, cardValue, kpiType, onClose }: Props) {
+export function KpiProvenanceDialog({
+  kpiId,
+  kpiName,
+  cardValue,
+  kpiType,
+  onClose,
+  fetcher,
+  cacheKey = "private",
+}: Props) {
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["kpi-provenance", kpiId],
-    queryFn: () => analyticsApi.kpiProvenance(kpiId as string),
+    queryKey: ["kpi-provenance", cacheKey, kpiId],
+    queryFn: () => (fetcher ?? analyticsApi.kpiProvenance)(kpiId as string),
     enabled: !!kpiId,
     staleTime: 5 * 60 * 1000,
   });

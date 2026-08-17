@@ -363,11 +363,32 @@ export interface ChatMessage {
 
 export interface ChatResponse {
   response: string;
+  /** Handle for asking how this answer was computed. */
+  message_id: string;
   executed_sql: string[];
   chart_config?: ChatChartConfig | null;
   trace_id?: string | null;
   session_id: string;
   is_new_session: boolean;
+}
+
+/** One query behind an answer, re-run. `error` is set instead of rows when the
+ *  statement was refused as a non-read or failed against the data as it is now. */
+export interface ChatProvenanceQuery {
+  sql: string;
+  columns: string[];
+  rows: Record<string, unknown>[];
+  row_count: number;
+  truncated: boolean;
+  error: string | null;
+}
+
+export interface ChatProvenance {
+  message_id: string;
+  dataset_name: string | null;
+  answered_at: string;
+  queries: ChatProvenanceQuery[];
+  replayed_at: string;
 }
 
 export interface TrendData {
