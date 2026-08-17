@@ -133,8 +133,7 @@ def get_metric_series(user_id: str, dataset_id: str, metric: Optional[str], peri
     # every MoM rule.
     from app.services.stats_service import find_column, to_datetime_safe, is_non_additive
 
-    # A sweep over many rules must not die on one unreadable dataset.
-    df = get_dataframe(dataset_id, user_id, raise_if_missing=False)
+    df = get_dataframe(dataset_id, user_id)
     if df is None or not metric or metric not in df.columns or not pd.api.types.is_numeric_dtype(df[metric]):
         return []
 
@@ -175,9 +174,7 @@ def evaluate_and_persist_rules(user_id: str, dataset_id: str) -> list[dict]:
 
     from app.services.data_processing import get_dataframe
 
-    # Each rule already records its own "ERROR (No Data)" status below, which
-    # is a truthful result for the run - better than aborting the whole sweep.
-    df = get_dataframe(dataset_id, user_id, raise_if_missing=False)
+    df = get_dataframe(dataset_id, user_id)
     now = datetime.utcnow().isoformat()
 
     for rule in rules:

@@ -9,8 +9,6 @@ import { ShareDialog } from "./dashboard/ShareDialog";
 import { CustomizeDashboardModal } from "./dashboard/CustomizeDashboardModal";
 import { useAuth } from "@/context/AuthContext";
 import { useLayoutStore } from "@/hooks/useLayoutStore";
-import { ErrorState, detectErrorType } from "@/components/ui/error-state";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 const FALLBACK_CHART_DATA = [
@@ -30,19 +28,12 @@ const FALLBACK_CHART_DATA = [
 
 export const Dashboard: React.FC = () => {
   const { user } = useAuth();
-  const router = useRouter();
   const { setWelcomeActive } = useLayoutStore();
   
-  const { data: analytics, isLoading: analyticsLoading, error: analyticsError } = useQuery({
+  const { data: analytics, isLoading: analyticsLoading } = useQuery({
     queryKey: ["analytics-kpis"],
     queryFn: () => analyticsApi.kpis(),
   });
-
-  // The dataset is still selected and still named in the header, but the file
-  // behind it is gone. Every card below would otherwise render its empty
-  // fallback — a ₹0 total and "No data for this period" — which reads as a
-  // finding about the business rather than a missing file.
-  const datasetFileMissing = detectErrorType(analyticsError) === "dataset_missing";
 
   const { data: insights, isLoading: insightsLoading } = useQuery({
     queryKey: ["insights"],
@@ -87,24 +78,6 @@ export const Dashboard: React.FC = () => {
       : FALLBACK_CHART_DATA;
 
   const kpis = analytics?.kpis ?? [];
-
-  if (datasetFileMissing) {
-    // Shown instead of the grid, not above it. Leaving the cards on screen
-    // would keep a wrong number visible next to the explanation, and the
-    // number is what people read.
-    return (
-      <ErrorState
-        errorType="dataset_missing"
-        message={
-          activeDataset?.name
-            ? `The file behind "${activeDataset.name}" is no longer on the server, so nothing can be computed from it. Upload it again to bring this dashboard back.`
-            : undefined
-        }
-        onRetry={() => router.push("/datasets")}
-        actionLabel="Go to Datasets"
-      />
-    );
-  }
 
   return (
     <div className="flex flex-col gap-6">

@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { datasetsApi, analyticsApi, insightsApi, BASE_URL } from "@/lib/api";
+import { datasetsApi, BASE_URL } from "@/lib/api";
 import type { Dataset, DatasetVersionEntry } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
@@ -87,19 +87,6 @@ function UploadZone({ onSuccess, onRedirect }: { onSuccess: () => void, onRedire
         formData.append("force", "true");
       }
       const res = await datasetsApi.upload(formData);
-
-      // The dataset was already on record but its file had gone missing, and
-      // this upload put it back. There is no background job to follow: the
-      // repair already happened, so go straight to done.
-      if (res.status === "restored" || !res.job_id) {
-        setUploadProgress({ filename: file.name, status: "done", currentStep: res.message ?? "Restored", progress: 100 });
-        setTimeout(() => {
-          setUploadProgress(null);
-          onSuccess();
-          if (onRedirect) onRedirect();
-        }, 2000);
-        return;
-      }
       setUploadProgress({ filename: file.name, status: "processing", jobId: res.job_id, currentStep: "Initializing", progress: 0 });
 
       const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
@@ -576,16 +563,6 @@ export default function DatasetsPage() {
           // refresh. Match the activate-mutation's behavior: invalidate
           // everything.
           qc.invalidateQueries();
-
-          // Then pull the dashboard's two slowest queries now, while the user
-          // is still looking at this page. Invalidating only marks them stale;
-          // nothing fetches until the dashboard mounts, so without this the
-          // click onto the dashboard is where the whole wait happens. These
-          // two are the ones worth the head start -- the KPI computation and
-          // the AI summary. If either fails it is ignored: this is a head
-          // start, and the dashboard will ask again for itself.
-          qc.prefetchQuery({ queryKey: ["analytics-kpis"], queryFn: () => analyticsApi.kpis() });
-          qc.prefetchQuery({ queryKey: ["executiveSummary"], queryFn: () => insightsApi.executiveSummary() });
         }}
         onRedirect={() => router.push("/analytics")}
       />

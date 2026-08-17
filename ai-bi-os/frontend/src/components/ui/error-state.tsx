@@ -1,11 +1,10 @@
-import { AlertTriangle, RefreshCw, WifiOff, Lock, Database, Clock, ShieldAlert, ServerCrash, FileX } from "lucide-react";
+import { AlertTriangle, RefreshCw, WifiOff, Lock, Database, Clock, ShieldAlert, ServerCrash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type ErrorType =
   | "backend_offline"
   | "auth_error"
   | "no_data"
-  | "dataset_missing"
   | "timeout"
   | "validation"
   | "permission_denied"
@@ -17,10 +16,6 @@ interface ErrorStateProps {
   message?: string;
   errorType?: ErrorType;
   onRetry?: () => void;
-  /** Label for the action button. Defaults to "Retry" -- override it when the
-   *  button does something other than run the same request again, so it does
-   *  not promise a retry that would fail the same way. */
-  actionLabel?: string;
   developerDetails?: string; // shown only in development
 }
 
@@ -44,17 +39,6 @@ const errorConfig: Record<
     defaultTitle: "No Data Available",
     defaultMessage:
       "There is no data for this view yet. Try uploading a dataset first.",
-  },
-  // Distinct from no_data on purpose. "No data yet" invites you to wait or
-  // look elsewhere; this one means the file behind a dataset you already
-  // uploaded is gone and only re-uploading brings it back. Saying "no data"
-  // here — or worse, quietly rendering a zero — would let someone read a
-  // missing file as a real business result.
-  dataset_missing: {
-    icon: <FileX className="h-6 w-6 text-warning" />,
-    defaultTitle: "This dataset's file is missing",
-    defaultMessage:
-      "The file behind this dataset is no longer on the server, so nothing can be computed from it. Please upload it again.",
   },
   timeout: {
     icon: <Clock className="h-6 w-6 text-warning" />,
@@ -96,9 +80,6 @@ function detectErrorType(error?: unknown): ErrorType {
     return "backend_offline";
   if (msg.includes("401") || msg.includes("unauthorized")) return "auth_error";
   if (msg.includes("403") || msg.includes("forbidden")) return "permission_denied";
-  // Checked before 404/"not found": a 410 is a different statement. The
-  // resource was here, we know it was here, and it is gone.
-  if (msg.includes("410") || msg.includes("no longer on the server")) return "dataset_missing";
   if (msg.includes("timeout") || msg.includes("aborted")) return "timeout";
   if (msg.includes("422") || msg.includes("validation")) return "validation";
   if (msg.includes("500") || msg.includes("server error")) return "server_error";
@@ -111,7 +92,6 @@ export function ErrorState({
   message,
   errorType = "generic",
   onRetry,
-  actionLabel,
   developerDetails,
 }: ErrorStateProps) {
   const config = errorConfig[errorType];
@@ -135,8 +115,8 @@ export function ErrorState({
           className="mt-5 gap-2"
           onClick={onRetry}
         >
-          {actionLabel ? null : <RefreshCw className="h-4 w-4" />}
-          {actionLabel ?? "Retry"}
+          <RefreshCw className="h-4 w-4" />
+          Retry
         </Button>
       )}
       {isDev && developerDetails && (

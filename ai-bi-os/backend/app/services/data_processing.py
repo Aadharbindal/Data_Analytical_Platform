@@ -164,107 +164,20 @@ def find_duplicate_dataset(content_hash: str, user_id: str) -> Optional[dict]:
 
 from app.core.config import DATA_DIR, DB_PATH
 
-import logging
-
-from fastapi import HTTPException
-
-from app.core.error_tracking import capture, capture_message
-from app.services import file_store
 from app.services.storage import s3_manager
-
-logger = logging.getLogger(__name__)
 
 def get_dataset_path(filename: str, skip_s3_download: bool = False) -> str:
     """Returns the absolute path to the dataset file based on its basename.
-
-    The local disk is a cache, not the record: this host wipes it on every
-    restart and deploy. So a file that is missing here is restored from the
-    database, which is where uploads are durably kept. Object storage is tried
-    after that, for files uploaded before the database became the record.
-
-    `skip_s3_download` is honoured for both remote sources - callers pass it
-    when they are about to *write* the file and know it cannot exist yet.
-    """
-    basename = os.path.basename(filename)
-    local_path = str(Path(DATA_DIR) / basename)
-
-    if os.path.exists(local_path) or skip_s3_download:
-        return local_path
-
-    if file_store.restore_to(basename, local_path):
-        return local_path
-
-    if s3_manager.enabled:
-        logger.info("%s is not in the database, trying object storage", basename)
-        s3_manager.download_file(basename, local_path)
-
+    If the file is not found locally, it attempts to download it from S3."""
+    local_path = str(Path(DATA_DIR) / os.path.basename(filename))
+    
+    if not os.path.exists(local_path) and not skip_s3_download:
+        # Try to download from S3 if it doesn't exist locally (ephemeral storage fallback)
+        if s3_manager.enabled:
+            print(f"File {filename} not found locally, attempting S3 download...")
+            s3_manager.download_file(filename, local_path)
+            
     return local_path
-
-def restore_missing_dataset_file(dataset_id: str, user_id: str, file_content: bytes) -> bool:
-    """If this dataset's file is gone, put it back from the bytes just uploaded.
-
-    Duplicate detection matches on a hash of the content, and it kept working
-    perfectly after the file behind that hash had been lost - so re-uploading
-    the very file that would fix a broken dataset was answered with "you
-    already have this one". The one action that could recover the data was the
-    one action refused.
-
-    Returns True if a file was actually restored, meaning the caller should
-    treat the upload as a repair rather than a duplicate. Returns False when
-    the file is already there, which is a genuine duplicate and should still be
-    reported as one.
-    """
-    conn = get_db_connection()
-    try:
-        cursor = conn.cursor()
-        cursor.execute(
-            "SELECT filepath FROM datasets WHERE id = %s AND user_id = %s",
-            (dataset_id, user_id),
-        )
-        row = cursor.fetchone()
-    finally:
-        conn.close()
-
-    if not row or not row[0]:
-        return False
-
-    basename = os.path.basename(row[0])
-    local_path = str(Path(DATA_DIR) / basename)
-
-    # skip_s3_download so this only asks "is it here?" rather than starting a
-    # restore we are about to make unnecessary.
-    if os.path.exists(local_path) or file_store.exists(basename):
-        return False
-
-    logger.warning("Restoring the missing file for dataset %s from a re-upload", dataset_id)
-
-    # The durable copy first: if only one of the two writes can succeed, the
-    # one that survives a restart is the one worth having.
-    file_store.save(basename, file_content)
-    try:
-        with open(local_path, "wb") as f:
-            f.write(file_content)
-    except Exception as exc:
-        logger.error("Could not write the restored file to disk: %s", exc)
-        capture(exc, action="restore_missing_dataset_file", dataset_id=dataset_id)
-
-    # This dataset is what the user just asked to see, and its cached
-    # everything was computed while the file was missing.
-    conn = get_db_connection()
-    try:
-        cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO active_dataset (user_id, dataset_id) VALUES (%s, %s) "
-            "ON CONFLICT (user_id) DO UPDATE SET dataset_id = EXCLUDED.dataset_id",
-            (user_id, dataset_id),
-        )
-        conn.commit()
-    finally:
-        conn.close()
-
-    invalidate_user_cache(user_id)
-    return True
-
 
 def run_filepath_migration():
     """Migrates any stored absolute Windows/Linux paths in SQLite to just their basenames."""
@@ -653,29 +566,6 @@ def init_db():
     except Exception:
         conn.rollback()
 
-    # The dashboard's AI summary, kept per dataset. It costs a blocking LLM
-    # call to produce and a dataset's id never changes contents, so computing
-    # it once and reading it back is both cheaper and more consistent - the
-    # same dataset now always describes itself the same way.
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS executive_summaries (
-            user_id TEXT NOT NULL,
-            dataset_id TEXT NOT NULL,
-            summary TEXT NOT NULL,
-            verified BOOLEAN NOT NULL DEFAULT FALSE,
-            facts JSONB,
-            created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-            PRIMARY KEY (user_id, dataset_id)
-        )
-    ''')
-    conn.commit()
-
-    # Durable storage for the uploaded files themselves. The disk this app
-    # runs on is erased on every restart and deploy, which is how a dataset
-    # could keep appearing in the picker with every number computed from it
-    # coming back as zero. See app/services/file_store.py.
-    file_store.init_file_store()
-
     # Per-user dashboard customization: which KPI cards are pinned and in what
     # order. pinned_kpis is NULL/empty until the user customizes — the
     # dashboard falls back to its default top-4 behavior in that case.
@@ -1026,12 +916,7 @@ def _finish_persisting(df, file_content, filename, user_id, metadata, version, c
     with open(disk_path, "wb") as f:
         f.write(file_content)
 
-    # The disk write above is only a cache - this host erases it on restart.
-    # The database copy is the one that makes the dataset still be here after a
-    # logout, a deploy, or an idle spin-down.
-    file_store.save(filename_db, file_content)
-
-    # Object storage, when it is configured, as a second copy.
+    # Upload to S3 if enabled
     if s3_manager.enabled:
         s3_manager.upload_file(file_content, filename_db)
 
@@ -1122,16 +1007,6 @@ def _finish_persisting(df, file_content, filename, user_id, metadata, version, c
     # Invalidate cache so next request picks up the new dataset
     invalidate_user_cache(user_id)
 
-    # Deliberately NOT seeding _df_cache with the frame parsed above, even
-    # though it is right here and doing so would save the next request a file
-    # read. parse_to_dataframe and get_dataframe are not guaranteed to produce
-    # the same frame - parse_to_dataframe falls back through latin-1/cp1252 and
-    # has its own bad-line handling, while get_dataframe re-reads with pandas'
-    # defaults. Seeding would mean the first views after an upload used one
-    # frame and everything after cache eviction used the other, so a figure
-    # could change on its own with nothing having happened. Re-reading a few
-    # MB costs ~130ms; a number that quietly changes costs trust.
-
     return dataset_info
 
 
@@ -1213,13 +1088,9 @@ def get_active_dataset(user_id: str):
         "semantic_dict": (dataset_row[13] if isinstance(dataset_row[13], (dict, list)) else json.loads(dataset_row[13])) if len(dataset_row) > 13 and dataset_row[13] is not None else None
     }
     
-    # Lazy classification if domain or semantic_dict is missing.
-    # Non-raising on purpose: this runs inside get_active_dataset, which every
-    # page calls just to learn which dataset is selected. If a missing file
-    # made *that* fail, the app would break before it could reach the endpoint
-    # whose job is to explain the missing file.
+    # Lazy classification if domain or semantic_dict is missing
     if not dataset_info.get("semantic_dict"):
-        df = get_dataframe(dataset_info["id"], user_id, raise_if_missing=False)
+        df = get_dataframe(dataset_info["id"], user_id)
         if df is not None and len(df) > 0:
             from app.services.semantic_classification import classify_dataset_and_build_dictionary
             domain, semantic_dict = classify_dataset_and_build_dictionary(df, dataset_info["name"])
@@ -1247,7 +1118,7 @@ def get_active_dataset(user_id: str):
     
     # Lazy computation for datasets where quality_score is 0.0 (from schema DEFAULT 0)
     if dataset_info["quality_score"] == 0.0:
-        df = get_dataframe(dataset_info["id"], user_id, raise_if_missing=False)
+        df = get_dataframe(dataset_info["id"], user_id)
         if df is not None and len(df) > 0:
             from app.services.stats_service import quality_report
             quality = quality_report(df)
@@ -1271,15 +1142,7 @@ def get_active_dataset(user_id: str):
 
     return dataset_info
 
-def get_dataframe(dataset_id: str, user_id: str, raise_if_missing: bool = True):
-    """Load a dataset's rows.
-
-    `raise_if_missing` controls what happens when the dataset's row exists but
-    its file cannot be found or restored. Anything answering a user raises, so
-    the answer is an error rather than a zero. Batch work - rule sweeps,
-    insight generation - passes False and skips the dataset instead, because
-    one unreadable file should not take down a run over all of them.
-    """
+def get_dataframe(dataset_id: str, user_id: str):
     # ── Cache hit — return instantly without any disk/DB I/O ──────────────────
     cache_key = (dataset_id, user_id)
     with _cache_lock:
@@ -1298,29 +1161,7 @@ def get_dataframe(dataset_id: str, user_id: str, raise_if_missing: bool = True):
     filename_db, sheet_name = row
     disk_path = get_dataset_path(filename_db)
     if not os.path.exists(disk_path):
-        # The dataset's row is here but its file is not, and get_dataset_path
-        # has already tried every place it could be restored from. This used to
-        # return None, which callers read as "no dataset" and answered with an
-        # empty result - so the dashboard reported a revenue of 0 rather than
-        # admitting it had nothing to compute from. On a product whose whole
-        # claim is that its numbers can be trusted, a confident zero is a worse
-        # failure than an error.
-        logger.error("Dataset %s has a record but no file (%s)", dataset_id, filename_db)
-        capture_message(
-            "A dataset's file could not be found or restored",
-            level="error",
-            dataset_id=dataset_id,
-            filename=filename_db,
-        )
-        if not raise_if_missing:
-            return None
-        raise HTTPException(
-            status_code=410,
-            detail=(
-                "This dataset's file is no longer on the server, so nothing can be "
-                "computed from it. Please upload the file again."
-            ),
-        )
+        return None
 
     lower_path = disk_path.lower()
     df = None

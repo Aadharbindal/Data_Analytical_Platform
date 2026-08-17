@@ -3,8 +3,6 @@ from app.services.stats_service import to_datetime_safe
 import numpy as np
 import re
 import os
-import json
-import logging
 import uuid
 from datetime import datetime
 from fastapi import APIRouter, Depends
@@ -26,68 +24,6 @@ def find_column(df: pd.DataFrame, pattern: str, numeric_only: bool = False) -> s
             return col
     return None
 
-def _read_cached_summary(user_id: str, dataset_id: str):
-    """The stored summary for this dataset, or None if there isn't one.
-
-    Never raises: a cache that cannot be read must fall through to computing
-    the answer, not turn a working dashboard into an error.
-    """
-    try:
-        conn = get_db_connection()
-        try:
-            cursor = conn.cursor()
-            cursor.execute(
-                "SELECT summary, verified, facts FROM executive_summaries WHERE user_id = %s AND dataset_id = %s",
-                (user_id, dataset_id),
-            )
-            row = cursor.fetchone()
-        finally:
-            conn.close()
-
-        if not row:
-            return None
-
-        facts = row[2]
-        if isinstance(facts, str):
-            facts = json.loads(facts)
-        return {"summary": row[0], "verified": bool(row[1]), "facts": facts or {}}
-    except Exception as exc:
-        logging.warning("Could not read the cached executive summary: %s", exc)
-        return None
-
-
-def _cache_summary(user_id: str, dataset_id: str, payload: dict) -> dict:
-    """Store a summary and hand the same payload straight back to the caller.
-
-    Returns its argument so it can wrap a `return` without changing what the
-    endpoint answers - a failure to cache costs the next visitor some latency,
-    never this visitor their result.
-    """
-    try:
-        conn = get_db_connection()
-        try:
-            cursor = conn.cursor()
-            cursor.execute(
-                """
-                INSERT INTO executive_summaries (user_id, dataset_id, summary, verified, facts)
-                VALUES (%s, %s, %s, %s, %s)
-                ON CONFLICT (user_id, dataset_id)
-                DO UPDATE SET summary = EXCLUDED.summary,
-                              verified = EXCLUDED.verified,
-                              facts = EXCLUDED.facts,
-                              created_at = now()
-                """,
-                (user_id, dataset_id, payload.get("summary", ""),
-                 bool(payload.get("verified")), json.dumps(payload.get("facts") or {})),
-            )
-            conn.commit()
-        finally:
-            conn.close()
-    except Exception as exc:
-        logging.warning("Could not cache the executive summary: %s", exc)
-    return payload
-
-
 @router.get("/executive-summary")
 async def get_executive_summary(current_user: dict = Depends(get_current_user)):
     api_key = os.getenv("GROQ_API_KEY")
@@ -97,17 +33,7 @@ async def get_executive_summary(current_user: dict = Depends(get_current_user)):
     dataset_info = get_active_dataset(current_user["id"])
     if not dataset_info:
         return {"summary": "No dataset uploaded yet. Upload a dataset to see AI insights.", "verified": False}
-
-    # A dataset's id is minted fresh for every upload and every new version, so
-    # its contents never change under a given id. That makes the summary
-    # cacheable outright: same id, same facts, same sentences. Worth doing
-    # because this endpoint sits on the dashboard's critical path and used to
-    # make a blocking LLM call on every single load - including every time the
-    # user navigated back to the dashboard.
-    cached = _read_cached_summary(current_user["id"], dataset_info["id"])
-    if cached is not None:
-        return cached
-
+        
     df = get_dataframe(dataset_info["id"], current_user["id"])
     if df is None:
         return {"summary": "Failed to load data.", "verified": False}
@@ -214,8 +140,7 @@ async def get_executive_summary(current_user: dict = Depends(get_current_user)):
                 break
                 
         if verified:
-            return _cache_summary(current_user["id"], dataset_info["id"],
-                                  {"summary": llm_summary, "verified": True, "facts": facts})
+            return {"summary": llm_summary, "verified": True, "facts": facts}
         else:
             raise Exception("Hallucination detected")
             
@@ -244,12 +169,7 @@ async def get_executive_summary(current_user: dict = Depends(get_current_user)):
         else:
             summary = f"The uploaded dataset contains {count_str} {row_label}."
 
-        # The deterministic fallback is cached too. It is reached when the LLM
-        # is unavailable or contradicted the facts, and in both cases the same
-        # input would produce the same fallback - there is nothing to gain from
-        # calling out again on the next load just to fail again.
-        return _cache_summary(current_user["id"], dataset_info["id"],
-                              {"summary": summary, "verified": True, "facts": facts})
+        return {"summary": summary, "verified": True, "facts": facts}
 
 @router.post("/deep-analyze")
 async def deep_analyze(current_user: dict = Depends(get_current_user)):

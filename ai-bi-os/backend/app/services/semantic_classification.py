@@ -8,73 +8,15 @@ from litellm import completion
 from app.core.config import LLM_MODEL
 from app.services.stats_service import is_non_additive, is_money_like
 
-def col_words(col) -> str:
-    """A column name reduced to lowercase words, so `\\bdate\\b` can match it.
-
-    Every rule in this module identifies columns with word-boundary regexes,
-    and `\\b` treats underscore as a word character while camelCase has no
-    separator at all. So "TransactionDate" collapsed to "transactiondate",
-    where `\\bdate\\b` cannot match, and a column whose 3,662 values were all
-    dates was classified as not a date. That took the dashboard's chart with
-    it - no date column means no time series to plot - and left "Total
-    Transactions" counting distinct *days* rather than transactions, because
-    the transaction reference column ("TransactionRef") was missed the same
-    way. Splitting camelCase here fixes every one of those rules at once.
-    """
-    s = str(col)
-    # ID -> "id", not "i d": only break before a capital that starts a word.
-    s = re.sub(r'(?<=[a-z0-9])(?=[A-Z])', ' ', s)
-    s = re.sub(r'(?<=[A-Z])(?=[A-Z][a-z])', ' ', s)
-    return re.sub(r'[_\-]+', ' ', s).lower().strip()
-
-
-def looks_like_dates(series: pd.Series, threshold: float = 0.8) -> bool:
-    """Whether a column actually holds dates, regardless of what it is called.
-
-    The name-based rules are a heuristic and will keep missing things -
-    "Booking", "Period", "Posted". Asking the data is the check that does not
-    depend on someone's naming convention.
-    """
-    try:
-        if pd.api.types.is_datetime64_any_dtype(series):
-            return True
-        sample = series.dropna()
-        if sample.empty:
-            return False
-        if len(sample) > 500:
-            sample = sample.sample(500, random_state=0)
-        # Purely numeric columns are excluded on purpose: a year-like integer
-        # or an amount would otherwise parse and be misread as a timestamp.
-        if pd.api.types.is_numeric_dtype(sample):
-            return False
-        parsed = pd.to_datetime(sample, errors="coerce", format="mixed")
-        # bool() rather than the bare comparison: numpy hands back a numpy.bool_,
-        # which is not the same object as True/False and does not survive JSON
-        # encoding either - the same class of problem main.py already had to
-        # paper over with custom encoders.
-        return bool((parsed.notna().sum() / len(sample)) >= threshold)
-    except Exception:
-        return False
-
-
 def validate_and_sanitize_business_terminology(df: pd.DataFrame, domain: str, bus_term: dict):
     entity_col = bus_term.get("entity_col")
     entity_label = bus_term.get("entity_count_label", "Total Items")
     
     if entity_col and entity_col not in df.columns:
         entity_col = None
-
-    # Counting the distinct values of a date column and labelling the result
-    # "Total Transactions" reports the number of *days* the data covers. That
-    # is what happened here: 3,662 transactions were shown as 324, which is
-    # how many separate dates they fell on. A date is never the entity being
-    # counted, so drop it and let the id-column search below choose properly.
-    if entity_col and looks_like_dates(df[entity_col]):
-        entity_col = None
-
-
+        
     if not entity_col:
-        id_cols = [c for c in df.columns if re.search(r'\b(id|key|code|uuid|number|num|ref|reference)\b', col_words(c)) or re.search(r'_id$', str(c).lower())]
+        id_cols = [c for c in df.columns if re.search(r'\b(id|key|code|uuid|number|num)\b|_id$', str(c).lower())]
         if id_cols:
             entity_col = id_cols[0]
         else:
@@ -86,7 +28,7 @@ def validate_and_sanitize_business_terminology(df: pd.DataFrame, domain: str, bu
         ent_lower = str(entity_col).lower()
         if "transaction" in entity_label.lower() or "order" in entity_label.lower() or "deal" in entity_label.lower() or "txn" in entity_label.lower():
             # If counting unique of user-specific ID but calling it transactions/orders/deals, switch to actual transaction reference ID
-            txn_id_col = next((c for c in df.columns if re.search(r'\b(utr|ref|reference|txn id|txnid|order id|invoice id|trans id)\b', col_words(c))), None)
+            txn_id_col = next((c for c in df.columns if re.search(r'\b(utr|ref|reference|txn_id|txnid|order_id|invoice_id|trans_id)\b', str(c).lower())), None)
             if txn_id_col and txn_id_col != entity_col:
                 entity_col = txn_id_col
                 bus_term["entity_col"] = entity_col
@@ -370,9 +312,7 @@ def fallback_classify(df: pd.DataFrame, filename: str) -> tuple[str, dict]:
         # those regexes below would silently fail to match the most common
         # snake_case naming convention. Normalizing underscores/hyphens to
         # spaces first makes `\bdate\b` etc. match "order date" correctly.
-        # Splits camelCase as well as underscores, so "TransactionDate" reads
-        # as "transaction date" and the word-boundary regexes below can match.
-        col_normalized = col_words(col)
+        col_normalized = col_lower.replace('_', ' ').replace('-', ' ')
 
         # Check datetime types
         is_dt = False
@@ -382,11 +322,9 @@ def fallback_classify(df: pd.DataFrame, filename: str) -> tuple[str, dict]:
         except:
             pass
 
-        # looks_like_dates() is the backstop for names no rule anticipates
-        # ("Booking", "Period", "Posted"). The column's own values decide.
-        if is_dt or re.search(r'\b(date|month|year|time|timestamp|day|hour)\b', col_normalized) or 'created at' in col_normalized or 'updated at' in col_normalized or looks_like_dates(df[col]):
+        if is_dt or re.search(r'\b(date|month|year|time|timestamp|day|hour)\b', col_normalized) or 'created at' in col_normalized or 'updated at' in col_normalized:
             date_cols.append(col)
-        elif re.search(r'\b(id|key|code|uuid|number|num|phone|zip|postal|ref|reference|utr)\b', col_normalized) or re.search(r'_id$|id$|^id', col_lower):
+        elif re.search(r'\b(id|key|code|uuid|number|num|phone|zip|postal|ref|reference|utr)\b|_id$|id$|^id', col_lower):
             entity_ids.append(col)
         elif re.search(r'\b(status|stage|state|phase|step|outcome)\b', col_normalized):
             status_fields.append(col)

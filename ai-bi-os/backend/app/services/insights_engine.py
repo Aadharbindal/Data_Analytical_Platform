@@ -87,9 +87,7 @@ class DeepInsightsEngine:
                 return []
 
             sem_dict = dataset_info.get("semantic_dict", {})
-            # Background generation: no insights is the right outcome for an
-            # unreadable dataset, and the read path already tells the user why.
-            df = get_dataframe(dataset_id, user_id, raise_if_missing=False)
+            df = get_dataframe(dataset_id, user_id)
             
             if df is None or len(df) == 0:
                 return []

@@ -13,9 +13,8 @@ from app.services.data_processing import (
     save_dataset, save_dataframe_as_new_version, DB_PATH, get_dataset_path, get_active_dataset,
     get_dataframe, invalidate_user_cache,
     create_upload_job, update_upload_job, complete_upload_job, fail_upload_job, get_upload_job,
-    find_duplicate_dataset, restore_missing_dataset_file,
+    find_duplicate_dataset,
 )
-from app.services import file_store
 from app.services.storage import s3_manager
 from app.core.security import get_current_user
 from app.services.stats_service import compute_kpis
@@ -50,22 +49,6 @@ async def upload_dataset(file: UploadFile = File(...), force: bool = Form(False)
     if not force:
         existing = find_duplicate_dataset(content_hash, current_user["id"])
         if existing:
-            # Before calling it a duplicate: is the file behind that dataset
-            # actually still there? If it is not, this upload is the user
-            # handing back bytes we lost, and refusing it would leave them with
-            # no way at all to recover the dataset.
-            if existing.get("id") and restore_missing_dataset_file(
-                existing["id"], current_user["id"], content
-            ):
-                return {
-                    "status": "restored",
-                    "dataset_id": existing["id"],
-                    "message": (
-                        f"'{existing['name']}' was already here but its file had gone missing. "
-                        "Restored it from this upload - your dashboard is back."
-                    ),
-                }
-
             if existing.get("in_progress"):
                 message = f"An identical file ('{existing['name']}') is already being uploaded. Wait for it to finish, or upload anyway to create a duplicate copy."
             else:
@@ -512,10 +495,6 @@ async def delete_dataset(dataset_id: str, current_user: dict = Depends(get_curre
             except Exception:
                 pass
                 
-        # The durable copy has to go too, or the next read would restore the
-        # file the user just deleted back onto disk.
-        file_store.delete(os.path.basename(filename_db))
-
         # Delete from S3 if enabled
         if s3_manager.enabled:
             s3_manager.delete_file(filename_db)
@@ -527,7 +506,6 @@ async def delete_dataset(dataset_id: str, current_user: dict = Depends(get_curre
     cursor.execute("DELETE FROM clustering_models WHERE dataset_id=%s", (dataset_id,))
     cursor.execute("DELETE FROM shared_links WHERE dataset_id=%s", (dataset_id,))
     cursor.execute("DELETE FROM insights WHERE dataset_id=%s", (dataset_id,))
-    cursor.execute("DELETE FROM executive_summaries WHERE dataset_id=%s", (dataset_id,))
     cursor.execute("DELETE FROM recommendations WHERE dataset_id=%s", (dataset_id,))
     # rule_events has an FK on rules(id) and notifications point at rule_id, so
     # both have to go before the rules themselves — otherwise deleting a dataset
