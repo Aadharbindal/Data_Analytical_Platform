@@ -428,6 +428,16 @@ def compute_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict:
     
     date_cols = sem_dict.get("date_columns", [])
     date_col = date_cols[0] if date_cols and date_cols[0] in df.columns else None
+
+    # Datasets classified before camelCase column names were split correctly
+    # have an empty date_columns list stored against them, and that silently
+    # removes the whole time series - the dashboard chart renders as a flat
+    # zero with "No data for this period" over a frame that has twelve months
+    # in it. Rather than make everyone re-upload, ask the frame directly when
+    # the stored dictionary offers nothing.
+    if not date_col:
+        from app.services.semantic_classification import looks_like_dates
+        date_col = next((c for c in df.columns if looks_like_dates(df[c])), None)
     
     def safe_divide(a, b):
         return a / b if b else 0.0
@@ -809,6 +819,16 @@ def compute_executive_kpis(df: pd.DataFrame, semantic_dict: dict = None) -> dict
     
     date_cols = sem_dict.get("date_columns", [])
     date_col = date_cols[0] if date_cols and date_cols[0] in df.columns else None
+
+    # Datasets classified before camelCase column names were split correctly
+    # have an empty date_columns list stored against them, and that silently
+    # removes the whole time series - the dashboard chart renders as a flat
+    # zero with "No data for this period" over a frame that has twelve months
+    # in it. Rather than make everyone re-upload, ask the frame directly when
+    # the stored dictionary offers nothing.
+    if not date_col:
+        from app.services.semantic_classification import looks_like_dates
+        date_col = next((c for c in df.columns if looks_like_dates(df[c])), None)
     
     if date_col:
         try:
