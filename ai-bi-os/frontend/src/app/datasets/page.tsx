@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { datasetsApi, BASE_URL } from "@/lib/api";
+import { datasetsApi, analyticsApi, insightsApi, BASE_URL } from "@/lib/api";
 import type { Dataset, DatasetVersionEntry } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
@@ -563,6 +563,16 @@ export default function DatasetsPage() {
           // refresh. Match the activate-mutation's behavior: invalidate
           // everything.
           qc.invalidateQueries();
+
+          // Then pull the dashboard's two slowest queries now, while the user
+          // is still looking at this page. Invalidating only marks them stale;
+          // nothing fetches until the dashboard mounts, so without this the
+          // click onto the dashboard is where the whole wait happens. These
+          // two are the ones worth the head start -- the KPI computation and
+          // the AI summary. If either fails it is ignored: this is a head
+          // start, and the dashboard will ask again for itself.
+          qc.prefetchQuery({ queryKey: ["analytics-kpis"], queryFn: () => analyticsApi.kpis() });
+          qc.prefetchQuery({ queryKey: ["executiveSummary"], queryFn: () => insightsApi.executiveSummary() });
         }}
         onRedirect={() => router.push("/analytics")}
       />

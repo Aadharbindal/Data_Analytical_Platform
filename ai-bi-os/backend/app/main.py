@@ -124,6 +124,19 @@ app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["
 app.include_router(telemetry.router, prefix="/api/v1/telemetry", tags=["telemetry"])
 
 @app.on_event("startup")
+async def warm_heavy_imports():
+    """Load the slow scientific libraries now, not on the first user request.
+
+    compute_kpis reaches statsmodels through its forecast, so before this the
+    first dashboard load after every restart paid several seconds importing it
+    - and on a host that sleeps when idle, that is most first visits.
+    """
+    from app.core.warmup import start_warmup
+
+    start_warmup()
+
+
+@app.on_event("startup")
 async def check_storage_on_startup():
     """Say at boot whether uploaded files will survive.
 

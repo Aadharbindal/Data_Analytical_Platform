@@ -587,6 +587,23 @@ def init_db():
     except Exception:
         conn.rollback()
 
+    # The dashboard's AI summary, kept per dataset. It costs a blocking LLM
+    # call to produce and a dataset's id never changes contents, so computing
+    # it once and reading it back is both cheaper and more consistent - the
+    # same dataset now always describes itself the same way.
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS executive_summaries (
+            user_id TEXT NOT NULL,
+            dataset_id TEXT NOT NULL,
+            summary TEXT NOT NULL,
+            verified BOOLEAN NOT NULL DEFAULT FALSE,
+            facts JSONB,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+            PRIMARY KEY (user_id, dataset_id)
+        )
+    ''')
+    conn.commit()
+
     # Durable storage for the uploaded files themselves. The disk this app
     # runs on is erased on every restart and deploy, which is how a dataset
     # could keep appearing in the picker with every number computed from it
@@ -1038,6 +1055,16 @@ def _finish_persisting(df, file_content, filename, user_id, metadata, version, c
 
     # Invalidate cache so next request picks up the new dataset
     invalidate_user_cache(user_id)
+
+    # Deliberately NOT seeding _df_cache with the frame parsed above, even
+    # though it is right here and doing so would save the next request a file
+    # read. parse_to_dataframe and get_dataframe are not guaranteed to produce
+    # the same frame - parse_to_dataframe falls back through latin-1/cp1252 and
+    # has its own bad-line handling, while get_dataframe re-reads with pandas'
+    # defaults. Seeding would mean the first views after an upload used one
+    # frame and everything after cache eviction used the other, so a figure
+    # could change on its own with nothing having happened. Re-reading a few
+    # MB costs ~130ms; a number that quietly changes costs trust.
 
     return dataset_info
 
