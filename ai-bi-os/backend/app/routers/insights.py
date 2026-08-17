@@ -102,7 +102,11 @@ async def get_executive_summary(current_user: dict = Depends(get_current_user)):
         "- Use the word 'transactions' instead of 'data points', 'rows', or 'records'.\n"
         "- Use the phrase 'Transaction Value' instead of 'Amount' or 'Total Amount'.\n"
         "- Add comma separators for numbers above 1,000 (e.g. 5,200 not 5200).\n"
-        "- Do NOT invent, estimate, or round numbers beyond what the facts contain."
+        "- Do NOT invent, estimate, or round numbers beyond what the facts contain.\n"
+        # The card renders this as plain text, so markdown arrives as literal
+        # asterisks on screen. Worth stating explicitly: the models now in use
+        # reach for headings and bold by default.
+        "- Write plain sentences only. No markdown, no bold, no headings, no bullet points."
     )
     
     try:

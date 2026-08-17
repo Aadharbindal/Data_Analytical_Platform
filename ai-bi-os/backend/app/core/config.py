@@ -44,14 +44,29 @@ if not SECRET_KEY:
     )
 
 # AI Model Configuration
+#
+# These were groq/llama-3.1-8b-instant and groq/llama-3.3-70b-versatile, and
+# Groq has retired both: asking for either now returns "the model does not
+# exist or you do not have access to it". Nothing in the app was broken by
+# that, but everything that goes through a model stopped working at once -
+# the AI chat answered "the AI service is temporarily unavailable", the
+# executive summary fell through to its deterministic template, and dataset
+# classification quietly dropped to its rule-based fallback. Meanwhile every
+# deterministic feature (KPIs, outliers, trends, forecasts) kept working, so
+# the app looked half-alive rather than plainly broken.
+#
+# A retired model is not a rare event, so if these ever start failing again,
+# `GET https://api.groq.com/openai/v1/models` lists what the key can actually
+# call today. Both values can also be overridden per environment.
+
 # Small/fast model: used for narrow, templated tasks (insight narratives,
 # recommendation wording, executive summaries) where the model fills in
 # placeholders or lightly rephrases deterministic facts rather than reasoning.
-LLM_MODEL = os.getenv("LLM_MODEL", "groq/llama-3.1-8b-instant")
+LLM_MODEL = os.getenv("LLM_MODEL", "groq/openai/gpt-oss-20b")
 # Larger/more capable model: used for multi-step agentic reasoning (tool
 # selection, SQL generation, synthesizing a final answer across several tool
 # calls) where quality matters more than the extra latency/cost.
-LLM_MODEL_COMPLEX = os.getenv("LLM_MODEL_COMPLEX", "groq/llama-3.3-70b-versatile")
+LLM_MODEL_COMPLEX = os.getenv("LLM_MODEL_COMPLEX", "groq/openai/gpt-oss-120b")
 
 # AWS S3 / Cloud Storage Configuration
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
