@@ -41,6 +41,13 @@ interface Point {
   r?: number;
 }
 
+// One source for the node entrance, because two things depend on it: the
+// animation itself, and the moment the connector endpoints can be measured
+// without catching a node mid-flight.
+const NODE_ENTRANCE_DELAY = 0.5;
+const NODE_ENTRANCE_STAGGER = 0.12;
+const NODE_ENTRANCE_DURATION = 0.5;
+
 // Same >=80/>=60 split already used for the quality-score color elsewhere
 // (DatasetDetailDrawer) -- reused here so "Healthy" always means the same
 // number range across the app instead of inventing a second threshold.
@@ -84,27 +91,14 @@ function buildPath(from: Point, to: Point) {
   return `M ${from.x} ${from.y} C ${c1x} ${from.y - bow}, ${dockX} ${from.y - bow}, ${to.x} ${to.y}`;
 }
 
-// Stops the line `dist` px short of `to`, so it ends at the icon's edge
-// instead of running under it (and, for near-level nodes, under the label
-// text sitting between the hub and the icon) -- the endpoint dot marks
-// exactly where it should visually stop.
-function shortenTowards(from: Point, to: Point, dist: number): Point {
-  const dx = to.x - from.x;
-  const dy = to.y - from.y;
-  const len = Math.hypot(dx, dy) || 1;
-  const t = Math.max(0, (len - dist) / len);
-  return { x: from.x + dx * t, y: from.y + dy * t };
-}
-
-// Where the line from `from` to `to` crosses a given x. Used to end a line at
-// the label's edge: shortening by a distance would depend on how far away the
-// node happens to sit, whereas the text always begins at a known x.
-function pointAtX(from: Point, to: Point, x: number): Point {
-  const dx = to.x - from.x;
-  // Degenerate case: nothing sensible to interpolate, so leave it where it is.
-  if (Math.abs(dx) < 0.5) return { x, y: to.y };
-  const t = Math.min(1, Math.max(0, (x - from.x) / dx));
-  return { x, y: from.y + (to.y - from.y) * t };
+/** Where a wire meets its icon: on the circle itself, up and toward the hub.
+ *  Landing side-on would send the final stretch straight through the label
+ *  sitting between the two; coming in over the top clears it, and puts the
+ *  arrival where the orbit below can pick it up. */
+function dockOnCircle(icon: Point, fromLeft: boolean): Point {
+  const r = icon.r ?? 22;
+  const k = Math.SQRT1_2; // 45 degrees, so the wire lands on the shoulder
+  return { x: icon.x + (fromLeft ? -k : k) * r, y: icon.y - k * r };
 }
 
 function centerOf(el: HTMLElement, containerRect: DOMRect): Point {
@@ -153,18 +147,12 @@ export function DashboardHub({ datasets, qualityScore, kpis, onInspectKpi }: Das
   const centerRef = useRef<HTMLDivElement>(null);
   const leftIconRefs = useRef<(HTMLDivElement | null)[]>([]);
   const rightIconRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const leftTextRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const rightTextRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const [geometry, setGeometry] = useState<{
     size: { width: number; height: number };
     center: Point;
     left: Point[];
     right: Point[];
-    /** x of each label's near edge, measured on the side the line approaches
-     *  from. The endpoint is derived from this rather than from the icon. */
-    leftTextEdge: number[];
-    rightTextEdge: number[];
   } | null>(null);
 
   // The icon circles are laid out by flexbox (justify-around inside
@@ -189,22 +177,27 @@ export function DashboardHub({ datasets, qualityScore, kpis, onInspectKpi }: Das
         right: rightIconRefs.current
           .filter((el): el is HTMLDivElement => !!el)
           .map((el) => centerOf(el, containerRect)),
-        // A line reaches a left node from its right, and a right node from its
-        // left, so the edge that matters is the one facing the hub.
-        leftTextEdge: leftTextRefs.current
-          .filter((el): el is HTMLDivElement => !!el)
-          .map((el) => el.getBoundingClientRect().right - containerRect.left),
-        rightTextEdge: rightTextRefs.current
-          .filter((el): el is HTMLDivElement => !!el)
-          .map((el) => el.getBoundingClientRect().left - containerRect.left),
       });
     };
 
     measure();
+
+    // Measured again once the nodes have finished arriving. Each one enters
+    // translated 12px sideways, and getBoundingClientRect reports the
+    // transformed box — so the first measurement pins every endpoint to where
+    // its node was passing through rather than where it came to rest. The
+    // container never changes size during that, so the ResizeObserver below
+    // does not catch it.
+    const lastEntranceEndsAt =
+      (NODE_ENTRANCE_DELAY + (leftNodes.length + rightNodes.length - 1) * NODE_ENTRANCE_STAGGER +
+        NODE_ENTRANCE_DURATION) * 1000;
+    const settle = window.setTimeout(measure, lastEntranceEndsAt + 60);
+
     const ro = new ResizeObserver(measure);
     if (containerRef.current) ro.observe(containerRef.current);
     window.addEventListener("resize", measure);
     return () => {
+      window.clearTimeout(settle);
       ro.disconnect();
       window.removeEventListener("resize", measure);
     };
@@ -234,23 +227,21 @@ export function DashboardHub({ datasets, qualityScore, kpis, onInspectKpi }: Das
               const isLeft = i < geometry.left.length;
               const idx = isLeft ? i : i - geometry.left.length;
               const iconPos = isLeft ? geometry.left[idx] : geometry.right[idx];
-              const textEdge = isLeft ? geometry.leftTextEdge[idx] : geometry.rightTextEdge[idx];
 
-              // Stop at the label, not at the icon behind it. Ending on the
-              // circle meant the last stretch of every line ran underneath the
-              // text, which is the one place a line has nothing to say and
-              // makes the words harder to read. Falls back to the icon edge if
-              // the label has not been measured yet.
-              const GAP = 12;
-              const endPos =
-                textEdge != null
-                  ? pointAtX(
-                      geometry.center,
-                      iconPos,
-                      isLeft ? textEdge + GAP : textEdge - GAP
-                    )
-                  : shortenTowards(geometry.center, iconPos, (iconPos.r ?? 22) + 3);
+              // The wire runs all the way to its icon and lands on the circle
+              // itself, on the shoulder facing the hub rather than the side —
+              // side-on would put the last stretch straight through the label.
+              const endPos = dockOnCircle(iconPos, !isLeft);
               const d = buildPath(geometry.center, endPos);
+
+              // The ring the wire feeds into. One short arc chasing its own
+              // circumference: a dash pattern of "visible arc, then a gap the
+              // length of everything else", offset over time, so a single
+              // segment travels the rim instead of the whole outline pulsing.
+              const orbitR = (iconPos.r ?? 22) + 5;
+              const circumference = 2 * Math.PI * orbitR;
+              const arcLength = circumference * 0.22;
+
               return (
                 <g key={i}>
                   <motion.path
@@ -263,15 +254,33 @@ export function DashboardHub({ datasets, qualityScore, kpis, onInspectKpi }: Das
                     animate={{ pathLength: 1, opacity: 1 }}
                     transition={{ duration: 1.1, ease: "easeOut", delay: 0.2 + i * 0.1 }}
                   />
+
                   <motion.circle
-                    cx={endPos.x}
-                    cy={endPos.y}
-                    r={3}
-                    fill={node.stroke}
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3, delay: 0.2 + i * 0.1 + 1.1 }}
-                  />
+                    cx={iconPos.x}
+                    cy={iconPos.y}
+                    r={orbitR}
+                    fill="none"
+                    stroke={node.stroke}
+                    strokeWidth={1.5}
+                    strokeLinecap="round"
+                    strokeDasharray={`${arcLength} ${circumference - arcLength}`}
+                    // Held back until the wire has finished drawing, so the
+                    // ring reads as something the wire arrives and starts,
+                    // rather than as decoration that was always spinning.
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.85 }}
+                    transition={{ duration: 0.4, delay: 0.2 + i * 0.1 + 1.0 }}
+                  >
+                    <animate
+                      attributeName="stroke-dashoffset"
+                      from={circumference}
+                      to="0"
+                      dur="3.2s"
+                      repeatCount="indefinite"
+                      begin={`${i * 0.25}s`}
+                    />
+                  </motion.circle>
+
                   <circle r={2.5} fill={node.stroke}>
                     <animateMotion dur="3s" repeatCount="indefinite" path={d} begin={`${i * 0.35}s`} />
                   </circle>
@@ -289,9 +298,8 @@ export function DashboardHub({ datasets, qualityScore, kpis, onInspectKpi }: Das
               key={i}
               node={node}
               align="left"
-              delay={0.5 + i * 0.12}
+              delay={NODE_ENTRANCE_DELAY + i * NODE_ENTRANCE_STAGGER}
               iconRef={(el) => (leftIconRefs.current[i] = el)}
-              textRef={(el) => (leftTextRefs.current[i] = el)}
             />
           ))}
         </div>
@@ -316,9 +324,8 @@ export function DashboardHub({ datasets, qualityScore, kpis, onInspectKpi }: Das
               key={i}
               node={node}
               align="right"
-              delay={0.5 + (i + leftNodes.length) * 0.12}
+              delay={NODE_ENTRANCE_DELAY + (i + leftNodes.length) * NODE_ENTRANCE_STAGGER}
               iconRef={(el) => (rightIconRefs.current[i] = el)}
-              textRef={(el) => (rightTextRefs.current[i] = el)}
             />
           ))}
         </div>
@@ -333,15 +340,11 @@ function HubNode({
   align,
   delay,
   iconRef,
-  textRef,
 }: {
   node: Node;
   align: "left" | "right";
   delay: number;
   iconRef: (el: HTMLDivElement | null) => void;
-  /** The label block. Lines end at its near edge, so the text is never
-   *  something a connector has to pass underneath. */
-  textRef?: (el: HTMLDivElement | null) => void;
 }) {
   const Icon = node.icon;
   const clickable = !!node.onInspect;
@@ -349,7 +352,7 @@ function HubNode({
     <motion.div
       initial={{ opacity: 0, x: align === "left" ? -12 : 12 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5, delay }}
+      transition={{ duration: NODE_ENTRANCE_DURATION, delay }}
       onClick={node.onInspect}
       role={clickable ? "button" : undefined}
       tabIndex={clickable ? 0 : undefined}
@@ -385,7 +388,7 @@ function HubNode({
       >
         <Icon className="w-5 h-5 text-white" strokeWidth={2.25} />
       </div>
-      <div ref={textRef} className="min-w-0">
+      <div className="min-w-0">
         <p className="text-xs text-foreground/60 truncate max-w-[140px]">{node.label}</p>
         <p className="text-sm font-semibold text-foreground truncate max-w-[140px]">{node.value}</p>
         {clickable && (
