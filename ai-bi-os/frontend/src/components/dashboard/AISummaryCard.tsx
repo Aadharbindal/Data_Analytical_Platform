@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { insightsApi } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton-loader";
+import { detectErrorType } from "@/components/ui/error-state";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -124,11 +125,12 @@ function StatTile({
 
 export function AISummaryCard() {
   const router = useRouter();
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["executiveSummary"],
     queryFn: () => insightsApi.executiveSummary(),
   });
 
+  const fileIsMissing = detectErrorType(error) === "dataset_missing";
   const facts = data?.facts;
   const netPositive = (facts?.total_value ?? 0) >= 0;
 
@@ -184,7 +186,15 @@ export function AISummaryCard() {
           ) : isError || !data || !data.summary ? (
             <div className="flex-1 flex items-center justify-center">
               <p className="text-[15px] leading-relaxed text-muted-foreground text-center">
-                No data available for analysis.
+                {/* "No data available" is the right thing to say when there is
+                    genuinely nothing to summarize. It is the wrong thing to say
+                    when the dataset is right there in the picker and only its
+                    file has gone missing — that reads as a fact about the data
+                    rather than a fault, and leaves no hint that re-uploading is
+                    what fixes it. */}
+                {fileIsMissing
+                  ? "This dataset's file is no longer on the server. Upload it again to restore this summary."
+                  : "No data available for analysis."}
               </p>
             </div>
           ) : (
