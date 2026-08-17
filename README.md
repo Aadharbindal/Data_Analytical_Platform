@@ -29,7 +29,7 @@ An enterprise analytics platform where every metric is computed by deterministic
 ![TailwindCSS](https://img.shields.io/badge/Tailwind-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
 
 
-### [**Try the live app →**](https://numerate-analytics.vercel.app)
+### [**Try the live app →**](https://numerate-qxc4wt62h-aadhar.vercel.app)
 
 ---
 
