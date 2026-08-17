@@ -164,19 +164,34 @@ def find_duplicate_dataset(content_hash: str, user_id: str) -> Optional[dict]:
 
 from app.core.config import DATA_DIR, DB_PATH
 
+import logging
+
+from app.services import file_store
 from app.services.storage import s3_manager
+
+logger = logging.getLogger(__name__)
 
 def get_dataset_path(filename: str, skip_s3_download: bool = False) -> str:
     """Returns the absolute path to the dataset file based on its basename.
-    If the file is not found locally, it attempts to download it from S3."""
-    local_path = str(Path(DATA_DIR) / os.path.basename(filename))
-    
-    if not os.path.exists(local_path) and not skip_s3_download:
-        # Try to download from S3 if it doesn't exist locally (ephemeral storage fallback)
-        if s3_manager.enabled:
-            print(f"File {filename} not found locally, attempting S3 download...")
-            s3_manager.download_file(filename, local_path)
-            
+
+    The local disk is a cache, not the record: this host erases it on every
+    restart and every deploy. A file missing from it is restored from the
+    database, which is where uploads are durably kept. Object storage is tried
+    after that, for files uploaded before the database became the record.
+    """
+    basename = os.path.basename(filename)
+    local_path = str(Path(DATA_DIR) / basename)
+
+    if os.path.exists(local_path) or skip_s3_download:
+        return local_path
+
+    if file_store.restore_to(basename, local_path):
+        return local_path
+
+    if s3_manager.enabled:
+        logger.info("%s is not in the database, trying object storage", basename)
+        s3_manager.download_file(basename, local_path)
+
     return local_path
 
 def run_filepath_migration():
@@ -566,6 +581,12 @@ def init_db():
     except Exception:
         conn.rollback()
 
+    # Durable storage for the uploaded files themselves. The disk this app runs
+    # on is erased on every restart and deploy, which is how a dataset could
+    # keep appearing in the picker while every number computed from it came
+    # back as zero. See app/services/file_store.py.
+    file_store.init_file_store()
+
     # Per-user dashboard customization: which KPI cards are pinned and in what
     # order. pinned_kpis is NULL/empty until the user customizes — the
     # dashboard falls back to its default top-4 behavior in that case.
@@ -916,7 +937,12 @@ def _finish_persisting(df, file_content, filename, user_id, metadata, version, c
     with open(disk_path, "wb") as f:
         f.write(file_content)
 
-    # Upload to S3 if enabled
+    # The disk write above is only a cache - this host erases it on restart.
+    # The database copy is the one that makes the dataset still be here after a
+    # logout, a deploy, or an idle spin-down.
+    file_store.save(filename_db, file_content)
+
+    # Object storage, when it is configured, as a second copy.
     if s3_manager.enabled:
         s3_manager.upload_file(file_content, filename_db)
 

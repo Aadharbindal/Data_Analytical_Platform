@@ -15,6 +15,7 @@ from app.services.data_processing import (
     create_upload_job, update_upload_job, complete_upload_job, fail_upload_job, get_upload_job,
     find_duplicate_dataset,
 )
+from app.services import file_store
 from app.services.storage import s3_manager
 from app.core.security import get_current_user
 from app.services.stats_service import compute_kpis
@@ -495,6 +496,10 @@ async def delete_dataset(dataset_id: str, current_user: dict = Depends(get_curre
             except Exception:
                 pass
                 
+        # The durable copy has to go too, or the next read would restore the
+        # file the user just deleted back onto disk.
+        file_store.delete(os.path.basename(filename_db))
+
         # Delete from S3 if enabled
         if s3_manager.enabled:
             s3_manager.delete_file(filename_db)
