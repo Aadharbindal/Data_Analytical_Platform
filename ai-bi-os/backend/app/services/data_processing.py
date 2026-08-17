@@ -200,6 +200,72 @@ def get_dataset_path(filename: str, skip_s3_download: bool = False) -> str:
 
     return local_path
 
+def restore_missing_dataset_file(dataset_id: str, user_id: str, file_content: bytes) -> bool:
+    """If this dataset's file is gone, put it back from the bytes just uploaded.
+
+    Duplicate detection matches on a hash of the content, and it kept working
+    perfectly after the file behind that hash had been lost - so re-uploading
+    the very file that would fix a broken dataset was answered with "you
+    already have this one". The one action that could recover the data was the
+    one action refused.
+
+    Returns True if a file was actually restored, meaning the caller should
+    treat the upload as a repair rather than a duplicate. Returns False when
+    the file is already there, which is a genuine duplicate and should still be
+    reported as one.
+    """
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT filepath FROM datasets WHERE id = %s AND user_id = %s",
+            (dataset_id, user_id),
+        )
+        row = cursor.fetchone()
+    finally:
+        conn.close()
+
+    if not row or not row[0]:
+        return False
+
+    basename = os.path.basename(row[0])
+    local_path = str(Path(DATA_DIR) / basename)
+
+    # skip_s3_download so this only asks "is it here?" rather than starting a
+    # restore we are about to make unnecessary.
+    if os.path.exists(local_path) or file_store.exists(basename):
+        return False
+
+    logger.warning("Restoring the missing file for dataset %s from a re-upload", dataset_id)
+
+    # The durable copy first: if only one of the two writes can succeed, the
+    # one that survives a restart is the one worth having.
+    file_store.save(basename, file_content)
+    try:
+        with open(local_path, "wb") as f:
+            f.write(file_content)
+    except Exception as exc:
+        logger.error("Could not write the restored file to disk: %s", exc)
+        capture(exc, action="restore_missing_dataset_file", dataset_id=dataset_id)
+
+    # This dataset is what the user just asked to see, and its cached
+    # everything was computed while the file was missing.
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO active_dataset (user_id, dataset_id) VALUES (%s, %s) "
+            "ON CONFLICT (user_id) DO UPDATE SET dataset_id = EXCLUDED.dataset_id",
+            (user_id, dataset_id),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    invalidate_user_cache(user_id)
+    return True
+
+
 def run_filepath_migration():
     """Migrates any stored absolute Windows/Linux paths in SQLite to just their basenames."""
     conn = get_db_connection()

@@ -228,7 +228,11 @@ export const datasetsApi = {
       {}
     ),
   upload: (formData: FormData) =>
-    api.upload<{ job_id: string; status: string }>("/api/v1/datasets/upload", formData),
+    // `status: "restored"` comes back with no job_id: the file already had a
+    // dataset row whose file had gone missing, so the upload repaired it in
+    // place instead of creating anything to track.
+    api.upload<{ job_id?: string; status: string; dataset_id?: string; message?: string }>(
+      "/api/v1/datasets/upload", formData),
   uploadStatus: (jobId: string) =>
     api.get<import("./types").UploadJob>(`/api/v1/datasets/upload/status/${jobId}`),
   delete: (id: string) => api.delete(`/api/v1/datasets/${id}`),

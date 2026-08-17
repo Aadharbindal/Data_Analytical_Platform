@@ -193,6 +193,19 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
       formData.append("force", "true");
 
       const res = await datasetsApi.upload(formData);
+
+      // The dataset was already on record but its file had gone missing, and
+      // this upload put it back. There is no background job to follow: the
+      // repair already happened, so go straight to done.
+      if (res.status === "restored" || !res.job_id) {
+        setLoadPct(100);
+        setCurrentStatusMsg(res.message ?? "Restored! Preparing dashboard...");
+        // Same handoff the completed-job branch uses: once these refetch, the
+        // parent Dashboard replaces this screen with the real one.
+        await queryClient.invalidateQueries();
+        setWelcomeActive(false);
+        return;
+      }
       setCurrentStatusMsg("Reading columns and profiling data...");
 
       // The backend now processes the file on a background thread and

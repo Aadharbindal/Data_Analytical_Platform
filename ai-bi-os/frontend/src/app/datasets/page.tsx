@@ -87,6 +87,19 @@ function UploadZone({ onSuccess, onRedirect }: { onSuccess: () => void, onRedire
         formData.append("force", "true");
       }
       const res = await datasetsApi.upload(formData);
+
+      // The dataset was already on record but its file had gone missing, and
+      // this upload put it back. There is no background job to follow: the
+      // repair already happened, so go straight to done.
+      if (res.status === "restored" || !res.job_id) {
+        setUploadProgress({ filename: file.name, status: "done", currentStep: res.message ?? "Restored", progress: 100 });
+        setTimeout(() => {
+          setUploadProgress(null);
+          onSuccess();
+          if (onRedirect) onRedirect();
+        }, 2000);
+        return;
+      }
       setUploadProgress({ filename: file.name, status: "processing", jobId: res.job_id, currentStep: "Initializing", progress: 0 });
 
       const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;

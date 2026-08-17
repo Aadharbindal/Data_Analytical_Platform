@@ -13,7 +13,7 @@ from app.services.data_processing import (
     save_dataset, save_dataframe_as_new_version, DB_PATH, get_dataset_path, get_active_dataset,
     get_dataframe, invalidate_user_cache,
     create_upload_job, update_upload_job, complete_upload_job, fail_upload_job, get_upload_job,
-    find_duplicate_dataset,
+    find_duplicate_dataset, restore_missing_dataset_file,
 )
 from app.services import file_store
 from app.services.storage import s3_manager
@@ -50,6 +50,22 @@ async def upload_dataset(file: UploadFile = File(...), force: bool = Form(False)
     if not force:
         existing = find_duplicate_dataset(content_hash, current_user["id"])
         if existing:
+            # Before calling it a duplicate: is the file behind that dataset
+            # actually still there? If it is not, this upload is the user
+            # handing back bytes we lost, and refusing it would leave them with
+            # no way at all to recover the dataset.
+            if existing.get("id") and restore_missing_dataset_file(
+                existing["id"], current_user["id"], content
+            ):
+                return {
+                    "status": "restored",
+                    "dataset_id": existing["id"],
+                    "message": (
+                        f"'{existing['name']}' was already here but its file had gone missing. "
+                        "Restored it from this upload - your dashboard is back."
+                    ),
+                }
+
             if existing.get("in_progress"):
                 message = f"An identical file ('{existing['name']}') is already being uploaded. Wait for it to finish, or upload anyway to create a duplicate copy."
             else:
