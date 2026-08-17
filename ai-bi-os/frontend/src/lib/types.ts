@@ -386,6 +386,10 @@ export interface ChatProvenanceQuery {
 export interface ChatProvenance {
   message_id: string;
   dataset_name: string | null;
+  /** False when the answer was computed against a dataset the user has since
+   *  switched away from — worth saying out loud rather than presenting old
+   *  figures as though they described current work. */
+  is_active_dataset: boolean;
   answered_at: string;
   queries: ChatProvenanceQuery[];
   replayed_at: string;

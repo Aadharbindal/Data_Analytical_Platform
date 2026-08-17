@@ -84,18 +84,29 @@ def wired(monkeypatch, dataset_csv):
     """Wires the endpoint to a fake message store and a temporary dataset."""
     rows = {}
 
-    def add_message(message_id, sql_list, user_id=USER["id"]):
+    def add_message(message_id, sql_list, user_id=USER["id"], dataset_id=None):
         rows[message_id] = {
             "id": message_id,
             "user_id": user_id,
             "role": "ai",
             "executed_sql": json.dumps(sql_list) if sql_list is not None else None,
             "created_at": "2026-01-01T00:00:00",
+            "dataset_id": dataset_id,
         }
 
     monkeypatch.setattr(chat_router, "get_db_connection", lambda: _FakeConn(rows))
     monkeypatch.setattr(
         chat_router, "get_active_dataset", lambda uid: {"id": "ds-1", "name": "sales.csv", "filepath": "sales.csv"}
+    )
+    # Stands in for the dataset lookup an answer's own dataset_id resolves to.
+    monkeypatch.setattr(
+        chat_router,
+        "_dataset_for_message",
+        lambda ds_id, uid: (
+            {"id": "ds-1", "name": "sales.csv", "filepath": "sales.csv"}
+            if ds_id in (None, "ds-1")
+            else None
+        ),
     )
     monkeypatch.setattr(chat_router, "get_dataset_path", lambda name: dataset_csv)
     app.dependency_overrides[get_current_user] = lambda: USER
@@ -173,3 +184,44 @@ def test_rows_are_capped_and_the_cap_is_reported(wired):
     assert len(q["rows"]) == 1
     assert q["row_count"] == 3
     assert q["truncated"] is True
+
+
+def test_replays_against_the_answers_own_dataset(wired):
+    wired("m9", ["SELECT SUM(amount) AS total FROM active_dataset"], dataset_id="ds-1")
+
+    body = _get("/api/v1/chat/messages/m9/provenance").json()
+    assert body["queries"][0]["rows"][0]["total"] == 400
+    assert body["is_active_dataset"] is True
+
+
+def test_says_so_when_the_answers_dataset_is_gone(wired):
+    # The dataset the answer was computed from has since been deleted. Silently
+    # re-running its SQL over whatever is active now would produce a
+    # column-not-found error that reads like a bug rather than the truth.
+    wired("m10", ["SELECT SUM(amount) FROM active_dataset"], dataset_id="ds-deleted")
+
+    res = _get("/api/v1/chat/messages/m10/provenance")
+    assert res.status_code == 409
+    assert "no longer available" in res.json()["detail"]
+
+
+def test_a_column_that_no_longer_exists_is_explained_not_dumped(wired):
+    # The engine's own wording ("Binder Error: Referenced column ... not found")
+    # reads like the feature is broken, when what it means is that the data
+    # underneath the query is not the data it was written for.
+    wired("m11", ["SELECT SUM(trade_value) FROM active_dataset"])
+
+    q = _get("/api/v1/chat/messages/m11/provenance").json()["queries"][0]
+    assert "Binder Error" not in q["error"]
+    assert "does not have" in q["error"]
+    assert "sales.csv" in q["error"]
+
+
+def test_the_dataset_is_recorded_when_an_answer_is_saved():
+    # The read path is only trustworthy if the write path stores the dataset.
+    import inspect
+    from app.routers import chat as c
+
+    src = inspect.getsource(c.chat)
+    assert "dataset_id" in src
+    assert 'dataset_id=dataset_info.get("id")' in src

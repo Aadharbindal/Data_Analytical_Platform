@@ -121,6 +121,51 @@ def _is_read_only(sql: str) -> bool:
     return not any(f" {word} " in f" {stripped} " for word in _FORBIDDEN_SQL)
 
 
+def _explain_query_failure(detail: str, dataset_info: dict) -> str:
+    """Turn an engine error into something a reader can act on.
+
+    A raw "Binder Error: Referenced column X not found" reads like the feature
+    is broken. Almost always it means the opposite: the query is intact and the
+    data underneath it is not the data it was written for. Saying that is both
+    more useful and more honest than passing the parser's wording through.
+    """
+    lowered = detail.lower()
+    if "not found in from clause" in lowered or "binder error" in lowered:
+        name = dataset_info.get("name") or "this dataset"
+        return (
+            f"This query asks for columns that {name} does not have. "
+            "The answer was computed from different data, so it cannot be re-checked here."
+        )
+    return detail
+
+
+def _dataset_for_message(dataset_id: Optional[str], user_id: str) -> Optional[dict]:
+    """The dataset an answer was computed from.
+
+    Answers written before the dataset was recorded have none, and there is no
+    way to work out which one they meant. Falling back to whatever is active
+    would be a guess dressed up as a fact - the drilldown would confidently
+    re-run the SQL over unrelated data - so those fall back only because the
+    alternative is offering nothing at all, and the response says plainly
+    whether the data shown is the current dataset or the original one.
+    """
+    if not dataset_id:
+        return get_active_dataset(user_id)
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "SELECT id, name, filepath FROM datasets WHERE id = %s AND user_id = %s",
+            (dataset_id, user_id),
+        )
+        row = cursor.fetchone()
+    finally:
+        conn.close()
+
+    return dict(row) if row else None
+
+
 @router.get("/messages/{message_id}/provenance")
 async def get_message_provenance(
     message_id: str,
@@ -141,7 +186,7 @@ async def get_message_provenance(
     # Scoped by user_id, not just message id: a message id is guessable and
     # would otherwise expose another account's queries and rows.
     cursor.execute(
-        "SELECT id, role, executed_sql, created_at FROM chat_messages WHERE id = %s AND user_id = %s",
+        "SELECT id, role, executed_sql, created_at, dataset_id FROM chat_messages WHERE id = %s AND user_id = %s",
         (message_id, current_user["id"]),
     )
     row = cursor.fetchone()
@@ -158,14 +203,33 @@ async def get_message_provenance(
             detail="This answer was not computed from your data, so there is nothing to show.",
         )
 
-    dataset_info = get_active_dataset(current_user["id"])
+    # Replayed against the dataset the answer was computed from, not whatever
+    # is active now. Re-running an old answer's SQL over a newly switched
+    # dataset produces a column-not-found error that reads like a bug, when the
+    # truthful statement is simply that the question was asked of other data.
+    dataset_info = _dataset_for_message(row["dataset_id"], current_user["id"])
     if not dataset_info:
-        raise HTTPException(status_code=400, detail="No active dataset")
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "The dataset this answer was computed from is no longer available, "
+                "so its figures cannot be re-checked."
+            ),
+        )
+
+    active = get_active_dataset(current_user["id"]) or {}
+    is_active = active.get("id") == dataset_info.get("id")
 
     filename_db = dataset_info.get("filepath")
     filepath = get_dataset_path(filename_db) if filename_db else None
     if not filepath or not os.path.exists(filepath):
-        raise HTTPException(status_code=400, detail="Dataset file is no longer available")
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "The file behind this answer's dataset is no longer on disk, "
+                "so its figures cannot be re-checked."
+            ),
+        )
 
     fmt = "csv"
     if filepath.endswith(".parquet"):
@@ -210,7 +274,7 @@ async def get_message_provenance(
                     "rows": [],
                     "row_count": 0,
                     "truncated": False,
-                    "error": str(exc.detail),
+                    "error": _explain_query_failure(str(exc.detail), dataset_info),
                 })
     finally:
         engine.close()
@@ -218,6 +282,9 @@ async def get_message_provenance(
     return {
         "message_id": message_id,
         "dataset_name": dataset_info.get("name") or dataset_info.get("filename"),
+        # So the reader knows whether they are looking at the data they are
+        # working in now, or the data this question was originally asked of.
+        "is_active_dataset": is_active,
         "answered_at": row["created_at"],
         "queries": queries,
         "replayed_at": datetime.utcnow().isoformat() + "Z",
@@ -292,16 +359,19 @@ async def chat(request: ChatRequest, current_user: dict = Depends(get_current_us
         cursor.execute("UPDATE chat_sessions SET updated_at = %s WHERE id = %s", (now, session_id))
     conn.commit()
 
-    def save_message(role, content, executed_sql=None, chart_config=None, trace_id=None):
+    def save_message(role, content, executed_sql=None, chart_config=None, trace_id=None, dataset_id=None):
         """Returns the id it wrote, so the answer can be handed back with a
         handle the caller can use to ask how it was computed. Without it a
         freshly received answer is the one thing on screen that cannot be
-        checked, which is exactly backwards."""
+        checked, which is exactly backwards.
+
+        The dataset is recorded alongside, because an answer only means
+        anything against the data it was computed from."""
         message_id = f"msg_{uuid.uuid4().hex[:8]}"
         cursor.execute(
             """
-            INSERT INTO chat_messages (id, session_id, user_id, role, content, executed_sql, chart_config, trace_id, created_at)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO chat_messages (id, session_id, user_id, role, content, executed_sql, chart_config, trace_id, created_at, dataset_id)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """,
             (
                 message_id,
@@ -313,6 +383,7 @@ async def chat(request: ChatRequest, current_user: dict = Depends(get_current_us
                 json.dumps(chart_config) if chart_config is not None else None,
                 trace_id,
                 datetime.utcnow().isoformat(),
+                dataset_id,
             ),
         )
         conn.commit()
@@ -320,9 +391,10 @@ async def chat(request: ChatRequest, current_user: dict = Depends(get_current_us
 
     save_message("user", request.message)
 
-    def finish(response_text, executed_sql=None, chart_config=None, trace_id=None):
+    def finish(response_text, executed_sql=None, chart_config=None, trace_id=None, dataset_id=None):
         message_id = save_message(
-            "ai", response_text, executed_sql=executed_sql, chart_config=chart_config, trace_id=trace_id
+            "ai", response_text, executed_sql=executed_sql, chart_config=chart_config,
+            trace_id=trace_id, dataset_id=dataset_id,
         )
         conn.close()
         return {
@@ -380,7 +452,8 @@ async def chat(request: ChatRequest, current_user: dict = Depends(get_current_us
         except Exception:
             pass
 
-        return finish(response_text, executed_sql=executed_sql, chart_config=chart_config, trace_id=trace_id)
+        return finish(response_text, executed_sql=executed_sql, chart_config=chart_config,
+                      trace_id=trace_id, dataset_id=dataset_info.get("id"))
     except Exception as e:
         return finish(f"Error executing query: {str(e)}")
 

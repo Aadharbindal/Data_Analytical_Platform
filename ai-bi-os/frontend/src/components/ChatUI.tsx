@@ -321,10 +321,17 @@ const AnswerProvenance: React.FC<{ messageId?: string; sql: string[] }> = ({
               ))}
 
               {data && (
-                <p className="text-[11px] text-muted-foreground/70">
-                  Re-run just now against {data.dataset_name ?? "your active dataset"}. If a
-                  figure above disagrees with the answer, the data has changed since it was
-                  written.
+                <p className="text-[11px] leading-relaxed text-muted-foreground/70">
+                  Re-run just now against{" "}
+                  <span className="text-foreground/80">{data.dataset_name ?? "your active dataset"}</span>
+                  {data.is_active_dataset === false && (
+                    <span className="text-warning">
+                      {" "}— the dataset this answer was written against, which is not the one
+                      you are working in now
+                    </span>
+                  )}
+                  . If a figure above disagrees with the answer, the data has changed since it
+                  was written.
                 </p>
               )}
             </div>

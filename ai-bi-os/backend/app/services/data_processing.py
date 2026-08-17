@@ -609,6 +609,13 @@ def init_db():
             FOREIGN KEY(user_id) REFERENCES users(id)
         )
     ''')
+    # Which dataset an answer was computed against. Without it, checking an
+    # answer means re-running its SQL over whatever happens to be active now —
+    # so switching datasets silently turned every earlier answer into a column
+    # that no longer exists. Null on rows written before this column, which is
+    # why the drilldown treats "unknown" as its own case rather than assuming
+    # the current one.
+    cursor.execute("ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS dataset_id TEXT")
     conn.commit()
 
     # Dynamically alter table to add columns for older DB schemas
