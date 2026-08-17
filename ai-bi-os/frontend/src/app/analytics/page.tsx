@@ -114,6 +114,12 @@ export default function AnalyticsDashboard() {
     >
 
 
+      {/* The figures are pinned to the bottom of each card with mt-auto.
+          Grid items already stretch to equal height, but the label above
+          them does not: "Active Trends" fits on one line where the other
+          three wrap onto two, so its number sat a line higher than the
+          rest. Pinning to the baseline keeps them level whatever the
+          labels do at a given width. */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {/* KPI Summary Card */}
         <motion.div variants={itemVariants} className="glass-card rounded-[20px] p-6 flex flex-col gap-4">
@@ -121,7 +127,7 @@ export default function AnalyticsDashboard() {
             <Activity className="h-5 w-5 text-primary" />
             <h3 className="text-sm font-medium">KPIs Monitored</h3>
           </div>
-          <p className="text-4xl font-semibold">{isLoading ? "-" : (kpis.data as any)?.kpis?.length || 0}</p>
+          <p className="mt-auto text-4xl font-semibold">{isLoading ? "-" : (kpis.data as any)?.kpis?.length || 0}</p>
         </motion.div>
 
         {/* Outlier Alert Card */}
@@ -130,7 +136,7 @@ export default function AnalyticsDashboard() {
             <AlertTriangle className="h-5 w-5 text-amber-500" />
             <h3 className="text-sm font-medium">Recent Outliers</h3>
           </div>
-          <p className="text-4xl font-semibold text-amber-500">{isLoading ? "-" : (outliers.data as any)?.outliers?.length || 0}</p>
+          <p className="mt-auto text-4xl font-semibold text-amber-500">{isLoading ? "-" : (outliers.data as any)?.outliers?.length || 0}</p>
         </motion.div>
 
         {/* Trends Card */}
@@ -139,7 +145,7 @@ export default function AnalyticsDashboard() {
             <TrendingUp className="h-5 w-5 text-emerald-500" />
             <h3 className="text-sm font-medium">Active Trends</h3>
           </div>
-          <p className="text-4xl font-semibold">{isLoading ? "-" : (trends.data as any)?.trend?.length || 0}</p>
+          <p className="mt-auto text-4xl font-semibold">{isLoading ? "-" : (trends.data as any)?.trend?.length || 0}</p>
         </motion.div>
 
         {/* Forecasts Card */}
@@ -148,7 +154,7 @@ export default function AnalyticsDashboard() {
             <BarChart2 className="h-5 w-5 text-indigo-500" />
             <h3 className="text-sm font-medium">Forecast Horizons</h3>
           </div>
-          <p className="text-4xl font-semibold">{isLoading ? "-" : ((forecasts.data as any)?.available ? 1 : 0)}</p>
+          <p className="mt-auto text-4xl font-semibold">{isLoading ? "-" : ((forecasts.data as any)?.available ? 1 : 0)}</p>
         </motion.div>
       </div>
       
