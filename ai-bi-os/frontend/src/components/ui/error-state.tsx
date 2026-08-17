@@ -59,8 +59,11 @@ const errorConfig: Record<
   server_error: {
     icon: <ServerCrash className="h-6 w-6 text-error" />,
     defaultTitle: "Internal Server Error",
+    // "Notified" would claim a person was alerted, which is only true when
+    // error tracking is configured. "Recorded" is true either way - the server
+    // logs it regardless - and matches what the backend itself replies.
     defaultMessage:
-      "Something went wrong on the server. The team has been notified.",
+      "Something went wrong on the server. The error has been recorded.",
   },
   generic: {
     icon: <AlertTriangle className="h-6 w-6 text-error" />,

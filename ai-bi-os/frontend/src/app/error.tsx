@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, RefreshCw, Home } from 'lucide-react';
+import { reportError } from '@/lib/reportError';
 
 export default function GlobalError({
   error,
@@ -15,8 +16,11 @@ export default function GlobalError({
   const router = useRouter();
 
   useEffect(() => {
-    // Log the error to an error reporting service
+    // This page said "our team has been notified" while doing nothing but
+    // logging to a console nobody was reading. Now it sends the crash, so the
+    // sentence below is true.
     console.error(error);
+    reportError(error, { kind: 'render' });
   }, [error]);
 
   return (
@@ -29,7 +33,7 @@ export default function GlobalError({
           Something went wrong
         </h2>
         <p className="mb-8 text-sm text-muted-foreground">
-          An unexpected error occurred while rendering this page. Our team has been notified.
+          An unexpected error occurred while rendering this page. It has been reported.
         </p>
         
         <div className="flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
@@ -42,7 +46,7 @@ export default function GlobalError({
             Try again
           </Button>
           <Button 
-            onClick={() => router.push('/dashboard')}
+            onClick={() => router.push('/')}
             variant="outline"
             className="flex items-center gap-2 border-white/10 hover:bg-white/5"
           >

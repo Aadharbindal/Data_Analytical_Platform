@@ -1,3 +1,4 @@
+import logging
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -53,6 +54,13 @@ class SafeJSONResponse(_JSONResponse):
         return super().render(_json_safe(content))
 
 
+# Before the app, so anything that fails during startup is reported too - the
+# failures hardest to find are the ones that happen before there is a server to
+# ask. No-op unless SENTRY_DSN is set.
+from app.core.error_tracking import init_error_tracking, capture
+
+init_error_tracking()
+
 app = FastAPI(
     title="Numerate OS Backend",
     redirect_slashes=False,
@@ -87,7 +95,7 @@ app.include_router(clustering.router, prefix="/api/v1/analytics/clustering", tag
 app.include_router(share.router, prefix="/api/v1/share", tags=["share"])
 app.include_router(catalog.router, prefix="/api/v1/catalog", tags=["catalog"])
 # Also include insights router for executive summary etc.
-from app.routers import insights, auth, recommendations, rules, ai_gateway, dashboard, notifications
+from app.routers import insights, auth, recommendations, rules, ai_gateway, dashboard, notifications, telemetry
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
@@ -113,6 +121,25 @@ app.include_router(chat.router, prefix="/api/v1/chat", tags=["chat"])
 app.include_router(ai_gateway.router, prefix="/api/v1/ai-gateway", tags=["ai-gateway"])
 app.include_router(dashboard.router, prefix="/api/v1/dashboard", tags=["dashboard"])
 app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["notifications"])
+app.include_router(telemetry.router, prefix="/api/v1/telemetry", tags=["telemetry"])
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request, exc: Exception):
+    """Report anything that got all the way out, then answer plainly.
+
+    Sentry's integration already catches most of this; the handler exists so
+    the reply is deliberate rather than a stack trace, and so the report
+    carries the path that produced it. It is registered for Exception only, so
+    HTTPException and the rate-limit response still travel their own routes -
+    a 404 is an answer, not a fault.
+    """
+    capture(exc, path=str(request.url.path), method=request.method)
+    logging.getLogger("app").exception("Unhandled error on %s %s", request.method, request.url.path)
+    return _JSONResponse(
+        status_code=500,
+        content={"detail": "Something went wrong on our side. The error has been recorded."},
+    )
+
 
 @app.get("/health")
 def health_check():

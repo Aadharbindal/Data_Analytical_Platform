@@ -1,10 +1,11 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AuthProvider } from "@/context/AuthContext";
 
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { installGlobalErrorReporting } from "@/lib/reportError";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -33,6 +34,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
         },
       })
   );
+
+  // Installed once, at the root, so it covers every page. Catches what React's
+  // error boundaries cannot: throws outside render, and promise rejections
+  // nobody handled - the failures that leave no trace at all today.
+  useEffect(() => installGlobalErrorReporting(), []);
 
   return (
     <QueryClientProvider client={queryClient}>
