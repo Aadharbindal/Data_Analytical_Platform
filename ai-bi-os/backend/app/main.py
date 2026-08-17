@@ -123,6 +123,24 @@ app.include_router(dashboard.router, prefix="/api/v1/dashboard", tags=["dashboar
 app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["notifications"])
 app.include_router(telemetry.router, prefix="/api/v1/telemetry", tags=["telemetry"])
 
+@app.on_event("startup")
+async def check_storage_on_startup():
+    """Say at boot whether uploaded files will survive.
+
+    This is the check that would have caught the problem it was written for:
+    object storage had been unreachable for months, uploads were silently
+    falling back to local disk, and the host wipes that disk on every deploy.
+    Nobody found out until a shared dashboard could not find its dataset.
+    Asking the question while someone is watching a deploy is much cheaper.
+    """
+    try:
+        from app.services.storage import report_storage_status
+
+        report_storage_status()
+    except Exception:
+        logging.getLogger("app").exception("Storage status check failed to run")
+
+
 @app.exception_handler(Exception)
 async def unhandled_exception_handler(request, exc: Exception):
     """Report anything that got all the way out, then answer plainly.
