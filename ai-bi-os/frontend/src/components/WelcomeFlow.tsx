@@ -350,8 +350,15 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
                   className="relative overflow-hidden rounded-[20px] p-[26px] backdrop-blur-[16px]"
                   style={{ backgroundImage: 'linear-gradient(180deg, rgba(45,95,200,.16) 0%, rgba(13,17,28,.92) 60%)' }}
                 >
-                  <div className="flex justify-between items-start mb-[22px] relative">
-                    <div><div className="text-[14px] font-semibold text-[#c5cbd6] mb-[7px]">Processed Volume</div><div className="text-[30px] font-extrabold">₹4,82,750</div></div>
+                  <div className="flex justify-between items-start mb-[18px] relative">
+                    <div>
+                      <div className="text-[14px] font-semibold text-[#c5cbd6] mb-[7px]">Processed Volume</div>
+                      <div className="text-[34px] font-extrabold tracking-tight leading-none">₹4,82,750</div>
+                      <div className="mt-[10px] inline-flex items-center gap-2 rounded-full bg-white/[0.04] ring-1 ring-inset ring-white/10 py-[5px] px-[11px]">
+                        <span className="text-[12px] text-[#8b93a3]">vs last period</span>
+                        <span className="text-[12.5px] font-bold text-[#37D67A]">↑ 12.4%</span>
+                      </div>
+                    </div>
                     <span className="bg-[#37D67A]/15 text-[#37D67A] text-[12.5px] font-bold py-1 px-[11px] rounded-full ring-1 ring-inset ring-[#37D67A]/25">↑ 12.4%</span>
                   </div>
 
@@ -365,32 +372,110 @@ export const WelcomeFlow: React.FC<WelcomeFlowProps> = ({ userName = "Aadhar" })
                       <div className="absolute inset-x-0 bottom-0 h-px bg-white/15" />
                     </div>
 
-                    <div className="relative h-full flex items-end gap-2">
-                      {bars.map((b, i) => (
-                        <div key={i} className="flex-1 flex items-end h-full">
-                          <div
-                            className="group-hover:brightness-110"
-                            style={{
-                              width: '100%', borderRadius: '5px 5px 0 0',
-                              height: (active===2 ? (b.v/480*100) : 0) + '%',
-                              // Both transitions declared here, because an
-                              // inline `transition` replaces whatever a utility
-                              // class sets. The stagger is written into the
-                              // height half only: as a separate transitionDelay
-                              // it would apply to filter too, and the last bar
-                              // would take most of a second to react to hover.
-                              transition: `height .8s cubic-bezier(.16,1,.3,1) ${active===2 ? 200+i*45 : 0}ms, filter .3s ease`,
-                              background: b.proj ? 'repeating-linear-gradient(135deg,rgba(77,139,255,.6) 0 5px,rgba(77,139,255,.22) 5px 10px)' : 'linear-gradient(180deg,#4d8bff,#2563eb)',
-                              // A lit cap on every bar, from the same direction
-                              // the rim is lit, plus its own colour cast below.
-                              boxShadow: b.proj
-                                ? 'inset 0 1px 0 rgba(255,255,255,.22)'
-                                : 'inset 0 1px 0 rgba(255,255,255,.38), 0 6px 18px -8px rgba(77,139,255,.75)',
-                            }}
-                          ></div>
-                        </div>
-                      ))}
+                    {/* The line across the bar tops. It is a stretched SVG, so
+                        the row below uses per-cell padding instead of a flex
+                        gap: with no gap, cell i spans exactly i/n..(i+1)/n of
+                        the width and its centre lands on (i+0.5)*100 in these
+                        units, which is what makes the line meet each bar dead
+                        centre. A flex gap shifts every centre by a different
+                        amount and the line drifts off the bars. */}
+                    <svg
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 h-full w-full overflow-visible"
+                      viewBox={`0 0 ${bars.length * 100} 100`}
+                      preserveAspectRatio="none"
+                    >
+                      <polyline
+                        fill="none"
+                        stroke="rgba(186,230,253,.75)"
+                        strokeWidth="1.5"
+                        vectorEffect="non-scaling-stroke"
+                        strokeLinejoin="round"
+                        points={bars.map((b, i) => `${i * 100 + 50},${active === 2 ? 100 - (b.v / 480 * 100) : 100}`).join(' ')}
+                        style={{ transition: 'opacity .5s ease 700ms', opacity: active === 2 ? 1 : 0 }}
+                      />
+                    </svg>
+
+                    <div className="relative h-full flex items-end">
+                      {bars.map((b, i) => {
+                        const h = active === 2 ? (b.v / 480 * 100) : 0;
+                        // Declared once and shared by the three faces, so they
+                        // can never drift out of step with each other.
+                        const grow = `height .8s cubic-bezier(.16,1,.3,1) ${active === 2 ? 200 + i * 45 : 0}ms`;
+                        return (
+                          <div key={i} className="flex-1 px-[3px] relative flex items-end h-full">
+                            <div className="relative w-full" style={{ height: h + '%', transition: grow }}>
+                              {/* Top face, skewed so it reads as the lit surface
+                                  of a solid rather than a highlight painted on
+                                  a rectangle. */}
+                              <div
+                                aria-hidden
+                                className="absolute left-0 right-0"
+                                style={{
+                                  top: '-5px', height: '10px',
+                                  transform: 'skewX(-45deg)', transformOrigin: 'bottom left',
+                                  background: b.proj
+                                    ? 'rgba(96,165,250,.30)'
+                                    : 'linear-gradient(90deg,#cfe6ff,#8ab8ff)',
+                                  borderRadius: '2px',
+                                }}
+                              />
+                              {/* Right face, in shadow. */}
+                              <div
+                                aria-hidden
+                                className="absolute top-0 bottom-0"
+                                style={{
+                                  right: '-5px', width: '10px',
+                                  transform: 'skewY(-45deg)', transformOrigin: 'top left',
+                                  background: b.proj
+                                    ? 'rgba(30,58,138,.35)'
+                                    : 'linear-gradient(180deg,#3b2a8f,#12205e)',
+                                }}
+                              />
+                              {/* Front face. */}
+                              <div
+                                className="relative h-full w-full group-hover:brightness-110"
+                                style={{
+                                  borderRadius: '3px',
+                                  transition: 'filter .3s ease',
+                                  background: b.proj
+                                    // The projection reads as a wireframe: a
+                                    // dotted lattice over near-black, so it is
+                                    // plainly not a measured month.
+                                    ? 'radial-gradient(circle at center, rgba(125,190,255,.55) 1px, transparent 1.2px) 0 0/7px 7px, linear-gradient(180deg,#0d1730,#070c1a)'
+                                    : 'linear-gradient(180deg,#f0abfc 0%,#c084fc 9%,#7c5cff 34%,#3b6fe0 68%,#22d3ee 100%)',
+                                  border: b.proj ? '1px solid rgba(125,190,255,.45)' : 'none',
+                                  boxShadow: b.proj
+                                    ? '0 0 18px -4px rgba(96,165,250,.5)'
+                                    : 'inset 0 1px 0 rgba(255,255,255,.9), inset 1px 0 0 rgba(255,255,255,.35), 0 0 22px -2px rgba(124,92,255,.75), 0 0 44px -6px rgba(34,211,238,.45)',
+                                }}
+                              />
+                            </div>
+                            {/* Peak marker. Kept in the DOM rather than in the
+                                stretched SVG above, which would squash a circle
+                                into an ellipse. */}
+                            <span
+                              aria-hidden
+                              className="absolute left-1/2 h-[7px] w-[7px] rounded-full"
+                              style={{
+                                bottom: `calc(${h}% - 3.5px)`, marginLeft: '-3.5px',
+                                background: '#eaf6ff',
+                                boxShadow: '0 0 10px 2px rgba(147,197,253,.9)',
+                                transition: `bottom .8s cubic-bezier(.16,1,.3,1) ${active === 2 ? 200 + i * 45 : 0}ms, opacity .4s ease 700ms`,
+                                opacity: active === 2 ? 1 : 0,
+                              }}
+                            />
+                          </div>
+                        );
+                      })}
                     </div>
+
+                    {/* The pool of light the bars stand in. */}
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-x-0 bottom-0 h-[26px]"
+                      style={{ background: 'linear-gradient(180deg, rgba(80,140,255,.20), transparent)', filter: 'blur(5px)' }}
+                    />
                   </div>
                 </div>
               </div>
