@@ -5,6 +5,11 @@ __pycache__/
 venv/
 env/
 .env
+# .env alone left every variant exposed: a .env.backup or .env.local carries
+# the same database password and API keys, and one `git add -A` is all it
+# takes. The negation keeps the committed template, which holds no secrets.
+.env.*
+!.env.example
 .next/
 *.log
 .cache/
