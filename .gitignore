@@ -12,4 +12,3 @@ env/
 !.env.example
 .next/
 *.log
-.cache/
